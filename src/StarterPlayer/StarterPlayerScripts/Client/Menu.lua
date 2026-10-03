@@ -303,8 +303,12 @@ function Menu.start()
 			local state = availability(id)
 			local level = levelOf(id)
 			dName.Text = (info.icon or "") .. " " .. (data.name or id)
-			dInfo.Text = string.format("%s %s\n📦 Arme : %s\n⚙️ %s", info.title or "", string.rep("★", info.stars or 1),
-				info.weapon or "?", data.passive and data.passive.name or "")
+			local weapons = {}
+			for _, weapon in ipairs(data.weapons or {}) do
+				table.insert(weapons, (weapon.icon or "") .. " " .. weapon.name)
+			end
+			dInfo.Text = string.format("%s %s\n📦 Armes : %s\n⚙️ %s", info.title or "", string.rep("★", info.stars or 1),
+				#weapons > 0 and table.concat(weapons, " · ") or (info.weapon or "?"), data.passive and data.passive.name or "")
 			local fatals = {}
 			local unlocked = Roster.fatalsUnlocked(level)
 			for i, f in ipairs(data.fatals or {}) do

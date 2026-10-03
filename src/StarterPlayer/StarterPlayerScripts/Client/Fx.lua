@@ -11,6 +11,7 @@ local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Config = require(Shared:WaitForChild("Config"))
 local CharacterList = require(Shared:WaitForChild("CharacterList"))
 local Items = require(Shared:WaitForChild("Items"))
+local MoveSets = require(Shared:WaitForChild("MoveSets"))
 local Animator = require(script.Parent:WaitForChild("Animator"))
 local CameraRig = require(script.Parent:WaitForChild("CameraRig"))
 
@@ -969,12 +970,13 @@ local function strikingLimb(model, move)
 	-- la main droite tient l'arme quand la Caisse Bizarre est ouverte : c'est l'arme qui laisse l'arc
 	if best == "rightHand" and model:GetAttribute("Armed") then
 		local costume = model:FindFirstChild("Costume")
+		local weapon = model:GetAttribute("Weapon") or ""
 		for _, prop in ipairs(costume and costume:GetChildren() or {}) do
-			if prop:IsA("Model") and prop:GetAttribute("AlwaysShown") then
+			if prop:IsA("Model") and prop:GetAttribute("AlwaysShown") and (prop:GetAttribute("Weapon") or weapon) == weapon then
 				return "prop"
 			end
 		end
-		if costume and costume:FindFirstChild("PropBottle") then
+		if costume and costume:FindFirstChild("PropBottle") and Fx.iconicWeapon(model) then
 			return "bottle"
 		end
 	end
@@ -1340,6 +1342,22 @@ local function buildProjectile(visual, color)
 		holder.Parent = folder
 		return holder, function(cf)
 			cap.CFrame = cf * CFrame.Angles(0, 0, math.rad(90)) * CFrame.Angles(os.clock() * 30, 0, 0)
+		end
+	end
+	if visual == "can" or visual == "barrel" or visual == "log" then
+		-- cylindre qui tournoie (canette, tonneau, bûche…) : taille selon size du projectile
+		local big = visual ~= "can"
+		local length = big and 1.8 or 0.9
+		local width = big and 1.4 or 0.5
+		local body = part({ Shape = Enum.PartType.Cylinder, Size = Vector3.new(length, width, width), Color = color or Color3.fromRGB(200, 60, 60), Material = big and Enum.Material.Wood or Enum.Material.Metal })
+		local band = part({ Shape = Enum.PartType.Cylinder, Size = Vector3.new(length * 0.3, width * 1.06, width * 1.06), Color = big and Color3.fromRGB(70, 70, 75) or Color3.fromRGB(230, 230, 230), Material = Enum.Material.Metal })
+		local holder = Instance.new("Model")
+		body.Parent, band.Parent = holder, holder
+		holder.Parent = folder
+		return holder, function(cf)
+			local spun = cf * CFrame.Angles(0, 0, os.clock() * 16)
+			body.CFrame = spun
+			band.CFrame = spun
 		end
 	end
 	if visual == "bottle" then
@@ -2050,7 +2068,10 @@ local function onItemEvent(kind, data)
 			local position = root.Position
 			Fx.burst(position + Vector3.new(0, 1, 0), Color3.fromRGB(200, 140, 60), 4)
 			Fx.ring(position, Color3.fromRGB(255, 220, 60), 6, 0.5)
-			Fx.popText(position + Vector3.new(0, 4.5, 1), "📦 ARME SORTIE !", Color3.fromRGB(255, 220, 60), 0.9, 1.2)
+			local charData = CharacterList[data.model:GetAttribute("Character") or ""]
+			local weapon = charData and charData.weaponById and charData.weaponById[data.model:GetAttribute("Weapon") or ""]
+			local text = weapon and (weapon.icon .. " " .. string.upper(weapon.name) .. " !") or "📦 ARME SORTIE !"
+			Fx.popText(position + Vector3.new(0, 4.5, 1), text, Color3.fromRGB(255, 220, 60), 0.9, 1.2)
 			playSound(SOUND_SWOOSH, root, 0.5, 1.4)
 		end
 		if data.model then
@@ -2290,21 +2311,33 @@ end
 -- Le perso se retourne : son arme passe dans l'autre main (celle du côté de la caméra).
 -- L'arme (bouteille de Gégé, canne de Mamie…) n'apparaît qu'une fois la Caisse Bizarre ouverte (attribut Armed) ;
 -- avec un objet à lancer en main, l'arme disparaît et c'est l'objet qui passe d'une main à l'autre.
+-- L'arme sortie est-elle l'arme emblématique du perso (ses accessoires visibles du costume) ?
+function Fx.iconicWeapon(model)
+	local data = CharacterList[model:GetAttribute("Character") or ""]
+	local weapon = model:GetAttribute("Weapon") or ""
+	return weapon == "" or weapon == MoveSets.iconic(data)
+end
+
 function Fx.onMirror(model, mirrored)
 	local costume = model:FindFirstChild("Costume")
 	local held = model:FindFirstChild("Tenu")
 	local holding = (model:GetAttribute("Held") or "") ~= "" or model:GetAttribute("Armed") ~= true
+	local weapon = model:GetAttribute("Weapon") or ""
+	local iconic = Fx.iconicWeapon(model)
 	local pairsToSet = {}
 	if costume then
-		table.insert(pairsToSet, { costume:FindFirstChild("PropBottle"), not holding and not mirrored })
-		table.insert(pairsToSet, { costume:FindFirstChild("PropBottle_M"), not holding and mirrored })
-		-- objets toujours en main des autres persos (canne, tampon, poêle…) : même principe que la bouteille
+		table.insert(pairsToSet, { costume:FindFirstChild("PropBottle"), not holding and iconic and not mirrored })
+		table.insert(pairsToSet, { costume:FindFirstChild("PropBottle_M"), not holding and iconic and mirrored })
+		-- objets toujours en main des autres persos (canne, tampon, poêle…) : même principe que la bouteille ;
+		-- un objet marqué « Weapon » n'apparaît qu'avec cette arme, les autres avec l'arme emblématique
 		for _, prop in ipairs(costume:GetChildren()) do
 			if prop:IsA("Model") and prop.Name ~= "PropBottle" and string.sub(prop.Name, 1, 4) == "Prop" then
 				local isMirror = string.sub(prop.Name, -2) == "_M"
 				local base = isMirror and costume:FindFirstChild(string.sub(prop.Name, 1, -3)) or prop
 				if base and base:GetAttribute("AlwaysShown") then
-					table.insert(pairsToSet, { prop, not holding and (isMirror == mirrored) })
+					local forWeapon = base:GetAttribute("Weapon")
+					local shown = forWeapon and forWeapon == weapon or (not forWeapon and iconic)
+					table.insert(pairsToSet, { prop, not holding and shown and (isMirror == mirrored) })
 				end
 			end
 		end

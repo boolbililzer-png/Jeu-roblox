@@ -118,9 +118,18 @@ local Config = require(shared.children.Config)
 local REQUIRED = {
 	"P_neutral", "P_side", "P_down", "P_up", "P_air", "P_dash",
 	"K_neutral", "K_side", "K_down", "K_up", "K_air", "K_dash",
-	"S_neutral", "S_side", "S_down", "S_up", "S_hold", "S_dash", "S_dodge", "S_air",
-	"SUPER", "SUPER_up", "SUPER_down", "GRAB", "THROW_fwd", "THROW_back", "THROW_up", "THROW_down",
+	"S_neutral", "S_side", "S_down", "S_up", "S_dash", "S_dodge", "S_air",
+	"SUPER", "SUPER_side", "SUPER_up", "SUPER_down", "GRAB", "THROW_fwd", "THROW_back", "THROW_up", "THROW_down",
 }
+-- coups que chaque arme n° 2 et 3 doit écrire (le reste retombe sur les coups du perso)
+local REQUIRED_WEAPON = {
+	"P_neutral", "P_side", "P_down", "P_up", "P_air", "P_dash",
+	"K_neutral", "K_side", "K_down", "K_up", "K_air", "K_dash",
+	"S_neutral", "S_side", "S_down", "S_up", "S_air",
+	"SUPER", "SUPER_side", "SUPER_up", "SUPER_down",
+}
+local ABILITIES = { speed = true, jumps = true, damage = true, knockback = true, reach = true, superCooldown = true,
+	heal = true, armor = true, status = true, text = true }
 local KINDS = { melee = true, projectile = true, self = true, grab = true, throw = true, item = true,
 	trap = true, wall = true, counter = true, absorb = true, grapple = true, emote = true }
 local PASSIVES = { bulles = true, traps = true, walls = true, rating = true, forms = true, burn = true, caprice = true,
@@ -239,9 +248,46 @@ for _, id in ipairs(Roster.ORDER) do
 			for _, key in ipairs(REQUIRED) do
 				if not moves[key] then err(id, "coup obligatoire manquant : " .. key) end
 			end
+			-- les 3 armes de la Caisse Bizarre
+			local weapons = data.weapons or {}
+			local weaponIds = {}
+			if #weapons ~= Config.WEAPON_COUNT then err(id, "il faut " .. Config.WEAPON_COUNT .. " armes dans data.weapons (il y en a " .. #weapons .. ")") end
+			for i, w in ipairs(weapons) do
+				local where = "weapons[" .. i .. "]"
+				if type(w.id) ~= "string" or not string.match(w.id, "^[%l_]+$") then err(id, where .. " : id manquant (lettres minuscules)") end
+				if w.id == "bare" then err(id, where .. " : id « bare » réservé") end
+				if weaponIds[w.id] then err(id, where .. " : id en double") end
+				weaponIds[w.id or ""] = true
+				if type(w.name) ~= "string" then err(id, where .. " : name manquant") end
+				if type(w.icon) ~= "string" then err(id, where .. " : icon manquante") end
+				if type(w.ability) ~= "table" then err(id, where .. " : ability manquante") else
+					local n = 0
+					for k, v in pairs(w.ability) do
+						if not ABILITIES[k] then err(id, where .. ".ability : capacité inconnue " .. tostring(k)) end
+						if k == "status" then checkStatus(id, where .. ".ability.status", v) end
+						if k ~= "text" then n += 1 end
+					end
+					if n == 0 then err(id, where .. ".ability : vide") end
+					if type(w.ability.text) ~= "string" then err(id, where .. ".ability.text manquant (phrase affichée dans le menu)") end
+				end
+				local props = w.props or (w.prop and { w.prop }) or {}
+				if i > 1 then
+					if #props == 0 then err(id, where .. " : prop (l'objet en main) manquant") end
+					for _, prop in ipairs(props) do
+						if type(prop.name) ~= "string" or string.sub(prop.name, 1, 4) ~= "Prop" then err(id, where .. ".prop : name doit commencer par Prop") end
+						checkPieces(id, where .. ".prop", prop.pieces, false)
+					end
+					if type(w.moves) ~= "table" then err(id, where .. " : moves manquant") else
+						for _, key in ipairs(REQUIRED_WEAPON) do
+							if not w.moves[key] then err(id, where .. " : coup obligatoire manquant : " .. key) end
+						end
+					end
+				end
+			end
 			local own = 0
 			for key, m in pairs(moves) do
-				if not string.find(key, ".", 1, true) and string.sub(key, 1, 5) ~= "ITEM_" then
+				local weapon = string.match(key, "^([%a_]+)%.")
+				if (weapon == nil or (weaponIds[weapon] and weapon ~= "bare")) and string.sub(key, 1, 5) ~= "ITEM_" then
 					own += 1
 					local where = key
 					if type(m.label) ~= "string" then err(id, where .. " : label manquant") end

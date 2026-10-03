@@ -100,15 +100,18 @@ end
 
 -- Signatures (L) : toujours plus fortes que les attaques P / K du perso
 local function strengthenSpecials(data)
+	-- la plus forte attaque P / K, tous jeux d'armes confondus (les mains nues comprises)
 	local strongest = 0
 	for key, move in pairs(data.moves) do
-		local prefix = string.sub(key, 1, 2)
-		if (prefix == "P_" or prefix == "K_") and not string.find(key, ".", 1, true) then
+		local _, base = MoveSets.split(key)
+		local prefix = string.sub(base, 1, 2)
+		if prefix == "P_" or prefix == "K_" then
 			strongest = math.max(strongest, move.damage or 0)
 		end
 	end
 	for key, move in pairs(data.moves) do
-		if string.sub(key, 1, 2) == "S_" and not string.find(key, ".", 1, true) and (move.damage or 0) > 0 and not move._strengthened then
+		local weapon, base = MoveSets.split(key)
+		if string.sub(base, 1, 2) == "S_" and weapon ~= MoveSets.BARE and (move.damage or 0) > 0 and not move._strengthened then
 			move._strengthened = true
 			-- la règle porte sur le TOTAL du coup : une rafale ou un coup à plusieurs touches répartit le bonus
 			local hits = move.hits or 1
@@ -140,6 +143,11 @@ for _, data in pairs(list) do
 		if not data.moves[key] then
 			data.moves[key] = move
 		end
+	end
+	-- 3 armes par perso (Caisse Bizarre) ; une fiche sans liste d'armes garde son arme emblématique seule
+	if type(data.weapons) ~= "table" or #data.weapons == 0 then
+		local info = Roster.INFO[data.id] or {}
+		data.weapons = { { id = "arme", name = info.weapon or "Arme", icon = info.icon or "📦" } }
 	end
 	MoveSets.install(data, { bare = BareMoves })
 	strengthenSpecials(data)

@@ -8,6 +8,8 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Config = require(Shared:WaitForChild("Config"))
 local Items = require(Shared:WaitForChild("Items"))
+local CharacterList = require(Shared:WaitForChild("CharacterList"))
+local MoveSets = require(Shared:WaitForChild("MoveSets"))
 local Fighters = require(script.Parent:WaitForChild("Fighters"))
 
 local Pickups = {}
@@ -93,11 +95,38 @@ local function attachProp(parent, id, hand, name, hidden)
 end
 
 -- Caisse Bizarre ouverte : le perso sort son arme (ses accessoires « AlwaysShown » apparaissent côté client)
+-- Une des 3 armes de la fiche, au hasard (jamais celle déjà en main)
+local function randomWeapon(model)
+	local data = CharacterList[model:GetAttribute("Character") or Config.DEFAULT_CHARACTER]
+	local weapons = data and data.weapons or {}
+	local current = MoveSets.weapon(model)
+	local choices = {}
+	for _, weapon in ipairs(weapons) do
+		if weapon.id ~= current then
+			table.insert(choices, weapon)
+		end
+	end
+	if #choices == 0 then
+		return nil
+	end
+	return choices[rng:NextInteger(1, #choices)]
+end
+
+-- Capacité passive de l'arme (vitesse, sauts…) : en attributs pour le client et les bots
+local function applyAbility(model, weapon)
+	local ability = weapon and weapon.ability or {}
+	model:SetAttribute("WeaponSpeed", ability.speed or 1)
+	model:SetAttribute("WeaponJumps", ability.jumps or 0)
+end
+
 function Pickups.arm(model)
+	local weapon = randomWeapon(model)
 	model:SetAttribute("Armed", true)
 	model:SetAttribute("ArmedSince", serverNow())
+	model:SetAttribute("Weapon", weapon and weapon.id or "")
+	applyAbility(model, weapon)
 	local root = Fighters.root(model)
-	fire("CrateOpened", { model = model, position = root and root.Position })
+	fire("CrateOpened", { model = model, position = root and root.Position, weapon = weapon and weapon.id })
 end
 
 -- Éjection (ou fin de manche) : retour aux mains nues
@@ -105,6 +134,8 @@ function Pickups.disarm(model)
 	if model:GetAttribute("Armed") then
 		model:SetAttribute("Armed", false)
 	end
+	model:SetAttribute("Weapon", "")
+	applyAbility(model, nil)
 end
 
 function Pickups.give(model, id)
@@ -221,10 +252,9 @@ function Pickups.tryPickup(model)
 		return false
 	end
 	local best, bestDistance = nil, Config.PICKUP_RANGE
-	local armed = model:GetAttribute("Armed") == true
 	for item, entry in pairs(onGround) do
-		-- encore en train de tomber ; une caisse ne sert à rien si on a déjà son arme
-		if os.clock() - entry.born > 0.8 and not (armed and entry.id == "crate") then
+		-- encore en train de tomber (une caisse ouverte avec une arme en main en sort une autre)
+		if os.clock() - entry.born > 0.8 then
 			local distance = (item:GetPivot().Position - root.Position).Magnitude
 			if distance <= bestDistance then
 				best, bestDistance = item, distance

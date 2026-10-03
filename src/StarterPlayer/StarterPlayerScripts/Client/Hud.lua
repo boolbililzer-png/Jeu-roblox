@@ -282,8 +282,10 @@ function Hud.start()
 			local heldId = model:GetAttribute("Held") or ""
 			local item = Items.LIST[heldId]
 			if not item then
-				-- Caisse Bizarre ouverte : le perso a sorti son arme
-				refs.held.Text = model:GetAttribute("Armed") and "📦" or ""
+				-- Caisse Bizarre ouverte : l'icône de l'arme sortie
+				local data = CharacterList[model:GetAttribute("Character") or ""]
+				local weapon = data and data.weaponById and data.weaponById[model:GetAttribute("Weapon") or ""]
+				refs.held.Text = model:GetAttribute("Armed") and (weapon and weapon.icon or "📦") or ""
 				refs.held.TextColor3 = Color3.fromRGB(255, 220, 120)
 			elseif heldId == "bomb" then
 				local left = math.max(0, Config.BOMB_FUSE - (now - (model:GetAttribute("HeldSince") or now)))

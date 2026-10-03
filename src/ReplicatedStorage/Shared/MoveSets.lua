@@ -1,9 +1,11 @@
--- Caisse Bizarre 📦 : sans elle, tout le monde se bat à mains nues avec les mêmes coups (shared/BareMoves.lua) ;
--- celui qui ramasse la caisse en sort SON arme (la bouteille de Gégé, le sac de Mamie…) et P, K, S deviennent
--- son moveset unique (les coups de data.moves). Saisie, projections, Supers et fatals restent ceux du perso.
--- Les coups à mains nues sont rangés dans data.moves sous la clé « bare.clé » (ex. "bare.P_neutral"),
--- avec leurs suites d'enchaînement préfixées de la même façon : le reste du jeu les lit comme les autres.
--- Un perso peut remplacer une partie des coups à mains nues avec data.weaponMoves.bare.
+-- Caisse Bizarre 📦 et armes.
+-- Sans caisse, tout le monde se bat à mains nues : coups P / K communs à tous (shared/BareMoves.lua, rangés sous
+-- « bare.clé »), mais chaque perso garde SES spéciaux (S_…, clés non préfixées de la fiche), ses Supers et ses fatals.
+-- Celui qui ouvre une caisse en sort UNE de ses 3 armes, au hasard (data.weapons de la fiche) :
+--   - l'arme n° 1 (emblématique) joue les coups P / K / S / SUPER non préfixés de data.moves ;
+--   - les armes n° 2 et 3 ont leurs propres coups (weapon.moves), rangés sous « <id>.clé » ; ce qu'elles n'écrivent
+--     pas (coups aériens, dash, combos…) retombe sur les coups non préfixés du perso.
+-- L'attribut « Weapon » du modèle dit quelle arme est sortie ("" ou absent = aucune, mains nues).
 local MoveSets = {}
 
 MoveSets.BARE = "bare"
@@ -12,9 +14,9 @@ function MoveSets.key(weapon, key)
 	return weapon .. "." .. key
 end
 
--- "gloves.P_neutral" -> "gloves", "P_neutral" ; "P_neutral" -> nil, "P_neutral"
+-- "bare.P_neutral" -> "bare", "P_neutral" ; "P_neutral" -> nil, "P_neutral"
 function MoveSets.split(key)
-	local weapon, base = string.match(key, "^(%a+)%.(.+)$")
+	local weapon, base = string.match(key, "^([%a_]+)%.(.+)$")
 	if weapon then
 		return weapon, base
 	end
@@ -39,9 +41,6 @@ local function installSet(data, weapon, set)
 	end
 end
 
--- Comme dans Brawlhalla : les coups de l'arme sont communs à tous, et un perso peut remplacer certains coups
--- par les siens (ses « signatures »). Le jeu du perso est fusionné coup par coup par-dessus le jeu générique
--- de l'arme ; un jeu complet (comme les gants de Gégé) remplace donc tout.
 local function merge(base, over)
 	if not base then
 		return over
@@ -60,58 +59,81 @@ local function merge(base, over)
 	return { moves = moves, links = links }
 end
 
+-- generic = { bare = BareMoves } ; data.weaponMoves.bare peut remplacer quelques coups à mains nues ;
+-- data.weapons[2..] : les armes à coups propres
 function MoveSets.install(data, generic)
 	local own = data.weaponMoves or {}
-	local weapons = {}
-	for weapon in pairs(generic) do
-		weapons[weapon] = true
-	end
-	for weapon in pairs(own) do
-		weapons[weapon] = true
-	end
-	for weapon in pairs(weapons) do
-		installSet(data, weapon, merge(generic[weapon], own[weapon]))
+	installSet(data, MoveSets.BARE, merge(generic.bare, own.bare))
+	data.weaponById = {}
+	for index, weapon in ipairs(data.weapons or {}) do
+		data.weaponById[weapon.id] = weapon
+		weapon.index = index
+		if index > 1 and weapon.moves then
+			installSet(data, weapon.id, { moves = weapon.moves, links = weapon.links })
+		end
 	end
 	return data
 end
 
--- Coup propre au perso qui demande la caisse : P_, K_ et S_ non préfixés (y compris combos et suites)
-function MoveSets.needsCrate(key)
-	local prefix = string.sub(key, 1, 2)
-	return string.find(key, ".", 1, true) == nil and (prefix == "P_" or prefix == "K_" or prefix == "S_")
+-- Arme emblématique (la n° 1) : ses coups sont ceux de data.moves
+function MoveSets.iconic(data)
+	return data and data.weapons and data.weapons[1] and data.weapons[1].id or nil
 end
 
--- armé = a ouvert une Caisse Bizarre (attribut « Armed » du modèle), jusqu'à sa prochaine éjection
+-- armé = a ouvert une Caisse Bizarre (attribut « Armed »), jusqu'à sa prochaine éjection
 function MoveSets.armed(model)
 	return model ~= nil and model:GetAttribute("Armed") == true
 end
 
--- Sans la caisse, chaque perso utilise quand même SES coups (tous différents) mais sans son arme, avec des
--- dégâts réduits (Config.UNARMED_DAMAGE, voir server/Mechanics.lua). Les coups communs à mains nues
--- (« bare. », shared/BareMoves.lua) ne servent plus que si MoveSets.SHARED_BARE_HANDS vaut true.
-MoveSets.SHARED_BARE_HANDS = false
-
--- Ce coup est-il utilisable, armé ou à mains nues ?
-function MoveSets.allowed(key, move, armed)
-	if not MoveSets.SHARED_BARE_HANDS then
-		return not (move and move.weapon == MoveSets.BARE)
+-- Arme sortie : son id, ou nil à mains nues
+function MoveSets.weapon(model)
+	if not MoveSets.armed(model) then
+		return nil
 	end
-	if move and move.weapon == MoveSets.BARE then
-		return not armed
-	elseif MoveSets.needsCrate(key) then
-		return armed
+	local id = model:GetAttribute("Weapon")
+	return (type(id) == "string" and id ~= "") and id or nil
+end
+
+-- Fiche de l'arme sortie (ou nil)
+function MoveSets.weaponData(data, model)
+	local id = MoveSets.weapon(model)
+	return id and data and data.weaponById and data.weaponById[id] or nil
+end
+
+-- Capacité passive de l'arme sortie (voir docs/fiche-perso.md) : table vide à mains nues
+function MoveSets.ability(data, model)
+	local weapon = MoveSets.weaponData(data, model)
+	return weapon and weapon.ability or {}
+end
+
+-- Ce coup est-il utilisable avec cette arme (weapon = id, nil à mains nues) ?
+--   bare.*      : mains nues seulement
+--   <arme>.*    : cette arme seulement
+--   P_ / K_ nus : il faut une arme (ceux de l'arme emblématique, et de secours pour les autres armes)
+--   S_ nus, Supers, saisie, objets, emotes : toujours
+function MoveSets.allowed(key, move, weapon)
+	local prefix = MoveSets.split(key)
+	if prefix == MoveSets.BARE then
+		return weapon == nil
+	elseif prefix then
+		return weapon == prefix
+	end
+	local kind = string.sub(key, 1, 2)
+	if kind == "P_" or kind == "K_" then
+		return weapon ~= nil
 	end
 	return true
 end
 
--- Premier coup utilisable parmi les candidats : armé, le moveset du perso (sinon à mains nues) ;
--- à mains nues, les coups communs (et ceux qui ne demandent pas la caisse : Supers, saisie…)
-function MoveSets.pick(moves, candidates, armed)
-	local order = (armed or not MoveSets.SHARED_BARE_HANDS) and { "" } or { MoveSets.BARE .. ".", "" }
+-- Premier coup utilisable parmi les candidats : à mains nues, les coups communs puis ceux du perso (S, Supers) ;
+-- avec une arme, les coups de l'arme puis ceux du perso
+function MoveSets.pick(moves, candidates, weapon)
+	-- l'arme emblématique n'a pas de coups préfixés : on retombe tout de suite sur ceux du perso
+	local order = weapon == nil and { MoveSets.BARE .. ".", "" } or { weapon .. ".", "" }
 	for _, prefix in ipairs(order) do
 		for _, key in ipairs(candidates) do
 			local full = prefix .. key
-			if moves[full] and MoveSets.allowed(full, moves[full], armed) then
+			if moves[full] and MoveSets.allowed(full, moves[full], weapon) then
 				return full
 			end
 		end

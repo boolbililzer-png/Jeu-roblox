@@ -7,14 +7,59 @@ Rien à importer dans Roblox : costume, accessoires, animations et effets sont d
 Vérifier une fiche : `python3 tools/check_characters.py <Id>` (le binaire `luau` doit être dans le PATH ou
 dans la variable `LUAU`). Le script contrôle la fiche et joue toutes ses animations hors Roblox.
 
-## Caisse Bizarre : mains nues, puis l'arme du perso
+## Caisse Bizarre : mains nues, puis une des 3 armes du perso
 
-- Sans caisse, tout le monde se bat à mains nues avec les mêmes coups (`BareMoves.lua`).
-- La Caisse Bizarre 📦 tombe dans l'arène. Celui qui l'ouvre (✋) sort **son arme**, par exemple le sac à main
-  de Mamie, et tous ses P, K et S deviennent **ceux de sa fiche**. Il la garde jusqu'à sa prochaine éjection.
-- La saisie, les projections, les deux Supers, les fatals, la recharge ⚡, le retour 🪂 et la mécanique
-  (passif) sont toujours ceux du perso, avec ou sans caisse.
-- L'arme est un accessoire `visible = true` dans `look.props`. Il n'apparaît que lorsque le perso est armé.
+- **Sans caisse** : P et K sont les coups à mains nues communs à tous (`BareMoves.lua`), mais les **L restent
+  ceux du perso** (ses `S_…` non préfixés : portée supérieure aux J / K), ainsi que ses 4 Supers (Y), sa saisie,
+  ses fatals et sa mécanique. Les dégâts sont réduits (`Config.UNARMED_DAMAGE`).
+- **L maintenu** (au sol : L, →L, ↓L) : le même spécial part au relâchement avec une portée allongée, jusqu'à
+  +80 % (`Config.S_HOLD_RANGE`) : couloir plus long, projectile qui vole plus loin, élan plus grand.
+- **La Caisse Bizarre** 📦 tombe dans l'arène. Celui qui l'ouvre (✋) sort **une de ses 3 armes, au hasard**
+  (`data.weapons`). Chaque arme a ses coups J / K / L / Y et sa **capacité** passive. Ouvrir une autre caisse
+  change d'arme. L'arme est perdue à l'éjection (ou jetée avec ✋).
+- Les 4 Supers (Y, →Y, ↑Y, ↓Y) existent dans chaque jeu : ceux du perso (`SUPER…` non préfixés) sans arme et
+  avec l'arme n° 1, ceux de l'arme avec les armes n° 2 et 3.
+
+## Les 3 armes (`weapons`)
+
+```lua
+weapons = {
+	-- n° 1 : l'arme emblématique. Ses coups sont ceux de data.moves (non préfixés), son objet est le
+	-- `visible = true` de look.props. Pas de moves ici.
+	{ id = "bouteille", name = "Bouteille de soda douteux", icon = "🍾",
+	  ability = { speed = 1.1, text = "Gégé trottine 10 % plus vite" } },
+	-- n° 2 et 3 : un objet en main (même format qu'un prop de look.props, construit caché et montré quand
+	-- l'arme est sortie), une capacité et SES coups. Les clés sont les mêmes que dans moves ; ce que l'arme
+	-- n'écrit pas (air avec flèche, combos, S_dash, S_dodge…) retombe sur les coups du perso.
+	{ id = "canettes", name = "Pack de canettes", icon = "🥫",
+	  prop = { name = "PropPack", hand = "Right", pieces = { { "Canette", "", "cyl", Vector3.new(0.4, 0.8, 0.4), Vector3.new(0, -0.6, 0), Vector3.new(0, 0, 0), Color3.fromRGB(200, 40, 40), "Metal" } } },
+	  ability = { reach = 1.2, text = "Portée +20 %" },
+	  moves = { P_neutral = { … }, …, SUPER_down = { … } },
+	  links = { P_neutral = { P = "P_combo2" } },   -- facultatif : suites propres à l'arme
+	},
+	{ … },
+}
+```
+
+Coups obligatoires d'une arme n° 2 ou 3 : `P_neutral, P_side, P_down, P_up, P_air, P_dash, K_neutral, K_side,
+K_down, K_up, K_air, K_dash, S_neutral, S_side, S_down, S_up, S_air, SUPER, SUPER_side, SUPER_up, SUPER_down`.
+Ils suivent les mêmes règles que les autres (couloir, visée, ↑L en diagonale, Y 1,3 fois plus large) et doivent
+être **différents** d'une arme à l'autre : chaque arme donne un style de jeu (lourde et lente, à projectiles,
+rapide et courte…). `trail = "prop"` fait traîner l'objet de l'arme.
+
+`ability` (une ou plusieurs, plus `text`, la phrase du menu) :
+
+| clé | effet |
+|---|---|
+| `speed = 1.15` | vitesse de déplacement × 1,15 |
+| `jumps = 1` | un saut en l'air de plus |
+| `damage = 1.2` | dégâts × 1,2 |
+| `knockback = 1.25` | éjection × 1,25 |
+| `reach = 1.2` | portée de tous les coups × 1,2 (zones, projectiles, élans) |
+| `superCooldown = 0.5` | recharge des Supers × 0,5 |
+| `heal = 0.3` | 30 % des dégâts infligés sont retirés de sa propre jauge |
+| `armor = true` | les spéciaux (L) encaissent sans être éjectés |
+| `status = { name = "slowed", duration = 2 }` | les spéciaux (L) infligent ce statut |
 
 ## Sources
 
@@ -38,7 +83,7 @@ dans la variable `LUAU`). Le script contrôle la fiche et joue toutes ses animat
 | ↑S (remontée, gratuite : `energyCost = 0`) | `S_up` | PDF Remontée |
 | ↓S en l'air (plongeon) | `S_air_down` | PDF Plongeon |
 | ESQUIVE puis S (ex-←S) | `S_dodge` | roster ←S |
-| S maintenu | `S_hold` | roster |
+| S maintenu | (le même L, portée allongée : `Config.S_HOLD_RANGE`) | moteur |
 | →→S | `S_dash` | roster |
 | S en l'air | `S_air` | roster (saut) S |
 | →⭐ (ou ⭐ seul) · ↑⭐ · ↓⭐ (`superCost = 100`) | `SUPER` `SUPER_up` `SUPER_down` | roster (↑⭐ : anti-air à inventer) |
@@ -62,7 +107,8 @@ end
 local data = {
 	id = "Mamie", name = "Mamie Tricot", costume = "Mamie", style = "granny",
 	look = { … },        -- costume (voir plus bas)
-	moves = { … },       -- coups
+	weapons = { … },     -- les 3 armes de la Caisse Bizarre (voir plus haut)
+	moves = { … },       -- coups (arme n° 1 ; les L et les Y servent aussi sans arme)
 	fatals = { … },      -- 3 coups fatals avec leur scène
 	passive = { kind = "traps", name = "Pelotes", icon = "🧶", max = 3 },
 	charge = { … },      -- recharge ⚡ (boucle de poses)
@@ -115,7 +161,7 @@ Le moteur transforme lui-même ces coups au chargement (`CharacterList.lua`), la
 - **Y (Supers)** : même chose avec un couloir 1,3 fois plus grand. Ils sont plus farfelus que les L.
 - **Sans limite** : plus de jauge d'énergie ni de jauge Super, plus de `energyCost` / `superCost` / `meterCost`
   (ignorés). L'équilibrage se fait par `startup` (0,2 à 0,45 s) et `recovery` (0,4 à 0,9 s), plus longs que les P / K.
-  Seule limite : les Supers (Y) ont un temps de recharge commun de `Config.SUPER_COOLDOWN` secondes (6 s) entre
+  Seule limite : les Supers (Y) ont un temps de recharge commun de `Config.SUPER_COOLDOWN` secondes (1,4 s) entre
   deux, géré par le moteur (attribut `SuperReadyAt` sur l'horloge serveur). La fiche n'a rien à écrire.
 - Les dégâts des L sont relevés automatiquement au-dessus des P / K ; écrire 12 à 18 pour un L, 20 à 28 pour un Y.
 
@@ -185,7 +231,7 @@ Les coups qui ont une suite (`links`) éjectent deux fois moins pour que le comb
 - `armor = true` : encaisse sans être éjecté pendant le coup.
 - `invuln = 0.2` : invulnérable au début du coup.
 - `meterCost = 20` : consomme la jauge du perso (pression du Canard, pigeons, réservoir).
-- `energyCost`, `superCost = 100` (Supers).
+- `energyCost`, `superCost` : ignorés (plus de jauges).
 - `variants = { { label = "…", damage = …, status = … }, { … }, { … } }` : 3 résultats possibles (Gaston).
   Le prochain résultat est affiché au-dessus de lui. Seul le gameplay change, l'animation reste la même.
 - `links = { P = "…", K = "…", S = "…", fwd_P = "…", up_K = "…", down_S = "…" }` : suites d'enchaînement.

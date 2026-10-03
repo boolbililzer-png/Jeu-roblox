@@ -703,6 +703,35 @@ function Combat.handleAction(player, action, extra)
 end
 
 -- Même chose pour un combattant piloté par le serveur (bots de server/Bot.lua)
+-- Allonge la portée d'un coup (copie) : couloir ou zone plus long, projectile qui vole plus loin, élan plus grand
+function Combat.scaleReach(move, factor)
+	local box = move.hitbox
+	if box and box.size then
+		if move.laneCentered then
+			move.hitbox = { size = Vector3.new(box.size.X * factor, box.size.Y, box.size.Z), offset = box.offset }
+		else
+			local length = box.size.X * factor
+			move.hitbox = {
+				size = Vector3.new(length, box.size.Y, box.size.Z),
+				offset = Vector2.new(box.offset.X + (length - box.size.X) / 2, box.offset.Y),
+			}
+		end
+		if move.lane then
+			move.lane = move.lane * factor
+		end
+	end
+	if move.projectile then
+		local p = table.clone(move.projectile)
+		if p.lifetime then
+			p.lifetime = p.lifetime * factor
+		end
+		move.projectile = p
+	end
+	if move.selfVelocity and move.selfVelocity.X ~= 0 then
+		move.selfVelocity = Vector2.new(move.selfVelocity.X * factor, move.selfVelocity.Y)
+	end
+end
+
 function Combat.handleModelAction(model, action, extra)
 	local s = model and Fighters.get(model)
 	if not s or model:GetAttribute("Eliminated") then
@@ -805,7 +834,7 @@ function Combat.handleModelAction(model, action, extra)
 		end
 		local _, base = MoveSets.split(extra)
 		local smashMove = character and character.moves[extra]
-		if not Config.SMASH_MOVES[base] or not smashMove or not MoveSets.allowed(extra, smashMove, MoveSets.armed(model)) then
+		if not (Config.SMASH_MOVES[base] or Config.S_CHARGE_MOVES[base]) or not smashMove or not MoveSets.allowed(extra, smashMove, MoveSets.weapon(model)) then
 			return
 		end
 		if now < s.busyUntil - 0.05 then
@@ -849,7 +878,7 @@ function Combat.handleModelAction(model, action, extra)
 		return
 	end
 	-- moveset du perso : il faut avoir ouvert une Caisse Bizarre ; coups à mains nues : sans elle
-	if not MoveSets.allowed(action, move, MoveSets.armed(model)) then
+	if not MoveSets.allowed(action, move, MoveSets.weapon(model)) then
 		return
 	end
 	-- statut loufoque en cours (fou rire = pas de K ni de ⭐, muet = pas de S…)
@@ -877,12 +906,34 @@ function Combat.handleModelAction(model, action, extra)
 	if cost > 0 then
 		model:SetAttribute("Energy", energy - cost)
 	end
+	local _, baseKey2 = MoveSets.split(action)
+	local isSpecial = string.sub(baseKey2, 1, 2) == "S_"
 	if smashPower then
-		-- version chargée : plus de dégâts, et plus d'éjection (voir Fighters.hit)
 		local charged = table.clone(move)
-		charged.damage = move.damage * (1 + Config.SMASH_DAMAGE_BONUS * smashPower)
-		charged.smashPower = smashPower
+		if isSpecial then
+			-- L maintenu : même coup, mais qui va plus loin (couloir, projectile, élan)
+			Combat.scaleReach(charged, 1 + Config.S_HOLD_RANGE * smashPower)
+		else
+			-- version chargée : plus de dégâts, et plus d'éjection (voir Fighters.hit)
+			charged.damage = move.damage * (1 + Config.SMASH_DAMAGE_BONUS * smashPower)
+			charged.smashPower = smashPower
+		end
 		move = charged
+	end
+	-- capacité passive de l'arme sortie (voir docs/fiche-perso.md)
+	local ability = Mechanics.weaponAbility(model)
+	if ability.reach and (ability.reach ~= 1) then
+		move = table.clone(move)
+		Combat.scaleReach(move, ability.reach)
+	end
+	if isSpecial and (ability.status or ability.armor) then
+		move = table.clone(move)
+		if ability.status and not move.status then
+			move.status = ability.status
+		end
+		if ability.armor and not move.armor then
+			move.armor = true
+		end
 	end
 	model:SetAttribute("MovePower", smashPower or 0)
 	if move.superCost then
@@ -897,7 +948,7 @@ function Combat.handleModelAction(model, action, extra)
 		return
 	end
 	if isSuper then
-		model:SetAttribute("SuperReadyAt", workspace:GetServerTimeNow() + Config.SUPER_COOLDOWN)
+		model:SetAttribute("SuperReadyAt", workspace:GetServerTimeNow() + Config.SUPER_COOLDOWN * (ability.superCooldown or 1))
 	end
 
 	s.busyUntil = now + move.startup + move.active + (move.hold or 0) + move.recovery

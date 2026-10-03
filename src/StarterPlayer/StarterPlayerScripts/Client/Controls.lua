@@ -74,7 +74,7 @@ function Controls.new()
 	self.sPressedAt = nil
 	self.buttons = {}
 	local pressedEvent = Instance.new("BindableEvent")
-	self.Pressed = pressedEvent.Event -- envoie : "P", "K", "P_RELEASE", "K_RELEASE", "S", "S_HOLD", "SAUT", "ESQUIVE", "SUPER", "CHARGE", "CHARGE_END", "MAIN"
+	self.Pressed = pressedEvent.Event -- envoie : "P", "K", "S", "P_RELEASE", "K_RELEASE", "S_RELEASE", "SAUT", "ESQUIVE", "SUPER", "CHARGE", "CHARGE_END", "MAIN"
 	self._fire = function(name)
 		pressedEvent:Fire(name)
 	end
@@ -89,8 +89,8 @@ function Controls.new()
 	return self
 end
 
--- S part au relâchement : tap = S, maintenu = S_HOLD. CHARGE dure tant que la touche est maintenue.
--- P et K partent à l'appui ; leur relâchement est aussi signalé (frappe chargée façon Smash).
+-- P, K et S partent à l'appui ; leur relâchement est aussi signalé (frappe chargée façon Smash pour J / K,
+-- portée allongée pour L maintenu). CHARGE dure tant que la touche est maintenue.
 function Controls:_press(name)
 	if name == "EMOTE" then
 		-- le bouton 😀 ouvre ou ferme la petite roue des emotes
@@ -101,11 +101,7 @@ function Controls:_press(name)
 	end
 	self.held = self.held or {}
 	self.held[name] = true
-	if name == "S" then
-		self.sPressedAt = os.clock()
-	else
-		self._fire(name)
-	end
+	self._fire(name)
 end
 
 -- Bouton maintenu (SAUT maintenu = plané du Capitaine Canard)
@@ -117,13 +113,9 @@ function Controls:_release(name)
 	if self.held then
 		self.held[name] = false
 	end
-	if name == "S" and self.sPressedAt then
-		local held = os.clock() - self.sPressedAt
-		self.sPressedAt = nil
-		self._fire(held >= Config.HOLD_TIME and "S_HOLD" or "S")
-	elseif name == "CHARGE" then
+	if name == "CHARGE" then
 		self._fire("CHARGE_END")
-	elseif name == "P" or name == "K" then
+	elseif name == "P" or name == "K" or name == "S" then
 		self._fire(name .. "_RELEASE")
 	end
 end
@@ -343,13 +335,14 @@ local HELP_ROWS = {
 	{ "Coup de poing (P)", "J", "J" },
 	{ "Coup de pied (K)", "K", "K" },
 	{ "Frappe chargée", "maintenir J ou K au sol", "hold J or K on ground" },
-	{ "Spécial (S), sans limite", "L, →L, ↓L (sûrs de toucher), ↑L = envol", "L, →L, ↓L (sure hit), ↑L = fly" },
-	{ "Spécial chargé", "maintenir L", "hold L" },
+	{ "Spécial (S), sans limite, même sans arme", "L, →L, ↓L (sûrs de toucher), ↑L = envol", "L, →L, ↓L (sure hit), ↑L = fly" },
+	{ "Spécial à longue portée", "maintenir L puis relâcher", "hold L then release" },
+	{ "Caisse Bizarre 📦", "✋ dessus : une de tes 3 armes au hasard", "✋ on it: one of your 3 weapons" },
 	{ "Saut / double saut", "Espace", "Space" },
 	{ "Esquive", "Maj gauche", "Left Shift" },
 	{ "Main ✋ : ramasser / lancer", "U (+ flèche pour viser)", "U (+ arrow to aim)" },
 	{ "Passer sous une plateforme", "maintenir bas", "hold down" },
-	{ "3 Supers / fatal (recharge 6 s)", "↑Y, →Y (ou Y), ↓Y", "↑Y, →Y (or Y), ↓Y" },
+	{ "3 Supers / fatal (recharge 1,4 s)", "↑Y, →Y (ou Y), ↓Y", "↑Y, →Y (or Y), ↓Y" },
 	{ "Dash", "2× gauche ou droite", "2× left or right" },
 	{ "Combos J / K", "J J J, J K J, K J K, K K J…", "J J J, J K J, K J K, K K J…" },
 	{ "Combos fléchés", "flèche + J ou K, puis J / K", "arrow + J or K, then J / K" },

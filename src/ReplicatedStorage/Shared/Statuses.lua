@@ -78,7 +78,7 @@ end
 
 -- Vitesse de marche : statut, bonus et mécanique du perso (note client de Dylan…)
 function Statuses.speed(model, now)
-	return (Statuses.flags(model, now).speed or 1) * (model:GetAttribute("SpeedMult") or 1)
+	return (Statuses.flags(model, now).speed or 1) * (model:GetAttribute("SpeedMult") or 1) * (model:GetAttribute("WeaponSpeed") or 1)
 end
 
 -- Ce coup est-il interdit par le statut ? (clé de base, sans « bare. »)

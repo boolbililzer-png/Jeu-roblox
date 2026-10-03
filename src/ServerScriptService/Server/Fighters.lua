@@ -229,14 +229,24 @@ function Fighters.applyKnockback(model, velocity, hitstun)
 		return
 	end
 	s.knockbackToken += 1
-	local token = s.knockbackToken
-	humanoid.PlatformStand = true
-	root.AssemblyLinearVelocity = velocity
-	task.delay(hitstun, function()
-		if state[model] and state[model].knockbackToken == token and humanoid.Parent then
-			humanoid.PlatformStand = false
-		end
-	end)
+	root.AssemblyLinearVelocity = Fighters.launchVelocity(humanoid, velocity)
+end
+
+-- Éjection sans PlatformStand : avec lui, le Humanoid ne se tenait plus à sa hauteur de hanche et le perso
+-- s'enfonçait dans le sol jusqu'à la taille. On garde l'état normal ; au sol, une petite composante vers le
+-- haut fait décoller le perso (sinon le Humanoid freine aussitôt la glissade) et il passe en chute libre.
+function Fighters.launchVelocity(humanoid, velocity)
+	if humanoid.PlatformStand then
+		humanoid.PlatformStand = false
+	end
+	if velocity.Magnitude < 1 then
+		return velocity
+	end
+	if humanoid.FloorMaterial ~= Enum.Material.Air and velocity.Y < Config.KB_GROUND_LIFT then
+		velocity = Vector3.new(velocity.X, Config.KB_GROUND_LIFT, velocity.Z)
+	end
+	humanoid:ChangeState(Enum.HumanoidStateType.Freefall)
+	return velocity
 end
 
 -- Petite poussée sans sonner (rebond sur Sumo, aspiration…)
@@ -247,7 +257,10 @@ function Fighters.nudge(model, velocity)
 		return
 	end
 	local root = Fighters.root(model)
-	if root then
+	local humanoid = model:FindFirstChildOfClass("Humanoid")
+	if root and humanoid then
+		root.AssemblyLinearVelocity = Fighters.launchVelocity(humanoid, velocity)
+	elseif root then
 		root.AssemblyLinearVelocity = velocity
 	end
 end
@@ -345,6 +358,9 @@ function Fighters.hit(attacker, target, move, damageMultiplier, direction)
 		target:SetAttribute("FragileUntil", 0)
 	end
 	speed *= Config.KB_SCALE
+	if attacker and Fighters.mechanics then
+		speed *= Fighters.mechanics.weaponAbility(attacker).knockback or 1
+	end
 	local angleDeg = move.kbAngle or 30
 	if comboPiece and angleDeg >= 0 and angleDeg < 75 then
 		-- coup de combo : l'adversaire décolle un peu et reste à portée pour la suite (vrais combos)

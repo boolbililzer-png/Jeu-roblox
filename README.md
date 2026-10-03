@@ -37,7 +37,7 @@ On ne combine jamais deux boutons : la direction tenue au moment de l'appui choi
 | **K** attaque lourde | K | K (bleu) |
 | **S** spécial, sans limite (maintenu = S chargé) | L | S (jaune) |
 | Esquive (puis S = spécial d'esquive) | Maj | ESQ |
-| ⭐ 3 Supers (6 s de recharge entre deux) : ↑Y, →Y (ou Y), ↓Y ; et coup fatal | Y | ⭐ |
+| ⭐ 3 Supers (1,4 s de recharge entre deux) : ↑Y, →Y (ou Y), ↓Y ; et coup fatal | Y | ⭐ |
 | ✋ Ramasser une caisse ou un objet, lancer l'objet, **jeter son arme** (pas de saisie) | U | ✋ |
 | 😀 Emotes | 1, 2, 3, 4 | 😀 |
 | Aide des touches | H | — |
@@ -56,7 +56,7 @@ On ne combine jamais deux boutons : la direction tenue au moment de l'appui choi
   foncent droit sur lui. ↑L fait décoller en diagonale vers l'avant en frappant (remontée façon Brawlhalla).
 - **Supers (Y)** : même principe avec un couloir 1,3 fois plus grand, et plus farfelus.
 - **Sans limite** : plus de jauge d'énergie ni de jauge Super, les L se font à volonté. Les Y ont seulement un
-  **temps de recharge** de 6 s entre deux (`Config.SUPER_COOLDOWN`) : le bouton ⭐ affiche les secondes qui
+  **temps de recharge** de 1,4 s entre deux (`Config.SUPER_COOLDOWN`) : le bouton ⭐ affiche les secondes qui
   restent et la barre ⭐ de la carte du joueur se remplit. Le coup fatal, lui, n'attend pas.
 - **Persos qui volent** (Capitaine Canard, Roi Pigeon, Gaston, Mamie) : un saut en l'air de plus, plané, et
   un ↑L très puissant.

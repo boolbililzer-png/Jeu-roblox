@@ -409,6 +409,35 @@ local function buildFromLook(model, folder, look)
 	end
 end
 
+function Costumes.buildWeaponProps(model, folder, costumeId)
+	local CharacterList = require(game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("CharacterList"))
+	local data = CharacterList[costumeId]
+	for index, weapon in ipairs(data and data.weapons or {}) do
+		local props = weapon.props or (weapon.prop and { weapon.prop }) or {}
+		if index > 1 then
+			for _, prop in ipairs(props) do
+				local side = prop.hand or "Right"
+				local other = side == "Right" and "Left" or "Right"
+				local hand = model:WaitForChild(side .. "Hand", 5)
+				local otherHand = model:WaitForChild(other .. "Hand", 5)
+				if hand and otherHand then
+					local spec = table.clone(prop)
+					spec.visible = false
+					buildProp(folder, hand, spec, prop.name, false)
+					buildProp(folder, otherHand, spec, prop.name .. "_M", true)
+					for _, name in ipairs({ prop.name, prop.name .. "_M" }) do
+						local built = folder:FindFirstChild(name)
+						if built then
+							built:SetAttribute("AlwaysShown", true)
+							built:SetAttribute("Weapon", weapon.id)
+						end
+					end
+				end
+			end
+		end
+	end
+end
+
 function Costumes.apply(model, costumeId)
 	-- on attend que le perso soit dans le monde (ses parties sont alors toutes créées)
 	while not model:IsDescendantOf(workspace) and model.Parent ~= nil do
@@ -438,6 +467,12 @@ function Costumes.apply(model, costumeId)
 	local ok, err = pcall(builder, model, folder)
 	if not ok then
 		warn("Costume « " .. tostring(costumeId) .. " » incomplet :", err)
+	end
+	-- les armes n° 2 et 3 de la Caisse Bizarre (data.weapons[i].prop) : construites cachées, le client montre
+	-- celle qui est sortie (attribut Weapon du modèle, voir client/Fx.lua onMirror)
+	local ok2, err2 = pcall(Costumes.buildWeaponProps, model, folder, costumeId)
+	if not ok2 then
+		warn("Armes de « " .. tostring(costumeId) .. " » incomplètes :", err2)
 	end
 	-- un corps d'avatar Roblox (pièces en mesh) n'aurait pas la silhouette prévue : on le signale
 	local head = model:FindFirstChild("Head")

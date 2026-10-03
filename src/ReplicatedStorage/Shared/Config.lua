@@ -42,7 +42,16 @@ Config.FAST_FALL_SPEED = 95
 Config.DOUBLE_TAP_WINDOW = 0.3
 Config.DASH_S_WINDOW = 0.4 -- dash puis S = spécial de dash
 Config.DODGE_S_WINDOW = 0.4 -- esquive puis S = spécial d'esquive
-Config.HOLD_TIME = 0.35 -- S maintenu au-delà = spécial chargé
+Config.HOLD_TIME = 0.35 -- (ancien S maintenu ; voir S_CHARGE_MOVES)
+-- L maintenu au sol : le spécial part au relâchement avec une portée allongée (jusqu'à +S_HOLD_RANGE à pleine charge,
+-- SMASH_MAX_TIME secondes) : couloir plus long, projectile qui va plus loin, élan plus grand
+Config.S_CHARGE_MOVES = { S_neutral = true, S_side = true, S_down = true }
+Config.S_HOLD_RANGE = 0.8
+-- Caisse Bizarre : chaque perso a 3 armes (data.weapons de sa fiche), la caisse en sort une au hasard ; en ouvrir une
+-- autre change d'arme. Sans arme : P / K communs à tous (BareMoves), mais les L, Y et fatals du perso
+Config.WEAPON_COUNT = 3
+-- Éjection reçue au sol : vitesse verticale minimale pour décoller (plus de PlatformStand, qui enfonçait le perso)
+Config.KB_GROUND_LIFT = 14
 Config.FATAL_INPUT_GAP = 1 -- délai max entre deux flèches du coup fatal
 Config.FATAL_RANGE = 20
 Config.GRAB_RANGE = 5
@@ -85,7 +94,7 @@ Config.S_UP_FLYER_DAMAGE = 1.6
 -- bloquent plus rien et ne sont plus affichés)
 Config.INFINITE_SPECIALS = true
 -- Seule limite des Supers (Y) : un temps de recharge entre deux Supers, en secondes (le coup fatal n'attend pas)
-Config.SUPER_COOLDOWN = 6
+Config.SUPER_COOLDOWN = 1.4
 Config.S_DAMAGE = 1.35 -- les signatures (L) frappent plus fort que les autres coups…
 Config.S_DAMAGE_OVER_LIGHT = 3 -- …et toujours au moins 3 de plus que la plus forte attaque P / K du perso
 Config.LIGHT_RANGE = 1.15 -- attaques P / K un peu plus larges : les combos touchent plus souvent

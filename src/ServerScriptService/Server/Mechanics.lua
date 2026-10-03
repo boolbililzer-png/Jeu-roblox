@@ -34,6 +34,7 @@ local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Config = require(Shared:WaitForChild("Config"))
 local CharacterList = require(Shared:WaitForChild("CharacterList"))
 local Statuses = require(Shared:WaitForChild("Statuses"))
+local MoveSets = require(Shared:WaitForChild("MoveSets"))
 local Fighters = require(script.Parent:WaitForChild("Fighters"))
 
 local Mechanics = {}
@@ -206,12 +207,19 @@ end
 
 ------------------------------------------------------------------------ Dégâts
 -- Multiplicateur de dégâts de l'attaquant : gorgées de Gégé, bonus en cours, tempo de Gloria
+-- Capacité passive de l'arme sortie (data.weapons[i].ability de la fiche) ; table vide à mains nues
+function Mechanics.weaponAbility(model)
+	local data = CharacterList[model:GetAttribute("Character") or ""]
+	return MoveSets.ability(data, model)
+end
+
 function Mechanics.damageMultiplier(attacker)
 	local mult = 1 + 0.1 * (attacker:GetAttribute("Bulles") or 0)
 	-- sans la Caisse Bizarre, le perso frappe sans son arme : moins fort (les bots et le mannequin aussi)
 	if attacker:GetAttribute("Armed") ~= true then
 		mult *= Config.UNARMED_DAMAGE
 	end
+	mult *= Mechanics.weaponAbility(attacker).damage or 1
 	mult *= Statuses.flags(attacker).damage or 1
 	local p = Mechanics.passive(attacker)
 	if p and p.kind == "tempo" then
@@ -238,6 +246,11 @@ end
 -- Après une touche : jauges de l'attaquant (note, likes, paperasse…) et de la victime (caprice, rage)
 function Mechanics.onHit(attacker, target, move, damage, direction)
 	if attacker and Fighters.get(attacker) then
+		-- arme qui soigne : une part des dégâts infligés est retirée de sa propre jauge
+		local heal = Mechanics.weaponAbility(attacker).heal
+		if heal and damage > 0 then
+			attacker:SetAttribute("Damage", math.max(0, (attacker:GetAttribute("Damage") or 0) - damage * heal))
+		end
 		local p = Mechanics.passive(attacker)
 		local kind = p and p.kind
 		if kind == "rating" then

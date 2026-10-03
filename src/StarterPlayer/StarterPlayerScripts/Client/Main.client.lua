@@ -115,7 +115,7 @@ local function moveInput()
 end
 
 local function maxAirJumps()
-	return Config.AIR_JUMPS + (character and character:GetAttribute("AirJumpsBonus") or 0)
+	return Config.AIR_JUMPS + (character and character:GetAttribute("AirJumpsBonus") or 0) + (character and character:GetAttribute("WeaponJumps") or 0)
 end
 
 local function isGrounded()
@@ -196,7 +196,7 @@ local function linkedMove(previous, button, v)
 	for _, name in ipairs(candidates) do
 		local key = links[name]
 		-- une suite aérienne ne sort pas une fois retombé au sol
-		if key and moves[key] and MoveSets.allowed(key, moves[key], MoveSets.armed(character))
+		if key and moves[key] and MoveSets.allowed(key, moves[key], MoveSets.weapon(character))
 			and not (string.find(key, "_air", 1, true) and not air) then
 			return key
 		end
@@ -206,7 +206,7 @@ end
 
 -- Premier coup utilisable parmi les candidats : avec la Caisse Bizarre, le moveset du perso ; sans, à mains nues
 local function pickMove(candidates)
-	return MoveSets.pick(characterData().moves, candidates, MoveSets.armed(character))
+	return MoveSets.pick(characterData().moves, candidates, MoveSets.weapon(character))
 end
 
 -- Le coup en cours donne-t-il son propre élan (selfVelocity) ? On ne le remplace pas alors.
@@ -252,14 +252,14 @@ local function resolveMove(button)
 			return pickMove(dir == "down" and { "S_air_down", "S_air" } or { "S_air", "S_neutral" })
 		end
 		return pickMove({ "S_" .. dir, "S_neutral" })
-	elseif button == "S_HOLD" then
-		return pickMove({ "S_hold", "S_neutral" })
 	elseif button == "SUPER" then
-		-- 3 Supers : ↑Y, →Y (ou Y seul) et ↓Y
+		-- 4 Supers : Y seul, →Y, ↑Y et ↓Y
 		if dir == "up" then
 			return pickMove({ "SUPER_up", "SUPER" })
 		elseif dir == "down" then
 			return pickMove({ "SUPER_down", "SUPER" })
+		elseif dir == "side" then
+			return pickMove({ "SUPER_side", "SUPER" })
 		end
 		return pickMove({ "SUPER" })
 	end
@@ -389,9 +389,9 @@ local function attack(button)
 	if not key then
 		return
 	end
-	-- J ou K au sol, hors combo : on attend de savoir si c'est un tap ou une frappe chargée
+	-- J, K ou L au sol, hors combo : on attend de savoir si c'est un tap ou une frappe chargée (L : portée allongée)
 	local _, baseKey = MoveSets.split(key)
-	if Config.SMASH_MOVES[baseKey] and isGrounded() and os.clock() >= busyUntil and canAct() then
+	if (Config.SMASH_MOVES[baseKey] or Config.S_CHARGE_MOVES[baseKey]) and isGrounded() and os.clock() >= busyUntil and canAct() then
 		smash = { button = button, key = key, pressedAt = os.clock() }
 		return
 	end
@@ -605,7 +605,7 @@ controls.Pressed:Connect(function(name)
 	if name == "CHARGE_END" then
 		setCharging(false)
 		return
-	elseif name == "P_RELEASE" or name == "K_RELEASE" then
+	elseif name == "P_RELEASE" or name == "K_RELEASE" or name == "S_RELEASE" then
 		if smash and smash.button == string.sub(name, 1, 1) then
 			releaseSmash()
 		end
@@ -667,14 +667,18 @@ KnockbackRemote.OnClientEvent:Connect(function(velocity, hitstun)
 	cancelSmash()
 	buffered = nil
 	knockbackToken += 1
-	local token = knockbackToken
-	humanoid.PlatformStand = true
-	root.AssemblyLinearVelocity = velocity
-	task.delay(hitstun, function()
-		if knockbackToken == token and humanoid then
-			humanoid.PlatformStand = false
+	-- plus de PlatformStand (le perso s'enfonçait dans le sol jusqu'à la taille) : au sol, une petite composante
+	-- vers le haut le fait décoller, et il passe en chute libre pour que le Humanoid ne freine pas la glissade
+	if humanoid.PlatformStand then
+		humanoid.PlatformStand = false
+	end
+	if velocity.Magnitude >= 1 then
+		if isGrounded() and velocity.Y < Config.KB_GROUND_LIFT then
+			velocity = Vector3.new(velocity.X, Config.KB_GROUND_LIFT, velocity.Z)
 		end
-	end)
+		humanoid:ChangeState(Enum.HumanoidStateType.Freefall)
+	end
+	root.AssemblyLinearVelocity = velocity
 end)
 
 -- Plateau qui va et vient : même calcul que le serveur (server/Arena.lua), fait ici avant la physique

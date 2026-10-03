@@ -2,7 +2,7 @@
 --
 -- Clés de coups : P_/K_ + neutral, side, down, up, air, dash (après un dash) ;
 -- P_/K_ + air_side, air_up, air_down : en l'air avec une flèche (sans coup pour cette flèche, on prend P_air / K_air) ;
--- S_ + neutral, side, down, up, hold (maintenu), dash, dodge (après une esquive), air, air_down ; SUPER, SUPER_down ;
+-- S_ + neutral, side, down, up, dash, dodge (après une esquive), air, air_down ; SUPER, SUPER_side, SUPER_up, SUPER_down ;
 -- GRAB (bouton ✋) puis THROW_fwd, THROW_back, THROW_up, THROW_down (flèche tenue pendant la saisie).
 -- Les autres coups (combo, finish…) ne sortent que dans un enchaînement, voir links.
 --
@@ -56,6 +56,8 @@ end
 
 local SODA = Color3.fromRGB(170, 220, 60)
 local BOTTLE = Color3.fromRGB(40, 140, 60)
+local CAN = Color3.fromRGB(210, 50, 50) -- canettes (arme n° 2)
+local WOODY = Color3.fromRGB(140, 95, 50) -- tonneau (arme n° 3)
 
 local data = {
 	id = "Gege",
@@ -63,6 +65,462 @@ local data = {
 	costume = "Gege",
 	style = "drunk",
 	holdsBottle = true, -- la bouteille pend au bout du bras quand aucun coup ne la tient autrement
+	------------------------------------------------------------------ Les 3 armes de la Caisse Bizarre (une au hasard)
+	-- n° 1 : la bouteille (ses coups sont ceux de moves). n° 2 : le pack de canettes, jeu de projectiles à portée.
+	-- n° 3 : le tonneau de soda, lourd et lent, qui encaisse pendant les spéciaux et éjecte loin.
+	weapons = {
+		{ id = "bouteille", name = "Bouteille de soda douteux", icon = "🍾",
+			ability = { speed = 1.1, text = "Trottine 10 % plus vite" } },
+		{ id = "canettes", name = "Pack de canettes", icon = "🥫",
+			prop = { name = "PropPack", hand = "Right", pieces = {
+				{ "Canette1", "", "cyl", Vector3.new(0.42, 0.75, 0.42), Vector3.new(-0.24, -0.55, 0), Vector3.new(0, 0, 0), CAN, "Metal" },
+				{ "Canette2", "", "cyl", Vector3.new(0.42, 0.75, 0.42), Vector3.new(0.24, -0.55, 0), Vector3.new(0, 0, 0), CAN, "Metal" },
+				{ "Canette3", "", "cyl", Vector3.new(0.42, 0.75, 0.42), Vector3.new(0, -0.55, 0.4), Vector3.new(0, 0, 0), Color3.fromRGB(60, 160, 230), "Metal" },
+				{ "Carton", "", "block", Vector3.new(1.0, 0.25, 0.9), Vector3.new(0, -0.95, 0.15), Vector3.new(0, 0, 0), Color3.fromRGB(190, 150, 90), "Fabric" },
+			} },
+			ability = { reach = 1.2, text = "Portée de tous les coups +20 %" },
+			moves = {
+				-- J : il claque une canette sur le nez de l'adversaire, bras tendu
+				P_neutral = {
+					label = "Claque de canette", startup = 0.08, active = 0.08, recovery = 0.14,
+					damage = 6, hitbox = box(4.5, 3, 2.8, 0.6), kbBase = 20, kbGrowth = 25, kbAngle = 25,
+					windup = { Root = { 4, -16, 0, 0, -0.1, 0.15 }, Waist = { 4, -22, 0 }, RS = { 60, 0, 30 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -15 }, LE = { 85, 0, 0 } },
+					strike = { Root = { -8, 16, 0, 0, -0.25, -0.3 }, Waist = { -10, 26, 0 }, RS = { 98, 0, 4 }, RE = { 8, 0, 0 }, RW = { -20, 0, 0 }, LS = { -8, 0, -20 }, LE = { 100, 0, 0 } },
+					follow = { Root = { -10, 22, 0, 0, -0.28, -0.4 }, Waist = { -14, 32, 0 }, RS = { 84, 0, 0 }, RE = { 14, 0, 0 }, RW = { -45, 0, 0 }, LS = { -14, 0, -20 }, LE = { 105, 0, 0 } },
+					trail = "prop", hitText = "TCHAC !",
+				},
+				-- →J : canette lancée à bout portant, qui rebondit sur le front (petit projectile court)
+				P_side = {
+					label = "Canette au front", kind = "projectile", startup = 0.1, active = 0, recovery = 0.2,
+					damage = 7, kbBase = 22, kbGrowth = 35, kbAngle = 30,
+					projectile = { speed = 70, angle = 5, gravity = 40, lifetime = 0.3, size = 1.2, color = CAN, visual = "can", aim = false },
+					windup = { Root = { 6, -26, 0, 0, -0.15, 0.2 }, Waist = { 6, -30, 0 }, RS = { 160, 0, 20 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 80, 0, -10 }, LE = { 30, 0, 0 } },
+					strike = { Root = { -10, 20, 0, 0, -0.3, -0.35 }, Waist = { -12, 26, 0 }, RS = { 95, 0, 0 }, RE = { 0, 0, 0 }, RW = { 10, 0, 0 }, LS = { 50, 0, -40 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { -12, 24, 0, 0, -0.32, -0.4 }, Waist = { -14, 30, 0 }, RS = { 90, 0, 4 }, RE = { 6, 0, 0 }, RW = { -10, 0, 0 }, LS = { 45, 0, -45 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+					hitText = "BLONG !",
+				},
+				-- ↓J : accroupi, il fait rouler une canette dans les tibias
+				P_down = {
+					label = "Canette roulante", startup = 0.1, active = 0.12, recovery = 0.2,
+					damage = 6, hitbox = box(6, 2, 3.5, -1.4), kbBase = 22, kbGrowth = 30, kbAngle = 70,
+					windup = { Root = { 10, 0, 0, 0, -0.9, 0.1 }, Waist = { 20, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 120, 0, 10 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -30 }, LE = { 90, 0, 0 } },
+					strike = { Root = { 16, 0, 0, 0, -1.0, -0.2 }, Waist = { 26, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 30, 0, 10 }, RE = { 0, 0, 0 }, RW = { -30, 0, 0 }, LS = { 40, 0, -30 }, LE = { 90, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					follow = { Root = { 18, 0, 0, 0, -1.0, -0.24 }, Waist = { 28, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 20, 0, 12 }, RE = { 0, 0, 0 }, RW = { -40, 0, 0 }, LS = { 44, 0, -32 }, LE = { 90, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.32 } },
+					fx = { { "toss", shape = "cyl", color = CAN, size = 0.5, count = 1, speed = 18 } }, hitText = "ROULE !",
+				},
+				-- ↑J : il décapsule une canette sous le menton, le jet de mousse soulève
+				P_up = {
+					label = "Mousse au menton", startup = 0.1, active = 0.1, recovery = 0.2,
+					damage = 7, hitbox = box(4, 5, 1.5, 3), kbBase = 24, kbGrowth = 40, kbAngle = 85,
+					windup = { Root = { 8, 0, 0, 0, -0.3, 0.1 }, Waist = { 10, 0, 0 }, RS = { 40, 0, 20 }, RE = { 120, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -20 }, LE = { 100, 0, 0 } },
+					strike = { Root = { -10, 0, 0, 0, 0.1, -0.1 }, Waist = { -14, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 170, 0, 10 }, RE = { 10, 0, 0 }, RW = { -40, 0, 0 }, LS = { 60, 0, -30 }, LE = { 80, 0, 0 } },
+					follow = { Root = { -12, 0, 0, 0, 0.12, -0.12 }, Waist = { -16, 0, 0 }, Neck = { -24, 0, 0 }, RS = { 178, 0, 12 }, RE = { 10, 0, 0 }, RW = { -50, 0, 0 }, LS = { 64, 0, -32 }, LE = { 80, 0, 0 } },
+					fx = { { "particles", tex = "spark", color = Color3.fromRGB(255, 250, 220), dir = "up", at = "hand", time = 0.25, speed = 16, size = 0.5, rate = 70 } }, hitText = "PSCHIT !",
+				},
+				-- J en l'air : il balance le pack entier en dessous de lui
+				P_air = {
+					label = "Pack plongeant", startup = 0.1, active = 0.12, recovery = 0.16,
+					damage = 8, hitbox = box(4.5, 4, 1.5, -1.5), kbBase = 20, kbGrowth = 35, kbAngle = -40,
+					windup = { Root = { 10, 0, 0 }, Waist = { 16, 0, 0 }, RS = { 185, 0, 12 }, RE = { 55, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, -40 }, LE = { 40, 0, 0 }, RH = { 40, 0, 0 }, RK = { -80, 0, 0 }, LH = { 60, 0, 0 }, LK = { -90, 0, 0 } },
+					strike = { Root = { -12, 0, 0 }, Waist = { -30, 0, 0 }, RS = { 50, 0, 5 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -25, 0, -45 }, LE = { 20, 0, 0 }, RH = { 15, 0, 0 }, RK = { -35, 0, 0 }, LH = { 35, 0, 0 }, LK = { -70, 0, 0 } },
+					follow = { Root = { -18, 0, 0 }, Waist = { -36, 0, 0 }, RS = { 22, 0, 5 }, RE = { 8, 0, 0 }, RW = { -20, 0, 0 }, LS = { -35, 0, -50 }, LE = { 20, 0, 0 }, RH = { 5, 0, 0 }, RK = { -30, 0, 0 }, LH = { 30, 0, 0 }, LK = { -65, 0, 0 } },
+					trail = "prop", hitText = "BLAM !",
+				},
+				-- dash J : en courant, il jette deux canettes devant lui
+				P_dash = {
+					label = "Double canette", kind = "projectile", startup = 0.08, active = 0, recovery = 0.22,
+					damage = 6, kbBase = 22, kbGrowth = 35, kbAngle = 30, selfVelocity = Vector2.new(30, 0),
+					projectile = { speed = 75, angle = 8, gravity = 50, lifetime = 0.35, size = 1.1, color = CAN, visual = "can", aim = false, fan = { count = 2, from = 0, to = 20 } },
+					windup = { Root = { 8, -20, 0, 0, -0.1, 0.2 }, Waist = { 8, -24, 0 }, RS = { 150, 0, 20 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -20 }, LE = { 40, 0, 0 } },
+					strike = { Root = { -8, 18, 0, 0, -0.2, -0.3 }, Waist = { -10, 22, 0 }, RS = { 92, 0, 0 }, RE = { 0, 0, 0 }, RW = { 10, 0, 0 }, LS = { 40, 0, -40 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { -10, 22, 0, 0, -0.24, -0.34 }, Waist = { -12, 26, 0 }, RS = { 88, 0, 2 }, RE = { 6, 0, 0 }, RW = { -10, 0, 0 }, LS = { 36, 0, -44 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+					hitText = "BLING !",
+				},
+				-- K : coup de pied dans une canette posée au sol, qui part comme un ballon
+				K_neutral = {
+					label = "Shoot de canette", kind = "projectile", startup = 0.18, active = 0, recovery = 0.3,
+					damage = 10, kbBase = 28, kbGrowth = 55, kbAngle = 30,
+					projectile = { speed = 80, angle = 10, gravity = 60, lifetime = 0.45, size = 1.3, color = CAN, visual = "can", aim = false },
+					windup = { Root = { 6, -10, 0, 0, -0.15, 0.1 }, Waist = { 6, -8, 0 }, RS = { 30, 0, 40 }, RE = { 50, 0, 0 }, LS = { 50, 0, -40 }, LE = { 50, 0, 0 }, RH = { -30, 0, 0 }, RK = { -60, 0, 0 } },
+					strike = { Root = { 10, 0, 0, 0, -0.1, 0.05 }, Waist = { 12, 0, 0 }, RS = { 60, 0, 55 }, RE = { 30, 0, 0 }, LS = { 70, 0, -55 }, LE = { 30, 0, 0 }, RH = { 95, 0, 0 }, RK = { -4, 0, 0 }, RA = { 10, 0, 0 } },
+					follow = { Root = { 14, 0, 0, 0, -0.1, 0.1 }, Waist = { 16, 0, 0 }, RS = { 64, 0, 60 }, RE = { 25, 0, 0 }, LS = { 74, 0, -60 }, LE = { 25, 0, 0 }, RH = { 104, 0, 0 }, RK = { 0, 0, 0 }, RA = { 15, 0, 0 } },
+					trail = "rightFoot", hitText = "PÉNO !",
+				},
+				-- →K : coup de pied retourné en tenant le pack à bout de bras (il sert de contrepoids)
+				K_side = {
+					label = "Retourné au pack", startup = 0.16, active = 0.12, recovery = 0.32,
+					damage = 12, hitbox = box(6, 3.5, 3.5, 0.5), kbBase = 32, kbGrowth = 70, kbAngle = 35, selfVelocity = Vector2.new(22, 0),
+					windup = { Root = { 6, 30, 0, 0, -0.2, 0.1 }, Waist = { 8, 40, 0 }, RS = { 120, 0, 60 }, RE = { 20, 0, 0 }, LS = { 40, 0, -40 }, LE = { 70, 0, 0 }, RH = { -20, 0, 10 }, RK = { -50, 0, 0 } },
+					strike = { Root = { 10, -40, 0, 0, -0.1, -0.1 }, Waist = { 10, -50, 0 }, RS = { 80, 0, 80 }, RE = { 10, 0, 0 }, LS = { 60, 0, -50 }, LE = { 40, 0, 0 }, RH = { 100, 0, 20 }, RK = { -6, 0, 0 }, RA = { 10, 0, 0 } },
+					follow = { Root = { 12, -50, 0, 0, -0.1, -0.14 }, Waist = { 12, -60, 0 }, RS = { 84, 0, 84 }, RE = { 10, 0, 0 }, LS = { 64, 0, -54 }, LE = { 40, 0, 0 }, RH = { 108, 0, 24 }, RK = { 0, 0, 0 }, RA = { 14, 0, 0 } },
+					spin = { axis = "y", degrees = 360 }, trail = "rightFoot", hitText = "VLAN !",
+				},
+				-- ↓K : balayette basse, le pack posé par terre pour s'appuyer dessus
+				K_down = {
+					label = "Balayette au pack", startup = 0.14, active = 0.14, recovery = 0.3,
+					damage = 9, hitbox = box(7, 2, 3.5, -1.6), kbBase = 28, kbGrowth = 50, kbAngle = 75,
+					windup = { Root = { 12, 10, 0, 0, -0.85, 0.1 }, Waist = { 16, 14, 0 }, RS = { 60, 0, 30 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -40 }, LE = { 80, 0, 0 }, LH = { -30, 0, 0 }, LK = { -40, 0, 0 } },
+					strike = { Root = { 16, -20, 0, 0, -0.95, -0.1 }, Waist = { 20, -26, 0 }, RS = { 50, 0, 40 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -40 }, LE = { 80, 0, 0 }, LH = { 50, 0, -20 }, LK = { -4, 0, 0 }, LA = { 20, 0, 0 } },
+					follow = { Root = { 18, -26, 0, 0, -0.95, -0.14 }, Waist = { 22, -32, 0 }, RS = { 52, 0, 42 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 34, 0, -42 }, LE = { 80, 0, 0 }, LH = { 56, 0, -24 }, LK = { 0, 0, 0 }, LA = { 24, 0, 0 } },
+					trail = "leftFoot", fx = { "dust" }, hitText = "FAUCHÉ !",
+				},
+				-- ↑K : coup de pied monté, une canette lâchée explose au plafond au même moment
+				K_up = {
+					label = "Pied et canette au plafond", startup = 0.16, active = 0.12, recovery = 0.32,
+					damage = 11, hitbox = box(4.5, 6, 1.5, 3.5), kbBase = 30, kbGrowth = 65, kbAngle = 88,
+					windup = { Root = { 10, 0, 0, 0, -0.25, 0.1 }, Waist = { 14, 0, 0 }, RS = { 100, 0, 40 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -40 }, LE = { 60, 0, 0 }, RH = { -20, 0, 0 }, RK = { -60, 0, 0 } },
+					strike = { Root = { -16, 0, 0, 0, 0.05, -0.1 }, Waist = { -20, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 160, 0, 20 }, RE = { 20, 0, 0 }, RW = { -30, 0, 0 }, LS = { 30, 0, -50 }, LE = { 30, 0, 0 }, RH = { 140, 0, 0 }, RK = { -6, 0, 0 }, RA = { 20, 0, 0 } },
+					follow = { Root = { -18, 0, 0, 0, 0.08, -0.12 }, Waist = { -22, 0, 0 }, Neck = { -24, 0, 0 }, RS = { 166, 0, 22 }, RE = { 20, 0, 0 }, RW = { -36, 0, 0 }, LS = { 34, 0, -52 }, LE = { 30, 0, 0 }, RH = { 148, 0, 0 }, RK = { 0, 0, 0 }, RA = { 24, 0, 0 } },
+					trail = "rightFoot", fx = { { "burst", color = CAN, size = 2, at = "above" } }, hitText = "KLANG !",
+				},
+				-- K en l'air : double coup de pied en pédalant, le pack au-dessus de la tête
+				K_air = {
+					label = "Pédalage pétillant", startup = 0.12, active = 0.2, recovery = 0.2,
+					damage = 10, hits = 2, hitbox = box(5, 4, 2.5, -0.5), kbBase = 22, kbGrowth = 45, kbAngle = 40,
+					windup = { Root = { -10, 0, 0 }, Waist = { -8, 0, 0 }, RS = { 170, 0, 20 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 170, 0, -20 }, LE = { 40, 0, 0 }, RH = { 60, 0, 0 }, RK = { -100, 0, 0 }, LH = { -20, 0, 0 }, LK = { -40, 0, 0 } },
+					strike = { Root = { -6, 0, 0 }, Waist = { 6, 0, 0 }, RS = { 174, 0, 22 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 174, 0, -22 }, LE = { 30, 0, 0 }, RH = { 90, 0, 0 }, RK = { -6, 0, 0 }, RA = { 10, 0, 0 }, LH = { 70, 0, 0 }, LK = { -110, 0, 0 } },
+					follow = { Root = { -4, 0, 0 }, Waist = { 8, 0, 0 }, RS = { 176, 0, 24 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 176, 0, -24 }, LE = { 30, 0, 0 }, RH = { 20, 0, 0 }, RK = { -60, 0, 0 }, LH = { 95, 0, 0 }, LK = { -4, 0, 0 }, LA = { 10, 0, 0 } },
+					trail = "rightFoot", hitText = "TAC TAC !",
+				},
+				-- dash K : glissade sur le carton du pack, pieds devant
+				K_dash = {
+					label = "Glissade au carton", startup = 0.1, active = 0.26, recovery = 0.3,
+					damage = 11, hitbox = box(6, 3, 3, -0.8), kbBase = 30, kbGrowth = 65, kbAngle = 38, selfVelocity = Vector2.new(55, 12),
+					windup = { Root = { -8, 0, 0, 0, -0.4, 0 }, Waist = { -10, 0, 0 }, RS = { 60, 0, 40 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -40 } },
+					strike = { Root = { 20, 0, 0, 0, -0.7, 0.2 }, Waist = { 10, 0, 0 }, RS = { -30, 0, 50 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, -40 }, LE = { 30, 0, 0 }, RH = { 85, 0, 0 }, RK = { 0, 0, 0 }, RA = { 10, 0, 0 }, LH = { 80, 0, 0 }, LK = { -10, 0, 0 } },
+					follow = { Root = { 24, 0, 0, 0, -0.72, 0.24 }, Waist = { 12, 0, 0 }, RS = { -36, 0, 55 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 75, 0, -45 }, LE = { 30, 0, 0 }, RH = { 90, 0, 0 }, RK = { 0, 0, 0 }, RA = { 14, 0, 0 }, LH = { 85, 0, 0 }, LK = { -10, 0, 0 } },
+					trail = "rightFoot", fx = { "dust" }, hitText = "SKRRRT !",
+				},
+				-- L : rafale de canettes secouées qui foncent sur l'adversaire (visée automatique)
+				S_neutral = {
+					label = "Rafale de canettes", kind = "projectile", startup = 0.22, active = 0, recovery = 0.45,
+					damage = 5, kbBase = 24, kbGrowth = 40, kbAngle = 30,
+					projectile = { speed = 85, angle = 0, gravity = 0, lifetime = 0.6, size = 1.3, color = CAN, visual = "can", fan = { count = 3, from = -8, to = 8 } },
+					windup = { Root = { 6, -20, 0, 0, -0.2, 0.2 }, Waist = { 8, -26, 0 }, Neck = { 4, 16, 0 }, RS = { 150, 0, 30 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 80, 0, -10 }, LE = { 40, 0, 0 } },
+					strike = { Root = { -12, 18, 0, 0, -0.3, -0.35 }, Waist = { -14, 24, 0 }, Neck = { 0, -12, 0 }, RS = { 96, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -40 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { -14, 22, 0, 0, -0.34, -0.42 }, Waist = { -18, 28, 0 }, Neck = { 0, -16, 0 }, RS = { 100, 0, 6 }, RE = { 6, 0, 0 }, RW = { -8, 0, 0 }, LS = { 55, 0, -45 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+					shake = true, windupFx = { "sodaShake" }, fx = { { "burst", color = CAN, size = 2, at = "hand" } }, text = "RAFALE !", hitText = "TING TING !",
+				},
+				-- →L : la canette-fusée : décapsulée à l'envers, elle part comme une torpille sur l'adversaire
+				S_side = {
+					label = "Canette-fusée", kind = "projectile", startup = 0.24, active = 0, recovery = 0.5,
+					damage = 15, kbBase = 32, kbGrowth = 62, kbAngle = 35,
+					projectile = { speed = 95, angle = 0, gravity = 0, lifetime = 0.7, size = 1.8, color = CAN, visual = "can" },
+					status = { name = "wet", duration = 2 },
+					windup = { Root = { 8, -30, 0, 0, -0.2, 0.25 }, Waist = { 10, -34, 0 }, Neck = { 6, 20, 0 }, RS = { 40, 0, 20 }, RE = { 120, 0, 0 }, RW = { 20, 0, 0 }, LS = { 40, 0, -20 }, LE = { 110, 0, 0 } },
+					strike = { Root = { -14, 20, 0, 0, -0.32, -0.4 }, Waist = { -16, 26, 0 }, Neck = { -4, -14, 0 }, RS = { 94, 0, -4 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, 6 }, LE = { 5, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+					follow = { Root = { -16, 24, 0, 0, -0.36, -0.46 }, Waist = { -20, 30, 0 }, Neck = { -6, -16, 0 }, RS = { 98, 0, -6 }, RE = { 4, 0, 0 }, RW = { 6, 0, 0 }, LS = { 94, 0, 8 }, LE = { 5, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+					shake = true, windupFx = { "sodaShake" }, fx = { { "beam", color = SODA, length = 12, width = 2, at = "hand" }, { "particles", tex = "spark", color = SODA, dir = "front", at = "hand", time = 0.3, speed = 20, size = 0.5, rate = 80 } },
+					text = "TORPILLE !", hitText = "KABLONG !",
+				},
+				-- ↓L : il écrase une canette sous sa semelle, la mousse jaillit en vague sur tout le couloir
+				S_down = {
+					label = "Vague de mousse", startup = 0.22, active = 0.2, recovery = 0.5,
+					damage = 13, hitbox = box(14, 5, 7, 0.8), kbBase = 28, kbGrowth = 50, kbAngle = 40,
+					status = { name = "slippery", duration = 2 },
+					windup = { Root = { 10, 0, 0, 0, -0.4, 0.1 }, Waist = { 14, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 60, 0, 30 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -30 }, LE = { 80, 0, 0 }, RH = { -60, 0, 0 }, RK = { -70, 0, 0 } },
+					strike = { Root = { -8, 0, 0, 0, -0.2, -0.2 }, Waist = { -12, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 30, 0, 50 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -50 }, LE = { 30, 0, 0 }, FR = { 0, 0, 0, 0, 0, -0.5 } },
+					follow = { Root = { -10, 0, 0, 0, -0.22, -0.24 }, Waist = { -14, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 34, 0, 54 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 34, 0, -54 }, LE = { 30, 0, 0 }, FR = { 0, 0, 0, 0, 0, -0.52 } },
+					hold = 0.1, fx = { "puddle", { "beam", color = Color3.fromRGB(255, 250, 225), length = 14, width = 2.5, at = "feet" }, { "ring", color = SODA, radius = 6, at = "feet" } }, text = "SCRATCH !", hitText = "MOUSSÉ !",
+				},
+				-- ↑L : deux canettes secouées sous les bras comme des réacteurs : décollage en diagonale sur une traînée de mousse
+				S_up = {
+					label = "Réacteurs de canettes", startup = 0.12, active = 0.3, recovery = 0.4,
+					damage = 13, hitbox = box(10, 11, 3, 4), kbBase = 32, kbGrowth = 52, kbAngle = 72, selfVelocity = Vector2.new(42, 82),
+					windup = { Root = { 6, 0, 0, 0, -0.8, 0.1 }, Waist = { -10, 0, 0 }, Neck = { 26, 0, 0 }, RS = { 20, 0, 30 }, RE = { 120, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -30 }, LE = { 120, 0, 0 } },
+					strike = { Root = { -40, 0, 0, 0, 0.4, -0.2 }, Waist = { -6, 0, 0 }, Neck = { 30, 0, 0 }, RS = { -40, 0, 50 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { -40, 0, -50 }, LE = { 10, 0, 0 }, RH = { -25, 0, 5 }, RK = { -30, 0, 0 }, LH = { -15, 0, -5 }, LK = { -50, 0, 0 } },
+					follow = { Root = { -44, 0, 0, 0, 0.45, -0.25 }, Waist = { -8, 0, 0 }, Neck = { 32, 0, 0 }, RS = { -46, 0, 55 }, RE = { 10, 0, 0 }, RW = { -8, 0, 0 }, LS = { -46, 0, -55 }, LE = { 10, 0, 0 }, RH = { -30, 0, 6 }, RK = { -35, 0, 0 }, LH = { -20, 0, -6 }, LK = { -55, 0, 0 } },
+					shake = true, trail = "body", fx = { { "particles", tex = "spark", color = Color3.fromRGB(255, 250, 220), dir = "down", at = "feet", time = 0.5, speed = 18, size = 0.6, rate = 90 }, { "ring", color = SODA, radius = 5, at = "feet" } },
+					text = "DÉCOLLAGE !", hitText = "FSHHH !",
+				},
+				-- L en l'air : pluie de canettes lâchées sous lui, qui tombent sur l'adversaire
+				S_air = {
+					label = "Pluie de canettes", kind = "projectile", startup = 0.15, active = 0, recovery = 0.4,
+					damage = 6, kbBase = 24, kbGrowth = 45, kbAngle = -40,
+					projectile = { speed = 60, angle = -70, gravity = 40, lifetime = 0.7, size = 1.2, color = CAN, visual = "can", rain = { count = 4, spread = 6 } },
+					windup = { Root = { 10, 0, 0 }, Waist = { 14, 0, 0 }, RS = { 170, 0, 20 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 170, 0, -20 }, LE = { 60, 0, 0 }, RH = { 40, 0, 0 }, RK = { -80, 0, 0 }, LH = { 50, 0, 0 }, LK = { -90, 0, 0 } },
+					strike = { Root = { -14, 0, 0 }, Waist = { -28, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 20, 0, 10 }, RE = { 0, 0, 0 }, RW = { -40, 0, 0 }, LS = { 20, 0, -10 }, LE = { 0, 0, 0 }, LW = { -40, 0, 0 }, RH = { 20, 0, 0 }, RK = { -40, 0, 0 }, LH = { 30, 0, 0 }, LK = { -60, 0, 0 } },
+					follow = { Root = { -18, 0, 0 }, Waist = { -32, 0, 0 }, Neck = { 34, 0, 0 }, RS = { 16, 0, 12 }, RE = { 4, 0, 0 }, RW = { -50, 0, 0 }, LS = { 16, 0, -12 }, LE = { 4, 0, 0 }, LW = { -50, 0, 0 }, RH = { 16, 0, 0 }, RK = { -36, 0, 0 }, LH = { 26, 0, 0 }, LK = { -56, 0, 0 } },
+					fx = { { "burst", color = CAN, size = 2, at = "feet" } }, text = "LÂCHER !", hitText = "PLONK !",
+				},
+				-- Y : le pack entier secoué comme un maraca, 12 canettes en éventail qui filent toutes sur l'adversaire
+				SUPER = {
+					label = "Maraca de canettes !", kind = "projectile", startup = 0.35, active = 0, recovery = 0.6,
+					damage = 4, kbBase = 25, kbGrowth = 40, kbAngle = 40,
+					projectile = { speed = 75, angle = 0, gravity = 0, lifetime = 1.0, size = 1.4, color = CAN, visual = "can", fan = { count = 8, from = -20, to = 40 } },
+					status = { name = "inverted", duration = 3 },
+					windup = { Root = { 0, 0, 0, 0, -0.85, 0.15 }, Waist = { -25, 0, 0 }, RS = { 60, 0, -40 }, RE = { 90, 0, 0 }, LS = { 60, 0, 40 }, LE = { 90, 0, 0 } },
+					strike = { Root = { 0, 0, 0, 0, 0.3, 0 }, Waist = { 20, 0, 0 }, Neck = { 25, 0, 0 }, RS = { 150, 0, 70 }, RE = { 0, 0, 0 }, LS = { 150, 0, -70 }, LE = { 0, 0, 0 }, FR = { 0, 0, 0, 0, 0.2, 0 }, FL = { 0, 0, 0, 0, 0.2, 0 } },
+					follow = { Root = { 4, 0, 0, 0, 0.2, 0 }, Waist = { 24, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 160, 0, 80 }, RE = { 5, 0, 0 }, LS = { 160, 0, -80 }, LE = { 5, 0, 0 } },
+					shake = true, windupFx = { "super", "sodaShake" }, text = "MARACA !", hitText = "TING TING TING !",
+				},
+				-- →Y : la canette géante : il gonfle une canette à la pompe à vélo et la lance comme un obus qui traverse le couloir
+				SUPER_side = {
+					label = "Canette géante !", kind = "projectile", startup = 0.4, active = 0, recovery = 0.7,
+					damage = 26, kbBase = 50, kbGrowth = 100, kbAngle = 30,
+					projectile = { speed = 90, angle = 0, gravity = 0, lifetime = 0.9, size = 3.2, color = CAN, visual = "can", pierce = true },
+					windup = { Root = { 10, -30, 0, 0, -0.5, 0.3 }, Waist = { 14, -34, 0 }, Neck = { 10, 20, 0 }, RS = { 30, 0, 30 }, RE = { 120, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -30 }, LE = { 120, 0, 0 } },
+					strike = { Root = { -18, 22, 0, 0, -0.3, -0.5 }, Waist = { -20, 28, 0 }, Neck = { -6, -16, 0 }, RS = { 96, 0, -2 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 92, 0, 4 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+					follow = { Root = { -20, 26, 0, 0, -0.34, -0.56 }, Waist = { -24, 32, 0 }, Neck = { -8, -18, 0 }, RS = { 100, 0, -4 }, RE = { 4, 0, 0 }, RW = { 6, 0, 0 }, LS = { 96, 0, 6 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.52 } },
+					shake = true, windupFx = { "super", { "symbols", symbols = { "🥫" }, count = 6, radius = 3, color = CAN } }, fx = { { "burst", color = CAN, size = 3.5, at = "hand" }, { "shake", amount = 0.4 } },
+					text = "OBUS !", hitText = "KA-BLONG !",
+				},
+				-- ↑Y : la fontaine : il décapsule tout le pack en même temps sous ses pieds et décolle sur un geyser de mousse
+				SUPER_up = {
+					label = "Fontaine de canettes !", startup = 0.35, active = 0.3, recovery = 0.7,
+					damage = 24, hitbox = box(16, 12, 8, 5), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3, selfVelocity = Vector2.new(0, 55),
+					windup = { Root = { -10, 0, 0, 0, -0.95, 0 }, Waist = { -32, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 40, 0, -20 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, 20 }, LE = { 110, 0, 0 } },
+					strike = { Root = { 6, 0, 0, 0, 0.5, 0 }, Waist = { 18, 0, 0 }, Neck = { 50, 0, 0 }, RS = { 186, 0, 6 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 186, 0, -6 }, LE = { 0, 0, 0 }, RH = { 40, 0, 10 }, RK = { -90, 0, 0 }, LH = { 20, 0, -15 }, LK = { -60, 0, 0 } },
+					follow = { Root = { 10, 0, 0, 0, 0.55, 0 }, Waist = { 24, 0, 0 }, Neck = { 56, 0, 0 }, RS = { 188, 0, 10 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 188, 0, -10 }, LE = { 0, 0, 0 }, RH = { 60, 0, 20 }, RK = { -110, 0, 0 }, LH = { 10, 0, -25 }, LK = { -40, 0, 0 } },
+					hold = 0.2, shake = true, spin = { axis = "y", degrees = 360 },
+					windupFx = { "super", "sodaShake" }, fx = { { "pillar", color = Color3.fromRGB(255, 250, 225), height = 22, width = 3, at = "front" }, { "beam", color = SODA, length = 16, width = 5, at = "feet" }, { "burst", color = CAN, size = 4, at = "above" }, { "ring", color = SODA, radius = 6, at = "feet" } },
+					text = "FONTAINE !", hitText = "PSCHIIIT !",
+				},
+				-- ↓Y : la roulade au sol : il fait rouler le pack entier à travers tout le couloir comme un rouleau compresseur
+				SUPER_down = {
+					label = "Rouleau de canettes !", startup = 0.35, active = 0.35, recovery = 0.7,
+					damage = 22, hitbox = box(16, 4, 8, -0.5), kbBase = 44, kbGrowth = 90, kbAngle = 60,
+					status = { name = "slowed", duration = 2 },
+					windup = { Root = { 14, 0, 0, 0, -0.9, 0.2 }, Waist = { 24, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 120, 0, 20 }, RE = { 70, 0, 0 }, RW = { 0, 0, 0 }, LS = { 120, 0, -20 }, LE = { 70, 0, 0 } },
+					strike = { Root = { 20, 0, 0, 0, -1.0, -0.3 }, Waist = { 30, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 30, 0, 20 }, RE = { 0, 0, 0 }, RW = { -30, 0, 0 }, LS = { 30, 0, -20 }, LE = { 0, 0, 0 }, LW = { -30, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { 22, 0, 0, 0, -1.0, -0.34 }, Waist = { 32, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 20, 0, 22 }, RE = { 0, 0, 0 }, RW = { -40, 0, 0 }, LS = { 20, 0, -22 }, LE = { 0, 0, 0 }, LW = { -40, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+					hold = 0.15, windupFx = { "super" }, fx = { { "toss", shape = "cyl", color = CAN, size = 1.2, count = 6, speed = 26 }, { "beam", color = CAN, length = 16, width = 3, at = "feet" }, { "shake", amount = 0.4 }, { "particles", tex = "smoke", color = Color3.fromRGB(230, 230, 230), dir = "front", at = "feet", time = 0.4, speed = 14 } },
+					text = "ROULEAU !", hitText = "ÉCRASÉ !",
+				},
+			},
+			links = {
+				P_neutral = { P = "P_side", K = "K_neutral", S = "S_neutral" },
+				P_side = { P = "P_up", K = "K_side", S = "S_side" },
+				P_down = { P = "P_up", K = "K_down", S = "S_down" },
+				K_neutral = { P = "P_neutral", K = "K_side", S = "S_side" },
+				K_side = { P = "P_up", K = "K_up", S = "S_neutral" },
+				P_dash = { P = "P_side", K = "K_side", S = "S_side" },
+				K_dash = { P = "P_up", S = "S_up" },
+			},
+		},
+		{ id = "tonneau", name = "Tonneau de soda", icon = "🛢️",
+			prop = { name = "PropTonneau", hand = "Right", pieces = {
+				{ "Fut", "", "cyl", Vector3.new(1.3, 1.7, 1.3), Vector3.new(0, -1.05, 0), Vector3.new(0, 0, 0), WOODY, "Wood" },
+				{ "Cercle1", "", "cyl", Vector3.new(1.38, 0.14, 1.38), Vector3.new(0, -0.5, 0), Vector3.new(0, 0, 0), Color3.fromRGB(70, 70, 75), "Metal" },
+				{ "Cercle2", "", "cyl", Vector3.new(1.38, 0.14, 1.38), Vector3.new(0, -1.6, 0), Vector3.new(0, 0, 0), Color3.fromRGB(70, 70, 75), "Metal" },
+				{ "Robinet", "", "cyl", Vector3.new(0.5, 0.16, 0.16), Vector3.new(0, -1.3, -0.8), Vector3.new(0, 0, 0), Color3.fromRGB(200, 170, 60), "Metal", { axis = "z" } },
+			} },
+			ability = { knockback = 1.25, armor = true, text = "Éjecte 25 % plus loin ; les L encaissent sans broncher" },
+			moves = {
+				-- J : coup de fût dans le ventre, à deux mains
+				P_neutral = {
+					label = "Coup de fût", startup = 0.12, active = 0.1, recovery = 0.22,
+					damage = 8, hitbox = box(4.5, 3.5, 2.8, 0.5), kbBase = 24, kbGrowth = 30, kbAngle = 30,
+					windup = { Root = { 4, -16, 0, 0, -0.15, 0.15 }, Waist = { 6, -20, 0 }, RS = { 60, 0, 10 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -10 }, LE = { 110, 0, 0 }, LW = { 0, 0, 0 } },
+					strike = { Root = { -10, 14, 0, 0, -0.28, -0.3 }, Waist = { -12, 20, 0 }, RS = { 96, 0, 4 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 92, 0, -6 }, LE = { 10, 0, 0 }, LW = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.35 } },
+					follow = { Root = { -12, 18, 0, 0, -0.3, -0.36 }, Waist = { -14, 24, 0 }, RS = { 100, 0, 6 }, RE = { 14, 0, 0 }, RW = { -10, 0, 0 }, LS = { 96, 0, -8 }, LE = { 14, 0, 0 }, LW = { -10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.38 } },
+					trail = "prop", hitText = "BOUM !",
+				},
+				-- →J : balayage horizontal du tonneau, il pivote sur ses talons
+				P_side = {
+					label = "Balayage de tonneau", startup = 0.16, active = 0.12, recovery = 0.26,
+					damage = 10, hitbox = box(6, 3.5, 3.5, 0.8), kbBase = 26, kbGrowth = 42, kbAngle = 28, selfVelocity = Vector2.new(16, 0),
+					windup = { Root = { 6, 40, 0, 0, -0.2, 0.2 }, Waist = { 8, 46, 0 }, RS = { 70, 0, 60 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, 20 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -8, -30, 0, 0, -0.3, -0.35 }, Waist = { -10, -36, 0 }, RS = { 90, 0, -30 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, -60 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { -10, -40, 0, 0, -0.32, -0.4 }, Waist = { -12, -46, 0 }, RS = { 94, 0, -36 }, RE = { 10, 0, 0 }, RW = { -10, 0, 0 }, LS = { 94, 0, -66 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+					trail = "prop", hitText = "BLAM !",
+				},
+				-- ↓J : il pose le tonneau par terre, lourdement, sur les orteils de l'adversaire
+				P_down = {
+					label = "Tonneau sur les orteils", startup = 0.14, active = 0.1, recovery = 0.26,
+					damage = 9, hitbox = box(5, 2.5, 2.5, -1.5), kbBase = 26, kbGrowth = 40, kbAngle = 80,
+					windup = { Root = { 6, 0, 0, 0, -0.2, 0.1 }, Waist = { -10, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 160, 0, 10 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 160, 0, -10 }, LE = { 40, 0, 0 } },
+					strike = { Root = { 18, 0, 0, 0, -0.9, -0.2 }, Waist = { 28, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 40, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -10 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					follow = { Root = { 20, 0, 0, 0, -0.95, -0.24 }, Waist = { 30, 0, 0 }, Neck = { 18, 0, 0 }, RS = { 36, 0, 12 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 36, 0, -12 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.32 } },
+					fx = { "thud", "dust" }, hitText = "AÏE LES ORTEILS !",
+				},
+				-- ↑J : il soulève le tonneau à bout de bras, le fond cogne le menton
+				P_up = {
+					label = "Tonneau au menton", startup = 0.14, active = 0.12, recovery = 0.26,
+					damage = 9, hitbox = box(4.5, 5.5, 1.5, 3), kbBase = 26, kbGrowth = 45, kbAngle = 86,
+					windup = { Root = { 10, 0, 0, 0, -0.35, 0.1 }, Waist = { 14, 0, 0 }, RS = { 30, 0, 10 }, RE = { 120, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -10 }, LE = { 120, 0, 0 } },
+					strike = { Root = { -12, 0, 0, 0, 0.1, -0.1 }, Waist = { -16, 0, 0 }, Neck = { -22, 0, 0 }, RS = { 172, 0, 8 }, RE = { 6, 0, 0 }, RW = { 0, 0, 0 }, LS = { 172, 0, -8 }, LE = { 6, 0, 0 } },
+					follow = { Root = { -14, 0, 0, 0, 0.14, -0.12 }, Waist = { -18, 0, 0 }, Neck = { -26, 0, 0 }, RS = { 178, 0, 10 }, RE = { 6, 0, 0 }, RW = { -10, 0, 0 }, LS = { 178, 0, -10 }, LE = { 6, 0, 0 } },
+					trail = "prop", hitText = "KLONK !",
+				},
+				-- J en l'air : il laisse tomber le tonneau sous lui et se rattrape dessus
+				P_air = {
+					label = "Tonneau tombant", startup = 0.12, active = 0.14, recovery = 0.18,
+					damage = 10, hitbox = box(4.5, 4, 1, -1.8), kbBase = 24, kbGrowth = 40, kbAngle = -45,
+					windup = { Root = { 8, 0, 0 }, Waist = { 14, 0, 0 }, RS = { 185, 0, 10 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 185, 0, -10 }, LE = { 40, 0, 0 }, RH = { 40, 0, 0 }, RK = { -80, 0, 0 }, LH = { 60, 0, 0 }, LK = { -90, 0, 0 } },
+					strike = { Root = { -10, 0, 0 }, Waist = { -28, 0, 0 }, RS = { 40, 0, 5 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -5 }, LE = { 0, 0, 0 }, RH = { 15, 0, 0 }, RK = { -35, 0, 0 }, LH = { 35, 0, 0 }, LK = { -70, 0, 0 } },
+					follow = { Root = { -14, 0, 0 }, Waist = { -32, 0, 0 }, RS = { 20, 0, 5 }, RE = { 8, 0, 0 }, RW = { -20, 0, 0 }, LS = { 20, 0, -5 }, LE = { 8, 0, 0 }, RH = { 5, 0, 0 }, RK = { -30, 0, 0 }, LH = { 30, 0, 0 }, LK = { -65, 0, 0 } },
+					trail = "prop", hitText = "BLAM !",
+				},
+				-- dash J : charge épaule contre tonneau, le fût en bélier
+				P_dash = {
+					label = "Bélier à tonneau", startup = 0.1, active = 0.2, recovery = 0.3,
+					damage = 11, hitbox = box(6, 4, 3, 0.5), kbBase = 30, kbGrowth = 55, kbAngle = 30, selfVelocity = Vector2.new(48, 0), armor = true,
+					windup = { Root = { 10, -20, 0, 0, -0.2, 0.2 }, Waist = { 12, -24, 0 }, RS = { 80, 0, 10 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 80, 0, -10 }, LE = { 100, 0, 0 } },
+					strike = { Root = { 18, 10, 0, 0, -0.3, -0.3 }, Waist = { 14, 14, 0 }, Neck = { -10, 0, 0 }, RS = { 96, 0, 4 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 92, 0, -4 }, LE = { 20, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { 20, 12, 0, 0, -0.32, -0.36 }, Waist = { 16, 16, 0 }, Neck = { -12, 0, 0 }, RS = { 100, 0, 6 }, RE = { 20, 0, 0 }, RW = { -10, 0, 0 }, LS = { 96, 0, -6 }, LE = { 20, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+					trail = "prop", fx = { "dust" }, hitText = "BÉLIER !",
+				},
+				-- K : coup de pied dans le tonneau posé devant lui, qui roule sur l'adversaire
+				K_neutral = {
+					label = "Tonneau roulant", startup = 0.2, active = 0.2, recovery = 0.35,
+					damage = 12, hitbox = box(8, 3.5, 4.5, 0), kbBase = 32, kbGrowth = 70, kbAngle = 32,
+					windup = { Root = { 8, -10, 0, 0, -0.15, 0.1 }, Waist = { 8, -8, 0 }, RS = { 40, 0, 30 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -40 }, LE = { 55, 0, 0 }, RH = { -30, 0, 0 }, RK = { -60, 0, 0 } },
+					strike = { Root = { 12, 0, 0, 0, -0.1, 0.05 }, Waist = { 14, 0, 0 }, RS = { 60, 0, 55 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, -55 }, LE = { 30, 0, 0 }, RH = { 95, 0, 0 }, RK = { -4, 0, 0 }, RA = { 10, 0, 0 } },
+					follow = { Root = { 16, 0, 0, 0, -0.1, 0.1 }, Waist = { 18, 0, 0 }, RS = { 64, 0, 60 }, RE = { 25, 0, 0 }, RW = { 0, 0, 0 }, LS = { 74, 0, -60 }, LE = { 25, 0, 0 }, RH = { 104, 0, 0 }, RK = { 0, 0, 0 }, RA = { 15, 0, 0 } },
+					trail = "rightFoot", fx = { { "toss", shape = "cyl", color = WOODY, size = 1.4, count = 1, speed = 24 }, "dust" }, hitText = "ROULE-BOULE !",
+				},
+				-- →K : coup de pied sauté avec le tonneau serré contre lui en bouclier
+				K_side = {
+					label = "Pied-bouclier", startup = 0.16, active = 0.14, recovery = 0.32,
+					damage = 13, hitbox = box(6, 3.5, 3.5, 0.5), kbBase = 34, kbGrowth = 72, kbAngle = 36, selfVelocity = Vector2.new(26, 18),
+					windup = { Root = { 6, -10, 0, 0, -0.2, 0.1 }, Waist = { 8, -8, 0 }, RS = { 60, 0, 10 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -10 }, LE = { 110, 0, 0 }, RH = { -20, 0, 10 }, RK = { -50, 0, 0 } },
+					strike = { Root = { 10, 0, 0, 0, 0.1, -0.1 }, Waist = { 12, 0, 0 }, RS = { 70, 0, 10 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, -10 }, LE = { 100, 0, 0 }, RH = { 100, 0, 10 }, RK = { -6, 0, 0 }, RA = { 10, 0, 0 }, LH = { -20, 0, 0 }, LK = { -60, 0, 0 } },
+					follow = { Root = { 12, 0, 0, 0, 0.12, -0.14 }, Waist = { 14, 0, 0 }, RS = { 74, 0, 12 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 74, 0, -12 }, LE = { 100, 0, 0 }, RH = { 108, 0, 12 }, RK = { 0, 0, 0 }, RA = { 14, 0, 0 }, LH = { -24, 0, 0 }, LK = { -64, 0, 0 } },
+					trail = "rightFoot", hitText = "VLAN !",
+				},
+				-- ↓K : il s'assoit sur le tonneau et balaie des deux jambes
+				K_down = {
+					label = "Balayage assis", startup = 0.16, active = 0.16, recovery = 0.34,
+					damage = 10, hitbox = box(7, 2.2, 3.5, -1.6), kbBase = 28, kbGrowth = 52, kbAngle = 76,
+					windup = { Root = { 6, 0, 0, 0, -0.5, 0.1 }, Waist = { 10, 0, 0 }, RS = { 40, 0, 30 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -30 }, LE = { 60, 0, 0 }, RH = { 40, 0, 0 }, RK = { -60, 0, 0 }, LH = { 40, 0, 0 }, LK = { -60, 0, 0 } },
+					strike = { Root = { 14, 0, 0, 0, -0.75, -0.15 }, Waist = { 18, 0, 0 }, RS = { 50, 0, 40 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -40 }, LE = { 30, 0, 0 }, RH = { 90, 0, 10 }, RK = { -4, 0, 0 }, RA = { 20, 0, 0 }, LH = { 90, 0, -10 }, LK = { -4, 0, 0 }, LA = { 20, 0, 0 } },
+					follow = { Root = { 16, 0, 0, 0, -0.78, -0.18 }, Waist = { 20, 0, 0 }, RS = { 54, 0, 44 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 54, 0, -44 }, LE = { 30, 0, 0 }, RH = { 96, 0, 12 }, RK = { 0, 0, 0 }, RA = { 24, 0, 0 }, LH = { 96, 0, -12 }, LK = { 0, 0, 0 }, LA = { 24, 0, 0 } },
+					trail = "rightFoot", fx = { "dust" }, hitText = "FAUCHÉ !",
+				},
+				-- ↑K : il balance le tonneau en l'air et le suit d'un coup de pied monté
+				K_up = {
+					label = "Tonneau envoyé", startup = 0.18, active = 0.14, recovery = 0.34,
+					damage = 12, hitbox = box(5, 6, 1.5, 3.5), kbBase = 32, kbGrowth = 68, kbAngle = 88,
+					windup = { Root = { 10, 0, 0, 0, -0.3, 0.1 }, Waist = { 14, 0, 0 }, RS = { 60, 0, 10 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -10 }, LE = { 110, 0, 0 }, RH = { -20, 0, 0 }, RK = { -60, 0, 0 } },
+					strike = { Root = { -16, 0, 0, 0, 0.05, -0.1 }, Waist = { -20, 0, 0 }, Neck = { -22, 0, 0 }, RS = { 170, 0, 10 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 170, 0, -10 }, LE = { 10, 0, 0 }, RH = { 140, 0, 0 }, RK = { -6, 0, 0 }, RA = { 20, 0, 0 } },
+					follow = { Root = { -18, 0, 0, 0, 0.08, -0.12 }, Waist = { -22, 0, 0 }, Neck = { -26, 0, 0 }, RS = { 176, 0, 12 }, RE = { 10, 0, 0 }, RW = { -10, 0, 0 }, LS = { 176, 0, -12 }, LE = { 10, 0, 0 }, RH = { 148, 0, 0 }, RK = { 0, 0, 0 }, RA = { 24, 0, 0 } },
+					trail = "rightFoot", hitText = "ET HOP !",
+				},
+				-- K en l'air : coup de pied de la pointe, le tonneau calé sous le bras
+				K_air = {
+					label = "Pointe sous tonneau", startup = 0.12, active = 0.14, recovery = 0.22,
+					damage = 11, hitbox = box(5.5, 3.5, 3, -0.5), kbBase = 26, kbGrowth = 52, kbAngle = 40,
+					windup = { Root = { -8, 0, 0 }, Waist = { -6, 0, 0 }, RS = { 20, 0, 20 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 120, 0, -30 }, LE = { 40, 0, 0 }, RH = { -20, 0, 0 }, RK = { -40, 0, 0 }, LH = { 50, 0, 0 }, LK = { -90, 0, 0 } },
+					strike = { Root = { 10, 0, 0 }, Waist = { 8, 0, 0 }, RS = { 20, 0, 20 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 130, 0, -40 }, LE = { 30, 0, 0 }, RH = { 95, 0, 0 }, RK = { -4, 0, 0 }, RA = { 20, 0, 0 }, LH = { 10, 0, 0 }, LK = { -60, 0, 0 } },
+					follow = { Root = { 12, 0, 0 }, Waist = { 10, 0, 0 }, RS = { 20, 0, 20 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 134, 0, -44 }, LE = { 30, 0, 0 }, RH = { 100, 0, 0 }, RK = { 0, 0, 0 }, RA = { 24, 0, 0 }, LH = { 6, 0, 0 }, LK = { -56, 0, 0 } },
+					trail = "rightFoot", hitText = "TOC !",
+				},
+				-- dash K : il saute sur le tonneau et le chevauche en roulant sur l'adversaire
+				K_dash = {
+					label = "Chevauchée de tonneau", startup = 0.12, active = 0.3, recovery = 0.34,
+					damage = 13, hitbox = box(6, 4, 3, -0.5), kbBase = 32, kbGrowth = 68, kbAngle = 40, selfVelocity = Vector2.new(52, 16), armor = true,
+					windup = { Root = { -8, 0, 0, 0, -0.4, 0 }, Waist = { -10, 0, 0 }, RS = { 60, 0, 30 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -30 }, LE = { 60, 0, 0 } },
+					strike = { Root = { 14, 0, 0, 0, 0.3, 0.1 }, Waist = { 10, 0, 0 }, RS = { 150, 0, 40 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, -40 }, LE = { 20, 0, 0 }, RH = { 70, 0, 25 }, RK = { -80, 0, 0 }, LH = { 70, 0, -25 }, LK = { -80, 0, 0 } },
+					follow = { Root = { 18, 0, 0, 0, 0.32, 0.14 }, Waist = { 12, 0, 0 }, RS = { 156, 0, 44 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 156, 0, -44 }, LE = { 20, 0, 0 }, RH = { 74, 0, 28 }, RK = { -84, 0, 0 }, LH = { 74, 0, -28 }, LK = { -84, 0, 0 } },
+					trail = "body", fx = { "dust" }, hitText = "YIHAA !",
+				},
+				-- L : il ouvre le robinet et arrose tout le couloir d'un jet de soda à haute pression (il encaisse pendant ce temps)
+				S_neutral = {
+					label = "Robinet à fond", startup = 0.24, active = 0.3, recovery = 0.5,
+					damage = 14, hitbox = box(14, 5, 7, 1), kbBase = 30, kbGrowth = 50, kbAngle = 28,
+					status = { name = "wet", duration = 2 },
+					windup = { Root = { 8, -16, 0, 0, -0.2, 0.15 }, Waist = { 8, -22, 0 }, Neck = { 6, 14, 0 }, RS = { 60, 0, 10 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -10 }, LE = { 110, 0, 0 } },
+					strike = { Root = { -10, 14, 0, 0, -0.3, -0.3 }, Waist = { -12, 20, 0 }, Neck = { -4, -10, 0 }, RS = { 92, 0, 4 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 88, 0, -6 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { -12, 16, 0, 0, -0.32, -0.34 }, Waist = { -14, 22, 0 }, Neck = { -6, -12, 0 }, RS = { 96, 0, 6 }, RE = { 10, 0, 0 }, RW = { -10, 0, 0 }, LS = { 92, 0, -8 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+					hold = 0.15, shake = true, fx = { { "beam", color = SODA, length = 14, width = 2.2, at = "hand" }, { "particles", tex = "spark", color = SODA, dir = "front", at = "hand", time = 0.4, speed = 22, size = 0.5, rate = 90 } },
+					text = "À FOND !", hitText = "ARROSÉ !",
+				},
+				-- →L : il lance le tonneau entier, qui roule droit sur l'adversaire
+				S_side = {
+					label = "Lancer de tonneau", kind = "projectile", startup = 0.26, active = 0, recovery = 0.55,
+					damage = 17, kbBase = 36, kbGrowth = 66, kbAngle = 32,
+					projectile = { speed = 70, angle = 0, gravity = 0, lifetime = 0.75, size = 2.6, color = WOODY, visual = "barrel" },
+					windup = { Root = { 10, -34, 0, 0, -0.25, 0.3 }, Waist = { 12, -38, 0 }, Neck = { 8, 22, 0 }, RS = { 150, 0, 30 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, -30 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -16, 22, 0, 0, -0.34, -0.45 }, Waist = { -18, 28, 0 }, Neck = { -6, -16, 0 }, RS = { 94, 0, 4 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, -4 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+					follow = { Root = { -18, 26, 0, 0, -0.36, -0.5 }, Waist = { -22, 32, 0 }, Neck = { -8, -18, 0 }, RS = { 98, 0, 6 }, RE = { 4, 0, 0 }, RW = { 6, 0, 0 }, LS = { 94, 0, -6 }, LE = { 4, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.52 } },
+					hideProp = "tonneau", fx = { { "burst", color = WOODY, size = 2.5, at = "hand" }, "dust" }, text = "ROULE !", hitText = "TONNEAU !",
+				},
+				-- ↓L : il frappe le sol avec le tonneau : onde de choc qui secoue tout le couloir
+				S_down = {
+					label = "Onde de tonneau", startup = 0.26, active = 0.2, recovery = 0.55,
+					damage = 15, hitbox = box(14, 5, 7, 0.5), kbBase = 32, kbGrowth = 55, kbAngle = 50,
+					status = { name = "stunned", duration = 1 },
+					windup = { Root = { -8, 0, 0, 0, -0.2, 0.1 }, Waist = { -16, 0, 0 }, Neck = { -14, 0, 0 }, RS = { 170, 0, 10 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 170, 0, -10 }, LE = { 30, 0, 0 } },
+					strike = { Root = { 22, 0, 0, 0, -0.9, -0.2 }, Waist = { 30, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 40, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -10 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					follow = { Root = { 24, 0, 0, 0, -0.95, -0.24 }, Waist = { 32, 0, 0 }, Neck = { 18, 0, 0 }, RS = { 36, 0, 12 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 36, 0, -12 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.32 } },
+					hold = 0.1, fx = { "thud", { "ring", color = WOODY, radius = 7, at = "feet" }, { "beam", color = Color3.fromRGB(230, 220, 200), length = 14, width = 2.5, at = "feet" }, { "shake", amount = 0.35 } },
+					text = "BADABOUM !", hitText = "SECOUÉ !",
+				},
+				-- ↑L : il monte sur le tonneau qui explose de pression : décollage en diagonale dans une gerbe de soda
+				S_up = {
+					label = "Tonneau-propulseur", startup = 0.14, active = 0.3, recovery = 0.42,
+					damage = 15, hitbox = box(10, 11, 3, 4), kbBase = 34, kbGrowth = 56, kbAngle = 72, selfVelocity = Vector2.new(42, 84),
+					windup = { Root = { 6, 0, 0, 0, -0.8, 0.1 }, Waist = { -10, 0, 0 }, Neck = { 26, 0, 0 }, RS = { 40, 0, 20 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -20 }, LE = { 110, 0, 0 }, RH = { 40, 0, 0 }, RK = { -60, 0, 0 } },
+					strike = { Root = { -40, 0, 0, 0, 0.4, -0.2 }, Waist = { -6, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 170, 0, 20 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 170, 0, -20 }, LE = { 10, 0, 0 }, RH = { -25, 0, 5 }, RK = { -30, 0, 0 }, LH = { -15, 0, -5 }, LK = { -50, 0, 0 } },
+					follow = { Root = { -44, 0, 0, 0, 0.45, -0.25 }, Waist = { -8, 0, 0 }, Neck = { 32, 0, 0 }, RS = { 176, 0, 22 }, RE = { 10, 0, 0 }, RW = { -8, 0, 0 }, LS = { 176, 0, -22 }, LE = { 10, 0, 0 }, RH = { -30, 0, 6 }, RK = { -35, 0, 0 }, LH = { -20, 0, -6 }, LK = { -55, 0, 0 } },
+					trail = "body", fx = { { "pillar", color = SODA, height = 12, width = 2.5, at = "feet" }, { "burst", color = SODA, size = 3, at = "feet" }, { "ring", color = SODA, radius = 5, at = "feet" } },
+					text = "PROPULSÉ !", hitText = "SPLOUF !",
+				},
+				-- L en l'air : chute en boulet de canon, assis sur le tonneau
+				S_air = {
+					label = "Boulet de tonneau", startup = 0.15, active = 0.35, recovery = 0.42,
+					damage = 15, hitbox = box(6, 5, 2, -1.5), kbBase = 28, kbGrowth = 58, kbAngle = -40, selfVelocity = Vector2.new(22, -75), armor = true,
+					windup = { Root = { 16, 0, 0 }, Waist = { 10, 0, 0 }, RS = { 160, 0, 20 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 160, 0, -20 }, LE = { 30, 0, 0 }, RH = { 60, 0, 0 }, RK = { -90, 0, 0 }, LH = { 60, 0, 0 }, LK = { -90, 0, 0 } },
+					strike = { Root = { -10, 0, 0 }, Waist = { -8, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 40, 0, 20 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -20 }, LE = { 100, 0, 0 }, RH = { 90, 0, 15 }, RK = { -90, 0, 0 }, LH = { 90, 0, -15 }, LK = { -90, 0, 0 } },
+					follow = { Root = { -14, 0, 0 }, Waist = { -10, 0, 0 }, Neck = { 24, 0, 0 }, RS = { 44, 0, 22 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 44, 0, -22 }, LE = { 100, 0, 0 }, RH = { 94, 0, 16 }, RK = { -94, 0, 0 }, LH = { 94, 0, -16 }, LK = { -94, 0, 0 } },
+					trail = "body", fx = { "thud", "dust" }, hitText = "BOULET !",
+				},
+				-- Y : le tonneau explose de pression entre ses bras, un raz-de-marée de soda sur tout le couloir
+				SUPER = {
+					label = "Raz-de-marée de soda !", startup = 0.4, active = 0.3, recovery = 0.7,
+					damage = 24, hitbox = box(16, 7, 8, 1.5), kbBase = 46, kbGrowth = 96, kbAngle = 35, armor = true,
+					status = { name = "wet", duration = 3 },
+					windup = { Root = { 0, 0, 0, 0, -0.6, 0.15 }, Waist = { -20, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 60, 0, 10 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -10 }, LE = { 110, 0, 0 } },
+					strike = { Root = { -16, 0, 0, 0, -0.3, -0.3 }, Waist = { -18, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 90, 0, 60 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, -60 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { -18, 0, 0, 0, -0.32, -0.34 }, Waist = { -20, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 94, 0, 66 }, RE = { 10, 0, 0 }, RW = { -10, 0, 0 }, LS = { 94, 0, -66 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+					hold = 0.2, shake = true, windupFx = { "super", "sodaShake" }, fx = { { "beam", color = SODA, length = 18, width = 6, at = "feet" }, { "burst", color = SODA, size = 5, at = "front" }, { "rain", shape = "ball", color = SODA, count = 12, radius = 8, size = 0.7 }, { "shake", amount = 0.5 } },
+					text = "RAZ-DE-MARÉE !", hitText = "NOYÉ !",
+				},
+				-- →Y : il saute sur le tonneau couché et le fait rouler à toute vitesse à travers le couloir, en équilibriste
+				SUPER_side = {
+					label = "Rouleau compresseur !", startup = 0.4, active = 0.45, recovery = 0.7,
+					damage = 26, hitbox = box(8, 5, 3, 0), kbBase = 50, kbGrowth = 100, kbAngle = 38, selfVelocity = Vector2.new(60, 8), armor = true,
+					windup = { Root = { -6, 0, 0, 0, -0.5, 0 }, Waist = { -10, 0, 0 }, RS = { 60, 0, 30 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -30 }, LE = { 60, 0, 0 }, RH = { 30, 0, 0 }, RK = { -60, 0, 0 } },
+					strike = { Root = { 10, 0, 0, 0, 0.5, 0.1 }, Waist = { 6, 0, 0 }, RS = { 90, 0, 80 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, -80 }, LE = { 0, 0, 0 }, RH = { 20, 0, 20 }, RK = { -20, 0, 0 }, LH = { 20, 0, -20 }, LK = { -20, 0, 0 } },
+					follow = { Root = { 12, 0, 0, 0, 0.52, 0.14 }, Waist = { 8, 0, 0 }, RS = { 94, 0, 84 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 94, 0, -84 }, LE = { 0, 0, 0 }, RH = { 24, 0, 24 }, RK = { -24, 0, 0 }, LH = { 24, 0, -24 }, LK = { -24, 0, 0 } },
+					wobble = true, windupFx = { "super", { "symbols", symbols = { "🛢️" }, count = 5, radius = 3, color = WOODY } }, fx = { { "toss", shape = "cyl", color = WOODY, size = 1.6, count = 1, speed = 30 }, { "particles", tex = "smoke", color = Color3.fromRGB(230, 230, 230), dir = "front", at = "feet", time = 0.5, speed = 14 }, { "shake", amount = 0.4 }, "dust" },
+					text = "ROULEAU COMPRESSEUR !", hitText = "APLATI !",
+				},
+				-- ↑Y : le geyser du tonneau : il saute dessus, le bouchon saute et un geyser le propulse au plafond en emportant tout
+				SUPER_up = {
+					label = "Geyser de tonneau !", startup = 0.35, active = 0.3, recovery = 0.7,
+					damage = 25, hitbox = box(16, 12, 8, 5), kbBase = 46, kbGrowth = 96, kbAngle = 86, invuln = 0.3, selfVelocity = Vector2.new(0, 58),
+					windup = { Root = { -10, 0, 0, 0, -0.95, 0 }, Waist = { -32, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 40, 0, -20 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, 20 }, LE = { 110, 0, 0 } },
+					strike = { Root = { 6, 0, 0, 0, 0.5, 0 }, Waist = { 18, 0, 0 }, Neck = { 50, 0, 0 }, RS = { 186, 0, 6 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 186, 0, -6 }, LE = { 0, 0, 0 }, RH = { 40, 0, 10 }, RK = { -90, 0, 0 }, LH = { 20, 0, -15 }, LK = { -60, 0, 0 } },
+					follow = { Root = { 10, 0, 0, 0, 0.55, 0 }, Waist = { 24, 0, 0 }, Neck = { 56, 0, 0 }, RS = { 188, 0, 10 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 188, 0, -10 }, LE = { 0, 0, 0 }, RH = { 60, 0, 20 }, RK = { -110, 0, 0 }, LH = { 10, 0, -25 }, LK = { -40, 0, 0 } },
+					hold = 0.2, shake = true, spin = { axis = "y", degrees = 360 },
+					windupFx = { "super", "sodaShake" }, fx = { { "pillar", color = SODA, height = 24, width = 3.5, at = "front" }, { "beam", color = SODA, length = 16, width = 5, at = "feet" }, { "burst", color = Color3.fromRGB(255, 240, 150), size = 4, at = "above" }, { "ring", color = SODA, radius = 6, at = "feet" }, "thud" },
+					text = "GEYSER !", hitText = "AU PLAFOND !",
+				},
+				-- ↓Y : il saute à pieds joints sur le tonneau qui s'écrase : la pression fait sauter le sol et tout le couloir avec
+				SUPER_down = {
+					label = "Écrasement de tonneau !", startup = 0.4, active = 0.3, recovery = 0.75,
+					damage = 24, hitbox = box(16, 5, 8, 0), kbBase = 46, kbGrowth = 94, kbAngle = 62, armor = true,
+					status = { name = "stunned", duration = 1.5 },
+					windup = { Root = { -10, 0, 0, 0, 0.3, 0 }, Waist = { -14, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 160, 0, 20 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 160, 0, -20 }, LE = { 30, 0, 0 }, RH = { 60, 0, 0 }, RK = { -90, 0, 0 }, LH = { 60, 0, 0 }, LK = { -90, 0, 0 } },
+					strike = { Root = { 24, 0, 0, 0, -0.95, -0.2 }, Waist = { 32, 0, 0 }, Neck = { 18, 0, 0 }, RS = { 30, 0, 50 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -50 }, LE = { 0, 0, 0 }, FR = { 0, 0, 0, 0, 0, 0.2 }, FL = { 0, 0, 0, 0, 0, -0.2 } },
+					follow = { Root = { 26, 0, 0, 0, -1.0, -0.24 }, Waist = { 34, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 26, 0, 54 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 26, 0, -54 }, LE = { 0, 0, 0 }, FR = { 0, 0, 0, 0, 0, 0.22 }, FL = { 0, 0, 0, 0, 0, -0.22 } },
+					hold = 0.2, windupFx = { "super" }, fx = { "thud", { "ring", color = WOODY, radius = 8, at = "feet" }, { "beam", color = Color3.fromRGB(230, 220, 200), length = 16, width = 3, at = "feet" }, { "toss", shape = "flat", color = WOODY, size = 1, count = 6, speed = 24 }, { "shake", amount = 0.6 } },
+					text = "ÉCRASEMENT !", hitText = "APLATI !",
+				},
+			},
+			links = {
+				P_neutral = { P = "P_side", K = "K_neutral", S = "S_neutral" },
+				P_side = { P = "P_up", K = "K_side", S = "S_side" },
+				P_down = { P = "P_up", K = "K_down", S = "S_down" },
+				K_neutral = { K = "K_side", P = "P_neutral", S = "S_down" },
+				K_side = { P = "P_up", K = "K_up", S = "S_side" },
+				P_dash = { P = "P_side", K = "K_side", S = "S_side" },
+				K_dash = { P = "P_up", S = "S_up" },
+			},
+		},
+	},
 
 	moves = {
 		------------------------------------------------------------------ Attaques légères (P)
@@ -602,6 +1060,20 @@ local data = {
 			strike = { Root = { 0, 0, 0, 0, 0.3, 0 }, Waist = { 20, 0, 0 }, Neck = { 25, 0, 0 }, RS = { 150, 0, 70 }, RE = { 0, 0, 0 }, LS = { 150, 0, -70 }, LE = { 0, 0, 0 }, FR = { 0, 0, 0, 0, 0.2, 0 }, FL = { 0, 0, 0, 0, 0.2, 0 } },
 			follow = { Root = { 4, 0, 0, 0, 0.2, 0 }, Waist = { 24, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 160, 0, 80 }, RE = { 5, 0, 0 }, LS = { 160, 0, -80 }, LE = { 5, 0, 0 } },
 			windupFx = { "super", { "symbols", symbols = { "🥤" }, count = 6, radius = 3, color = SODA } }, text = "TOURNÉE GÉNÉRALE !", hitText = "GLOUPS !",
+		},
+		-- Bouteille-boomerang (→Y) : il fait tournoyer la bouteille au-dessus de sa tête et la lance à plat : elle traverse le couloir
+		-- en fauchant tout le monde, puis revient dans sa main (il la rattrape d'un geste de rock star)
+		SUPER_side = {
+			label = "Bouteille-boomerang !", kind = "projectile", startup = 0.38, active = 0, recovery = 0.65,
+			damage = 24, kbBase = 46, kbGrowth = 96, kbAngle = 34,
+			projectile = { speed = 85, angle = 0, gravity = 0, lifetime = 0.9, size = 3, color = BOTTLE, visual = "bottle", returns = true, pierce = true },
+			status = { name = "inverted", duration = 2 },
+			windup = { Root = { 6, -36, 0, 0, -0.3, 0.3 }, Waist = { 10, -40, 0 }, Neck = { 10, 24, 0 }, RS = { 176, 0, 30 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, -20 }, LE = { 60, 0, 0 } },
+			strike = { Root = { -16, 26, 0, 0, -0.34, -0.5 }, Waist = { -18, 30, 0 }, Neck = { -6, -18, 0 }, RS = { 94, 0, -6 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -40 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+			follow = { Root = { -18, 30, 0, 0, -0.36, -0.55 }, Waist = { -22, 34, 0 }, Neck = { -8, -20, 0 }, RS = { 98, 0, -8 }, RE = { 4, 0, 0 }, RW = { 6, 0, 0 }, LS = { 46, 0, -44 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.52 } },
+			spin = { axis = "y", degrees = 360 }, hideProp = "bottle", windupFx = { "super", { "symbols", symbols = { "🍾" }, count = 6, radius = 3, color = SODA } },
+			fx = { { "burst", color = SODA, size = 3, at = "hand" }, { "ring", color = SODA, radius = 4, at = "front" }, { "shake", amount = 0.3 } },
+			text = "BOOMERANG !", hitText = "FAUCHÉ !",
 		},
 		-- Geyser de soda douteux (↑Y) : accroupi, il secoue la bouteille entre ses genoux et la pointe au ciel : le bouchon saute,
 		-- un geyser de soda roule sur tout le couloir et emporte tout au plafond, lui en vrille

@@ -11,6 +11,13 @@ local Config = require(Shared:WaitForChild("Config"))
 local Poses = require(Shared:WaitForChild("Poses"))
 local AnimCore = require(Shared:WaitForChild("AnimCore"))
 local CharacterList = require(Shared:WaitForChild("CharacterList"))
+local MoveSets = require(Shared:WaitForChild("MoveSets"))
+
+-- L'arme sortie est-elle l'arme emblématique (la bouteille de Gégé, par ex.) ?
+local function iconicWeapon(model, data)
+	local weapon = model:GetAttribute("Weapon") or ""
+	return weapon == "" or weapon == MoveSets.iconic(data)
+end
 
 AnimCore.DODGE_DURATION = Config.DODGE_DURATION
 AnimCore.SMASH_MAX_TIME = Config.SMASH_MAX_TIME
@@ -370,7 +377,7 @@ local function stepModel(model, rig, dt, now, serverNow)
 				frozen = (root.Anchored and not model:GetAttribute("Grabbed")) or model:GetAttribute("Eliminated") == true,
 				style = data and data.style,
 				fidgets = data and data.fidgets, -- manies propres au perso (sinon celles de Gégé)
-				bottle = data ~= nil and data.holdsBottle == true and armed, -- la bouteille sort de la Caisse Bizarre
+				bottle = data ~= nil and data.holdsBottle == true and armed and iconicWeapon(model, data), -- la bouteille sort de la Caisse Bizarre
 				drunk = model:GetAttribute("Bulles") or 0,
 				mirror = mirrored,
 				charging = Animator.isCharging(model),

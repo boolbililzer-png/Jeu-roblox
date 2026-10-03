@@ -158,7 +158,7 @@ local function act(brain, key, extra)
 end
 
 local function pick(brain, candidates)
-	return MoveSets.pick(brain.data.moves, candidates, MoveSets.armed(brain.model))
+	return MoveSets.pick(brain.data.moves, candidates, MoveSets.weapon(brain.model))
 end
 
 local function nearestCrate(root)
@@ -188,7 +188,7 @@ local function think(brain, now)
 	local flags = Statuses.flags(model)
 	local onGround = grounded(brain)
 	if onGround then
-		brain.airJumps = Config.AIR_JUMPS + (model:GetAttribute("AirJumpsBonus") or 0)
+		brain.airJumps = Config.AIR_JUMPS + (model:GetAttribute("AirJumpsBonus") or 0) + (model:GetAttribute("WeaponJumps") or 0)
 		brain.upUsed = false
 	end
 	local busy = os.clock() < s.busyUntil
@@ -300,7 +300,9 @@ local function think(brain, now)
 	local key
 	if super and (Config.INFINITE_SPECIALS or rng:NextNumber() < 0.5) then
 		-- un des 3 Supers selon la position de l'adversaire
-		key = pick(brain, dy > 3 and { "SUPER_up", "SUPER" } or (rng:NextNumber() < 0.5 and { "SUPER_down", "SUPER" } or { "SUPER" }))
+		key = pick(brain, dy > 3 and { "SUPER_up", "SUPER" }
+			or (math.abs(dx) > 7 and { "SUPER_side", "SUPER" })
+			or (rng:NextNumber() < 0.5 and { "SUPER_down", "SUPER" } or { "SUPER" }))
 	elseif not onGround then
 		if dy < -2 then
 			key = pick(brain, roll < 0.5 and { "P_air_down", "P_air" } or { "K_air_down", "K_air" })
@@ -316,7 +318,7 @@ local function think(brain, now)
 	elseif roll < 0.75 then
 		key = pick(brain, roll < 0.6 and { "K_neutral" } or { "K_side", "K_down", "K_neutral" })
 	elseif energy >= 25 then
-		key = pick(brain, ({ { "S_neutral" }, { "S_side" }, { "S_down" }, { "S_hold" } })[rng:NextInteger(1, 4)])
+		key = pick(brain, ({ { "S_neutral" }, { "S_side" }, { "S_down" }, { "S_side", "S_neutral" } })[rng:NextInteger(1, 4)])
 	else
 		key = pick(brain, { "P_down", "P_neutral" })
 	end
