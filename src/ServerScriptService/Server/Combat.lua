@@ -645,7 +645,13 @@ end)
 
 -- Point d'entrée des actions envoyées par les joueurs
 function Combat.handleAction(player, action, extra)
-	local model = player.Character
+	if player.Character then
+		Combat.handleModelAction(player.Character, action, extra)
+	end
+end
+
+-- Même chose pour un combattant piloté par le serveur (bots de server/Bot.lua)
+function Combat.handleModelAction(model, action, extra)
 	local s = model and Fighters.get(model)
 	if not s or model:GetAttribute("Eliminated") then
 		return

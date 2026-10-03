@@ -1333,6 +1333,203 @@ local function onSpecialEvent(kind, data)
 	end
 end
 
+------------------------------------------------------------------------ Pièges d'arène (server/Hazards.lua)
+local function overlay(color, alpha, duration, text)
+	if not screenGui then
+		return
+	end
+	local frame = Instance.new("Frame")
+	frame.Size = UDim2.fromScale(1, 1)
+	frame.BackgroundColor3 = color
+	frame.BackgroundTransparency = 1 - alpha
+	frame.BorderSizePixel = 0
+	frame.ZIndex = 5
+	frame.Parent = screenGui
+	if text then
+		local label = Instance.new("TextLabel")
+		label.BackgroundTransparency = 1
+		label.Size = UDim2.fromScale(1, 0.15)
+		label.Position = UDim2.fromScale(0, 0.42)
+		label.Text = text
+		label.TextScaled = true
+		label.Font = Enum.Font.LuckiestGuy
+		label.TextColor3 = Color3.new(1, 1, 1)
+		label.TextStrokeTransparency = 0
+		label.ZIndex = 6
+		label.Parent = frame
+	end
+	task.delay(duration, function()
+		tween(frame, 0.25, { BackgroundTransparency = 1 })
+		for _, child in ipairs(frame:GetChildren()) do
+			if child:IsA("TextLabel") then
+				tween(child, 0.25, { TextTransparency = 1, TextStrokeTransparency = 1 })
+			end
+		end
+	end)
+	cleanup(frame, duration + 0.4)
+end
+
+local function hazardWarn(data)
+	if screenGui then
+		local label = Instance.new("TextLabel")
+		label.BackgroundTransparency = 1
+		label.Size = UDim2.fromScale(0.7, 0.08)
+		label.Position = UDim2.fromScale(0.15, 0.2)
+		label.Text = (data.icon or "⚠️") .. "  " .. (data.text or "ATTENTION !")
+		label.TextScaled = true
+		label.Font = Enum.Font.LuckiestGuy
+		label.TextColor3 = data.color or YELLOW
+		label.TextStrokeTransparency = 0
+		label.ZIndex = 7
+		label.Parent = screenGui
+		task.spawn(function()
+			for i = 1, 8 do
+				label.Visible = i % 2 == 1
+				task.wait(0.22)
+			end
+			label:Destroy()
+		end)
+	end
+	if data.position and (data.kind == "puddle" or data.kind == "pillar" or data.kind == "launcher" or data.kind == "sand") then
+		Fx.ring(data.position + Vector3.new(0, 0.3, 0), data.color or YELLOW, 5, 2)
+		Fx.popText(data.position + Vector3.new(0, 4, 0), data.icon or "⚠️", Color3.new(1, 1, 1), 1.4, 2)
+	end
+	playSound(SOUND_SWOOSH, nil, 0.5, 0.5)
+end
+
+local function crossing(fromSign, y, color, duration, size)
+	local p = part({ Size = size or Vector3.new(6, 3, 4), Color = color or YELLOW, Material = Enum.Material.SmoothPlastic })
+	local startX, endX = fromSign * 50, -fromSign * 50
+	p.CFrame = CFrame.new(startX, y + 1.5, 0)
+	tween(p, duration, { CFrame = CFrame.new(endX, y + 1.5, 0) }, Enum.EasingStyle.Linear)
+	cleanup(p, duration + 0.1)
+	return p
+end
+
+local function hazardFx(data)
+	local kind = data.kind
+	if kind == "puddle" or kind == "sand" then
+		local puddle = part({ Shape = Enum.PartType.Cylinder, Size = Vector3.new(0.2, 1, 1), Color = data.color or SODA, Transparency = 0.25,
+			Material = kind == "sand" and Enum.Material.Sand or Enum.Material.Glass, CFrame = CFrame.new(data.position) * CFrame.Angles(0, 0, math.rad(90)) })
+		tween(puddle, 0.3, { Size = Vector3.new(0.2, 12, 6) })
+		task.delay(data.time or 4, function()
+			tween(puddle, 0.4, { Transparency = 1 })
+		end)
+		cleanup(puddle, (data.time or 4) + 0.5)
+	elseif kind == "pillar" or kind == "launcher" then
+		local column = part({ Size = Vector3.new(6, 1, 6), Color = data.color or YELLOW, Transparency = 0.25, Material = Enum.Material.Neon, CFrame = CFrame.new(data.position) })
+		tween(column, 0.2, { Size = Vector3.new(6, 28, 6), CFrame = CFrame.new(data.position + Vector3.new(0, 14, 0)) }, Enum.EasingStyle.Back)
+		task.delay(data.time or 0.6, function()
+			tween(column, 0.35, { Transparency = 1 })
+		end)
+		cleanup(column, (data.time or 0.6) + 0.5)
+		CameraRig.shake(0.4, 0.3)
+	elseif kind == "dive" and data.position then
+		local bird = part({ Shape = Enum.PartType.Ball, Size = Vector3.new(2, 2, 2), Color = data.color or YELLOW })
+		bird.CFrame = CFrame.new(data.position + Vector3.new(-30, 30, 0))
+		tween(bird, 0.35, { CFrame = CFrame.new(data.position) }, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
+		cleanup(bird, 0.5)
+		Fx.popText(data.position + Vector3.new(0, 5, 0), "COUCOU !", data.color or YELLOW, 1.2, 1)
+	elseif kind == "shockwave" then
+		local wave = crossing(data.from or 1, 2, data.color, 0.4, Vector3.new(2, 6, 6))
+		wave.Material = Enum.Material.Neon
+		wave.Transparency = 0.4
+		CameraRig.shake(0.3, 0.3)
+	elseif kind == "bounce" then
+		CameraRig.shake(0.6, 0.6)
+		Fx.popText(Vector3.new(0, 8, 0), "BOING BOING !", data.color or YELLOW, 1.6, 1)
+	elseif kind == "spotlight" then
+		overlay(Color3.new(0, 0, 0), 0.82, data.time or 1.5)
+		local root = data.target and data.target:FindFirstChild("HumanoidRootPart")
+		if root then
+			local light = Instance.new("SpotLight")
+			light.Face = Enum.NormalId.Top
+			light.Range = 30
+			light.Brightness = 6
+			light.Parent = root
+			task.delay(data.time or 1.5, function()
+				light:Destroy()
+			end)
+		end
+	elseif kind == "flock" then
+		overlay(Color3.fromRGB(120, 120, 130), 0.6, data.time or 1, "ROUCOULE !")
+		for i = 1, 14 do
+			task.delay(i * 0.04, function()
+				local bird = part({ Shape = Enum.PartType.Ball, Size = Vector3.new(1.4, 1.2, 1.4), Color = Color3.fromRGB(140, 140, 150) })
+				local y = 5 + math.random() * 30
+				bird.CFrame = CFrame.new(-80, y, 1)
+				tween(bird, 1, { CFrame = CFrame.new(80, y + math.random() * 6, 1) }, Enum.EasingStyle.Linear)
+				cleanup(bird, 1.1)
+			end)
+		end
+	elseif kind == "ticket" then
+		local head = data.target and data.target:FindFirstChild("Head")
+		if head then
+			Fx.popText(head.Position + Vector3.new(0, 3, 1), "🎫 0047 !", Color3.fromRGB(255, 60, 60), 1.3, 1.2)
+		end
+	elseif kind == "sweeper" then
+		crossing(data.from or 1, data.y or 2, data.color, data.time or 2.4)
+	elseif kind == "conveyor" then
+		Fx.popText(Vector3.new(0, 6, 0), (data.dir or 1) > 0 and "➡➡➡" or "⬅⬅⬅", data.color or YELLOW, 2, data.time or 4)
+	elseif kind == "notifications" then
+		if screenGui then
+			for i = 1, 7 do
+				local note = Instance.new("TextLabel")
+				note.Size = UDim2.fromScale(0.28, 0.08)
+				note.Position = UDim2.fromScale(math.random() * 0.7, 0.15 + math.random() * 0.6)
+				note.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+				note.Text = ({ "❤️ +1", "🔔 Nouvel abonné !", "💬 trop fort", "👍 GG", "🔥🔥🔥" })[i % 5 + 1]
+				note.TextScaled = true
+				note.Font = Enum.Font.FredokaOne
+				note.ZIndex = 6
+				note.Parent = screenGui
+				Instance.new("UICorner", note).CornerRadius = UDim.new(0, 12)
+				cleanup(note, data.time or 2)
+			end
+		end
+	elseif kind == "blackout" then
+		overlay(Color3.new(0, 0, 0), 0.95, data.time or 1, "⚡ COUPURE ⚡")
+	elseif kind == "whistle" then
+		Fx.popText(Vector3.new(0, 12, 0), "PRRRRRT !", Color3.fromRGB(255, 60, 60), 2, 1)
+		playSound(SOUND_SWOOSH, nil, 0.8, 2)
+	elseif kind == "swap" and data.a and data.b then
+		Fx.burst(data.a, Color3.fromRGB(255, 220, 100), 4)
+		Fx.burst(data.b, Color3.fromRGB(255, 220, 100), 4)
+		Fx.popText((data.a + data.b) / 2 + Vector3.new(0, 6, 0), "🎩 ABRACADABRA !", Color3.fromRGB(255, 220, 100), 1.4, 1)
+	elseif kind == "sunbeam" then
+		overlay(Color3.fromRGB(255, 240, 160), 0.45, 0.6, "☀️")
+	end
+end
+
+-- Public des arènes : les figurants se balancent et sautent de joie aux gros coups
+local crowdBase = {}
+local cheerUntil = 0
+local function updateCrowd()
+	local t = os.clock()
+	local cheering = t < cheerUntil
+	for _, model in ipairs(CollectionService:GetTagged("Public")) do
+		local base = crowdBase[model]
+		if not base and model.PrimaryPart then
+			base = model:GetPivot()
+			crowdBase[model] = base
+		end
+		if base then
+			local phase = (model:GetAttribute("Phase") or 0) * math.pi * 2
+			local hop = cheering and math.abs(math.sin(t * 12 + phase)) * 1.5 or math.abs(math.sin(t * 2.5 + phase)) * 0.3
+			model:PivotTo(base * CFrame.new(0, hop, 0) * CFrame.Angles(0, 0, math.sin(t * 2 + phase) * 0.08))
+		end
+	end
+	for model in pairs(crowdBase) do
+		if not model.Parent then
+			crowdBase[model] = nil
+		end
+	end
+end
+
+function Fx.cheer(duration)
+	cheerUntil = math.max(cheerUntil, os.clock() + (duration or 1.5))
+end
+
 ------------------------------------------------------------------------ Statuts au-dessus de la tête
 local statusGuis = {}
 
@@ -1691,6 +1888,7 @@ end
 
 ------------------------------------------------------------------------ Éjections (KO)
 function Fx.onKO(data)
+	Fx.cheer(2) -- le public exulte
 	-- l'explosion part du bord de l'écran le plus proche, pour rester visible
 	local p = data.position or Vector3.zero
 	local b = Config.BLAST
@@ -1897,7 +2095,12 @@ function Fx.start()
 		elseif kind == "Object" or kind == "ObjectEnd" or kind == "Grapple" or kind == "Counter" or kind == "Absorbed"
 			or kind == "Sneeze" or kind == "Buff" or kind == "Popup" or kind == "FatalFx" then
 			onSpecialEvent(kind, data)
+		elseif kind == "HazardWarn" then
+			hazardWarn(data)
+		elseif kind == "HazardFx" then
+			hazardFx(data)
 		elseif kind == "Fatal" then
+			Fx.cheer(4)
 			local root = data.target and data.target:FindFirstChild("HumanoidRootPart")
 			if root then
 				CameraRig.punch(root.Position, 0.45, 3)
@@ -1913,6 +2116,7 @@ function Fx.start()
 		updateRespawns()
 		updateHeldEffects()
 		updateObjects()
+		updateCrowd()
 	end)
 end
 

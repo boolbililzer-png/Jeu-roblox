@@ -1,11 +1,12 @@
--- Arène de test : « Le Bar-Tabac Chez Gégé », construite par code (aucun modèle à importer).
+-- Arène construite par code (aucun modèle à importer), au thème choisi dans shared/Arenas.lua.
 --
 -- Disposition (de bas en haut) :
 --   rebords bas à gauche et à droite (pleins, avec un geyser de soda chacun)
 --   sol principal (plein, on ne passe pas au travers)
 --   plateformes fines « Traversables » : on saute au travers par en dessous, ↓ maintenu pour redescendre
---     - deux tables de bar à mi-hauteur, une étagère en haut au centre, deux balcons sur les côtés
---     - un plateau de serveur qui va et vient tout en haut
+--     - deux plateformes à mi-hauteur, une en haut au centre, deux balcons sur les côtés
+--     - un plateau qui va et vient tout en haut
+-- Le piège de chaque arène est dans server/Hazards.lua.
 -- Murs invisibles devant et derrière : le combat reste sur un seul plan.
 local RunService = game:GetService("RunService")
 local CollectionService = game:GetService("CollectionService")
@@ -16,12 +17,7 @@ local Config = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Co
 local Arena = {}
 Arena.SOFT_TAG = "Traversable" -- plateformes fines (chaque client les rend traversables pour son perso)
 
-local WOOD = Color3.fromRGB(120, 80, 50)
-local DARK_WOOD = Color3.fromRGB(85, 55, 35)
-local ZINC = Color3.fromRGB(170, 175, 180)
-local WALL = Color3.fromRGB(150, 60, 50)
-local NEON = Color3.fromRGB(255, 120, 200)
-local SODA = Color3.fromRGB(170, 220, 60)
+local NEON = Color3.fromRGB(255, 120, 200) -- liseré des plateformes fines (couleur de l'arène)
 
 local function part(parent, name, size, position, color, props)
 	local p = Instance.new("Part")
@@ -75,95 +71,153 @@ function Arena.movingState(t)
 	return CFrame.new(x, m.y, 0), Vector3.new(vx, 0, 0)
 end
 
-function Arena.build()
+local function material(name, fallback)
+	local ok, value = pcall(function()
+		return Enum.Material[name]
+	end)
+	return ok and value or fallback or Enum.Material.SmoothPlastic
+end
+
+local function decorPiece(parent, spec)
+	local name, shape, size, position, color, mat, options = spec[1], spec[2], spec[3], spec[4], spec[5], spec[6], spec[7] or {}
+	local p
+	if shape == "wedge" then
+		p = Instance.new("WedgePart")
+		p.Anchored = true
+		p.Size = size
+		p.Position = position
+		p.Color = color
+		p.Name = name
+		p.Parent = parent
+	else
+		p = part(parent, name, size, position, color)
+		if shape == "ball" then
+			p.Shape = Enum.PartType.Ball
+		elseif shape == "cyl" then
+			p.Shape = Enum.PartType.Cylinder
+			-- un cylindre Roblox est couché sur X ; axis = "y" (par défaut) le dresse, "z" le tourne vers la caméra
+			local axis = options.axis or "y"
+			local length = axis == "x" and size.X or axis == "z" and size.Z or size.Y
+			local diameter = axis == "x" and size.Y or math.max(size.X, axis == "z" and size.Y or size.Z)
+			p.Size = Vector3.new(length, diameter, diameter)
+			if axis == "y" then
+				p.CFrame = CFrame.new(position) * CFrame.Angles(0, 0, math.rad(90))
+			elseif axis == "z" then
+				p.CFrame = CFrame.new(position) * CFrame.Angles(0, math.rad(90), 0)
+			end
+		end
+	end
+	p.Material = material(mat)
+	p.CanCollide = false
+	p.CanQuery = false
+	p.CanTouch = false
+	p.Transparency = options.transparency or 0
+	p.Reflectance = options.reflect or 0
+	return p
+end
+
+-- Public : figurants simples (corps + tête) ; chaque client les fait se balancer (client/Fx.lua)
+local function buildCrowd(parent, crowd)
+	if not crowd then
+		return
+	end
+	for i, place in ipairs(crowd.places or {}) do
+		local color = crowd.colors[(i - 1) % #crowd.colors + 1]
+		local model = Instance.new("Model")
+		model.Name = "Figurant" .. i
+		local body = part(model, "Corps", Vector3.new(3, 4, 2), place, color, { CanCollide = false, CanQuery = false, CanTouch = false })
+		local head = part(model, "Tete", Vector3.new(2.2, 2.2, 2.2), place + Vector3.new(0, 3.2, 0), Color3.fromRGB(235, 190, 150), { CanCollide = false, CanQuery = false, CanTouch = false, Shape = Enum.PartType.Ball })
+		model.PrimaryPart = body
+		model:SetAttribute("Phase", (i * 0.37) % 1)
+		CollectionService:AddTag(model, "Public")
+		model.Parent = parent
+		local _ = head
+	end
+end
+
+local current = nil
+
+-- Construit l'arène (theme = id de shared/Arenas.lua). La disposition de combat ne change jamais.
+function Arena.build(themeId)
+	local Arenas = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Arenas"))
+	local theme = Arenas.BY_ID[themeId or ""] or Arenas.BY_ID[Arenas.DEFAULT]
 	-- Le modèle « Baseplate » de Roblox Studio gênerait les chutes dans le vide
 	local baseplate = workspace:FindFirstChild("Baseplate")
 	if baseplate then
 		baseplate:Destroy()
 	end
+	local old = workspace:FindFirstChild("Arena")
+	if old then
+		old:Destroy()
+	end
+	current = theme
+	workspace:SetAttribute("ArenaId", theme.id)
+	workspace:SetAttribute("ArenaName", theme.name)
 
 	local folder = Instance.new("Folder")
 	folder.Name = "Arena"
+	local softColor, softMaterial = theme.soft[1], material(theme.soft[2], Enum.Material.Metal)
+	NEON = theme.edge or NEON
 
 	-- Sols pleins
-	part(folder, "SolPrincipal", Vector3.new(90, 4, 12), Vector3.new(0, 0, 0), WOOD, { Material = Enum.Material.WoodPlanks })
-	part(folder, "RebordGauche", Vector3.new(16, 3, 12), Vector3.new(-63, -8, 0), DARK_WOOD, { Material = Enum.Material.WoodPlanks })
-	part(folder, "RebordDroit", Vector3.new(16, 3, 12), Vector3.new(63, -8, 0), DARK_WOOD, { Material = Enum.Material.WoodPlanks })
+	part(folder, "SolPrincipal", Vector3.new(90, 4, 12), Vector3.new(0, 0, 0), theme.floor[1], { Material = material(theme.floor[2]) })
+	part(folder, "RebordGauche", Vector3.new(16, 3, 12), Vector3.new(-63, -8, 0), theme.ledge[1], { Material = material(theme.ledge[2]) })
+	part(folder, "RebordDroit", Vector3.new(16, 3, 12), Vector3.new(63, -8, 0), theme.ledge[1], { Material = material(theme.ledge[2]) })
 
 	-- Plateformes fines
-	softPlatform(folder, "TableGauche", 20, Vector3.new(-28, 15, 0), ZINC)
-	softPlatform(folder, "TableDroite", 20, Vector3.new(28, 15, 0), ZINC)
-	softPlatform(folder, "Etagere", 16, Vector3.new(0, 29, 0), WOOD, Enum.Material.WoodPlanks)
-	softPlatform(folder, "BalconGauche", 14, Vector3.new(-56, 26, 0), ZINC)
-	softPlatform(folder, "BalconDroit", 14, Vector3.new(56, 26, 0), ZINC)
-	local moving = softPlatform(folder, "PlateauServeur", Config.MOVING_PLATFORM.width, Vector3.new(0, Config.MOVING_PLATFORM.y, 0), Color3.fromRGB(200, 200, 210))
+	softPlatform(folder, "PlateformeGauche", 20, Vector3.new(-28, 15, 0), softColor, softMaterial)
+	softPlatform(folder, "PlateformeDroite", 20, Vector3.new(28, 15, 0), softColor, softMaterial)
+	softPlatform(folder, "PlateformeHaute", 16, Vector3.new(0, 29, 0), softColor, softMaterial)
+	softPlatform(folder, "BalconGauche", 14, Vector3.new(-56, 26, 0), softColor, softMaterial)
+	softPlatform(folder, "BalconDroit", 14, Vector3.new(56, 26, 0), softColor, softMaterial)
+	local moving = softPlatform(folder, "PlateauMobile", Config.MOVING_PLATFORM.width, Vector3.new(0, Config.MOVING_PLATFORM.y, 0), softColor, softMaterial)
 	moving:SetAttribute("Moving", true)
 
 	-- Murs invisibles : le combat reste sur un seul plan
 	part(folder, "MurAvant", Vector3.new(500, 500, 1), Vector3.new(0, 50, 3.5), Color3.new(), { Transparency = 1, CanQuery = false })
 	part(folder, "MurArriere", Vector3.new(500, 500, 1), Vector3.new(0, 50, -3.5), Color3.new(), { Transparency = 1, CanQuery = false })
 
-	-- Décor du bar
+	-- Décor (fond seulement)
 	local decor = Instance.new("Folder")
 	decor.Name = "Decor"
 	decor.Parent = folder
-	local noCollide = { CanCollide = false, CanQuery = false }
-	part(decor, "MurDuBar", Vector3.new(220, 110, 2), Vector3.new(0, 25, -30), WALL, { CanCollide = false, CanQuery = false, Material = Enum.Material.Brick })
-	part(decor, "Comptoir", Vector3.new(50, 8, 6), Vector3.new(-10, -6, -22), ZINC, { CanCollide = false, CanQuery = false, Material = Enum.Material.DiamondPlate })
-	part(decor, "JukeBox", Vector3.new(8, 14, 4), Vector3.new(30, -3, -24), NEON, { CanCollide = false, CanQuery = false, Material = Enum.Material.Neon })
-	part(decor, "DistributeurDeSoda", Vector3.new(7, 16, 4), Vector3.new(-40, -2, -24), SODA, noCollide)
-	for i, x in ipairs({ -28, 28 }) do
-		part(decor, "PiedDeTable" .. i, Vector3.new(1.5, 13, 1.5), Vector3.new(x, 8, -3), DARK_WOOD, noCollide)
+	part(decor, "MurDuFond", Vector3.new(220, 110, 2), Vector3.new(0, 25, -30), theme.wall[1], { CanCollide = false, CanQuery = false, Material = material(theme.wall[2]) })
+	for _, spec in ipairs(theme.decor or {}) do
+		decorPiece(decor, spec)
 	end
-	for i, x in ipairs({ -56, 56 }) do
-		part(decor, "Rambarde" .. i, Vector3.new(14, 2.5, 0.4), Vector3.new(x, 27.8, -5.5), ZINC, noCollide)
+	for _, s in ipairs(theme.signs or {}) do
+		sign(decor, s[1], s[2], s[3], s[4])
 	end
-	sign(decor, "CHEZ GÉGÉ", Vector3.new(0, 66, -28.5), Vector3.new(50, 10, 1))
-	sign(decor, "HAPPY HOUR", Vector3.new(-62, 44, -28.5), Vector3.new(28, 6, 1), SODA)
-	sign(decor, "SODA DOUTEUX 1€", Vector3.new(62, 44, -28.5), Vector3.new(30, 6, 1), Color3.fromRGB(255, 200, 60))
+	buildCrowd(decor, theme.crowd)
 
 	folder.Parent = workspace
 
-	local projectiles = Instance.new("Folder")
-	projectiles.Name = "Projectiles"
-	projectiles.Parent = workspace
+	if not workspace:FindFirstChild("Projectiles") then
+		local projectiles = Instance.new("Folder")
+		projectiles.Name = "Projectiles"
+		projectiles.Parent = workspace
+	end
 
 	-- Le plateau va et vient. Les clients font le même calcul pour que les joueurs posés dessus soient
-	-- emportés sans saccade ; la version du serveur sert au mannequin et aux objets.
-	RunService.Heartbeat:Connect(function()
+	-- emportés sans saccade ; la version du serveur sert aux bots, au mannequin et aux objets.
+	if Arena.movingConnection then
+		Arena.movingConnection:Disconnect()
+	end
+	Arena.movingConnection = RunService.Heartbeat:Connect(function()
 		local cframe, velocity = Arena.movingState(workspace:GetServerTimeNow())
 		moving.CFrame = cframe
 		moving.AssemblyLinearVelocity = velocity
 	end)
 
 	local lighting = game:GetService("Lighting")
-	lighting.ClockTime = 20
-	lighting.Ambient = Color3.fromRGB(120, 90, 110)
-	lighting.OutdoorAmbient = Color3.fromRGB(140, 110, 130)
+	lighting.ClockTime = theme.sky[1]
+	lighting.Ambient = theme.sky[2]
+	lighting.OutdoorAmbient = theme.sky[3]
+	return theme
 end
 
--- Geysers de soda (piège de l'arène, coupé avec Config.ARENA_HAZARDS) : de temps en temps un rebord
--- bouillonne puis crache un jet qui envoie en l'air ceux qui sont dessus. onErupt(position) applique l'éjection.
-function Arena.startHazards(fxRemote, onErupt)
-	if not Config.ARENA_HAZARDS then
-		return
-	end
-	local spots = { Vector3.new(-63, -6.5, 0), Vector3.new(63, -6.5, 0) }
-	task.spawn(function()
-		task.wait(15)
-		while true do
-			local spot = spots[math.random(#spots)]
-			if fxRemote then
-				fxRemote:FireAllClients("GeyserWarn", { position = spot })
-			end
-			task.wait(1.3)
-			if fxRemote then
-				fxRemote:FireAllClients("Geyser", { position = spot })
-			end
-			onErupt(spot)
-			task.wait(math.random(9, 14))
-		end
-	end)
+function Arena.current()
+	return current
 end
 
 return Arena

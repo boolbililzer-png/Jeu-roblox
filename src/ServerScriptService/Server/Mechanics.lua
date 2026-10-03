@@ -96,10 +96,6 @@ function Mechanics.passive(model)
 	return passive
 end
 
-local function kindOf(model)
-	local p = Mechanics.passive(model)
-	return p and p.kind
-end
 
 function Mechanics.meter(model)
 	return model:GetAttribute("Meter") or 0
@@ -255,9 +251,9 @@ function Mechanics.onHit(attacker, target, move, damage, direction)
 		elseif kind == "fresh" and Mechanics.meter(attacker) >= p.threshold and (move.kind or "melee") == "melee" then
 			Fighters.applyStatus(target, "frozen", p.freeze)
 		end
-		if move.burn then
-			Fighters.applyStatus(target, "burning", move.burnTime or 3)
-		end
+	end
+	if move.burn then
+		Fighters.applyStatus(target, "burning", move.burnTime or 3)
 	end
 
 	local tp = Mechanics.passive(target)

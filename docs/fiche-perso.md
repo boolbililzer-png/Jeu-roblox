@@ -221,9 +221,9 @@ look = {
   pièce en (0, −1,3, 0), axe "y").
 - Visez 10 à 25 pièces : silhouette lisible de loin (chapeau, coiffure, lunettes, nez, accessoires
   emblématiques).
-- Matières : "SmoothPlastic", "Plastic", "Fabric", "Wood", "WoodPlanks", "Metal", "Glass", "Neon", "Ice",
-  "Foil", "Marble", "Slate", "Granite", "Sand", "Grass", "Cardboard" n'existe pas : utilisez "Fabric" ou
-  "SmoothPlastic".
+- Matières (noms de Enum.Material) : "SmoothPlastic", "Plastic", "Fabric", "Wood", "WoodPlanks", "Metal",
+  "Glass", "Neon", "Ice", "Foil", "Marble", "Slate", "Granite", "Sand", "Grass", "Cardboard", "Rubber",
+  "Leather", "Concrete", "Brick".
 
 ## Fatals (3, séquence de 3 flèches)
 

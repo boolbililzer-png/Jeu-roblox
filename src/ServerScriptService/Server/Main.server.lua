@@ -52,22 +52,25 @@ knockbackRemote.Parent = remotes
 local fxRemote = Instance.new("RemoteEvent")
 fxRemote.Name = "Fx"
 fxRemote.Parent = remotes
+local menuRemote = Instance.new("RemoteEvent")
+menuRemote.Name = "Menu"
+menuRemote.Parent = remotes
 remotes.Parent = ReplicatedStorage
 
 local Fighters = require(script.Parent:WaitForChild("Fighters"))
-local Arena = require(script.Parent:WaitForChild("Arena"))
 local Combat = require(script.Parent:WaitForChild("Combat"))
 local Match = require(script.Parent:WaitForChild("Match"))
-local Dummy = require(script.Parent:WaitForChild("Dummy"))
 local Mechanics = require(script.Parent:WaitForChild("Mechanics"))
 local Specials = require(script.Parent:WaitForChild("Specials"))
+local Hazards = require(script.Parent:WaitForChild("Hazards"))
+local Lobby = require(script.Parent:WaitForChild("Lobby"))
 
 Fighters.init({ Knockback = knockbackRemote, Fx = fxRemote })
 Fighters.mechanics = Mechanics
 Mechanics.setFxRemote(fxRemote)
 Specials.setFxRemote(fxRemote)
+Hazards.setFxRemote(fxRemote)
 require(script.Parent:WaitForChild("Fatals")).setFxRemote(fxRemote)
-Arena.build()
 Combat.setFatalHandler(Match.tryFatal)
 Combat.setActionHook(Match.onFighterAction)
 Combat.setFxRemote(fxRemote)
@@ -81,21 +84,5 @@ actionRemote.OnServerEvent:Connect(function(player, action, extra)
 end)
 
 Match.start()
-
--- Geysers de soda des rebords : ils envoient en l'air ceux qui sont dessus
-local GEYSER = { damage = 4, kbBase = 90, kbGrowth = 20, kbAngle = 90, hitText = "PSCHHHT !" }
-Arena.startHazards(fxRemote, function(spot)
-	for _, model in ipairs(Fighters.all()) do
-		local root = Fighters.root(model)
-		if root and not root.Anchored then
-			local offset = root.Position - spot
-			if math.abs(offset.X) < 5 and offset.Y > -1 and offset.Y < 16 then
-				Fighters.hit(nil, model, GEYSER, 1, offset.X >= 0 and 1 or -1)
-			end
-		end
-	end
-end)
-
-if Config.SPAWN_DUMMY then
-	Dummy.spawn()
-end
+-- salon : menus, choix du perso et du mode, bots, arènes, résultats (voir server/Lobby.lua)
+Lobby.start(menuRemote)

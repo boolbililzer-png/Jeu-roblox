@@ -304,9 +304,16 @@ function Hud.start()
 		local target = Hud.findFinishable(myModel)
 		if target then
 			local character = CharacterList[myModel:GetAttribute("Character")]
-			local fatal = character and character.fatals[1]
 			local dir = target.HumanoidRootPart.Position.X >= myModel.HumanoidRootPart.Position.X and 1 or -1
-			finishPrompt.Text = "TERMINE-LE !  " .. (fatal and Hud.sequenceText(fatal.sequence, dir) or "")
+			-- les fatals débloqués par la maîtrise s'affichent tous (pas besoin de les mémoriser)
+			local unlocked = Hud.fatalsUnlocked and Hud.fatalsUnlocked(myModel:GetAttribute("Character") or "") or 1
+			local sequences = {}
+			for index, fatal in ipairs(character and character.fatals or {}) do
+				if index <= unlocked then
+					table.insert(sequences, Hud.sequenceText(fatal.sequence, dir))
+				end
+			end
+			finishPrompt.Text = "TERMINE-LE !  " .. table.concat(sequences, "   |   ")
 		else
 			finishPrompt.Text = ""
 		end

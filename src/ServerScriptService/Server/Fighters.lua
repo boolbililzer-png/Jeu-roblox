@@ -82,6 +82,12 @@ function Fighters.register(model, characterId, displayName)
 	end)
 end
 
+-- Retire un combattant du match (fin de partie : les joueurs retournent au salon)
+function Fighters.unregister(model)
+	state[model] = nil
+	CollectionService:RemoveTag(model, Fighters.TAG)
+end
+
 function Fighters.get(model)
 	return state[model]
 end

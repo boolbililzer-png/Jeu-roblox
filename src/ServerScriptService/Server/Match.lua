@@ -23,6 +23,14 @@ local Specials = require(script.Parent:WaitForChild("Specials"))
 
 local Match = {}
 
+-- Branchés par server/Lobby.lua :
+--   Match.characterFor(player) -> id du perso si le joueur participe à la partie en cours, sinon nil (spectateur)
+--   Match.onEnd(group)         -> fin de partie (groupe gagnant ou nil)
+Match.characterFor = nil
+Match.onEnd = nil
+Match.fatalAllowed = nil -- (attaquant, n° du fatal) -> débloqué ?
+local active = false -- une partie est en cours
+
 local roundOver = false
 local suddenDeath = false
 local fxRemote = nil
@@ -114,8 +122,22 @@ local function declareWinner(group)
 	roundOver = true
 	Pickups.reset(false)
 	workspace:SetAttribute("MatchEndsAt", 0)
-	Match.setMessage(group and (groupName(group) .. " GAGNE !") or "ÉGALITÉ !", 6)
-	task.delay(6, startRound)
+	Match.setMessage(group and (groupName(group) .. " GAGNE !") or "ÉGALITÉ !", 4)
+	task.delay(4, function()
+		if Match.onEnd then
+			Match.onEnd(group)
+		else
+			startRound()
+		end
+	end)
+end
+
+-- Groupe (joueur ou équipe) d'un combattant, et nom affiché (pour le salon)
+Match.groupOf = function(model)
+	return groupOf(model)
+end
+Match.groupName = function(group)
+	return groupName(group)
 end
 
 local function eliminate(model)
@@ -485,8 +507,9 @@ function Match.tryFatal(attacker, fatalId)
 	end
 	local character = CharacterList[attacker:GetAttribute("Character")]
 	local fatal = nil
-	for _, f in ipairs(character and character.fatals or {}) do
-		if f.id == fatalId then
+	for index, f in ipairs(character and character.fatals or {}) do
+		-- fatals débloqués par la maîtrise du perso (voir server/Lobby.lua)
+		if f.id == fatalId and (not Match.fatalAllowed or Match.fatalAllowed(attacker, index)) then
 			fatal = f
 		end
 	end
@@ -568,6 +591,59 @@ end
 
 local reloaded = {}
 
+-- Spectateur (au salon, ou pas dans la partie) : le perso attend hors de l'arène, sans être un combattant
+local function park(character)
+	local root = character:FindFirstChild("HumanoidRootPart")
+	if root then
+		root.Anchored = true
+		root.CFrame = CFrame.new(Config.SPECTATOR_POINT + Vector3.new(math.random(-20, 20), 20, 0))
+	end
+	character:SetAttribute("Parked", true)
+end
+Match.park = park
+
+
+-- Règles de la partie : mode "time" (aux points), "stock" (aux vies) ou "training" (sans fin)
+function Match.configure(mode, seconds)
+	Config.MATCH_MODE = mode
+	Config.MATCH_TIME = seconds or Config.MATCH_TIME
+end
+
+function Match.begin()
+	active = true
+	startRound()
+	if Config.MATCH_MODE == "training" then
+		workspace:SetAttribute("MatchEndsAt", 0)
+	end
+end
+
+-- Fin de partie : plus de combattants, les joueurs retournent au salon
+function Match.stop()
+	active = false
+	roundOver = true
+	suddenDeath = false
+	workspace:SetAttribute("MatchEndsAt", 0)
+	workspace:SetAttribute("SuddenDeath", false)
+	Pickups.reset(false)
+	for model in pairs(platforms) do
+		leavePlatform(model)
+	end
+	for _, model in ipairs(Fighters.all()) do
+		Combat.releaseGrabs(model)
+		Pickups.clear(model)
+		Specials.clear(model)
+		Fighters.unregister(model)
+		model:SetAttribute("Eliminated", false)
+		if Players:GetPlayerFromCharacter(model) then
+			park(model)
+		end
+	end
+end
+
+function Match.isActive()
+	return active
+end
+
 local function onCharacterAdded(player, character)
 	-- Perso apparu avec l'avatar Roblox du joueur (avant que le jeu ne mette son corps standard) : on le refait
 	local starter = StarterPlayer:FindFirstChild("StarterCharacter")
@@ -579,9 +655,18 @@ local function onCharacterAdded(player, character)
 	local humanoid = character:WaitForChild("Humanoid")
 	character:WaitForChild("HumanoidRootPart")
 	Match.setupHumanoid(humanoid)
-	local characterData = CharacterList[Config.DEFAULT_CHARACTER]
+	local characterId = Match.characterFor and Match.characterFor(player) or (not Match.characterFor and Config.DEFAULT_CHARACTER) or nil
+	local characterData = characterId and CharacterList[characterId]
+	if not characterData then
+		-- pas dans la partie : costume du perso choisi au salon, et on attend hors de l'arène
+		local choice = CharacterList[player:GetAttribute("Choice") or ""] or CharacterList[Config.DEFAULT_CHARACTER]
+		task.spawn(Costumes.apply, character, choice.costume)
+		park(character)
+		return
+	end
+	character:SetAttribute("Parked", false)
 	Costumes.apply(character, characterData.costume)
-	Match.registerFighter(character, Config.DEFAULT_CHARACTER, player.DisplayName)
+	Match.registerFighter(character, characterData.id, player.DisplayName)
 	task.wait()
 	character:PivotTo(spawnCFrame(#Fighters.all()))
 	if roundOver or suddenDeath then
@@ -609,7 +694,8 @@ function Match.start()
 
 	workspace:SetAttribute("SuddenDeath", false)
 	workspace:SetAttribute("MatchMode", Config.MATCH_MODE)
-	workspace:SetAttribute("MatchEndsAt", Config.MATCH_MODE == "time" and workspace:GetServerTimeNow() + Config.MATCH_TIME or 0)
+	workspace:SetAttribute("MatchEndsAt", 0)
+	roundOver = true -- rien ne se passe avant que le salon lance une partie (Match.begin)
 	-- objets à ramasser ; la bombe éjecte d'office (comme une chute, avec le point pour celui qui l'a lancée)
 	Pickups.start(fxRemote, function(model, creditTo)
 		if not roundOver and not respawning[model] then
@@ -634,7 +720,7 @@ function Match.start()
 			end
 		end
 		local endsAt = workspace:GetAttribute("MatchEndsAt") or 0
-		if not roundOver and not suddenDeath and endsAt > 0 and workspace:GetServerTimeNow() >= endsAt then
+		if active and not roundOver and not suddenDeath and endsAt > 0 and workspace:GetServerTimeNow() >= endsAt then
 			endOfTime()
 		end
 	end)

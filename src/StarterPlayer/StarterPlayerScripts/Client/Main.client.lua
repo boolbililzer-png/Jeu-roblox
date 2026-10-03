@@ -38,7 +38,10 @@ task.spawn(function()
 end)
 
 local controls = Controls.new()
+local Menu = require(script.Parent:WaitForChild("Menu"))
+Menu.start()
 CameraRig.start()
+Hud.fatalsUnlocked = Menu.fatalsUnlocked
 Hud.start()
 Animator.start()
 Fx.start()
@@ -533,7 +536,11 @@ local function tryFatal()
 	end
 	local towards = target.HumanoidRootPart.Position.X >= root.Position.X and "right" or "left"
 	local away = towards == "right" and "left" or "right"
-	for _, fatal in ipairs(characterData().fatals) do
+	local unlocked = Menu.fatalsUnlocked(character:GetAttribute("Character") or "")
+	for index, fatal in ipairs(characterData().fatals) do
+		if index > unlocked then
+			break -- pas encore débloqué (maîtrise niveau 5 et 15)
+		end
 		local sequence = fatal.sequence
 		local count = #sequence
 		if #directionHistory >= count then
@@ -746,6 +753,12 @@ RunService.Heartbeat:Connect(function(dt)
 		moveX = v.X
 	end
 	humanoid:Move(Vector3.new(moveX, 0, 0), false)
+
+	-- Piège de la Salle de Fitness : le tapis de course pousse ceux qui sont sur le sol principal
+	if grounded and (workspace:GetAttribute("ConveyorUntil") or 0) > workspace:GetServerTimeNow() and math.abs(root.Position.X) < 45 and root.Position.Y < 8 then
+		local velocity = root.AssemblyLinearVelocity
+		root.AssemblyLinearVelocity = Vector3.new(velocity.X + (workspace:GetAttribute("ConveyorSpeed") or 0) * dt * 6, velocity.Y, 0)
+	end
 
 	-- Plateformes fines : on les traverse en montant, et ↓ maintenu (sans attaquer) pour redescendre
 	if v.Y < -0.6 and grounded and acting and not busy then
