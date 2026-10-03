@@ -102,7 +102,14 @@ local function strengthenSpecials(data)
 	for key, move in pairs(data.moves) do
 		if string.sub(key, 1, 2) == "S_" and not string.find(key, ".", 1, true) and (move.damage or 0) > 0 and not move._strengthened then
 			move._strengthened = true
-			move.damage = math.max(math.floor(move.damage * Config.S_DAMAGE + 0.5), strongest + Config.S_DAMAGE_OVER_LIGHT)
+			-- la règle porte sur le TOTAL du coup : une rafale ou un coup à plusieurs touches répartit le bonus
+			local hits = move.hits or 1
+			local p = move.projectile
+			if p then
+				hits *= (p.hits or 1) * ((p.fan and p.fan.count) or (p.rain and p.rain.count) or 1)
+			end
+			local total = math.max(move.damage * hits * Config.S_DAMAGE, strongest + Config.S_DAMAGE_OVER_LIGHT)
+			move.damage = math.max(1, math.floor(total / hits + 0.5))
 		end
 	end
 end
