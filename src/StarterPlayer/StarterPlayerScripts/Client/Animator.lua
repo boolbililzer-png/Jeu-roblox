@@ -25,6 +25,11 @@ Animator.onMoveStart = nil
 Animator.onMirror = nil
 -- Appelé avec le diagnostic des articulations : function(model, text, ok)
 Animator.onReport = nil
+-- Évènements de déplacement (branchés par Fx pour la poussière et les anneaux) :
+--   onLand(model, impact 0..1), onTakeoff(model), onAirJump(model)
+Animator.onLand = nil
+Animator.onTakeoff = nil
+Animator.onAirJump = nil
 
 local rigs = {}
 local localCharacter = nil
@@ -177,10 +182,15 @@ function Animator.playDodge(model, startClock)
 end
 
 -- Micro-arrêt sur image à l'impact : la pose reste figée un court instant
-function Animator.freeze(model, duration)
+-- Arrêt sur image à l'impact (hitstop). shake = la victime tremble pendant l'arrêt, comme dans Brawlhalla.
+function Animator.freeze(model, duration, shake)
 	local rig = rigs[model]
 	if rig and Config.HITSTOP then
 		rig.freezeUntil = math.max(rig.freezeUntil, os.clock() + duration)
+		if shake then
+			rig.shakeUntil = math.max(rig.shakeUntil or 0, os.clock() + duration)
+			rig.shakeAmount = shake
+		end
 	end
 end
 
@@ -307,10 +317,20 @@ local function isGrounded(model, root)
 end
 
 local function applyPose(rig, pose)
+	-- victime en plein arrêt sur image : elle tremble
+	local jitter = nil
+	if rig.shakeUntil and os.clock() < rig.shakeUntil then
+		local a = rig.shakeAmount or 0.15
+		jitter = CFrame.new((math.random() - 0.5) * 2 * a, (math.random() - 0.5) * a, 0)
+	end
 	for key, motor in pairs(rig.motors) do
 		local v = pose[key]
 		if v then
-			motor.Transform = toCFrame(v)
+			if key == "Root" and jitter then
+				motor.Transform = jitter * toCFrame(v)
+			else
+				motor.Transform = toCFrame(v)
+			end
 		end
 	end
 end
@@ -364,6 +384,26 @@ local function stepModel(model, rig, dt, now, serverNow)
 				obese = (model:GetAttribute("ObeseUntil") or 0) > serverNow,
 				dashing = now < (rig.dashUntil or 0),
 			})
+			-- poussière et anneaux : atterrissage, décollage, double saut
+			local core = rig.core
+			if core.landAt ~= rig.seenLand then
+				rig.seenLand = core.landAt
+				if Animator.onLand and core.landAt > 0 then
+					Animator.onLand(model, core.landImpact or 0.5)
+				end
+			end
+			if core.takeoffAt ~= rig.seenTakeoff then
+				rig.seenTakeoff = core.takeoffAt
+				if Animator.onTakeoff and core.takeoffAt > 0 then
+					Animator.onTakeoff(model)
+				end
+			end
+			if core.airJumpAt ~= rig.seenAirJump then
+				rig.seenAirJump = core.airJumpAt
+				if Animator.onAirJump and core.airJumpAt > 0 then
+					Animator.onAirJump(model)
+				end
+			end
 		end
 		applyPose(rig, pose)
 	end

@@ -191,6 +191,24 @@ Poses.hit = {
 }
 
 -- Petit coup encaissé : la tête part en arrière, le buste plie, les pieds restent au sol
+-- Éjecté par un coup moyen : plié en deux, les bras et les jambes traînent vers l'attaquant (le corps part en
+-- arrière, les extrémités suivent), comme les persos de Brawlhalla
+Poses.launched = {
+	Root = { 12, 0, 0, 0, 0, 0 },
+	Waist = { -28, 0, 0 },
+	Neck = { -22, 0, 0 },
+	RS = { 75, 0, 35 },
+	RE = { 35, 0, 0 },
+	LS = { 70, 0, -40 },
+	LE = { 45, 0, 0 },
+	RH = { 55, 0, 8 },
+	RK = { -45, 0, 0 },
+	LH = { 35, 0, -8 },
+	LK = { -70, 0, 0 },
+	FR = { 0, 0, 0 },
+	FL = { 0, 0, 0 },
+}
+
 Poses.flinch = {
 	Root = { 8, -8, 0, 0, -0.25, 0.35 },
 	Waist = { 16, -10, 4 },

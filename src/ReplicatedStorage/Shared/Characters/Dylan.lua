@@ -446,9 +446,9 @@ local data = {
 		SUPER_up = {
 			label = "Livraison express en orbite !", superCost = 100, startup = 0.25, active = 0.45, recovery = 0.55,
 			damage = 22, hitbox = box(9, 10, 0, 3), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
-			windup = { Root = { -8, 0, 0, 0, -0.85, 0 }, Waist = { -18, 0, 0 }, RS = { 40, 0, 70 }, RE = { 20, 0, 0 }, LS = { 40, 0, -70 }, LE = { 20, 0, 0 } },
-			strike = { Root = { 10, 0, 0 }, Waist = { 10, 0, 0 }, Neck = { 25, 0, 0 }, RS = { 120, 0, 80 }, RE = { 0, 0, 0 }, LS = { 120, 0, -80 }, LE = { 0, 0, 0 }, RH = { 20, 0, 10 }, RK = { -30, 0, 0 }, LH = { 10, 0, -10 }, LK = { -40, 0, 0 } },
-			follow = { Root = { 12, 0, 0 }, Waist = { 14, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 150, 0, 70 }, RE = { 10, 0, 0 }, LS = { 150, 0, -70 }, LE = { 10, 0, 0 }, RH = { 30, 0, 10 }, RK = { -50, 0, 0 }, LH = { 20, 0, -10 }, LK = { -60, 0, 0 } },
+			windup = { Root = { -12, 0, 0, 0, -0.35, 0 }, Waist = { -16.8, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 48, 0, 36 }, RE = { 72, 0, 0 }, LS = { 48, 0, -36 }, LE = { 72, 0, 0 }, RH = { 48, 0, 0 }, RK = { -120, 0, 0 } },
+			strike = { Root = { -48, 0, 0, 0, -0.3, -0.2 }, Waist = { -24, 0, 0 }, Neck = { 48, 0, 0 }, RS = { 96, 0, 48 }, RE = { 24, 0, 0 }, LS = { 96, 0, -48 }, LE = { 24, 0, 0 }, RH = { -84, 0, 0 }, RK = { -132, 0, 0 }, RA = { -36, 0, 0 } },
+			follow = { Root = { -52.8, 0, 0, 0, -0.3, -0.22 }, Waist = { -26.4, 0, 0 }, Neck = { 52.8, 0, 0 }, RS = { 102, 0, 54 }, RE = { 24, 0, 0 }, LS = { 102, 0, -54 }, LE = { 24, 0, 0 }, RH = { -93.6, 0, 0 }, RK = { -120, 0, 0 }, RA = { -36, 0, 0 } },
 			spin = { axis = "y", degrees = 720 }, selfVelocity = Vector2.new(0, 70),
 			windupFx = { "super" }, trail = "prop", fx = { { "ring", color = Color3.fromRGB(255, 140, 30), radius = 6, at = "feet" }, { "particles", tex = "spark", color = Color3.fromRGB(255, 200, 60), dir = "down", at = "feet", time = 0.6 } }, text = "LIVRÉ EN 2 MIN !", hitText = "COLIS EN ORBITE !",
 		},

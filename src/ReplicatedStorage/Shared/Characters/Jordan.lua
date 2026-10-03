@@ -488,9 +488,9 @@ local data = {
 		SUPER_up = {
 			label = "Uppercut RAGE QUIT !", superCost = 100, startup = 0.3, active = 0.25, recovery = 0.55,
 			damage = 22, hitbox = box(7, 10, 2, 4), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
-			windup = { Root = { -10, -20, 0, 0, -0.9, 0.2 }, Waist = { -25, -20, 0 }, Neck = { -10, 0, 0 }, RS = { -40, 0, 30 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -30 }, LE = { 80, 0, 0 } },
-			strike = { Root = { 8, 15, 0, 0, 0.5, -0.2 }, Waist = { 18, 20, 0 }, Neck = { 35, 0, 0 }, RS = { 180, 0, 10 }, RE = { 5, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -50 }, LE = { 40, 0, 0 }, FR = { 0, 0, 0, 0, 0.6, 0 }, FL = { 0, 0, 0, 0, 0.4, 0 } },
-			follow = { Root = { 12, 20, 0, 0, 0.6, -0.2 }, Waist = { 22, 25, 0 }, Neck = { 40, 0, 0 }, RS = { 190, 0, 15 }, RE = { 10, 0, 0 }, RW = { -20, 0, 0 }, LS = { 30, 0, -60 }, LE = { 30, 0, 0 }, FR = { 0, 0, 0, 0, 0.7, 0 }, FL = { 0, 0, 0, 0, 0.5, 0 } },
+			windup = { Root = { -12, 0, 4.8, 0, -0.6, 0.05 }, Waist = { -28.8, 0, 7.2 }, Neck = { -24, 0, 12 }, RS = { 0, 0, 12 }, RE = { 12, 0, 0 }, LS = { 0, 0, -12 }, LE = { 12, 0, 0 } },
+			strike = { Root = { 12, 0, 0, 0, 0.3, 0 }, Waist = { 16.8, 0, 0 }, Neck = { 26.4, 0, 0 }, RS = { -48, 0, 48 }, RE = { 36, 0, 0 }, LS = { -48, 0, -48 }, LE = { 36, 0, 0 }, RH = { 156, 0, 0 }, RK = { -144, 0, 0 }, RA = { -24, 0, 0 }, FL = { 0, 0, 0, 0, 0.3, 0 } },
+			follow = { Root = { 14.4, 0, 0, 0, 0.35, 0 }, Waist = { 19.2, 0, 0 }, Neck = { 31.2, 0, 0 }, RS = { -54, 0, 50.4 }, RE = { 36, 0, 0 }, LS = { -54, 0, -50.4 }, LE = { 36, 0, 0 }, RH = { 165.6, 0, 0 }, RK = { -150, 0, 0 }, RA = { -24, 0, 0 }, FL = { 0, 0, 0, 0, 0.35, 0 } },
 			hold = 0.25, selfVelocity = Vector2.new(0, 45),
 			windupFx = { "super" }, trail = "prop", fx = { { "symbols", symbols = { "!!", "#@%", "💢" }, count = 6, color = Color3.fromRGB(255, 60, 60) }, { "burst", color = Color3.fromRGB(90, 255, 140), size = 4, at = "above" } }, text = "GG NO RE !", hitText = "ALT+F4 !",
 		},

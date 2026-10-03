@@ -17,7 +17,7 @@ local abs, clamp, sqrt, atan2, asin, acos = math.abs, math.clamp, math.sqrt, mat
 local pi = math.pi
 local KEYS = Poses.KEYS
 local lerp, merge, add = Poses.lerp, Poses.merge, Poses.add
-local easeOut, easeIn, easeInOut, smooth = Poses.easeOut, Poses.easeIn, Poses.easeInOut, Poses.smooth
+local easeOut, easeInOut, smooth = Poses.easeOut, Poses.easeInOut, Poses.smooth
 
 -- Géométrie du rig R15 dans le repère du HumanoidRootPart (studs, avant = -Z)
 AnimCore.RIG = {
@@ -138,6 +138,26 @@ local OMEGA = {
 	FR = 26, FL = 26,
 }
 local ZETA = 0.68
+-- Pendant un coup : le tronc est ferme, les membres claquent et dépassent un peu leur cible (effet cartoon)
+local ZETA_MOVE = {
+	Root = 0.8, Waist = 0.72, Neck = 0.6,
+	RS = 0.58, RE = 0.5, RW = 0.45, LS = 0.58, LE = 0.5, LW = 0.45,
+	RH = 0.62, RK = 0.55, RA = 0.5, LH = 0.62, LK = 0.55, LA = 0.5,
+	FR = 0.8, FL = 0.8,
+}
+-- Raideur des ressorts selon la phase du coup : très nerveux pendant la frappe (la pose est vraiment atteinte),
+-- vif au retour en garde (pas de flottement)
+local PHASE_BOOST = { windup = 2.4, active = 3.2, recovery = 1.8 }
+
+-- Mouvement en fouet (« successive breaking of joints ») : quand le corps passe d'une pose à l'autre, le bassin
+-- part d'abord, puis le buste, l'épaule, le coude et enfin le poignet, qui rattrape tout le monde en claquant.
+-- Valeur = part du temps de transition attendue avant que l'articulation se mette en route.
+local DELAY = {
+	Root = 0, Waist = 0.12, Neck = 0.32,
+	RS = 0.2, RE = 0.36, RW = 0.5, LS = 0.2, LE = 0.36, LW = 0.5,
+	RH = 0.06, RK = 0.18, RA = 0.3, LH = 0.06, LK = 0.18, LA = 0.3,
+	FR = 0.08, FL = 0.08,
+}
 
 ------------------------------------------------------------------------ Miroir
 local MIRROR = { RS = "LS", RE = "LE", RW = "LW", RH = "LH", RK = "LK", RA = "LA", FR = "FL" }
@@ -380,10 +400,26 @@ local function basePose(rig, input, dt)
 			local t = clamp(elapsed / 0.08, 0, 1) * (1 - smooth((elapsed - 0.12) / 0.3))
 			return lerp(stanceFeet(merge(Poses.idle, {})), stanceFeet(merge(Poses.idle, Poses.flinch)), t), "hit"
 		end
-		local spin = -elapsed * clamp(rig.hitPower * 5, 120, 900)
+		-- impact : il se plie autour du coup (0,08 s), puis vole
+		local fold = clamp(elapsed / 0.06, 0, 1) * (1 - smooth((elapsed - 0.06) / 0.18))
 		local flail = sin(now * 25) * 15
+		if rig.hitPower < 115 then
+			-- coup moyen : plié en deux, bras et jambes qui traînent vers l'attaquant, il ne tourne pas
+			local wob = sin(now * 18) * 6
+			return add(merge(Poses.idle, Poses.launched), {
+				Root = { 8 * fold, 0, wob * 0.5, 0, 0, 0 },
+				Waist = { -18 * fold, 0, 0 },
+				RS = { flail * 0.6, 0, 0 },
+				LS = { -flail * 0.6, 0, 0 },
+				RH = { -wob, 0, 0 },
+				LH = { wob, 0, 0 },
+			}), "tumble"
+		end
+		-- gros coup : il tournoie (de plus en plus vite selon la force), les membres en vrac
+		local spin = -elapsed * clamp(rig.hitPower * 5, 360, 1100)
 		return add(merge(Poses.idle, Poses.hit), {
 			Root = { spin, 0, 0 },
+			Waist = { -15 * fold, 0, 0 },
 			RS = { flail, 0, 0 },
 			LS = { -flail, 0, 0 },
 			RH = { -flail, 0, 0 },
@@ -549,6 +585,56 @@ local function compose(base, partial)
 	return out
 end
 
+-- Interpolation en fouet entre deux poses : chaque articulation démarre avec son retard (DELAY × stagger)
+-- et arrive à l'heure, donc les extrémités vont plus vite et claquent
+local function lerpStaggered(a, b, t, ease, stagger)
+	local out = {}
+	for _, key in ipairs(KEYS) do
+		local d = (DELAY[key] or 0) * stagger
+		local tk = clamp((t - d) / (1 - d), 0, 1)
+		local k = ease(tk)
+		local va, vb = a[key] or Poses.ZERO, b[key] or Poses.ZERO
+		local v = {}
+		for i = 1, 6 do
+			local x, y = va[i] or 0, vb[i] or 0
+			v[i] = x + (y - x) * k
+		end
+		out[key] = v
+	end
+	return out
+end
+
+-- Anticipation et poids automatiques des coups au sol : petit recul avant (le corps se ramasse), puis il plonge
+-- dans le coup à l'impact et revient en garde. S'ajoute aux poses écrites dans les fiches.
+local ANTICIPATION = { Root = { 5, 0, 0, 0, -0.12, 0.16 }, Waist = { 4, 0, 0 } }
+local IMPACT = { Root = { -7, 0, 0, 0, -0.14, -0.32 }, Waist = { -6, 0, 0 } }
+local function scaled(p, k)
+	local out = {}
+	for key, v in pairs(p) do
+		out[key] = { (v[1] or 0) * k, (v[2] or 0) * k, (v[3] or 0) * k, (v[4] or 0) * k, (v[5] or 0) * k, (v[6] or 0) * k }
+	end
+	return out
+end
+-- Le coup est-il un coup au sol frappé avec le corps (et pas un saut, une vrille, une recharge…) ?
+local function groundedStrike(key, m)
+	if not key or m.spin or (m.kind and m.kind ~= "melee") then
+		return false
+	end
+	if string.find(key, "air", 1, true) or string.find(key, "EMOTE", 1, true) or string.find(key, "ITEM", 1, true) then
+		return false
+	end
+	return m.selfVelocity == nil or m.selfVelocity.Y == 0
+end
+
+-- Courbe de frappe : part doucement, finit très vite (le coup « claque »)
+local function easeStrike(t)
+	return t * t * t
+end
+-- Courbe d'élan : se ramasse vite puis ralentit (anticipation)
+local function easeWindup(t)
+	return 1 - (1 - t) ^ 3
+end
+
 function AnimCore.moveDuration(m)
 	return math.max(m.startup, 0.02) + math.max(m.active, 0.06) + (m.hold or 0) + math.max(m.recovery, 0.05)
 end
@@ -580,14 +666,24 @@ local function movePose(rig, base, now)
 		return pose, "windup"
 	end
 
+	local weighted = groundedStrike(rig.move.key, m)
 	if elapsed < startup then
-		-- élan (65 % du temps) puis départ du coup, de plus en plus vite jusqu'à l'impact
-		local split = startup * 0.65
+		-- élan (60 % du temps) puis départ du coup en fouet, de plus en plus vite jusqu'à l'impact
+		local split = startup * 0.6
 		local pose
 		if elapsed < split then
-			pose = rig.move.skipWindup and windup or lerp(base, windup, easeOut(elapsed / split))
+			local t = elapsed / split
+			pose = rig.move.skipWindup and windup or lerpStaggered(base, windup, t, easeWindup, 0.5)
+			if weighted then
+				pose = add(pose, scaled(ANTICIPATION, easeWindup(t)))
+			end
 		else
-			pose = lerp(windup, strike, easeIn((elapsed - split) / (startup - split)))
+			local t = (elapsed - split) / (startup - split)
+			pose = lerpStaggered(windup, strike, t, easeStrike, 0.7)
+			if weighted then
+				pose = add(pose, scaled(ANTICIPATION, 1 - t))
+				pose = add(pose, scaled(IMPACT, easeStrike(t)))
+			end
 		end
 		if m.shake then
 			pose = add(pose, { Root = { 0, 0, sin(elapsed * 70) * 4 }, RS = { sin(elapsed * 90) * 12, 0, 0 }, RE = { sin(elapsed * 90 + 1) * 15, 0, 0 } })
@@ -599,7 +695,11 @@ local function movePose(rig, base, now)
 	if elapsed < active + hold then
 		-- le coup continue sur sa lancée après l'impact
 		local progress = elapsed / (active + hold)
-		local pose = lerp(strike, follow, easeOut(progress))
+		local pose = lerpStaggered(strike, follow, progress, easeOut, 0.4)
+		if weighted then
+			-- le poids reste dans le coup puis se relâche
+			pose = add(pose, scaled(IMPACT, 1 - 0.4 * progress))
+		end
 		if m.spin then
 			local angle = m.spin.degrees * easeOut(progress)
 			pose = add(pose, { Root = m.spin.axis == "y" and { 0, angle, 0 } or { -angle, 0, 0 } })
@@ -626,7 +726,12 @@ local function movePose(rig, base, now)
 		end
 	end
 	if elapsed < recovery then
-		return lerp(follow, base, easeInOut(elapsed / recovery)), "recovery"
+		local t = elapsed / recovery
+		local pose = lerpStaggered(follow, base, t, easeInOut, 0.35)
+		if weighted then
+			pose = add(pose, scaled(IMPACT, 0.6 * (1 - easeInOut(t))))
+		end
+		return pose, "recovery"
 	end
 	rig.move = nil
 	return base, nil
@@ -660,7 +765,8 @@ function AnimCore.step(rig, input)
 	local pose = base
 	local movePhase = nil
 	if rig.move and state ~= "tumble" and state ~= "hit" then
-		pose, movePhase = movePose(rig, base, now)
+		-- on vise la pose avec un poil d'avance : les ressorts arrivent ainsi pile à l'impact
+		pose, movePhase = movePose(rig, base, now + 0.03)
 	elseif state == "tumble" or state == "hit" then
 		rig.move = nil
 	end
@@ -686,7 +792,7 @@ function AnimCore.step(rig, input)
 	end
 
 	-- Ressorts : inertie et léger dépassement en fin de mouvement
-	local boost = (movePhase == "windup" or movePhase == "active") and 1.9 or 1
+	local boost = movePhase and PHASE_BOOST[movePhase] or 1
 	if state == "tumble" or state == "dodge" or state == "air" and now - rig.airJumpAt < 0.42 then
 		boost = 2.2
 	end
@@ -704,9 +810,10 @@ function AnimCore.step(rig, input)
 			springs[key] = s
 		end
 		local omega = OMEGA[key] * boost
+		local zeta = movePhase and (ZETA_MOVE[key] or ZETA) or ZETA
 		local v = {}
 		for i = 1, 6 do
-			s.x[i], s.v[i] = springStep(s.x[i], s.v[i], target[i] or 0, omega, ZETA, dt)
+			s.x[i], s.v[i] = springStep(s.x[i], s.v[i], target[i] or 0, omega, zeta, dt)
 			v[i] = s.x[i]
 		end
 		out[key] = v

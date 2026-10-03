@@ -502,9 +502,9 @@ local data = {
 		SUPER_up = {
 			label = "Avalanche inversée !", superCost = 100, startup = 0.3, active = 0.25, recovery = 0.55,
 			damage = 22, hitbox = box(7, 10, 2, 4), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
-			windup = { Root = { -10, -20, 0, 0, -0.9, 0.2 }, Waist = { -25, -20, 0 }, Neck = { -10, 0, 0 }, RS = { -40, 0, 30 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -30 }, LE = { 80, 0, 0 } },
-			strike = { Root = { 8, 15, 0, 0, 0.5, -0.2 }, Waist = { 18, 20, 0 }, Neck = { 35, 0, 0 }, RS = { 180, 0, 10 }, RE = { 5, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -50 }, LE = { 40, 0, 0 }, FR = { 0, 0, 0, 0, 0.6, 0 }, FL = { 0, 0, 0, 0, 0.4, 0 } },
-			follow = { Root = { 12, 20, 0, 0, 0.6, -0.2 }, Waist = { 22, 25, 0 }, Neck = { 40, 0, 0 }, RS = { 190, 0, 15 }, RE = { 10, 0, 0 }, RW = { -20, 0, 0 }, LS = { 30, 0, -60 }, LE = { 30, 0, 0 }, FR = { 0, 0, 0, 0, 0.7, 0 }, FL = { 0, 0, 0, 0, 0.5, 0 } },
+			windup = { Root = { 12, 0, 0, 0, -0.4, 0.2 }, Waist = { 16.8, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 168, 0, 24 }, RE = { 144, 0, 0 }, LS = { 168, 0, -24 }, LE = { 144, 0, 0 } },
+			strike = { Root = { 66, 0, 0, 0, -1.3, 0.5 }, Waist = { 12, 0, 0 }, Neck = { -24, 0, 0 }, RS = { 192, 0, 36 }, RE = { 144, 0, 0 }, LS = { 192, 0, -36 }, LE = { 144, 0, 0 }, RH = { 144, 0, 7.2 }, RK = { 0, 0, 0 }, RA = { 24, 0, 0 }, LH = { 138, 0, -7.2 }, LK = { -12, 0, 0 }, LA = { 24, 0, 0 } },
+			follow = { Root = { 69.6, 0, 0, 0, -1.35, 0.55 }, Waist = { 14.4, 0, 0 }, Neck = { -26.4, 0, 0 }, RS = { 198, 0, 38.4 }, RE = { 150, 0, 0 }, LS = { 198, 0, -38.4 }, LE = { 150, 0, 0 }, RH = { 153.6, 0, 7.2 }, RK = { 0, 0, 0 }, RA = { 24, 0, 0 }, LH = { 146.4, 0, -7.2 }, LK = { -6, 0, 0 }, LA = { 24, 0, 0 } },
 			hold = 0.25, selfVelocity = Vector2.new(0, 45),
 			windupFx = { "super" }, trail = "prop", status = { name = "frozen", duration = 1.2 }, fx = { { "pillar", color = Color3.fromRGB(165, 225, 255), height = 18, width = 4, at = "front" }, { "rain", shape = "ball", color = Color3.fromRGB(248, 252, 255), count = 14, radius = 6 } }, text = "RAFRAÎCHISSANT !", hitText = "GLAGLA !",
 		},

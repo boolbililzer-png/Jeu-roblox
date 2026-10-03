@@ -469,9 +469,9 @@ local data = {
 		SUPER_up = {
 			label = "Turbo-aspiration verticale !", superCost = 100, startup = 0.25, active = 0.45, recovery = 0.55,
 			damage = 22, hitbox = box(9, 10, 0, 3), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
-			windup = { Root = { -8, 0, 0, 0, -0.85, 0 }, Waist = { -18, 0, 0 }, RS = { 40, 0, 70 }, RE = { 20, 0, 0 }, LS = { 40, 0, -70 }, LE = { 20, 0, 0 } },
-			strike = { Root = { 10, 0, 0 }, Waist = { 10, 0, 0 }, Neck = { 25, 0, 0 }, RS = { 120, 0, 80 }, RE = { 0, 0, 0 }, LS = { 120, 0, -80 }, LE = { 0, 0, 0 }, RH = { 20, 0, 10 }, RK = { -30, 0, 0 }, LH = { 10, 0, -10 }, LK = { -40, 0, 0 } },
-			follow = { Root = { 12, 0, 0 }, Waist = { 14, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 150, 0, 70 }, RE = { 10, 0, 0 }, LS = { 150, 0, -70 }, LE = { 10, 0, 0 }, RH = { 30, 0, 10 }, RK = { -50, 0, 0 }, LH = { 20, 0, -10 }, LK = { -60, 0, 0 } },
+			windup = { Root = { -7.2, 0, 0, 0, -0.6, 0 }, Waist = { -18, 0, 0 }, Neck = { -12, 0, 0 }, RS = { -24, 0, 30 }, RE = { 108, 0, 0 }, LS = { -24, 0, -30 }, LE = { 108, 0, 0 } },
+			strike = { Root = { 24, 0, 0, 0, 0.2, 0.3 }, Waist = { 12, 0, 0 }, Neck = { 24, 0, 0 }, RS = { -72, 0, 48 }, RE = { 0, 0, 0 }, LS = { -72, 0, -48 }, LE = { 0, 0, 0 }, RH = { 180, 0, 0 }, RK = { 0, 0, 0 }, RA = { 24, 0, 0 }, LH = { 36, 0, 0 }, LK = { -72, 0, 0 } },
+			follow = { Root = { 26.4, 0, 0, 0, 0.25, 0.35 }, Waist = { 14.4, 0, 0 }, Neck = { 26.4, 0, 0 }, RS = { -74.4, 0, 50.4 }, RE = { 0, 0, 0 }, LS = { -74.4, 0, -50.4 }, LE = { 0, 0, 0 }, RH = { 144, 0, 0 }, RK = { -36, 0, 0 }, LH = { 180, 0, 0 }, LK = { 0, 0, 0 }, LA = { 24, 0, 0 } },
 			spin = { axis = "y", degrees = 720 }, selfVelocity = Vector2.new(0, 70),
 			windupFx = { "super" }, trail = "prop", pull = true, fx = { { "ring", color = Color3.fromRGB(80, 220, 255), radius = 7, at = "root" }, { "particles", tex = "smoke", color = Color3.fromRGB(200, 200, 210), dir = "all", at = "root", time = 0.8 } }, text = "MODE TURBO.EXE", hitText = "ASPIRÉ !",
 		},

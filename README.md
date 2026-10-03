@@ -46,7 +46,13 @@ On ne combine jamais deux boutons : la direction tenue au moment de l'appui choi
 - **Double tap ← ou →** : ruée. P, K ou S pendant la ruée ou juste après donnent un coup de dash, qui garde
   l'élan. On peut aussi marcher pendant un coup (plus lentement).
 - **Spéciaux (L)** : neutre, ↑, →, ↓, maintenu, en l'air… Ils ont une plus grande portée (`Config.S_RANGE`).
-- **↓ maintenu** sur une plateforme fine : on passe au travers.
+- **↓ maintenu** sur une plateforme fine : on passe au travers. **↓ maintenu en l'air** : chute rapide.
+- **Sauts** : 1 au sol et 2 en l'air, puis ↑L pour remonter (comme Brawlhalla).
+- **Esquive de poursuite** : juste après avoir touché, l'esquive revient presque tout de suite pour suivre
+  l'adversaire.
+- **Gravity cancel** : esquive en l'air puis P, K ou L tout de suite = le coup « au sol » en plein vol.
+- **Combos** : les coups qui ont une suite soulèvent un peu l'adversaire et le gardent à portée.
+- **Signatures (L)** : toujours plus fortes que les attaques P / K, et plus de portée.
 - **J et K maintenus au sol** : frappe chargée, comme les smashs.
 - **↑S** sert de remontée et ne coûte pas d'énergie.
 

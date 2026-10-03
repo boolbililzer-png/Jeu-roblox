@@ -17,7 +17,7 @@ local abs, clamp, sqrt, atan2, asin, acos = math.abs, math.clamp, math.sqrt, mat
 local pi = math.pi
 local KEYS = Poses.KEYS
 local lerp, merge, add = Poses.lerp, Poses.merge, Poses.add
-local easeOut, easeIn, easeInOut, smooth = Poses.easeOut, Poses.easeIn, Poses.easeInOut, Poses.smooth
+local easeOut, easeInOut, smooth = Poses.easeOut, Poses.easeInOut, Poses.smooth
 
 -- Géométrie du rig R15 dans le repère du HumanoidRootPart (studs, avant = -Z)
 AnimCore.RIG = {
@@ -138,6 +138,26 @@ local OMEGA = {
 	FR = 26, FL = 26,
 }
 local ZETA = 0.68
+-- Pendant un coup : le tronc est ferme, les membres claquent et dépassent un peu leur cible (effet cartoon)
+local ZETA_MOVE = {
+	Root = 0.8, Waist = 0.72, Neck = 0.6,
+	RS = 0.58, RE = 0.5, RW = 0.45, LS = 0.58, LE = 0.5, LW = 0.45,
+	RH = 0.62, RK = 0.55, RA = 0.5, LH = 0.62, LK = 0.55, LA = 0.5,
+	FR = 0.8, FL = 0.8,
+}
+-- Raideur des ressorts selon la phase du coup : très nerveux pendant la frappe (la pose est vraiment atteinte),
+-- vif au retour en garde (pas de flottement)
+local PHASE_BOOST = { windup = 2.4, active = 3.2, recovery = 1.8 }
+
+-- Mouvement en fouet (« successive breaking of joints ») : quand le corps passe d'une pose à l'autre, le bassin
+-- part d'abord, puis le buste, l'épaule, le coude et enfin le poignet, qui rattrape tout le monde en claquant.
+-- Valeur = part du temps de transition attendue avant que l'articulation se mette en route.
+local DELAY = {
+	Root = 0, Waist = 0.12, Neck = 0.32,
+	RS = 0.2, RE = 0.36, RW = 0.5, LS = 0.2, LE = 0.36, LW = 0.5,
+	RH = 0.06, RK = 0.18, RA = 0.3, LH = 0.06, LK = 0.18, LA = 0.3,
+	FR = 0.08, FL = 0.08,
+}
 
 ------------------------------------------------------------------------ Miroir
 local MIRROR = { RS = "LS", RE = "LE", RW = "LW", RH = "LH", RK = "LK", RA = "LA", FR = "FL" }
@@ -380,10 +400,26 @@ local function basePose(rig, input, dt)
 			local t = clamp(elapsed / 0.08, 0, 1) * (1 - smooth((elapsed - 0.12) / 0.3))
 			return lerp(stanceFeet(merge(Poses.idle, {})), stanceFeet(merge(Poses.idle, Poses.flinch)), t), "hit"
 		end
-		local spin = -elapsed * clamp(rig.hitPower * 5, 120, 900)
+		-- impact : il se plie autour du coup (0,08 s), puis vole
+		local fold = clamp(elapsed / 0.06, 0, 1) * (1 - smooth((elapsed - 0.06) / 0.18))
 		local flail = sin(now * 25) * 15
+		if rig.hitPower < 115 then
+			-- coup moyen : plié en deux, bras et jambes qui traînent vers l'attaquant, il ne tourne pas
+			local wob = sin(now * 18) * 6
+			return add(merge(Poses.idle, Poses.launched), {
+				Root = { 8 * fold, 0, wob * 0.5, 0, 0, 0 },
+				Waist = { -18 * fold, 0, 0 },
+				RS = { flail * 0.6, 0, 0 },
+				LS = { -flail * 0.6, 0, 0 },
+				RH = { -wob, 0, 0 },
+				LH = { wob, 0, 0 },
+			}), "tumble"
+		end
+		-- gros coup : il tournoie (de plus en plus vite selon la force), les membres en vrac
+		local spin = -elapsed * clamp(rig.hitPower * 5, 360, 1100)
 		return add(merge(Poses.idle, Poses.hit), {
 			Root = { spin, 0, 0 },
+			Waist = { -15 * fold, 0, 0 },
 			RS = { flail, 0, 0 },
 			LS = { -flail, 0, 0 },
 			RH = { -flail, 0, 0 },
@@ -549,6 +585,56 @@ local function compose(base, partial)
 	return out
 end
 
+-- Interpolation en fouet entre deux poses : chaque articulation démarre avec son retard (DELAY × stagger)
+-- et arrive à l'heure, donc les extrémités vont plus vite et claquent
+local function lerpStaggered(a, b, t, ease, stagger)
+	local out = {}
+	for _, key in ipairs(KEYS) do
+		local d = (DELAY[key] or 0) * stagger
+		local tk = clamp((t - d) / (1 - d), 0, 1)
+		local k = ease(tk)
+		local va, vb = a[key] or Poses.ZERO, b[key] or Poses.ZERO
+		local v = {}
+		for i = 1, 6 do
+			local x, y = va[i] or 0, vb[i] or 0
+			v[i] = x + (y - x) * k
+		end
+		out[key] = v
+	end
+	return out
+end
+
+-- Anticipation et poids automatiques des coups au sol : petit recul avant (le corps se ramasse), puis il plonge
+-- dans le coup à l'impact et revient en garde. S'ajoute aux poses écrites dans les fiches.
+local ANTICIPATION = { Root = { 5, 0, 0, 0, -0.12, 0.16 }, Waist = { 4, 0, 0 } }
+local IMPACT = { Root = { -7, 0, 0, 0, -0.14, -0.32 }, Waist = { -6, 0, 0 } }
+local function scaled(p, k)
+	local out = {}
+	for key, v in pairs(p) do
+		out[key] = { (v[1] or 0) * k, (v[2] or 0) * k, (v[3] or 0) * k, (v[4] or 0) * k, (v[5] or 0) * k, (v[6] or 0) * k }
+	end
+	return out
+end
+-- Le coup est-il un coup au sol frappé avec le corps (et pas un saut, une vrille, une recharge…) ?
+local function groundedStrike(key, m)
+	if not key or m.spin or (m.kind and m.kind ~= "melee") then
+		return false
+	end
+	if string.find(key, "air", 1, true) or string.find(key, "EMOTE", 1, true) or string.find(key, "ITEM", 1, true) then
+		return false
+	end
+	return m.selfVelocity == nil or m.selfVelocity.Y == 0
+end
+
+-- Courbe de frappe : part doucement, finit très vite (le coup « claque »)
+local function easeStrike(t)
+	return t * t * t
+end
+-- Courbe d'élan : se ramasse vite puis ralentit (anticipation)
+local function easeWindup(t)
+	return 1 - (1 - t) ^ 3
+end
+
 function AnimCore.moveDuration(m)
 	return math.max(m.startup, 0.02) + math.max(m.active, 0.06) + (m.hold or 0) + math.max(m.recovery, 0.05)
 end
@@ -580,14 +666,24 @@ local function movePose(rig, base, now)
 		return pose, "windup"
 	end
 
+	local weighted = groundedStrike(rig.move.key, m)
 	if elapsed < startup then
-		-- élan (65 % du temps) puis départ du coup, de plus en plus vite jusqu'à l'impact
-		local split = startup * 0.65
+		-- élan (60 % du temps) puis départ du coup en fouet, de plus en plus vite jusqu'à l'impact
+		local split = startup * 0.6
 		local pose
 		if elapsed < split then
-			pose = rig.move.skipWindup and windup or lerp(base, windup, easeOut(elapsed / split))
+			local t = elapsed / split
+			pose = rig.move.skipWindup and windup or lerpStaggered(base, windup, t, easeWindup, 0.5)
+			if weighted then
+				pose = add(pose, scaled(ANTICIPATION, easeWindup(t)))
+			end
 		else
-			pose = lerp(windup, strike, easeIn((elapsed - split) / (startup - split)))
+			local t = (elapsed - split) / (startup - split)
+			pose = lerpStaggered(windup, strike, t, easeStrike, 0.7)
+			if weighted then
+				pose = add(pose, scaled(ANTICIPATION, 1 - t))
+				pose = add(pose, scaled(IMPACT, easeStrike(t)))
+			end
 		end
 		if m.shake then
 			pose = add(pose, { Root = { 0, 0, sin(elapsed * 70) * 4 }, RS = { sin(elapsed * 90) * 12, 0, 0 }, RE = { sin(elapsed * 90 + 1) * 15, 0, 0 } })
@@ -599,7 +695,11 @@ local function movePose(rig, base, now)
 	if elapsed < active + hold then
 		-- le coup continue sur sa lancée après l'impact
 		local progress = elapsed / (active + hold)
-		local pose = lerp(strike, follow, easeOut(progress))
+		local pose = lerpStaggered(strike, follow, progress, easeOut, 0.4)
+		if weighted then
+			-- le poids reste dans le coup puis se relâche
+			pose = add(pose, scaled(IMPACT, 1 - 0.4 * progress))
+		end
 		if m.spin then
 			local angle = m.spin.degrees * easeOut(progress)
 			pose = add(pose, { Root = m.spin.axis == "y" and { 0, angle, 0 } or { -angle, 0, 0 } })
@@ -626,7 +726,12 @@ local function movePose(rig, base, now)
 		end
 	end
 	if elapsed < recovery then
-		return lerp(follow, base, easeInOut(elapsed / recovery)), "recovery"
+		local t = elapsed / recovery
+		local pose = lerpStaggered(follow, base, t, easeInOut, 0.35)
+		if weighted then
+			pose = add(pose, scaled(IMPACT, 0.6 * (1 - easeInOut(t))))
+		end
+		return pose, "recovery"
 	end
 	rig.move = nil
 	return base, nil
@@ -660,7 +765,8 @@ function AnimCore.step(rig, input)
 	local pose = base
 	local movePhase = nil
 	if rig.move and state ~= "tumble" and state ~= "hit" then
-		pose, movePhase = movePose(rig, base, now)
+		-- on vise la pose avec un poil d'avance : les ressorts arrivent ainsi pile à l'impact
+		pose, movePhase = movePose(rig, base, now + 0.03)
 	elseif state == "tumble" or state == "hit" then
 		rig.move = nil
 	end
@@ -686,7 +792,7 @@ function AnimCore.step(rig, input)
 	end
 
 	-- Ressorts : inertie et léger dépassement en fin de mouvement
-	local boost = (movePhase == "windup" or movePhase == "active") and 1.9 or 1
+	local boost = movePhase and PHASE_BOOST[movePhase] or 1
 	if state == "tumble" or state == "dodge" or state == "air" and now - rig.airJumpAt < 0.42 then
 		boost = 2.2
 	end
@@ -704,9 +810,10 @@ function AnimCore.step(rig, input)
 			springs[key] = s
 		end
 		local omega = OMEGA[key] * boost
+		local zeta = movePhase and (ZETA_MOVE[key] or ZETA) or ZETA
 		local v = {}
 		for i = 1, 6 do
-			s.x[i], s.v[i] = springStep(s.x[i], s.v[i], target[i] or 0, omega, ZETA, dt)
+			s.x[i], s.v[i] = springStep(s.x[i], s.v[i], target[i] or 0, omega, zeta, dt)
 			v[i] = s.x[i]
 		end
 		out[key] = v
@@ -1852,9 +1959,9 @@ local data = {
 		SUPER_up = {
 			label = "Lancer de jouets !", superCost = 100, startup = 0.25, active = 0.45, recovery = 0.55,
 			damage = 22, hitbox = box(9, 10, 0, 3), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
-			windup = { Root = { -8, 0, 0, 0, -0.85, 0 }, Waist = { -18, 0, 0 }, RS = { 40, 0, 70 }, RE = { 20, 0, 0 }, LS = { 40, 0, -70 }, LE = { 20, 0, 0 } },
-			strike = { Root = { 10, 0, 0 }, Waist = { 10, 0, 0 }, Neck = { 25, 0, 0 }, RS = { 120, 0, 80 }, RE = { 0, 0, 0 }, LS = { 120, 0, -80 }, LE = { 0, 0, 0 }, RH = { 20, 0, 10 }, RK = { -30, 0, 0 }, LH = { 10, 0, -10 }, LK = { -40, 0, 0 } },
-			follow = { Root = { 12, 0, 0 }, Waist = { 14, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 150, 0, 70 }, RE = { 10, 0, 0 }, LS = { 150, 0, -70 }, LE = { 10, 0, 0 }, RH = { 30, 0, 10 }, RK = { -50, 0, 0 }, LH = { 20, 0, -10 }, LK = { -60, 0, 0 } },
+			windup = { Root = { -4.8, 0, 0, 0, -0.7, 0 }, Waist = { -14.4, 0, 0 }, Neck = { -12, 0, 0 }, RS = { 24, 0, 24 }, RE = { 108, 0, 0 }, LS = { 24, 0, -24 }, LE = { 108, 0, 0 } },
+			strike = { Root = { 4.8, 0, 0, 0, 0.45, 0 }, Waist = { 12, 0, 0 }, Neck = { 36, 0, 0 }, RS = { 210, 0, 18 }, RE = { 6, 0, 0 }, RW = { 0, 0, 0 }, LS = { 210, 0, -18 }, LE = { 6, 0, 0 }, FR = { 0, 0, 0, 0, 0.4, 0 }, FL = { 0, 0, 0, 0, 0.4, 0 } },
+			follow = { Root = { 7.2, 0, 0, 0, 0.5, 0 }, Waist = { 14.4, 0, 0 }, Neck = { 40.8, 0, 0 }, RS = { 213.6, 0, 26.4 }, RE = { 12, 0, 0 }, RW = { 0, 0, 0 }, LS = { 213.6, 0, -26.4 }, LE = { 12, 0, 0 }, FR = { 0, 0, 0, 0, 0.45, 0 }, FL = { 0, 0, 0, 0, 0.45, 0 } },
 			spin = { axis = "y", degrees = 720 }, selfVelocity = Vector2.new(0, 70),
 			windupFx = { "super" }, trail = "prop", fx = { { "toss", shape = "ball", color = Color3.fromRGB(150, 200, 255), count = 8, speed = 12, lift = 45 }, { "symbols", symbols = { "😭", "🧸", "🍼" }, count = 6 } }, text = "OUIIIN !", hitText = "BOING !",
 		},
@@ -2604,9 +2711,9 @@ local data = {
 		SUPER_up = {
 			label = "Tampon REFUSÉ céleste !", superCost = 100, startup = 0.3, active = 0.25, recovery = 0.55,
 			damage = 22, hitbox = box(7, 10, 2, 4), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
-			windup = { Root = { -10, -20, 0, 0, -0.9, 0.2 }, Waist = { -25, -20, 0 }, Neck = { -10, 0, 0 }, RS = { -40, 0, 30 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -30 }, LE = { 80, 0, 0 } },
-			strike = { Root = { 8, 15, 0, 0, 0.5, -0.2 }, Waist = { 18, 20, 0 }, Neck = { 35, 0, 0 }, RS = { 180, 0, 10 }, RE = { 5, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -50 }, LE = { 40, 0, 0 }, FR = { 0, 0, 0, 0, 0.6, 0 }, FL = { 0, 0, 0, 0, 0.4, 0 } },
-			follow = { Root = { 12, 20, 0, 0, 0.6, -0.2 }, Waist = { 22, 25, 0 }, Neck = { 40, 0, 0 }, RS = { 190, 0, 15 }, RE = { 10, 0, 0 }, RW = { -20, 0, 0 }, LS = { 30, 0, -60 }, LE = { 30, 0, 0 }, FR = { 0, 0, 0, 0, 0.7, 0 }, FL = { 0, 0, 0, 0, 0.5, 0 } },
+			windup = { Root = { 9.6, 0, 0, 0, -0.7, 0.1 }, Waist = { 7.2, 0, 0 }, Neck = { 7.2, 0, 0 }, RS = { 48, 0, 36 }, RE = { 84, 0, 0 }, LS = { 48, 0, -36 }, LE = { 84, 0, 0 }, RH = { 96, 0, 0 }, RK = { -108, 0, 0 } },
+			strike = { Root = { 30, 0, 0, 0, -0.6, 0.3 }, Waist = { 12, 0, 0 }, Neck = { 18, 0, 0 }, RS = { -36, 0, 48 }, RE = { 24, 0, 0 }, LS = { -36, 0, -48 }, LE = { 24, 0, 0 }, RH = { 180, 0, 0 }, RK = { -6, 0, 0 }, RA = { 24, 0, 0 } },
+			follow = { Root = { 33.6, 0, 0, 0, -0.6, 0.35 }, Waist = { 14.4, 0, 0 }, Neck = { 21.6, 0, 0 }, RS = { -42, 0, 50.4 }, RE = { 24, 0, 0 }, LS = { -42, 0, -50.4 }, LE = { 24, 0, 0 }, RH = { 192, 0, 0 }, RK = { -6, 0, 0 }, RA = { 24, 0, 0 } },
 			hold = 0.25, selfVelocity = Vector2.new(0, 45),
 			windupFx = { "super" }, trail = "prop", status = { name = "waiting", duration = 2 }, fx = { { "text", text = "REFUSÉ", color = Color3.fromRGB(220, 40, 40), at = "above" }, { "rain", shape = "flat", color = Color3.fromRGB(250, 250, 245), count = 12, radius = 6 } }, text = "SUIVANT !", hitText = "TAMPONNÉ !",
 		},
@@ -3397,9 +3504,9 @@ local data = {
 		SUPER_up = {
 			label = "Avalanche inversée !", superCost = 100, startup = 0.3, active = 0.25, recovery = 0.55,
 			damage = 22, hitbox = box(7, 10, 2, 4), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
-			windup = { Root = { -10, -20, 0, 0, -0.9, 0.2 }, Waist = { -25, -20, 0 }, Neck = { -10, 0, 0 }, RS = { -40, 0, 30 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -30 }, LE = { 80, 0, 0 } },
-			strike = { Root = { 8, 15, 0, 0, 0.5, -0.2 }, Waist = { 18, 20, 0 }, Neck = { 35, 0, 0 }, RS = { 180, 0, 10 }, RE = { 5, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -50 }, LE = { 40, 0, 0 }, FR = { 0, 0, 0, 0, 0.6, 0 }, FL = { 0, 0, 0, 0, 0.4, 0 } },
-			follow = { Root = { 12, 20, 0, 0, 0.6, -0.2 }, Waist = { 22, 25, 0 }, Neck = { 40, 0, 0 }, RS = { 190, 0, 15 }, RE = { 10, 0, 0 }, RW = { -20, 0, 0 }, LS = { 30, 0, -60 }, LE = { 30, 0, 0 }, FR = { 0, 0, 0, 0, 0.7, 0 }, FL = { 0, 0, 0, 0, 0.5, 0 } },
+			windup = { Root = { 12, 0, 0, 0, -0.4, 0.2 }, Waist = { 16.8, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 168, 0, 24 }, RE = { 144, 0, 0 }, LS = { 168, 0, -24 }, LE = { 144, 0, 0 } },
+			strike = { Root = { 66, 0, 0, 0, -1.3, 0.5 }, Waist = { 12, 0, 0 }, Neck = { -24, 0, 0 }, RS = { 192, 0, 36 }, RE = { 144, 0, 0 }, LS = { 192, 0, -36 }, LE = { 144, 0, 0 }, RH = { 144, 0, 7.2 }, RK = { 0, 0, 0 }, RA = { 24, 0, 0 }, LH = { 138, 0, -7.2 }, LK = { -12, 0, 0 }, LA = { 24, 0, 0 } },
+			follow = { Root = { 69.6, 0, 0, 0, -1.35, 0.55 }, Waist = { 14.4, 0, 0 }, Neck = { -26.4, 0, 0 }, RS = { 198, 0, 38.4 }, RE = { 150, 0, 0 }, LS = { 198, 0, -38.4 }, LE = { 150, 0, 0 }, RH = { 153.6, 0, 7.2 }, RK = { 0, 0, 0 }, RA = { 24, 0, 0 }, LH = { 146.4, 0, -7.2 }, LK = { -6, 0, 0 }, LA = { 24, 0, 0 } },
 			hold = 0.25, selfVelocity = Vector2.new(0, 45),
 			windupFx = { "super" }, trail = "prop", status = { name = "frozen", duration = 1.2 }, fx = { { "pillar", color = Color3.fromRGB(165, 225, 255), height = 18, width = 4, at = "front" }, { "rain", shape = "ball", color = Color3.fromRGB(248, 252, 255), count = 14, radius = 6 } }, text = "RAFRAÎCHISSANT !", hitText = "GLAGLA !",
 		},
@@ -4205,9 +4312,9 @@ local data = {
 		SUPER_up = {
 			label = "Geyser de bain !", superCost = 100, startup = 0.4, active = 0.3, recovery = 0.6,
 			damage = 22, hitbox = box(8, 14, 4, 6), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
-			windup = { Root = { -12, 0, 0, 0, -0.8, 0.1 }, Waist = { -30, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 150, 0, 20 }, RE = { 40, 0, 0 }, LS = { 150, 0, -20 }, LE = { 40, 0, 0 } },
-			strike = { Root = { 6, 0, 0, 0, 0.1, -0.1 }, Waist = { 16, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 175, 0, 35 }, RE = { 0, 0, 0 }, LS = { 175, 0, -35 }, LE = { 0, 0, 0 }, FR = { 0, 0, 0, 0, 0.2, 0 }, FL = { 0, 0, 0, 0, 0.2, 0 } },
-			follow = { Root = { 8, 0, 0, 0, 0.15, -0.1 }, Waist = { 20, 0, 0 }, Neck = { 35, 0, 0 }, RS = { 180, 0, 45 }, RE = { 5, 0, 0 }, LS = { 180, 0, -45 }, LE = { 5, 0, 0 }, FR = { 0, 0, 0, 0, 0.25, 0 }, FL = { 0, 0, 0, 0, 0.25, 0 } },
+			windup = { Root = { -9.6, 0, 0, 0, -0.5, 0 }, Waist = { -24, 0, 0 }, Neck = { -14.4, 0, 0 }, RS = { 36, 0, -24 }, RE = { 132, 0, 0 }, LS = { 36, 0, 24 }, LE = { 132, 0, 0 } },
+			strike = { Root = { 16.8, 0, 0, 0, -0.1, 0.4 }, Waist = { 24, 0, 0 }, Neck = { 36, 0, 0 }, RS = { 72, 0, 90 }, RE = { 12, 0, 0 }, LS = { 72, 0, -90 }, LE = { 12, 0, 0 }, FR = { 0, 0, 0, 0, 0, 0.4 }, FL = { 0, 0, 0, 0, 0, 0.3 } },
+			follow = { Root = { 19.2, 0, 0, 0, -0.1, 0.5 }, Waist = { 28.8, 0, 0 }, Neck = { 40.8, 0, 0 }, RS = { 84, 0, 98.4 }, RE = { 12, 0, 0 }, LS = { 84, 0, -98.4 }, LE = { 12, 0, 0 }, FR = { 0, 0, 0, 0, 0, 0.5 }, FL = { 0, 0, 0, 0, 0, 0.4 } },
 			hold = 0.45, shake = true,
 			windupFx = { "super" }, status = { name = "wet", duration = 2 }, fx = { { "pillar", color = Color3.fromRGB(80, 180, 255), height = 24, width = 4, at = "front" }, { "puddle", color = Color3.fromRGB(225, 245, 255), width = 6 } }, text = "COIN COIN !", hitText = "SPLAAASH !",
 		},
@@ -4971,9 +5078,9 @@ local data = {
 		SUPER_up = {
 			label = "Flambée verticale !", superCost = 100, startup = 0.4, active = 0.3, recovery = 0.6,
 			damage = 22, hitbox = box(8, 14, 4, 6), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
-			windup = { Root = { -12, 0, 0, 0, -0.8, 0.1 }, Waist = { -30, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 150, 0, 20 }, RE = { 40, 0, 0 }, LS = { 150, 0, -20 }, LE = { 40, 0, 0 } },
-			strike = { Root = { 6, 0, 0, 0, 0.1, -0.1 }, Waist = { 16, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 175, 0, 35 }, RE = { 0, 0, 0 }, LS = { 175, 0, -35 }, LE = { 0, 0, 0 }, FR = { 0, 0, 0, 0, 0.2, 0 }, FL = { 0, 0, 0, 0, 0.2, 0 } },
-			follow = { Root = { 8, 0, 0, 0, 0.15, -0.1 }, Waist = { 20, 0, 0 }, Neck = { 35, 0, 0 }, RS = { 180, 0, 45 }, RE = { 5, 0, 0 }, LS = { 180, 0, -45 }, LE = { 5, 0, 0 }, FR = { 0, 0, 0, 0, 0.25, 0 }, FL = { 0, 0, 0, 0, 0.25, 0 } },
+			windup = { Root = { -14.4, -12, 0, 0, -0.85, 0 }, Waist = { -31.2, -12, 0 }, Neck = { 14.4, 0, 0 }, RS = { 24, 0, 24 }, RE = { 24, 0, 0 }, RW = { -96, 0, 0 }, LS = { 48, 0, -48 }, LE = { 72, 0, 0 } },
+			strike = { Root = { 7.2, 6, 0, 0, 0.35, -0.1 }, Waist = { 19.2, 6, 0 }, Neck = { 36, 0, 0 }, RS = { 180, 0, 18 }, RE = { 12, 0, 0 }, RW = { -108, 0, 0 }, LS = { 36, 0, -72 }, LE = { 48, 0, 0 }, FR = { 0, 0, 0, 0, 0.3, 0 }, FL = { 0, 0, 0, 0, 0.3, 0 } },
+			follow = { Root = { 9.6, 9.6, 0, 0, 0.4, -0.12 }, Waist = { 24, 9.6, 0 }, Neck = { 43.2, 0, 0 }, RS = { 206.4, 0, 12 }, RE = { 12, 0, 0 }, RW = { -72, 0, 0 }, LS = { 30, 0, -78 }, LE = { 48, 0, 0 }, FR = { 0, 0, 0, 0, 0.35, 0 }, FL = { 0, 0, 0, 0, 0.35, 0 } },
 			hold = 0.45, shake = true,
 			windupFx = { "super" }, burn = true, burnTime = 3, fx = { { "pillar", color = Color3.fromRGB(255, 120, 30), height = 24, width = 4, at = "front" }, { "particles", tex = "fire", color = Color3.fromRGB(255, 200, 60), dir = "up", at = "front", time = 0.7, speed = 16 } }, text = "FLAMBÉ MINUTE !", hitText = "BIEN CUIT !",
 		},
@@ -5701,9 +5808,9 @@ local data = {
 		SUPER_up = {
 			label = "Livraison express en orbite !", superCost = 100, startup = 0.25, active = 0.45, recovery = 0.55,
 			damage = 22, hitbox = box(9, 10, 0, 3), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
-			windup = { Root = { -8, 0, 0, 0, -0.85, 0 }, Waist = { -18, 0, 0 }, RS = { 40, 0, 70 }, RE = { 20, 0, 0 }, LS = { 40, 0, -70 }, LE = { 20, 0, 0 } },
-			strike = { Root = { 10, 0, 0 }, Waist = { 10, 0, 0 }, Neck = { 25, 0, 0 }, RS = { 120, 0, 80 }, RE = { 0, 0, 0 }, LS = { 120, 0, -80 }, LE = { 0, 0, 0 }, RH = { 20, 0, 10 }, RK = { -30, 0, 0 }, LH = { 10, 0, -10 }, LK = { -40, 0, 0 } },
-			follow = { Root = { 12, 0, 0 }, Waist = { 14, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 150, 0, 70 }, RE = { 10, 0, 0 }, LS = { 150, 0, -70 }, LE = { 10, 0, 0 }, RH = { 30, 0, 10 }, RK = { -50, 0, 0 }, LH = { 20, 0, -10 }, LK = { -60, 0, 0 } },
+			windup = { Root = { -12, 0, 0, 0, -0.35, 0 }, Waist = { -16.8, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 48, 0, 36 }, RE = { 72, 0, 0 }, LS = { 48, 0, -36 }, LE = { 72, 0, 0 }, RH = { 48, 0, 0 }, RK = { -120, 0, 0 } },
+			strike = { Root = { -48, 0, 0, 0, -0.3, -0.2 }, Waist = { -24, 0, 0 }, Neck = { 48, 0, 0 }, RS = { 96, 0, 48 }, RE = { 24, 0, 0 }, LS = { 96, 0, -48 }, LE = { 24, 0, 0 }, RH = { -84, 0, 0 }, RK = { -132, 0, 0 }, RA = { -36, 0, 0 } },
+			follow = { Root = { -52.8, 0, 0, 0, -0.3, -0.22 }, Waist = { -26.4, 0, 0 }, Neck = { 52.8, 0, 0 }, RS = { 102, 0, 54 }, RE = { 24, 0, 0 }, LS = { 102, 0, -54 }, LE = { 24, 0, 0 }, RH = { -93.6, 0, 0 }, RK = { -120, 0, 0 }, RA = { -36, 0, 0 } },
 			spin = { axis = "y", degrees = 720 }, selfVelocity = Vector2.new(0, 70),
 			windupFx = { "super" }, trail = "prop", fx = { { "ring", color = Color3.fromRGB(255, 140, 30), radius = 6, at = "feet" }, { "particles", tex = "spark", color = Color3.fromRGB(255, 200, 60), dir = "down", at = "feet", time = 0.6 } }, text = "LIVRÉ EN 2 MIN !", hitText = "COLIS EN ORBITE !",
 		},
@@ -6467,9 +6574,9 @@ local data = {
 		SUPER_up = {
 			label = "Extraction royale !", superCost = 100, startup = 0.3, active = 0.25, recovery = 0.55,
 			damage = 22, hitbox = box(7, 10, 2, 4), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
-			windup = { Root = { -10, -20, 0, 0, -0.9, 0.2 }, Waist = { -25, -20, 0 }, Neck = { -10, 0, 0 }, RS = { -40, 0, 30 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -30 }, LE = { 80, 0, 0 } },
-			strike = { Root = { 8, 15, 0, 0, 0.5, -0.2 }, Waist = { 18, 20, 0 }, Neck = { 35, 0, 0 }, RS = { 180, 0, 10 }, RE = { 5, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -50 }, LE = { 40, 0, 0 }, FR = { 0, 0, 0, 0, 0.6, 0 }, FL = { 0, 0, 0, 0, 0.4, 0 } },
-			follow = { Root = { 12, 20, 0, 0, 0.6, -0.2 }, Waist = { 22, 25, 0 }, Neck = { 40, 0, 0 }, RS = { 190, 0, 15 }, RE = { 10, 0, 0 }, RW = { -20, 0, 0 }, LS = { 30, 0, -60 }, LE = { 30, 0, 0 }, FR = { 0, 0, 0, 0, 0.7, 0 }, FL = { 0, 0, 0, 0, 0.5, 0 } },
+			windup = { Root = { 9.6, 0, 0, 0, -0.2, 0.3 }, Waist = { 12, 0, 0 }, Neck = { 7.2, 0, 0 }, LS = { 120, 0, -24 }, LE = { 96, 0, 0 }, LW = { 0, 0, 0 }, RS = { 36, 0, 48 }, RE = { 72, 0, 0 }, RH = { -24, 0, 0 }, RK = { -48, 0, 0 } },
+			strike = { Root = { 28.8, 0, 0, 0, -0.05, 0.4 }, Waist = { 14.4, 0, 0 }, Neck = { -12, 0, 0 }, LS = { 144, 0, -36 }, LE = { 24, 0, 0 }, LW = { 84, 0, 0 }, RS = { -24, 0, 60 }, RE = { 24, 0, 0 }, RH = { 180, 0, 0 }, RK = { -4.8, 0, 0 }, RA = { 24, 0, 0 } },
+			follow = { Root = { 33.6, 0, 0, 0, -0.05, 0.5 }, Waist = { 16.8, 0, 0 }, Neck = { -14.4, 0, 0 }, LS = { 150, 0, -38.4 }, LE = { 24, 0, 0 }, LW = { 96, 0, 0 }, RS = { -30, 0, 62.4 }, RE = { 24, 0, 0 }, RH = { 189.6, 0, 0 }, RK = { -4.8, 0, 0 }, RA = { 24, 0, 0 } },
 			hold = 0.25, selfVelocity = Vector2.new(0, 45),
 			windupFx = { "super" }, trail = "prop", status = { name = "laughing", duration = 2 }, fx = { { "particles", tex = "spark", color = Color3.fromRGB(150, 205, 240), dir = "up", at = "hand", time = 0.5 }, { "text", text = "🦷", at = "above" } }, text = "OUVREZ GRAND !", hitText = "ARRACHÉ !",
 		},
@@ -7344,9 +7451,9 @@ local data = {
 		SUPER_up = {
 			label = "Lévitation ratée !", superCost = 100, startup = 0.25, active = 0.45, recovery = 0.55,
 			damage = 22, hitbox = box(9, 10, 0, 3), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
-			windup = { Root = { -8, 0, 0, 0, -0.85, 0 }, Waist = { -18, 0, 0 }, RS = { 40, 0, 70 }, RE = { 20, 0, 0 }, LS = { 40, 0, -70 }, LE = { 20, 0, 0 } },
-			strike = { Root = { 10, 0, 0 }, Waist = { 10, 0, 0 }, Neck = { 25, 0, 0 }, RS = { 120, 0, 80 }, RE = { 0, 0, 0 }, LS = { 120, 0, -80 }, LE = { 0, 0, 0 }, RH = { 20, 0, 10 }, RK = { -30, 0, 0 }, LH = { 10, 0, -10 }, LK = { -40, 0, 0 } },
-			follow = { Root = { 12, 0, 0 }, Waist = { 14, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 150, 0, 70 }, RE = { 10, 0, 0 }, LS = { 150, 0, -70 }, LE = { 10, 0, 0 }, RH = { 30, 0, 10 }, RK = { -50, 0, 0 }, LH = { 20, 0, -10 }, LK = { -60, 0, 0 } },
+			windup = { Root = { -7.2, 0, 0, 0, -0.5, 0 }, Waist = { -16.8, 0, 0 }, Neck = { 0, 0, 0 }, RS = { 192, 0, -24 }, RE = { 120, 0, 0 }, LS = { 192, 0, 24 }, LE = { 120, 0, 0 } },
+			strike = { Root = { 33.6, 0, 0, 0, -0.15, 0.35 }, Waist = { 14.4, 0, 0 }, Neck = { 24, 0, 0 }, RS = { -36, 0, 72 }, RE = { 24, 0, 0 }, LS = { -36, 0, -72 }, LE = { 24, 0, 0 }, RH = { 180, 0, 0 }, RK = { 0, 0, 0 }, RA = { -24, 0, 0 } },
+			follow = { Root = { 38.4, 0, 0, 0, -0.15, 0.45 }, Waist = { 16.8, 0, 0 }, Neck = { 28.8, 0, 0 }, RS = { -42, 0, 78 }, RE = { 24, 0, 0 }, LS = { -42, 0, -78 }, LE = { 24, 0, 0 }, RH = { 192, 0, 0 }, RK = { 0, 0, 0 }, RA = { -24, 0, 0 } },
 			spin = { axis = "y", degrees = 720 }, selfVelocity = Vector2.new(0, 70),
 			windupFx = { "super" }, trail = "prop", variants = { { label = "Lévitation ratée : colombes !", hitText = "ROUCOU !" }, { label = "Lévitation ratée : BOUM !", damage = 26, hitText = "KABOUM !" }, { label = "Lévitation ratée : lapin !", status = { name = "dog", duration = 2 }, hitText = "COUIC !" } }, fx = { { "particles", tex = "spark", color = Color3.fromRGB(190, 110, 255), dir = "all", at = "root", time = 0.7 } }, text = "ABRACADA… OUPS !", hitText = "TA-DAAA !",
 		},
@@ -8245,9 +8352,9 @@ local data = {
 		SUPER_up = {
 			label = "Bouchon de champagne !", superCost = 100, startup = 0.3, active = 0.25, recovery = 0.55,
 			damage = 22, hitbox = box(7, 10, 2, 4), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
-			windup = { Root = { -10, -20, 0, 0, -0.9, 0.2 }, Waist = { -25, -20, 0 }, Neck = { -10, 0, 0 }, RS = { -40, 0, 30 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -30 }, LE = { 80, 0, 0 } },
-			strike = { Root = { 8, 15, 0, 0, 0.5, -0.2 }, Waist = { 18, 20, 0 }, Neck = { 35, 0, 0 }, RS = { 180, 0, 10 }, RE = { 5, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -50 }, LE = { 40, 0, 0 }, FR = { 0, 0, 0, 0, 0.6, 0 }, FL = { 0, 0, 0, 0, 0.4, 0 } },
-			follow = { Root = { 12, 20, 0, 0, 0.6, -0.2 }, Waist = { 22, 25, 0 }, Neck = { 40, 0, 0 }, RS = { 190, 0, 15 }, RE = { 10, 0, 0 }, RW = { -20, 0, 0 }, LS = { 30, 0, -60 }, LE = { 30, 0, 0 }, FR = { 0, 0, 0, 0, 0.7, 0 }, FL = { 0, 0, 0, 0, 0.5, 0 } },
+			windup = { Root = { -7.2, 0, 0, 0, -0.95, 0 }, Waist = { -42, 0, 0 }, Neck = { -36, 0, 0 }, RS = { -36, 0, 26.4 }, RE = { 48, 0, 0 }, LS = { -36, 0, -26.4 }, LE = { 48, 0, 0 } },
+			strike = { Root = { 2.4, 0, 0, 0, 0.45, 0 }, Waist = { 14.4, 0, 0 }, Neck = { 57.6, 0, 0 }, RS = { -66, 0, 36 }, RE = { 12, 0, 0 }, LS = { -66, 0, -36 }, LE = { 12, 0, 0 }, FR = { 0, 0, 0, 0, 0.3, 0 }, FL = { 0, 0, 0, 0, 0.3, 0 } },
+			follow = { Root = { 4.8, 0, 0, 0, 0.55, 0 }, Waist = { 19.2, 0, 0 }, Neck = { 66, 0, 0 }, RS = { -74.4, 0, 42 }, RE = { 12, 0, 0 }, LS = { -74.4, 0, -42 }, LE = { 12, 0, 0 }, FR = { 0, 0, 0, 0, 0.45, 0 }, FL = { 0, 0, 0, 0, 0.4, 0 } },
 			hold = 0.25, selfVelocity = Vector2.new(0, 45),
 			windupFx = { "super" }, trail = "bottle", fx = { { "pillar", color = Color3.fromRGB(170, 220, 60), height = 22, width = 3, at = "front" }, { "burst", color = Color3.fromRGB(255, 240, 150), size = 4, at = "above" } }, text = "SANTÉ !", hitText = "PLOP !",
 		},
@@ -8930,9 +9037,9 @@ local data = {
 		SUPER_up = {
 			label = "Saut de pom-pom !", superCost = 100, startup = 0.4, active = 0.3, recovery = 0.6,
 			damage = 22, hitbox = box(8, 14, 4, 6), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
-			windup = { Root = { -12, 0, 0, 0, -0.8, 0.1 }, Waist = { -30, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 150, 0, 20 }, RE = { 40, 0, 0 }, LS = { 150, 0, -20 }, LE = { 40, 0, 0 } },
-			strike = { Root = { 6, 0, 0, 0, 0.1, -0.1 }, Waist = { 16, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 175, 0, 35 }, RE = { 0, 0, 0 }, LS = { 175, 0, -35 }, LE = { 0, 0, 0 }, FR = { 0, 0, 0, 0, 0.2, 0 }, FL = { 0, 0, 0, 0, 0.2, 0 } },
-			follow = { Root = { 8, 0, 0, 0, 0.15, -0.1 }, Waist = { 20, 0, 0 }, Neck = { 35, 0, 0 }, RS = { 180, 0, 45 }, RE = { 5, 0, 0 }, LS = { 180, 0, -45 }, LE = { 5, 0, 0 }, FR = { 0, 0, 0, 0, 0.25, 0 }, FL = { 0, 0, 0, 0, 0.25, 0 } },
+			windup = { Root = { -4.8, 0, 0, 0, -0.3, 0.05 }, Waist = { -7.2, 0, 0 }, RS = { 24, 0, 24 }, RE = { 36, 0, 0 }, LS = { 24, 0, -24 }, LE = { 36, 0, 0 }, RH = { 42, 0, 0 }, RK = { -72, 0, 0 }, RA = { -30, 0, 0 } },
+			strike = { Root = { 21.6, 0, 0, 0, -0.05, 0.15 }, Waist = { 14.4, 0, 0 }, Neck = { 19.2, 0, 0 }, RS = { 108, 0, 98.4 }, RE = { 0, 0, 0 }, LS = { 108, 0, -98.4 }, LE = { 0, 0, 0 }, RH = { 201.6, 0, 0 }, RK = { 0, 0, 0 }, RA = { 24, 0, 0 } },
+			follow = { Root = { 24, 0, 0, 0, -0.05, 0.18 }, Waist = { 16.8, 0, 0 }, Neck = { 21.6, 0, 0 }, RS = { 110.4, 0, 103.2 }, RE = { 0, 0, 0 }, LS = { 110.4, 0, -103.2 }, LE = { 0, 0, 0 }, RH = { 211.2, 0, 0 }, RK = { 0, 0, 0 }, RA = { 24, 0, 0 } },
 			hold = 0.45, shake = true,
 			windupFx = { "super" }, trail = "prop", fx = { { "pillar", color = Color3.fromRGB(255, 45, 170), height = 20, width = 4, at = "front" }, { "symbols", symbols = { "♪", "♫", "💥" }, count = 8, color = Color3.fromRGB(220, 255, 40) } }, text = "ET ON SAUTE !", hitText = "DROP !",
 		},
@@ -9696,9 +9803,9 @@ local data = {
 		SUPER_up = {
 			label = "Uppercut RAGE QUIT !", superCost = 100, startup = 0.3, active = 0.25, recovery = 0.55,
 			damage = 22, hitbox = box(7, 10, 2, 4), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
-			windup = { Root = { -10, -20, 0, 0, -0.9, 0.2 }, Waist = { -25, -20, 0 }, Neck = { -10, 0, 0 }, RS = { -40, 0, 30 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -30 }, LE = { 80, 0, 0 } },
-			strike = { Root = { 8, 15, 0, 0, 0.5, -0.2 }, Waist = { 18, 20, 0 }, Neck = { 35, 0, 0 }, RS = { 180, 0, 10 }, RE = { 5, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -50 }, LE = { 40, 0, 0 }, FR = { 0, 0, 0, 0, 0.6, 0 }, FL = { 0, 0, 0, 0, 0.4, 0 } },
-			follow = { Root = { 12, 20, 0, 0, 0.6, -0.2 }, Waist = { 22, 25, 0 }, Neck = { 40, 0, 0 }, RS = { 190, 0, 15 }, RE = { 10, 0, 0 }, RW = { -20, 0, 0 }, LS = { 30, 0, -60 }, LE = { 30, 0, 0 }, FR = { 0, 0, 0, 0, 0.7, 0 }, FL = { 0, 0, 0, 0, 0.5, 0 } },
+			windup = { Root = { -12, 0, 4.8, 0, -0.6, 0.05 }, Waist = { -28.8, 0, 7.2 }, Neck = { -24, 0, 12 }, RS = { 0, 0, 12 }, RE = { 12, 0, 0 }, LS = { 0, 0, -12 }, LE = { 12, 0, 0 } },
+			strike = { Root = { 12, 0, 0, 0, 0.3, 0 }, Waist = { 16.8, 0, 0 }, Neck = { 26.4, 0, 0 }, RS = { -48, 0, 48 }, RE = { 36, 0, 0 }, LS = { -48, 0, -48 }, LE = { 36, 0, 0 }, RH = { 156, 0, 0 }, RK = { -144, 0, 0 }, RA = { -24, 0, 0 }, FL = { 0, 0, 0, 0, 0.3, 0 } },
+			follow = { Root = { 14.4, 0, 0, 0, 0.35, 0 }, Waist = { 19.2, 0, 0 }, Neck = { 31.2, 0, 0 }, RS = { -54, 0, 50.4 }, RE = { 36, 0, 0 }, LS = { -54, 0, -50.4 }, LE = { 36, 0, 0 }, RH = { 165.6, 0, 0 }, RK = { -150, 0, 0 }, RA = { -24, 0, 0 }, FL = { 0, 0, 0, 0, 0.35, 0 } },
 			hold = 0.25, selfVelocity = Vector2.new(0, 45),
 			windupFx = { "super" }, trail = "prop", fx = { { "symbols", symbols = { "!!", "#@%", "💢" }, count = 6, color = Color3.fromRGB(255, 60, 60) }, { "burst", color = Color3.fromRGB(90, 255, 140), size = 4, at = "above" } }, text = "GG NO RE !", hitText = "ALT+F4 !",
 		},
@@ -10447,9 +10554,9 @@ local data = {
 		SUPER_up = {
 			label = "Selfie en contre-plongée !", superCost = 100, startup = 0.3, active = 0.25, recovery = 0.55,
 			damage = 22, hitbox = box(7, 10, 2, 4), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
-			windup = { Root = { -10, -20, 0, 0, -0.9, 0.2 }, Waist = { -25, -20, 0 }, Neck = { -10, 0, 0 }, RS = { -40, 0, 30 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -30 }, LE = { 80, 0, 0 } },
-			strike = { Root = { 8, 15, 0, 0, 0.5, -0.2 }, Waist = { 18, 20, 0 }, Neck = { 35, 0, 0 }, RS = { 180, 0, 10 }, RE = { 5, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -50 }, LE = { 40, 0, 0 }, FR = { 0, 0, 0, 0, 0.6, 0 }, FL = { 0, 0, 0, 0, 0.4, 0 } },
-			follow = { Root = { 12, 20, 0, 0, 0.6, -0.2 }, Waist = { 22, 25, 0 }, Neck = { 40, 0, 0 }, RS = { 190, 0, 15 }, RE = { 10, 0, 0 }, RW = { -20, 0, 0 }, LS = { 30, 0, -60 }, LE = { 30, 0, 0 }, FR = { 0, 0, 0, 0, 0.7, 0 }, FL = { 0, 0, 0, 0, 0.5, 0 } },
+			windup = { Root = { -4.8, 0, 0, 0, -0.3, 0.1 }, Waist = { -7.2, 0, 0 }, Neck = { -12, 24, 0 }, RS = { 24, 0, 36 }, RE = { 72, 0, 0 }, LS = { 120, 0, 24 }, LE = { 36, 0, 0 }, LW = { 0, 0, 0 }, RH = { 36, 0, 0 }, RK = { -84, 0, 0 } },
+			strike = { Root = { 21.6, 0, 0, 0, -0.05, 0.15 }, Waist = { 14.4, 0, 0 }, Neck = { 12, 24, 0 }, RS = { 72, 0, 72 }, RE = { 12, 0, 0 }, LS = { 120, 0, 12 }, LE = { 12, 0, 0 }, LW = { -72, 0, 0 }, RH = { 198, 0, 0 }, RK = { 0, 0, 0 }, RA = { 24, 0, 0 } },
+			follow = { Root = { 24, 0, 0, 0, -0.05, 0.18 }, Waist = { 16.8, 0, 0 }, Neck = { 14.4, 26.4, 0 }, RS = { 74.4, 0, 74.4 }, RE = { 12, 0, 0 }, LS = { 122.4, 0, 12 }, LE = { 12, 0, 0 }, LW = { -72, 0, 0 }, RH = { 206.4, 0, 0 }, RK = { 0, 0, 0 }, RA = { 24, 0, 0 } },
 			hold = 0.25, selfVelocity = Vector2.new(0, 45),
 			windupFx = { "super" }, trail = "prop", status = { name = "blinded", duration = 1.5 }, fx = { { "screen", color = Color3.fromRGB(255, 255, 255), alpha = 0.4 }, { "burst", color = Color3.fromRGB(255, 60, 150), size = 4, at = "above" } }, text = "CHEEEESE !", hitText = "FLASHÉ !",
 		},
@@ -11226,9 +11333,9 @@ local data = {
 		SUPER_up = {
 			label = "Envolée de pelotes !", superCost = 100, startup = 0.4, active = 0.3, recovery = 0.6,
 			damage = 22, hitbox = box(8, 14, 4, 6), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
-			windup = { Root = { -12, 0, 0, 0, -0.8, 0.1 }, Waist = { -30, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 150, 0, 20 }, RE = { 40, 0, 0 }, LS = { 150, 0, -20 }, LE = { 40, 0, 0 } },
-			strike = { Root = { 6, 0, 0, 0, 0.1, -0.1 }, Waist = { 16, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 175, 0, 35 }, RE = { 0, 0, 0 }, LS = { 175, 0, -35 }, LE = { 0, 0, 0 }, FR = { 0, 0, 0, 0, 0.2, 0 }, FL = { 0, 0, 0, 0, 0.2, 0 } },
-			follow = { Root = { 8, 0, 0, 0, 0.15, -0.1 }, Waist = { 20, 0, 0 }, Neck = { 35, 0, 0 }, RS = { 180, 0, 45 }, RE = { 5, 0, 0 }, LS = { 180, 0, -45 }, LE = { 5, 0, 0 }, FR = { 0, 0, 0, 0, 0.25, 0 }, FL = { 0, 0, 0, 0, 0.25, 0 } },
+			windup = { Root = { -12, 12, 0, 0, -0.35, 0 }, Waist = { -28.8, 12, 0 }, Neck = { 36, 0, 0 }, RS = { 24, 0, 36 }, RE = { 72, 0, 0 }, LS = { 48, 0, -18 }, LE = { 132, 0, 0 }, LW = { 0, 0, 0 } },
+			strike = { Root = { 9.6, -6, 0, 0, -0.1, 0.4 }, Waist = { 7.2, -6, 0 }, Neck = { 45.6, 0, 0 }, RS = { -24, 0, 42 }, RE = { 48, 0, 0 }, LS = { 210, 0, -6 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 }, FR = { 0, 0, 0, 0, 0, 0.3 }, FL = { 0, 0, 0, 0, 0, 0.35 } },
+			follow = { Root = { 12, -6, 0, 0, -0.1, 0.45 }, Waist = { 9.6, -6, 0 }, Neck = { 48, 0, 0 }, RS = { -30, 0, 45.6 }, RE = { 48, 0, 0 }, LS = { 216, 0, -2.4 }, LE = { 0, 0, 0 }, LW = { -12, 0, 0 }, FR = { 0, 0, 0, 0, 0, 0.35 }, FL = { 0, 0, 0, 0, 0, 0.4 } },
 			hold = 0.45, shake = true,
 			windupFx = { "super" }, trail = "prop", status = { name = "rooted", duration = 1 }, fx = { { "pillar", color = Color3.fromRGB(230, 120, 170), height = 20, width = 4, at = "front" }, { "toss", shape = "ball", color = Color3.fromRGB(160, 90, 200), count = 6, speed = 10, lift = 40 } }, text = "DE MON TEMPS !", hitText = "EMBOBINÉ !",
 		},
@@ -11952,9 +12059,9 @@ local data = {
 		SUPER_up = {
 			label = "L'Ascenseur invisible !", superCost = 100, startup = 0.3, active = 0.25, recovery = 0.55,
 			damage = 22, hitbox = box(7, 10, 2, 4), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
-			windup = { Root = { -10, -20, 0, 0, -0.9, 0.2 }, Waist = { -25, -20, 0 }, Neck = { -10, 0, 0 }, RS = { -40, 0, 30 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -30 }, LE = { 80, 0, 0 } },
-			strike = { Root = { 8, 15, 0, 0, 0.5, -0.2 }, Waist = { 18, 20, 0 }, Neck = { 35, 0, 0 }, RS = { 180, 0, 10 }, RE = { 5, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -50 }, LE = { 40, 0, 0 }, FR = { 0, 0, 0, 0, 0.6, 0 }, FL = { 0, 0, 0, 0, 0.4, 0 } },
-			follow = { Root = { 12, 20, 0, 0, 0.6, -0.2 }, Waist = { 22, 25, 0 }, Neck = { 40, 0, 0 }, RS = { 190, 0, 15 }, RE = { 10, 0, 0 }, RW = { -20, 0, 0 }, LS = { 30, 0, -60 }, LE = { 30, 0, 0 }, FR = { 0, 0, 0, 0, 0.7, 0 }, FL = { 0, 0, 0, 0, 0.5, 0 } },
+			windup = { Root = { 0, 0, 0, 0, 0.1, 0.3 }, Waist = { 4.8, 0, 0 }, Neck = { 7.2, 0, 0 }, RS = { 12, 0, 24 }, RE = { 48, 0, 0 }, LS = { 12, 0, -24 }, LE = { 48, 0, 0 }, FR = { 0, 0, 0, 0, 0.2, 0.4 }, FL = { 0, 0, 0, 0, 0, -0.2 } },
+			strike = { Root = { 30, 0, 0, 0, -0.05, 0.4 }, Waist = { 12, 0, 0 }, Neck = { 14.4, 0, 0 }, RS = { -36, 0, 66 }, RE = { 12, 0, 0 }, LS = { -36, 0, -66 }, LE = { 12, 0, 0 }, RH = { 186, 0, 0 }, RK = { -6, 0, 0 }, RA = { 30, 0, 0 } },
+			follow = { Root = { 33.6, 0, 0, 0, -0.05, 0.45 }, Waist = { 14.4, 0, 0 }, Neck = { 16.8, 0, 0 }, RS = { -42, 0, 72 }, RE = { 12, 0, 0 }, LS = { -42, 0, -72 }, LE = { 12, 0, 0 }, RH = { 198, 0, 0 }, RK = { 0, 0, 0 }, RA = { 30, 0, 0 } },
 			hold = 0.25, selfVelocity = Vector2.new(0, 45),
 			windupFx = { "super" }, trail = "rightHand", fx = { { "text", text = "[DING]", color = Color3.fromRGB(240, 240, 240), at = "above" }, { "ring", color = Color3.fromRGB(220, 235, 255), radius = 5, at = "front" } }, text = "…", hitText = "[ÉTAGE SUIVANT]",
 		},
@@ -12716,9 +12823,9 @@ local data = {
 		SUPER_up = {
 			label = "Scratch du ciel !", superCost = 100, startup = 0.3, active = 0.25, recovery = 0.55,
 			damage = 22, hitbox = box(7, 10, 2, 4), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
-			windup = { Root = { -10, -20, 0, 0, -0.9, 0.2 }, Waist = { -25, -20, 0 }, Neck = { -10, 0, 0 }, RS = { -40, 0, 30 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -30 }, LE = { 80, 0, 0 } },
-			strike = { Root = { 8, 15, 0, 0, 0.5, -0.2 }, Waist = { 18, 20, 0 }, Neck = { 35, 0, 0 }, RS = { 180, 0, 10 }, RE = { 5, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -50 }, LE = { 40, 0, 0 }, FR = { 0, 0, 0, 0, 0.6, 0 }, FL = { 0, 0, 0, 0, 0.4, 0 } },
-			follow = { Root = { 12, 20, 0, 0, 0.6, -0.2 }, Waist = { 22, 25, 0 }, Neck = { 40, 0, 0 }, RS = { 190, 0, 15 }, RE = { 10, 0, 0 }, RW = { -20, 0, 0 }, LS = { 30, 0, -60 }, LE = { 30, 0, 0 }, FR = { 0, 0, 0, 0, 0.7, 0 }, FL = { 0, 0, 0, 0, 0.5, 0 } },
+			windup = { Root = { -7.2, 0, 0, 0, -0.3, 0.2 }, Waist = { -12, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 36, 0, 36 }, RE = { 72, 0, 0 }, LS = { -48, 0, -24 }, LE = { 120, 0, 0 }, FR = { 0, 0, 0, 0, 0, 0.3 }, FL = { 0, 0, 0, 0, 0.15, 0 } },
+			strike = { Root = { 24, 0, 0, 0, -0.1, 0.3 }, Waist = { 18, 0, 0 }, Neck = { -12, 0, 0 }, RS = { -36, 0, 72 }, RE = { 24, 0, 0 }, LS = { -48, 0, -30 }, LE = { 120, 0, 0 }, RH = { 180, 0, 0 }, RK = { -6, 0, 0 }, RA = { 24, 0, 0 } },
+			follow = { Root = { 26.4, 0, 0, 0, -0.1, 0.35 }, Waist = { 19.2, 0, 0 }, Neck = { -14.4, 0, 0 }, RS = { -38.4, 0, 74.4 }, RE = { 24, 0, 0 }, LS = { -48, 0, -30 }, LE = { 120, 0, 0 }, RH = { 186, 0, 0 }, RK = { -6, 0, 0 }, RA = { 24, 0, 0 } },
 			hold = 0.25, selfVelocity = Vector2.new(0, 45),
 			windupFx = { "super" }, trail = "prop", status = { name = "dancing", duration = 2 }, fx = { { "symbols", symbols = { "♪", "♫", "🎶" }, count = 8, color = Color3.fromRGB(255, 200, 60) }, { "shake", amount = 0.4 } }, text = "ON MONTE LE SON !", hitText = "WIKI-WIKI !",
 		},
@@ -13511,9 +13618,9 @@ local data = {
 		SUPER_up = {
 			label = "Envol de la nuée royale !", superCost = 100, startup = 0.4, active = 0.3, recovery = 0.6,
 			damage = 22, hitbox = box(8, 14, 4, 6), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
-			windup = { Root = { -12, 0, 0, 0, -0.8, 0.1 }, Waist = { -30, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 150, 0, 20 }, RE = { 40, 0, 0 }, LS = { 150, 0, -20 }, LE = { 40, 0, 0 } },
-			strike = { Root = { 6, 0, 0, 0, 0.1, -0.1 }, Waist = { 16, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 175, 0, 35 }, RE = { 0, 0, 0 }, LS = { 175, 0, -35 }, LE = { 0, 0, 0 }, FR = { 0, 0, 0, 0, 0.2, 0 }, FL = { 0, 0, 0, 0, 0.2, 0 } },
-			follow = { Root = { 8, 0, 0, 0, 0.15, -0.1 }, Waist = { 20, 0, 0 }, Neck = { 35, 0, 0 }, RS = { 180, 0, 45 }, RE = { 5, 0, 0 }, LS = { 180, 0, -45 }, LE = { 5, 0, 0 }, FR = { 0, 0, 0, 0, 0.25, 0 }, FL = { 0, 0, 0, 0, 0.25, 0 } },
+			windup = { Root = { -7.2, 0, 0, 0, -0.5, 0.1 }, Waist = { -12, 0, 0 }, Neck = { -9.6, 0, 0 }, RS = { 204, 0, 72 }, RE = { 18, 0, 0 }, LS = { 204, 0, -72 }, LE = { 18, 0, 0 } },
+			strike = { Root = { 14.4, 0, 0, 0, 0.3, 0.3 }, Waist = { 16.8, 0, 0 }, Neck = { 26.4, 0, 0 }, RS = { 24, 0, 90 }, RE = { 12, 0, 0 }, LS = { 24, 0, -90 }, LE = { 12, 0, 0 }, RH = { 72, 0, 0 }, RK = { -108, 0, 0 }, LH = { 48, 0, 0 }, LK = { -84, 0, 0 } },
+			follow = { Root = { 16.8, 0, 0, 0, 0.35, 0.35 }, Waist = { 19.2, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 6, 0, 84 }, RE = { 12, 0, 0 }, LS = { 6, 0, -84 }, LE = { 12, 0, 0 }, RH = { 60, 0, 0 }, RK = { -96, 0, 0 }, LH = { 42, 0, 0 }, LK = { -78, 0, 0 } },
 			hold = 0.45, shake = true,
 			windupFx = { "super" }, status = { name = "blinded", duration = 1.5 }, fx = { { "swarm", shape = "ball", color = Color3.fromRGB(125, 130, 150), count = 10, distance = 14, height = 6 }, { "pillar", color = Color3.fromRGB(150, 150, 170), height = 20, width = 5, at = "front", neon = false } }, text = "ENVOLEZ-VOUS !", hitText = "ROUCOULÉ !",
 		},
@@ -14285,9 +14392,9 @@ local data = {
 		SUPER_up = {
 			label = "Tornade de bandelettes !", superCost = 100, startup = 0.4, active = 0.3, recovery = 0.6,
 			damage = 22, hitbox = box(8, 14, 4, 6), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
-			windup = { Root = { -12, 0, 0, 0, -0.8, 0.1 }, Waist = { -30, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 150, 0, 20 }, RE = { 40, 0, 0 }, LS = { 150, 0, -20 }, LE = { 40, 0, 0 } },
-			strike = { Root = { 6, 0, 0, 0, 0.1, -0.1 }, Waist = { 16, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 175, 0, 35 }, RE = { 0, 0, 0 }, LS = { 175, 0, -35 }, LE = { 0, 0, 0 }, FR = { 0, 0, 0, 0, 0.2, 0 }, FL = { 0, 0, 0, 0, 0.2, 0 } },
-			follow = { Root = { 8, 0, 0, 0, 0.15, -0.1 }, Waist = { 20, 0, 0 }, Neck = { 35, 0, 0 }, RS = { 180, 0, 45 }, RE = { 5, 0, 0 }, LS = { 180, 0, -45 }, LE = { 5, 0, 0 }, FR = { 0, 0, 0, 0, 0.25, 0 }, FL = { 0, 0, 0, 0, 0.25, 0 } },
+			windup = { Root = { -7.2, 0, 0, 0, -0.2, 0 }, Waist = { -9.6, 0, 0 }, Neck = { 24, 0, 12 }, RS = { 24, 0, 36 }, RE = { 36, 0, 0 }, LS = { 180, 0, -12 }, LE = { 144, 0, 0 } },
+			strike = { Root = { 48, 0, 0, 0, -0.9, 0.4 }, Waist = { 12, 0, 0 }, Neck = { 24, 0, 0 }, RS = { 144, 0, 72 }, RE = { 24, 0, 0 }, LS = { 144, 0, -72 }, LE = { 24, 0, 0 }, RH = { 144, 0, 6 }, RK = { -6, 0, 0 }, RA = { 18, 0, 0 }, LH = { 126, 0, -6 }, LK = { -24, 0, 0 }, LA = { 18, 0, 0 } },
+			follow = { Root = { 52.8, 0, 0, 0, -0.95, 0.45 }, Waist = { 14.4, 0, 0 }, Neck = { 26.4, 0, 0 }, RS = { 150, 0, 78 }, RE = { 24, 0, 0 }, LS = { 150, 0, -78 }, LE = { 24, 0, 0 }, RH = { 150, 0, 6 }, RK = { -6, 0, 0 }, RA = { 18, 0, 0 }, LH = { 132, 0, -6 }, LK = { -21.6, 0, 0 }, LA = { 18, 0, 0 } },
 			hold = 0.45, shake = true,
 			windupFx = { "super" }, status = { name = "sneezy", duration = 3 }, fx = { { "pillar", color = Color3.fromRGB(228, 214, 176), height = 22, width = 5, at = "front" }, { "symbols", symbols = { "🤧", "🦠" }, count = 6 } }, text = "ATCHOUM DIVIN !", hitText = "CONTAMINÉ !",
 		},
@@ -15050,9 +15157,9 @@ local data = {
 		SUPER_up = {
 			label = "Turbo-aspiration verticale !", superCost = 100, startup = 0.25, active = 0.45, recovery = 0.55,
 			damage = 22, hitbox = box(9, 10, 0, 3), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
-			windup = { Root = { -8, 0, 0, 0, -0.85, 0 }, Waist = { -18, 0, 0 }, RS = { 40, 0, 70 }, RE = { 20, 0, 0 }, LS = { 40, 0, -70 }, LE = { 20, 0, 0 } },
-			strike = { Root = { 10, 0, 0 }, Waist = { 10, 0, 0 }, Neck = { 25, 0, 0 }, RS = { 120, 0, 80 }, RE = { 0, 0, 0 }, LS = { 120, 0, -80 }, LE = { 0, 0, 0 }, RH = { 20, 0, 10 }, RK = { -30, 0, 0 }, LH = { 10, 0, -10 }, LK = { -40, 0, 0 } },
-			follow = { Root = { 12, 0, 0 }, Waist = { 14, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 150, 0, 70 }, RE = { 10, 0, 0 }, LS = { 150, 0, -70 }, LE = { 10, 0, 0 }, RH = { 30, 0, 10 }, RK = { -50, 0, 0 }, LH = { 20, 0, -10 }, LK = { -60, 0, 0 } },
+			windup = { Root = { -7.2, 0, 0, 0, -0.6, 0 }, Waist = { -18, 0, 0 }, Neck = { -12, 0, 0 }, RS = { -24, 0, 30 }, RE = { 108, 0, 0 }, LS = { -24, 0, -30 }, LE = { 108, 0, 0 } },
+			strike = { Root = { 24, 0, 0, 0, 0.2, 0.3 }, Waist = { 12, 0, 0 }, Neck = { 24, 0, 0 }, RS = { -72, 0, 48 }, RE = { 0, 0, 0 }, LS = { -72, 0, -48 }, LE = { 0, 0, 0 }, RH = { 180, 0, 0 }, RK = { 0, 0, 0 }, RA = { 24, 0, 0 }, LH = { 36, 0, 0 }, LK = { -72, 0, 0 } },
+			follow = { Root = { 26.4, 0, 0, 0, 0.25, 0.35 }, Waist = { 14.4, 0, 0 }, Neck = { 26.4, 0, 0 }, RS = { -74.4, 0, 50.4 }, RE = { 0, 0, 0 }, LS = { -74.4, 0, -50.4 }, LE = { 0, 0, 0 }, RH = { 144, 0, 0 }, RK = { -36, 0, 0 }, LH = { 180, 0, 0 }, LK = { 0, 0, 0 }, LA = { 24, 0, 0 } },
 			spin = { axis = "y", degrees = 720 }, selfVelocity = Vector2.new(0, 70),
 			windupFx = { "super" }, trail = "prop", pull = true, fx = { { "ring", color = Color3.fromRGB(80, 220, 255), radius = 7, at = "root" }, { "particles", tex = "smoke", color = Color3.fromRGB(200, 200, 210), dir = "all", at = "root", time = 0.8 } }, text = "MODE TURBO.EXE", hitText = "ASPIRÉ !",
 		},
@@ -15784,9 +15891,9 @@ local data = {
 		SUPER_up = {
 			label = "Shiko volcanique !", superCost = 100, startup = 0.4, active = 0.3, recovery = 0.6,
 			damage = 22, hitbox = box(8, 14, 4, 6), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
-			windup = { Root = { -12, 0, 0, 0, -0.8, 0.1 }, Waist = { -30, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 150, 0, 20 }, RE = { 40, 0, 0 }, LS = { 150, 0, -20 }, LE = { 40, 0, 0 } },
-			strike = { Root = { 6, 0, 0, 0, 0.1, -0.1 }, Waist = { 16, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 175, 0, 35 }, RE = { 0, 0, 0 }, LS = { 175, 0, -35 }, LE = { 0, 0, 0 }, FR = { 0, 0, 0, 0, 0.2, 0 }, FL = { 0, 0, 0, 0, 0.2, 0 } },
-			follow = { Root = { 8, 0, 0, 0, 0.15, -0.1 }, Waist = { 20, 0, 0 }, Neck = { 35, 0, 0 }, RS = { 180, 0, 45 }, RE = { 5, 0, 0 }, LS = { 180, 0, -45 }, LE = { 5, 0, 0 }, FR = { 0, 0, 0, 0, 0.25, 0 }, FL = { 0, 0, 0, 0, 0.25, 0 } },
+			windup = { Root = { -9.6, 0, 0, 0, -0.6, 0.3 }, Waist = { -19.2, 0, 0 }, Neck = { -7.2, 0, 0 }, RS = { 72, 0, 24 }, RE = { 108, 0, 0 }, LS = { 72, 0, -24 }, LE = { 108, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+			strike = { Root = { 26.4, 0, 0, 0, -0.15, 0.45 }, Waist = { 31.2, 0, 0 }, Neck = { 24, 0, 0 }, RS = { 144, 0, 90 }, RE = { 12, 0, 0 }, LS = { 144, 0, -90 }, LE = { 12, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+			follow = { Root = { 28.8, 0, 0, 0, -0.12, 0.5 }, Waist = { 33.6, 0, 0 }, Neck = { 28.8, 0, 0 }, RS = { 153.6, 0, 96 }, RE = { 12, 0, 0 }, LS = { 153.6, 0, -96 }, LE = { 12, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
 			hold = 0.45, shake = true,
 			windupFx = { "super" }, status = { name = "slowed", duration = 2 }, fx = { { "pillar", color = Color3.fromRGB(110, 220, 90), height = 20, width = 6, at = "front" }, { "shake", amount = 0.6 } }, text = "DOSUKOI !", hitText = "GLOUP !",
 		},
@@ -16559,9 +16666,9 @@ local data = {
 		SUPER_up = {
 			label = "Débouchage céleste !", superCost = 100, startup = 0.3, active = 0.25, recovery = 0.55,
 			damage = 22, hitbox = box(7, 10, 2, 4), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
-			windup = { Root = { -10, -20, 0, 0, -0.9, 0.2 }, Waist = { -25, -20, 0 }, Neck = { -10, 0, 0 }, RS = { -40, 0, 30 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -30 }, LE = { 80, 0, 0 } },
-			strike = { Root = { 8, 15, 0, 0, 0.5, -0.2 }, Waist = { 18, 20, 0 }, Neck = { 35, 0, 0 }, RS = { 180, 0, 10 }, RE = { 5, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -50 }, LE = { 40, 0, 0 }, FR = { 0, 0, 0, 0, 0.6, 0 }, FL = { 0, 0, 0, 0, 0.4, 0 } },
-			follow = { Root = { 12, 20, 0, 0, 0.6, -0.2 }, Waist = { 22, 25, 0 }, Neck = { 40, 0, 0 }, RS = { 190, 0, 15 }, RE = { 10, 0, 0 }, RW = { -20, 0, 0 }, LS = { 30, 0, -60 }, LE = { 30, 0, 0 }, FR = { 0, 0, 0, 0, 0.7, 0 }, FL = { 0, 0, 0, 0, 0.5, 0 } },
+			windup = { Root = { 24, 0, 0, 0, -0.9, 0.2 }, Waist = { -36, 0, 0 }, Neck = { -30, 0, 0 }, RS = { 84, 0, 24 }, RE = { 120, 0, 0 }, LS = { 84, 0, -24 }, LE = { 120, 0, 0 }, RH = { 144, 0, 0 }, RK = { -168, 0, 0 }, LH = { 144, 0, 0 }, LK = { -168, 0, 0 } },
+			strike = { Root = { 36, 0, 0, 0, -0.6, 0.3 }, Waist = { -12, 0, 0 }, Neck = { -12, 0, 0 }, RS = { -36, 0, 60 }, RE = { 24, 0, 0 }, LS = { -36, 0, -60 }, LE = { 24, 0, 0 }, RH = { 180, 0, 0 }, RK = { -6, 0, 0 }, RA = { 24, 0, 0 }, LH = { 72, 0, 0 }, LK = { -120, 0, 0 } },
+			follow = { Root = { 38.4, 0, 0, 0, -0.6, 0.35 }, Waist = { -12, 0, 0 }, Neck = { -14.4, 0, 0 }, RS = { -42, 0, 62.4 }, RE = { 24, 0, 0 }, LS = { -42, 0, -62.4 }, LE = { 24, 0, 0 }, RH = { 186, 0, 0 }, RK = { -6, 0, 0 }, RA = { 24, 0, 0 }, LH = { 78, 0, 0 }, LK = { -126, 0, 0 } },
 			hold = 0.25, selfVelocity = Vector2.new(0, 45),
 			windupFx = { "super" }, trail = "prop", fx = { { "pillar", color = Color3.fromRGB(120, 200, 255), height = 22, width = 3, at = "front" }, { "burst", color = Color3.fromRGB(230, 60, 60), size = 5, at = "above" } }, text = "ÇA VA DÉBOUCHER !", hitText = "POP !",
 		},
@@ -17590,6 +17697,24 @@ Poses.hit = {
 }
 
 -- Petit coup encaissé : la tête part en arrière, le buste plie, les pieds restent au sol
+-- Éjecté par un coup moyen : plié en deux, les bras et les jambes traînent vers l'attaquant (le corps part en
+-- arrière, les extrémités suivent), comme les persos de Brawlhalla
+Poses.launched = {
+	Root = { 12, 0, 0, 0, 0, 0 },
+	Waist = { -28, 0, 0 },
+	Neck = { -22, 0, 0 },
+	RS = { 75, 0, 35 },
+	RE = { 35, 0, 0 },
+	LS = { 70, 0, -40 },
+	LE = { 45, 0, 0 },
+	RH = { 55, 0, 8 },
+	RK = { -45, 0, 0 },
+	LH = { 35, 0, -8 },
+	LK = { -70, 0, 0 },
+	FR = { 0, 0, 0 },
+	FL = { 0, 0, 0 },
+}
+
 Poses.flinch = {
 	Root = { 8, -8, 0, 0, -0.25, 0.35 },
 	Waist = { 16, -10, 4 },
@@ -23741,6 +23866,11 @@ Animator.onMoveStart = nil
 Animator.onMirror = nil
 -- Appelé avec le diagnostic des articulations : function(model, text, ok)
 Animator.onReport = nil
+-- Évènements de déplacement (branchés par Fx pour la poussière et les anneaux) :
+--   onLand(model, impact 0..1), onTakeoff(model), onAirJump(model)
+Animator.onLand = nil
+Animator.onTakeoff = nil
+Animator.onAirJump = nil
 
 local rigs = {}
 local localCharacter = nil
@@ -23893,10 +24023,15 @@ function Animator.playDodge(model, startClock)
 end
 
 -- Micro-arrêt sur image à l'impact : la pose reste figée un court instant
-function Animator.freeze(model, duration)
+-- Arrêt sur image à l'impact (hitstop). shake = la victime tremble pendant l'arrêt, comme dans Brawlhalla.
+function Animator.freeze(model, duration, shake)
 	local rig = rigs[model]
 	if rig and Config.HITSTOP then
 		rig.freezeUntil = math.max(rig.freezeUntil, os.clock() + duration)
+		if shake then
+			rig.shakeUntil = math.max(rig.shakeUntil or 0, os.clock() + duration)
+			rig.shakeAmount = shake
+		end
 	end
 end
 
@@ -24023,10 +24158,20 @@ local function isGrounded(model, root)
 end
 
 local function applyPose(rig, pose)
+	-- victime en plein arrêt sur image : elle tremble
+	local jitter = nil
+	if rig.shakeUntil and os.clock() < rig.shakeUntil then
+		local a = rig.shakeAmount or 0.15
+		jitter = CFrame.new((math.random() - 0.5) * 2 * a, (math.random() - 0.5) * a, 0)
+	end
 	for key, motor in pairs(rig.motors) do
 		local v = pose[key]
 		if v then
-			motor.Transform = toCFrame(v)
+			if key == "Root" and jitter then
+				motor.Transform = jitter * toCFrame(v)
+			else
+				motor.Transform = toCFrame(v)
+			end
 		end
 	end
 end
@@ -24080,6 +24225,26 @@ local function stepModel(model, rig, dt, now, serverNow)
 				obese = (model:GetAttribute("ObeseUntil") or 0) > serverNow,
 				dashing = now < (rig.dashUntil or 0),
 			})
+			-- poussière et anneaux : atterrissage, décollage, double saut
+			local core = rig.core
+			if core.landAt ~= rig.seenLand then
+				rig.seenLand = core.landAt
+				if Animator.onLand and core.landAt > 0 then
+					Animator.onLand(model, core.landImpact or 0.5)
+				end
+			end
+			if core.takeoffAt ~= rig.seenTakeoff then
+				rig.seenTakeoff = core.takeoffAt
+				if Animator.onTakeoff and core.takeoffAt > 0 then
+					Animator.onTakeoff(model)
+				end
+			end
+			if core.airJumpAt ~= rig.seenAirJump then
+				rig.seenAirJump = core.airJumpAt
+				if Animator.onAirJump and core.airJumpAt > 0 then
+					Animator.onAirJump(model)
+				end
+			end
 		end
 		applyPose(rig, pose)
 	end
@@ -24851,7 +25016,10 @@ function Fx.flash(model)
 end
 
 -- Traînée lumineuse derrière une partie du corps ou un objet
-local function trailOn(target, color, duration, a0, a1)
+-- Arc de frappe (« smear » façon Brawlhalla) : un ruban blanc, épais et lumineux, qui suit le membre ou l'arme
+-- pendant la frappe puis s'efface très vite. tip = 2e pièce optionnelle (ex. la main au bout de l'avant-bras) :
+-- le ruban va alors du haut de target jusqu'au bout de tip.
+local function trailOn(target, color, duration, a0, a1, tip)
 	if not target then
 		return
 	end
@@ -24862,18 +25030,30 @@ local function trailOn(target, color, duration, a0, a1)
 		att0.Position = Vector3.new(0, target.Size.Y * 0.5, 0)
 		att0.Parent = target
 		att1 = Instance.new("Attachment")
-		att1.Position = Vector3.new(0, -target.Size.Y * 0.5, 0)
-		att1.Parent = target
+		if tip then
+			att1.Position = Vector3.new(0, -tip.Size.Y * 0.6, 0)
+			att1.Parent = tip
+		else
+			att1.Position = Vector3.new(0, -target.Size.Y * 0.5, 0)
+			att1.Parent = target
+		end
 		cleanup(att0, duration + 0.4)
 		cleanup(att1, duration + 0.4)
 	end
 	local trail = Instance.new("Trail")
 	trail.Attachment0 = att0
 	trail.Attachment1 = att1
-	trail.Lifetime = 0.18
-	trail.Color = ColorSequence.new(color)
-	trail.Transparency = NumberSequence.new(0.2, 1)
-	trail.LightEmission = 0.8
+	trail.Lifetime = 0.16
+	trail.MinLength = 0
+	trail.Color = ColorSequence.new(Color3.new(1, 1, 1), color)
+	trail.Transparency = NumberSequence.new({
+		NumberSequenceKeypoint.new(0, 0.05),
+		NumberSequenceKeypoint.new(0.5, 0.45),
+		NumberSequenceKeypoint.new(1, 1),
+	})
+	trail.WidthScale = NumberSequence.new(1, 0.35)
+	trail.LightEmission = 1
+	trail.LightInfluence = 0
 	trail.FaceCamera = true
 	trail.Parent = target
 	task.delay(duration, function()
@@ -24891,14 +25071,14 @@ function Fx.trail(model, kind, duration)
 			trailOn(body, SODA, duration, body:FindFirstChild("TrailA"), body:FindFirstChild("TrailB"))
 		end
 	elseif kind == "rightFoot" then
-		trailOn(partOf(model, "RightLowerLeg"), color, duration)
+		trailOn(partOf(model, "RightLowerLeg"), color, duration, nil, nil, partOf(model, "RightFoot"))
 	elseif kind == "leftFoot" then
-		trailOn(partOf(model, "LeftLowerLeg"), color, duration)
+		trailOn(partOf(model, "LeftLowerLeg"), color, duration, nil, nil, partOf(model, "LeftFoot"))
 	elseif kind == "bothFeet" then
-		trailOn(partOf(model, "RightLowerLeg"), color, duration)
-		trailOn(partOf(model, "LeftLowerLeg"), color, duration)
+		trailOn(partOf(model, "RightLowerLeg"), color, duration, nil, nil, partOf(model, "RightFoot"))
+		trailOn(partOf(model, "LeftLowerLeg"), color, duration, nil, nil, partOf(model, "LeftFoot"))
 	elseif kind == "leftHand" then
-		trailOn(partOf(model, "LeftLowerArm"), color, duration)
+		trailOn(partOf(model, "LeftLowerArm"), color, duration, nil, nil, partOf(model, "LeftHand"))
 	elseif kind == "rightLeg" then
 		trailOn(partOf(model, "RightUpperLeg"), color, duration)
 	elseif kind == "body" then
@@ -24913,10 +25093,10 @@ function Fx.trail(model, kind, duration)
 			end
 		end
 	elseif kind == "rightHand" then
-		trailOn(partOf(model, "RightLowerArm"), color, duration)
+		trailOn(partOf(model, "RightLowerArm"), color, duration, nil, nil, partOf(model, "RightHand"))
 	elseif kind == "bothHands" then
-		trailOn(partOf(model, "RightLowerArm"), color, duration)
-		trailOn(partOf(model, "LeftLowerArm"), color, duration)
+		trailOn(partOf(model, "RightLowerArm"), color, duration, nil, nil, partOf(model, "RightHand"))
+		trailOn(partOf(model, "LeftLowerArm"), color, duration, nil, nil, partOf(model, "LeftHand"))
 	elseif kind == "head" then
 		trailOn(partOf(model, "Head"), color, duration)
 	elseif kind == "weapon" then
@@ -25611,6 +25791,43 @@ function Fx.runNamed(model, name, move)
 end
 
 ------------------------------------------------------------------------ Coups
+-- Membre qui frappe vraiment (celui qui bouge le plus entre l'élan et la frappe) : sert à dessiner l'arc de frappe
+-- des coups qui n'en précisent pas
+local LIMBS = {
+	{ "rightHand", { "RS", "RE" } }, { "leftHand", { "LS", "LE" } },
+	{ "rightFoot", { "RH", "RK" } }, { "leftFoot", { "LH", "LK" } },
+}
+local function strikingLimb(model, move)
+	local from, to = move.windup or {}, move.strike or {}
+	local best, bestAmount = nil, 25
+	for _, limb in ipairs(LIMBS) do
+		local amount = 0
+		for _, joint in ipairs(limb[2]) do
+			local a, b = from[joint], to[joint]
+			if b then
+				a = a or { 0, 0, 0 }
+				amount += math.abs(b[1] - a[1]) + math.abs(b[2] - a[2]) + math.abs(b[3] - a[3])
+			end
+		end
+		if amount > bestAmount then
+			best, bestAmount = limb[1], amount
+		end
+	end
+	-- la main droite tient l'arme quand la Caisse Bizarre est ouverte : c'est l'arme qui laisse l'arc
+	if best == "rightHand" and model:GetAttribute("Armed") then
+		local costume = model:FindFirstChild("Costume")
+		for _, prop in ipairs(costume and costume:GetChildren() or {}) do
+			if prop:IsA("Model") and prop:GetAttribute("AlwaysShown") then
+				return "prop"
+			end
+		end
+		if costume and costume:FindFirstChild("PropBottle") then
+			return "bottle"
+		end
+	end
+	return best
+end
+
 -- Appelé par l'Animator au lancement de chaque coup, chez tous les joueurs
 function Fx.onMoveStart(model, key, move, startClock, power)
 	power = power or 0
@@ -25621,6 +25838,22 @@ function Fx.onMoveStart(model, key, move, startClock, power)
 	if move.prop then
 		setPropVisible(model, propName(move.prop), true, total)
 	end
+	-- signature (L) ou Super : le perso s'entoure d'un contour lumineux pendant l'élan (on voit venir le gros coup)
+	local isSignature = string.find(key, "S_", 1, true) ~= nil or string.find(key, "SUPER", 1, true) ~= nil
+	if isSignature and move.startup >= 0.08 then
+		local glow = Instance.new("Highlight")
+		local super = string.find(key, "SUPER", 1, true) ~= nil
+		glow.FillColor = super and Color3.fromRGB(255, 200, 40) or Color3.fromRGB(255, 255, 255)
+		glow.OutlineColor = super and Color3.fromRGB(255, 120, 20) or Color3.fromRGB(120, 200, 255)
+		glow.FillTransparency = 0.8
+		glow.OutlineTransparency = 0.05
+		glow.DepthMode = Enum.HighlightDepthMode.Occluded
+		glow.Parent = model
+		task.delay(delayToStrike + 0.05, function()
+			tween(glow, 0.12, { FillTransparency = 1, OutlineTransparency = 1 })
+		end)
+		cleanup(glow, delayToStrike + 0.25)
+	end
 	for _, name in ipairs(move.windupFx or {}) do
 		Fx.runNamed(model, name, move)
 	end
@@ -25630,8 +25863,17 @@ function Fx.onMoveStart(model, key, move, startClock, power)
 			return
 		end
 		local root = model:FindFirstChild("HumanoidRootPart")
-		if move.trail then
-			Fx.trail(model, move.trail, strikeDuration)
+		local kind = move.kind or "melee"
+		local trailKind = move.trail
+		if not trailKind and (kind == "melee" or kind == "absorb" or kind == "counter" or kind == "wall") and move.hitbox then
+			trailKind = strikingLimb(model, move)
+		end
+		if trailKind then
+			Fx.trail(model, trailKind, strikeDuration)
+		end
+		-- coup qui part en avant au sol : poussière sous les pieds
+		if root and move.selfVelocity and math.abs(move.selfVelocity.X) >= 20 and move.selfVelocity.Y <= 0 then
+			Fx.dust(model, 0.6)
 		end
 		if move.hideProp then
 			setPropVisible(model, propName(move.hideProp), false, strikeDuration + move.recovery)
@@ -25655,23 +25897,160 @@ function Fx.onMoveStart(model, key, move, startClock, power)
 end
 
 ------------------------------------------------------------------------ Impacts
+-- Étincelle d'impact façon Brawlhalla : éclair blanc, rayons en étoile étirés dans le sens de l'éjection,
+-- et anneau coloré pour les gros coups. power = vitesse d'éjection, dir = +1 / -1 (sens du coup)
+function Fx.hitSpark(position, power, dir, color)
+	local k = math.clamp(power / 120, 0.4, 1.8)
+	color = color or YELLOW
+	local core = part({ Shape = Enum.PartType.Ball, Size = Vector3.new(0.6, 0.6, 0.6), Color = Color3.new(1, 1, 1), Material = Enum.Material.Neon, Position = position + Vector3.new(0, 0, 1.2) })
+	tween(core, 0.06, { Size = Vector3.new(2.2, 2.2, 2.2) * k })
+	task.delay(0.06, function()
+		tween(core, 0.12, { Size = Vector3.new(0.2, 0.2, 0.2), Transparency = 1 })
+	end)
+	cleanup(core, 0.2)
+	local rays = 7 + math.floor(k * 3)
+	for i = 1, rays do
+		local angle = (i / rays) * math.pi * 2 + math.random() * 0.4
+		local v = Vector3.new(math.cos(angle), math.sin(angle), 0)
+		-- les rayons qui partent dans le sens du coup sont plus longs
+		local along = math.max(0, v.X * dir)
+		local length = (1.2 + along * 2.4) * k * (0.8 + math.random() * 0.4)
+		local ray = part({ Size = Vector3.new(0.16, 0.16, length), Color = i % 2 == 0 and color or Color3.new(1, 1, 1), Material = Enum.Material.Neon,
+			CFrame = CFrame.lookAt(position + v * 0.6 + Vector3.new(0, 0, 1.2), position + v * 5 + Vector3.new(0, 0, 1.2)) })
+		local finish = position + v * (length * 1.3) + Vector3.new(0, 0, 1.2)
+		tween(ray, 0.16, { CFrame = CFrame.lookAt(finish, finish + v), Size = Vector3.new(0.04, 0.04, length * 0.3), Transparency = 0.6 }, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+		cleanup(ray, 0.18)
+	end
+	if power > 80 then
+		Fx.ring(position + Vector3.new(0, 0, 1), color, 2.5 * k, 0.22)
+	end
+	if power > 150 then
+		Fx.ring(position + Vector3.new(0, 0, 0.9), Color3.new(1, 1, 1), 4 * k, 0.32)
+	end
+end
+
+-- Éjection : traînée de fumée derrière le perso qui vole (plus le coup est fort, plus elle dure)
+function Fx.launchTrail(model, power)
+	local torso = partOf(model, "UpperTorso")
+	if not torso or power < 70 then
+		return
+	end
+	local duration = math.clamp(power * 0.006, 0.35, 1.3)
+	local a0 = Instance.new("Attachment")
+	a0.Position = Vector3.new(0, 0.9, 0)
+	a0.Parent = torso
+	local a1 = Instance.new("Attachment")
+	a1.Position = Vector3.new(0, -0.9, 0)
+	a1.Parent = torso
+	local trail = Instance.new("Trail")
+	trail.Attachment0, trail.Attachment1 = a0, a1
+	trail.Lifetime = 0.35
+	trail.MinLength = 0
+	trail.Color = ColorSequence.new(Color3.new(1, 1, 1), Color3.fromRGB(190, 190, 200))
+	trail.Transparency = NumberSequence.new(0.25, 1)
+	trail.WidthScale = NumberSequence.new(1, 0.1)
+	trail.LightEmission = 0.4
+	trail.FaceCamera = true
+	trail.Parent = torso
+	if power > 130 then
+		emitterAt(torso, CFrame.new(), {
+			Texture = TEX_SMOKE,
+			Color = ColorSequence.new(Color3.fromRGB(235, 235, 240)),
+			Size = NumberSequence.new(1.1, 2.4),
+			Transparency = NumberSequence.new(0.4, 1),
+			Lifetime = NumberRange.new(0.35, 0.6),
+			Speed = NumberRange.new(0.5, 1.5),
+			Rate = 45,
+		}, duration)
+	end
+	task.delay(duration, function()
+		trail.Enabled = false
+	end)
+	cleanup(trail, duration + 0.4)
+	cleanup(a0, duration + 0.4)
+	cleanup(a1, duration + 0.4)
+end
+
 function Fx.onHit(data)
 	local power = data.power or 30
 	local strong = power > 110
-	Fx.burst(data.position, strong and Color3.fromRGB(255, 120, 40) or Color3.new(1, 1, 1), strong and 4 or 2.2)
+	local huge = power > 160
+	local dir = 1
+	local attackerRoot = data.attacker and data.attacker:FindFirstChild("HumanoidRootPart")
+	if attackerRoot and data.position then
+		dir = data.position.X >= attackerRoot.Position.X and 1 or -1
+	end
+	local color = huge and Color3.fromRGB(255, 80, 40) or strong and Color3.fromRGB(255, 160, 40) or YELLOW
+	Fx.hitSpark(data.position, power, dir, color)
 	Fx.popText(data.position + Vector3.new(0, 1.5, 0), data.text or "PAF !", strong and Color3.fromRGB(255, 90, 40) or YELLOW, strong and 1.4 or 1, 0.75)
+	-- arrêt sur image : plus long pour les gros coups ; la victime tremble pendant ce temps
+	local stop = 0.045 + math.min(power, 220) * 0.0006
 	if data.target then
 		Fx.flash(data.target)
-		Animator.freeze(data.target, 0.05 + math.min(power, 200) * 0.0005)
+		Animator.freeze(data.target, stop, 0.12 + math.min(power, 200) * 0.0008)
+		Fx.launchTrail(data.target, power)
 	end
 	if data.attacker then
-		Animator.freeze(data.attacker, 0.05 + math.min(power, 200) * 0.0005)
+		Animator.freeze(data.attacker, stop)
 	end
-	if strong then
-		Fx.ring(data.position, Color3.fromRGB(255, 200, 80), 5, 0.3)
+	if huge then
+		CameraRig.punch(data.position, 0.9, 0.22)
+		Fx.cheer(1)
 	end
 	CameraRig.shake(math.clamp(power / 220, 0.08, 0.9), 0.25)
 	playSound(SOUND_HIT, nil, 0.6, strong and 0.8 or 1.3)
+end
+
+------------------------------------------------------------------------ Déplacements
+-- Poussière sous les pieds (atterrissage, départ en course, coup qui fonce)
+function Fx.dust(model, amount)
+	local root = model:FindFirstChild("HumanoidRootPart")
+	if not root then
+		return
+	end
+	amount = amount or 1
+	for _, side in ipairs({ -1, 1 }) do
+		-- émetteur posé dans le repère du monde : la poussière part à gauche et à droite sur l'écran
+		local anchor = part({ Size = Vector3.new(0.2, 0.2, 0.2), Transparency = 1, CFrame = CFrame.new(root.Position + Vector3.new(side * 0.8, -2.8, 0.5)) })
+		local emitter = Instance.new("ParticleEmitter")
+		emitter.Texture = TEX_SMOKE
+		emitter.Color = ColorSequence.new(Color3.fromRGB(225, 215, 195))
+		emitter.Size = NumberSequence.new(0.6 * amount, 1.6 * amount)
+		emitter.Transparency = NumberSequence.new(0.35, 1)
+		emitter.Lifetime = NumberRange.new(0.25, 0.45)
+		emitter.Speed = NumberRange.new(3 * amount, 6 * amount)
+		emitter.SpreadAngle = Vector2.new(25, 10)
+		emitter.Acceleration = Vector3.new(0, 2, 0)
+		emitter.EmissionDirection = side > 0 and Enum.NormalId.Right or Enum.NormalId.Left
+		emitter.Rate = 0
+		emitter.Parent = anchor
+		emitter:Emit(math.floor(6 * amount + 0.5))
+		cleanup(anchor, 0.8)
+	end
+end
+
+local function onLand(model, impact)
+	if impact > 0.45 then
+		Fx.dust(model, 0.6 + impact * 0.6)
+	end
+end
+
+local function onTakeoff(model)
+	Fx.dust(model, 0.5)
+end
+
+-- Double saut : petit anneau blanc sous les pieds, comme dans Brawlhalla
+local function onAirJump(model)
+	local root = model:FindFirstChild("HumanoidRootPart")
+	if not root then
+		return
+	end
+	local position = root.Position + Vector3.new(0, -2.6, 0)
+	local ring = part({ Shape = Enum.PartType.Cylinder, Size = Vector3.new(0.15, 1, 1), Color = Color3.new(1, 1, 1), Material = Enum.Material.Neon, Transparency = 0.2,
+		CFrame = CFrame.new(position) * CFrame.Angles(0, 0, math.rad(90)) })
+	tween(ring, 0.25, { Size = Vector3.new(0.05, 4, 4), Transparency = 1 })
+	cleanup(ring, 0.3)
+	playSound(SOUND_SWOOSH, root, 0.25, 1.8)
 end
 
 ------------------------------------------------------------------------ Projectiles
@@ -26182,6 +26561,43 @@ local function hazardFx(data)
 		Fx.popText((data.a + data.b) / 2 + Vector3.new(0, 6, 0), "🎩 ABRACADABRA !", Color3.fromRGB(255, 220, 100), 1.4, 1)
 	elseif kind == "sunbeam" then
 		overlay(Color3.fromRGB(255, 240, 160), 0.45, 0.6, "☀️")
+	end
+end
+
+-- Esquive : silhouettes fantômes laissées derrière le perso (comme les « afterimages » de Brawlhalla)
+function Fx.afterimage(model, count)
+	count = count or 3
+	for n = 0, count - 1 do
+		task.delay(n * 0.05, function()
+			if not model.Parent then
+				return
+			end
+			for _, p in ipairs(model:GetChildren()) do
+				if p:IsA("BasePart") and p.Name ~= "HumanoidRootPart" and p.Transparency < 1 then
+					local ghost = part({ Size = p.Size, CFrame = p.CFrame, Color = Color3.fromRGB(190, 225, 255), Material = Enum.Material.Neon, Transparency = 0.55 })
+					tween(ghost, 0.22, { Transparency = 1 })
+					cleanup(ghost, 0.25)
+				end
+			end
+		end)
+	end
+end
+
+local dodgeSeen = {}
+local function updateDodges()
+	for _, model in ipairs(CollectionService:GetTagged("Fighter")) do
+		local start = model:GetAttribute("DodgeStart")
+		if start and start ~= dodgeSeen[model] then
+			if dodgeSeen[model] ~= nil then
+				Fx.afterimage(model, 3)
+			end
+			dodgeSeen[model] = start
+		end
+	end
+	for model in pairs(dodgeSeen) do
+		if not model.Parent then
+			dodgeSeen[model] = nil
+		end
 	end
 end
 
@@ -26739,6 +27155,9 @@ function Fx.start()
 	Animator.onMoveStart = Fx.onMoveStart
 	Animator.onDash = Fx.dash
 	Animator.onMirror = Fx.onMirror
+	Animator.onLand = onLand
+	Animator.onTakeoff = onTakeoff
+	Animator.onAirJump = onAirJump
 	-- Diagnostic des animations : vert si les 15 articulations sont trouvées, rouge sinon
 	Animator.onReport = function(model, text, ok)
 		if not Config.ANIM_DEBUG or (ok and model ~= Players.LocalPlayer.Character) then
@@ -26801,6 +27220,7 @@ function Fx.start()
 		updateHeldEffects()
 		updateObjects()
 		updateCrowd()
+		updateDodges()
 	end)
 end
 

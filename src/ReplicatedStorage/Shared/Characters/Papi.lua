@@ -490,9 +490,9 @@ local data = {
 		SUPER_up = {
 			label = "Scratch du ciel !", superCost = 100, startup = 0.3, active = 0.25, recovery = 0.55,
 			damage = 22, hitbox = box(7, 10, 2, 4), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
-			windup = { Root = { -10, -20, 0, 0, -0.9, 0.2 }, Waist = { -25, -20, 0 }, Neck = { -10, 0, 0 }, RS = { -40, 0, 30 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -30 }, LE = { 80, 0, 0 } },
-			strike = { Root = { 8, 15, 0, 0, 0.5, -0.2 }, Waist = { 18, 20, 0 }, Neck = { 35, 0, 0 }, RS = { 180, 0, 10 }, RE = { 5, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -50 }, LE = { 40, 0, 0 }, FR = { 0, 0, 0, 0, 0.6, 0 }, FL = { 0, 0, 0, 0, 0.4, 0 } },
-			follow = { Root = { 12, 20, 0, 0, 0.6, -0.2 }, Waist = { 22, 25, 0 }, Neck = { 40, 0, 0 }, RS = { 190, 0, 15 }, RE = { 10, 0, 0 }, RW = { -20, 0, 0 }, LS = { 30, 0, -60 }, LE = { 30, 0, 0 }, FR = { 0, 0, 0, 0, 0.7, 0 }, FL = { 0, 0, 0, 0, 0.5, 0 } },
+			windup = { Root = { -7.2, 0, 0, 0, -0.3, 0.2 }, Waist = { -12, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 36, 0, 36 }, RE = { 72, 0, 0 }, LS = { -48, 0, -24 }, LE = { 120, 0, 0 }, FR = { 0, 0, 0, 0, 0, 0.3 }, FL = { 0, 0, 0, 0, 0.15, 0 } },
+			strike = { Root = { 24, 0, 0, 0, -0.1, 0.3 }, Waist = { 18, 0, 0 }, Neck = { -12, 0, 0 }, RS = { -36, 0, 72 }, RE = { 24, 0, 0 }, LS = { -48, 0, -30 }, LE = { 120, 0, 0 }, RH = { 180, 0, 0 }, RK = { -6, 0, 0 }, RA = { 24, 0, 0 } },
+			follow = { Root = { 26.4, 0, 0, 0, -0.1, 0.35 }, Waist = { 19.2, 0, 0 }, Neck = { -14.4, 0, 0 }, RS = { -38.4, 0, 74.4 }, RE = { 24, 0, 0 }, LS = { -48, 0, -30 }, LE = { 120, 0, 0 }, RH = { 186, 0, 0 }, RK = { -6, 0, 0 }, RA = { 24, 0, 0 } },
 			hold = 0.25, selfVelocity = Vector2.new(0, 45),
 			windupFx = { "super" }, trail = "prop", status = { name = "dancing", duration = 2 }, fx = { { "symbols", symbols = { "♪", "♫", "🎶" }, count = 8, color = Color3.fromRGB(255, 200, 60) }, { "shake", amount = 0.4 } }, text = "ON MONTE LE SON !", hitText = "WIKI-WIKI !",
 		},

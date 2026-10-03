@@ -493,9 +493,9 @@ local data = {
 		SUPER_up = {
 			label = "Envolée de pelotes !", superCost = 100, startup = 0.4, active = 0.3, recovery = 0.6,
 			damage = 22, hitbox = box(8, 14, 4, 6), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
-			windup = { Root = { -12, 0, 0, 0, -0.8, 0.1 }, Waist = { -30, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 150, 0, 20 }, RE = { 40, 0, 0 }, LS = { 150, 0, -20 }, LE = { 40, 0, 0 } },
-			strike = { Root = { 6, 0, 0, 0, 0.1, -0.1 }, Waist = { 16, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 175, 0, 35 }, RE = { 0, 0, 0 }, LS = { 175, 0, -35 }, LE = { 0, 0, 0 }, FR = { 0, 0, 0, 0, 0.2, 0 }, FL = { 0, 0, 0, 0, 0.2, 0 } },
-			follow = { Root = { 8, 0, 0, 0, 0.15, -0.1 }, Waist = { 20, 0, 0 }, Neck = { 35, 0, 0 }, RS = { 180, 0, 45 }, RE = { 5, 0, 0 }, LS = { 180, 0, -45 }, LE = { 5, 0, 0 }, FR = { 0, 0, 0, 0, 0.25, 0 }, FL = { 0, 0, 0, 0, 0.25, 0 } },
+			windup = { Root = { -12, 12, 0, 0, -0.35, 0 }, Waist = { -28.8, 12, 0 }, Neck = { 36, 0, 0 }, RS = { 24, 0, 36 }, RE = { 72, 0, 0 }, LS = { 48, 0, -18 }, LE = { 132, 0, 0 }, LW = { 0, 0, 0 } },
+			strike = { Root = { 9.6, -6, 0, 0, -0.1, 0.4 }, Waist = { 7.2, -6, 0 }, Neck = { 45.6, 0, 0 }, RS = { -24, 0, 42 }, RE = { 48, 0, 0 }, LS = { 210, 0, -6 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 }, FR = { 0, 0, 0, 0, 0, 0.3 }, FL = { 0, 0, 0, 0, 0, 0.35 } },
+			follow = { Root = { 12, -6, 0, 0, -0.1, 0.45 }, Waist = { 9.6, -6, 0 }, Neck = { 48, 0, 0 }, RS = { -30, 0, 45.6 }, RE = { 48, 0, 0 }, LS = { 216, 0, -2.4 }, LE = { 0, 0, 0 }, LW = { -12, 0, 0 }, FR = { 0, 0, 0, 0, 0, 0.35 }, FL = { 0, 0, 0, 0, 0, 0.4 } },
 			hold = 0.45, shake = true,
 			windupFx = { "super" }, trail = "prop", status = { name = "rooted", duration = 1 }, fx = { { "pillar", color = Color3.fromRGB(230, 120, 170), height = 20, width = 4, at = "front" }, { "toss", shape = "ball", color = Color3.fromRGB(160, 90, 200), count = 6, speed = 10, lift = 40 } }, text = "DE MON TEMPS !", hitText = "EMBOBINÉ !",
 		},

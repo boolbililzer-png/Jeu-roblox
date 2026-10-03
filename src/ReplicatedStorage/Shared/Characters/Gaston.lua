@@ -596,9 +596,9 @@ local data = {
 		SUPER_up = {
 			label = "Lévitation ratée !", superCost = 100, startup = 0.25, active = 0.45, recovery = 0.55,
 			damage = 22, hitbox = box(9, 10, 0, 3), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
-			windup = { Root = { -8, 0, 0, 0, -0.85, 0 }, Waist = { -18, 0, 0 }, RS = { 40, 0, 70 }, RE = { 20, 0, 0 }, LS = { 40, 0, -70 }, LE = { 20, 0, 0 } },
-			strike = { Root = { 10, 0, 0 }, Waist = { 10, 0, 0 }, Neck = { 25, 0, 0 }, RS = { 120, 0, 80 }, RE = { 0, 0, 0 }, LS = { 120, 0, -80 }, LE = { 0, 0, 0 }, RH = { 20, 0, 10 }, RK = { -30, 0, 0 }, LH = { 10, 0, -10 }, LK = { -40, 0, 0 } },
-			follow = { Root = { 12, 0, 0 }, Waist = { 14, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 150, 0, 70 }, RE = { 10, 0, 0 }, LS = { 150, 0, -70 }, LE = { 10, 0, 0 }, RH = { 30, 0, 10 }, RK = { -50, 0, 0 }, LH = { 20, 0, -10 }, LK = { -60, 0, 0 } },
+			windup = { Root = { -7.2, 0, 0, 0, -0.5, 0 }, Waist = { -16.8, 0, 0 }, Neck = { 0, 0, 0 }, RS = { 192, 0, -24 }, RE = { 120, 0, 0 }, LS = { 192, 0, 24 }, LE = { 120, 0, 0 } },
+			strike = { Root = { 33.6, 0, 0, 0, -0.15, 0.35 }, Waist = { 14.4, 0, 0 }, Neck = { 24, 0, 0 }, RS = { -36, 0, 72 }, RE = { 24, 0, 0 }, LS = { -36, 0, -72 }, LE = { 24, 0, 0 }, RH = { 180, 0, 0 }, RK = { 0, 0, 0 }, RA = { -24, 0, 0 } },
+			follow = { Root = { 38.4, 0, 0, 0, -0.15, 0.45 }, Waist = { 16.8, 0, 0 }, Neck = { 28.8, 0, 0 }, RS = { -42, 0, 78 }, RE = { 24, 0, 0 }, LS = { -42, 0, -78 }, LE = { 24, 0, 0 }, RH = { 192, 0, 0 }, RK = { 0, 0, 0 }, RA = { -24, 0, 0 } },
 			spin = { axis = "y", degrees = 720 }, selfVelocity = Vector2.new(0, 70),
 			windupFx = { "super" }, trail = "prop", variants = { { label = "Lévitation ratée : colombes !", hitText = "ROUCOU !" }, { label = "Lévitation ratée : BOUM !", damage = 26, hitText = "KABOUM !" }, { label = "Lévitation ratée : lapin !", status = { name = "dog", duration = 2 }, hitText = "COUIC !" } }, fx = { { "particles", tex = "spark", color = Color3.fromRGB(190, 110, 255), dir = "all", at = "root", time = 0.7 } }, text = "ABRACADA… OUPS !", hitText = "TA-DAAA !",
 		},

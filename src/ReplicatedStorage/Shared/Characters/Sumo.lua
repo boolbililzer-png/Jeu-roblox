@@ -445,9 +445,9 @@ local data = {
 		SUPER_up = {
 			label = "Shiko volcanique !", superCost = 100, startup = 0.4, active = 0.3, recovery = 0.6,
 			damage = 22, hitbox = box(8, 14, 4, 6), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
-			windup = { Root = { -12, 0, 0, 0, -0.8, 0.1 }, Waist = { -30, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 150, 0, 20 }, RE = { 40, 0, 0 }, LS = { 150, 0, -20 }, LE = { 40, 0, 0 } },
-			strike = { Root = { 6, 0, 0, 0, 0.1, -0.1 }, Waist = { 16, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 175, 0, 35 }, RE = { 0, 0, 0 }, LS = { 175, 0, -35 }, LE = { 0, 0, 0 }, FR = { 0, 0, 0, 0, 0.2, 0 }, FL = { 0, 0, 0, 0, 0.2, 0 } },
-			follow = { Root = { 8, 0, 0, 0, 0.15, -0.1 }, Waist = { 20, 0, 0 }, Neck = { 35, 0, 0 }, RS = { 180, 0, 45 }, RE = { 5, 0, 0 }, LS = { 180, 0, -45 }, LE = { 5, 0, 0 }, FR = { 0, 0, 0, 0, 0.25, 0 }, FL = { 0, 0, 0, 0, 0.25, 0 } },
+			windup = { Root = { -9.6, 0, 0, 0, -0.6, 0.3 }, Waist = { -19.2, 0, 0 }, Neck = { -7.2, 0, 0 }, RS = { 72, 0, 24 }, RE = { 108, 0, 0 }, LS = { 72, 0, -24 }, LE = { 108, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+			strike = { Root = { 26.4, 0, 0, 0, -0.15, 0.45 }, Waist = { 31.2, 0, 0 }, Neck = { 24, 0, 0 }, RS = { 144, 0, 90 }, RE = { 12, 0, 0 }, LS = { 144, 0, -90 }, LE = { 12, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+			follow = { Root = { 28.8, 0, 0, 0, -0.12, 0.5 }, Waist = { 33.6, 0, 0 }, Neck = { 28.8, 0, 0 }, RS = { 153.6, 0, 96 }, RE = { 12, 0, 0 }, LS = { 153.6, 0, -96 }, LE = { 12, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
 			hold = 0.45, shake = true,
 			windupFx = { "super" }, status = { name = "slowed", duration = 2 }, fx = { { "pillar", color = Color3.fromRGB(110, 220, 90), height = 20, width = 6, at = "front" }, { "shake", amount = 0.6 } }, text = "DOSUKOI !", hitText = "GLOUP !",
 		},

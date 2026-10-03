@@ -512,9 +512,9 @@ local data = {
 		SUPER_up = {
 			label = "Geyser de bain !", superCost = 100, startup = 0.4, active = 0.3, recovery = 0.6,
 			damage = 22, hitbox = box(8, 14, 4, 6), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
-			windup = { Root = { -12, 0, 0, 0, -0.8, 0.1 }, Waist = { -30, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 150, 0, 20 }, RE = { 40, 0, 0 }, LS = { 150, 0, -20 }, LE = { 40, 0, 0 } },
-			strike = { Root = { 6, 0, 0, 0, 0.1, -0.1 }, Waist = { 16, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 175, 0, 35 }, RE = { 0, 0, 0 }, LS = { 175, 0, -35 }, LE = { 0, 0, 0 }, FR = { 0, 0, 0, 0, 0.2, 0 }, FL = { 0, 0, 0, 0, 0.2, 0 } },
-			follow = { Root = { 8, 0, 0, 0, 0.15, -0.1 }, Waist = { 20, 0, 0 }, Neck = { 35, 0, 0 }, RS = { 180, 0, 45 }, RE = { 5, 0, 0 }, LS = { 180, 0, -45 }, LE = { 5, 0, 0 }, FR = { 0, 0, 0, 0, 0.25, 0 }, FL = { 0, 0, 0, 0, 0.25, 0 } },
+			windup = { Root = { -9.6, 0, 0, 0, -0.5, 0 }, Waist = { -24, 0, 0 }, Neck = { -14.4, 0, 0 }, RS = { 36, 0, -24 }, RE = { 132, 0, 0 }, LS = { 36, 0, 24 }, LE = { 132, 0, 0 } },
+			strike = { Root = { 16.8, 0, 0, 0, -0.1, 0.4 }, Waist = { 24, 0, 0 }, Neck = { 36, 0, 0 }, RS = { 72, 0, 90 }, RE = { 12, 0, 0 }, LS = { 72, 0, -90 }, LE = { 12, 0, 0 }, FR = { 0, 0, 0, 0, 0, 0.4 }, FL = { 0, 0, 0, 0, 0, 0.3 } },
+			follow = { Root = { 19.2, 0, 0, 0, -0.1, 0.5 }, Waist = { 28.8, 0, 0 }, Neck = { 40.8, 0, 0 }, RS = { 84, 0, 98.4 }, RE = { 12, 0, 0 }, LS = { 84, 0, -98.4 }, LE = { 12, 0, 0 }, FR = { 0, 0, 0, 0, 0, 0.5 }, FL = { 0, 0, 0, 0, 0, 0.4 } },
 			hold = 0.45, shake = true,
 			windupFx = { "super" }, status = { name = "wet", duration = 2 }, fx = { { "pillar", color = Color3.fromRGB(80, 180, 255), height = 24, width = 4, at = "front" }, { "puddle", color = Color3.fromRGB(225, 245, 255), width = 6 } }, text = "COIN COIN !", hitText = "SPLAAASH !",
 		},

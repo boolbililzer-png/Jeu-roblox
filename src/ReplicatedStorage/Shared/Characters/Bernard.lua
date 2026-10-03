@@ -467,9 +467,9 @@ local data = {
 		SUPER_up = {
 			label = "Tampon REFUSÉ céleste !", superCost = 100, startup = 0.3, active = 0.25, recovery = 0.55,
 			damage = 22, hitbox = box(7, 10, 2, 4), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
-			windup = { Root = { -10, -20, 0, 0, -0.9, 0.2 }, Waist = { -25, -20, 0 }, Neck = { -10, 0, 0 }, RS = { -40, 0, 30 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -30 }, LE = { 80, 0, 0 } },
-			strike = { Root = { 8, 15, 0, 0, 0.5, -0.2 }, Waist = { 18, 20, 0 }, Neck = { 35, 0, 0 }, RS = { 180, 0, 10 }, RE = { 5, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -50 }, LE = { 40, 0, 0 }, FR = { 0, 0, 0, 0, 0.6, 0 }, FL = { 0, 0, 0, 0, 0.4, 0 } },
-			follow = { Root = { 12, 20, 0, 0, 0.6, -0.2 }, Waist = { 22, 25, 0 }, Neck = { 40, 0, 0 }, RS = { 190, 0, 15 }, RE = { 10, 0, 0 }, RW = { -20, 0, 0 }, LS = { 30, 0, -60 }, LE = { 30, 0, 0 }, FR = { 0, 0, 0, 0, 0.7, 0 }, FL = { 0, 0, 0, 0, 0.5, 0 } },
+			windup = { Root = { 9.6, 0, 0, 0, -0.7, 0.1 }, Waist = { 7.2, 0, 0 }, Neck = { 7.2, 0, 0 }, RS = { 48, 0, 36 }, RE = { 84, 0, 0 }, LS = { 48, 0, -36 }, LE = { 84, 0, 0 }, RH = { 96, 0, 0 }, RK = { -108, 0, 0 } },
+			strike = { Root = { 30, 0, 0, 0, -0.6, 0.3 }, Waist = { 12, 0, 0 }, Neck = { 18, 0, 0 }, RS = { -36, 0, 48 }, RE = { 24, 0, 0 }, LS = { -36, 0, -48 }, LE = { 24, 0, 0 }, RH = { 180, 0, 0 }, RK = { -6, 0, 0 }, RA = { 24, 0, 0 } },
+			follow = { Root = { 33.6, 0, 0, 0, -0.6, 0.35 }, Waist = { 14.4, 0, 0 }, Neck = { 21.6, 0, 0 }, RS = { -42, 0, 50.4 }, RE = { 24, 0, 0 }, LS = { -42, 0, -50.4 }, LE = { 24, 0, 0 }, RH = { 192, 0, 0 }, RK = { -6, 0, 0 }, RA = { 24, 0, 0 } },
 			hold = 0.25, selfVelocity = Vector2.new(0, 45),
 			windupFx = { "super" }, trail = "prop", status = { name = "waiting", duration = 2 }, fx = { { "text", text = "REFUSÉ", color = Color3.fromRGB(220, 40, 40), at = "above" }, { "rain", shape = "flat", color = Color3.fromRGB(250, 250, 245), count = 12, radius = 6 } }, text = "SUIVANT !", hitText = "TAMPONNÉ !",
 		},

@@ -488,9 +488,9 @@ local data = {
 		SUPER_up = {
 			label = "Tornade de bandelettes !", superCost = 100, startup = 0.4, active = 0.3, recovery = 0.6,
 			damage = 22, hitbox = box(8, 14, 4, 6), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
-			windup = { Root = { -12, 0, 0, 0, -0.8, 0.1 }, Waist = { -30, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 150, 0, 20 }, RE = { 40, 0, 0 }, LS = { 150, 0, -20 }, LE = { 40, 0, 0 } },
-			strike = { Root = { 6, 0, 0, 0, 0.1, -0.1 }, Waist = { 16, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 175, 0, 35 }, RE = { 0, 0, 0 }, LS = { 175, 0, -35 }, LE = { 0, 0, 0 }, FR = { 0, 0, 0, 0, 0.2, 0 }, FL = { 0, 0, 0, 0, 0.2, 0 } },
-			follow = { Root = { 8, 0, 0, 0, 0.15, -0.1 }, Waist = { 20, 0, 0 }, Neck = { 35, 0, 0 }, RS = { 180, 0, 45 }, RE = { 5, 0, 0 }, LS = { 180, 0, -45 }, LE = { 5, 0, 0 }, FR = { 0, 0, 0, 0, 0.25, 0 }, FL = { 0, 0, 0, 0, 0.25, 0 } },
+			windup = { Root = { -7.2, 0, 0, 0, -0.2, 0 }, Waist = { -9.6, 0, 0 }, Neck = { 24, 0, 12 }, RS = { 24, 0, 36 }, RE = { 36, 0, 0 }, LS = { 180, 0, -12 }, LE = { 144, 0, 0 } },
+			strike = { Root = { 48, 0, 0, 0, -0.9, 0.4 }, Waist = { 12, 0, 0 }, Neck = { 24, 0, 0 }, RS = { 144, 0, 72 }, RE = { 24, 0, 0 }, LS = { 144, 0, -72 }, LE = { 24, 0, 0 }, RH = { 144, 0, 6 }, RK = { -6, 0, 0 }, RA = { 18, 0, 0 }, LH = { 126, 0, -6 }, LK = { -24, 0, 0 }, LA = { 18, 0, 0 } },
+			follow = { Root = { 52.8, 0, 0, 0, -0.95, 0.45 }, Waist = { 14.4, 0, 0 }, Neck = { 26.4, 0, 0 }, RS = { 150, 0, 78 }, RE = { 24, 0, 0 }, LS = { 150, 0, -78 }, LE = { 24, 0, 0 }, RH = { 150, 0, 6 }, RK = { -6, 0, 0 }, RA = { 18, 0, 0 }, LH = { 132, 0, -6 }, LK = { -21.6, 0, 0 }, LA = { 18, 0, 0 } },
 			hold = 0.45, shake = true,
 			windupFx = { "super" }, status = { name = "sneezy", duration = 3 }, fx = { { "pillar", color = Color3.fromRGB(228, 214, 176), height = 22, width = 5, at = "front" }, { "symbols", symbols = { "🤧", "🦠" }, count = 6 } }, text = "ATCHOUM DIVIN !", hitText = "CONTAMINÉ !",
 		},

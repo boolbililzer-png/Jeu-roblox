@@ -170,7 +170,10 @@ function Fx.flash(model)
 end
 
 -- Traînée lumineuse derrière une partie du corps ou un objet
-local function trailOn(target, color, duration, a0, a1)
+-- Arc de frappe (« smear » façon Brawlhalla) : un ruban blanc, épais et lumineux, qui suit le membre ou l'arme
+-- pendant la frappe puis s'efface très vite. tip = 2e pièce optionnelle (ex. la main au bout de l'avant-bras) :
+-- le ruban va alors du haut de target jusqu'au bout de tip.
+local function trailOn(target, color, duration, a0, a1, tip)
 	if not target then
 		return
 	end
@@ -181,18 +184,30 @@ local function trailOn(target, color, duration, a0, a1)
 		att0.Position = Vector3.new(0, target.Size.Y * 0.5, 0)
 		att0.Parent = target
 		att1 = Instance.new("Attachment")
-		att1.Position = Vector3.new(0, -target.Size.Y * 0.5, 0)
-		att1.Parent = target
+		if tip then
+			att1.Position = Vector3.new(0, -tip.Size.Y * 0.6, 0)
+			att1.Parent = tip
+		else
+			att1.Position = Vector3.new(0, -target.Size.Y * 0.5, 0)
+			att1.Parent = target
+		end
 		cleanup(att0, duration + 0.4)
 		cleanup(att1, duration + 0.4)
 	end
 	local trail = Instance.new("Trail")
 	trail.Attachment0 = att0
 	trail.Attachment1 = att1
-	trail.Lifetime = 0.18
-	trail.Color = ColorSequence.new(color)
-	trail.Transparency = NumberSequence.new(0.2, 1)
-	trail.LightEmission = 0.8
+	trail.Lifetime = 0.16
+	trail.MinLength = 0
+	trail.Color = ColorSequence.new(Color3.new(1, 1, 1), color)
+	trail.Transparency = NumberSequence.new({
+		NumberSequenceKeypoint.new(0, 0.05),
+		NumberSequenceKeypoint.new(0.5, 0.45),
+		NumberSequenceKeypoint.new(1, 1),
+	})
+	trail.WidthScale = NumberSequence.new(1, 0.35)
+	trail.LightEmission = 1
+	trail.LightInfluence = 0
 	trail.FaceCamera = true
 	trail.Parent = target
 	task.delay(duration, function()
@@ -210,14 +225,14 @@ function Fx.trail(model, kind, duration)
 			trailOn(body, SODA, duration, body:FindFirstChild("TrailA"), body:FindFirstChild("TrailB"))
 		end
 	elseif kind == "rightFoot" then
-		trailOn(partOf(model, "RightLowerLeg"), color, duration)
+		trailOn(partOf(model, "RightLowerLeg"), color, duration, nil, nil, partOf(model, "RightFoot"))
 	elseif kind == "leftFoot" then
-		trailOn(partOf(model, "LeftLowerLeg"), color, duration)
+		trailOn(partOf(model, "LeftLowerLeg"), color, duration, nil, nil, partOf(model, "LeftFoot"))
 	elseif kind == "bothFeet" then
-		trailOn(partOf(model, "RightLowerLeg"), color, duration)
-		trailOn(partOf(model, "LeftLowerLeg"), color, duration)
+		trailOn(partOf(model, "RightLowerLeg"), color, duration, nil, nil, partOf(model, "RightFoot"))
+		trailOn(partOf(model, "LeftLowerLeg"), color, duration, nil, nil, partOf(model, "LeftFoot"))
 	elseif kind == "leftHand" then
-		trailOn(partOf(model, "LeftLowerArm"), color, duration)
+		trailOn(partOf(model, "LeftLowerArm"), color, duration, nil, nil, partOf(model, "LeftHand"))
 	elseif kind == "rightLeg" then
 		trailOn(partOf(model, "RightUpperLeg"), color, duration)
 	elseif kind == "body" then
@@ -232,10 +247,10 @@ function Fx.trail(model, kind, duration)
 			end
 		end
 	elseif kind == "rightHand" then
-		trailOn(partOf(model, "RightLowerArm"), color, duration)
+		trailOn(partOf(model, "RightLowerArm"), color, duration, nil, nil, partOf(model, "RightHand"))
 	elseif kind == "bothHands" then
-		trailOn(partOf(model, "RightLowerArm"), color, duration)
-		trailOn(partOf(model, "LeftLowerArm"), color, duration)
+		trailOn(partOf(model, "RightLowerArm"), color, duration, nil, nil, partOf(model, "RightHand"))
+		trailOn(partOf(model, "LeftLowerArm"), color, duration, nil, nil, partOf(model, "LeftHand"))
 	elseif kind == "head" then
 		trailOn(partOf(model, "Head"), color, duration)
 	elseif kind == "weapon" then
@@ -930,6 +945,43 @@ function Fx.runNamed(model, name, move)
 end
 
 ------------------------------------------------------------------------ Coups
+-- Membre qui frappe vraiment (celui qui bouge le plus entre l'élan et la frappe) : sert à dessiner l'arc de frappe
+-- des coups qui n'en précisent pas
+local LIMBS = {
+	{ "rightHand", { "RS", "RE" } }, { "leftHand", { "LS", "LE" } },
+	{ "rightFoot", { "RH", "RK" } }, { "leftFoot", { "LH", "LK" } },
+}
+local function strikingLimb(model, move)
+	local from, to = move.windup or {}, move.strike or {}
+	local best, bestAmount = nil, 25
+	for _, limb in ipairs(LIMBS) do
+		local amount = 0
+		for _, joint in ipairs(limb[2]) do
+			local a, b = from[joint], to[joint]
+			if b then
+				a = a or { 0, 0, 0 }
+				amount += math.abs(b[1] - a[1]) + math.abs(b[2] - a[2]) + math.abs(b[3] - a[3])
+			end
+		end
+		if amount > bestAmount then
+			best, bestAmount = limb[1], amount
+		end
+	end
+	-- la main droite tient l'arme quand la Caisse Bizarre est ouverte : c'est l'arme qui laisse l'arc
+	if best == "rightHand" and model:GetAttribute("Armed") then
+		local costume = model:FindFirstChild("Costume")
+		for _, prop in ipairs(costume and costume:GetChildren() or {}) do
+			if prop:IsA("Model") and prop:GetAttribute("AlwaysShown") then
+				return "prop"
+			end
+		end
+		if costume and costume:FindFirstChild("PropBottle") then
+			return "bottle"
+		end
+	end
+	return best
+end
+
 -- Appelé par l'Animator au lancement de chaque coup, chez tous les joueurs
 function Fx.onMoveStart(model, key, move, startClock, power)
 	power = power or 0
@@ -940,6 +992,22 @@ function Fx.onMoveStart(model, key, move, startClock, power)
 	if move.prop then
 		setPropVisible(model, propName(move.prop), true, total)
 	end
+	-- signature (L) ou Super : le perso s'entoure d'un contour lumineux pendant l'élan (on voit venir le gros coup)
+	local isSignature = string.find(key, "S_", 1, true) ~= nil or string.find(key, "SUPER", 1, true) ~= nil
+	if isSignature and move.startup >= 0.08 then
+		local glow = Instance.new("Highlight")
+		local super = string.find(key, "SUPER", 1, true) ~= nil
+		glow.FillColor = super and Color3.fromRGB(255, 200, 40) or Color3.fromRGB(255, 255, 255)
+		glow.OutlineColor = super and Color3.fromRGB(255, 120, 20) or Color3.fromRGB(120, 200, 255)
+		glow.FillTransparency = 0.8
+		glow.OutlineTransparency = 0.05
+		glow.DepthMode = Enum.HighlightDepthMode.Occluded
+		glow.Parent = model
+		task.delay(delayToStrike + 0.05, function()
+			tween(glow, 0.12, { FillTransparency = 1, OutlineTransparency = 1 })
+		end)
+		cleanup(glow, delayToStrike + 0.25)
+	end
 	for _, name in ipairs(move.windupFx or {}) do
 		Fx.runNamed(model, name, move)
 	end
@@ -949,8 +1017,17 @@ function Fx.onMoveStart(model, key, move, startClock, power)
 			return
 		end
 		local root = model:FindFirstChild("HumanoidRootPart")
-		if move.trail then
-			Fx.trail(model, move.trail, strikeDuration)
+		local kind = move.kind or "melee"
+		local trailKind = move.trail
+		if not trailKind and (kind == "melee" or kind == "absorb" or kind == "counter" or kind == "wall") and move.hitbox then
+			trailKind = strikingLimb(model, move)
+		end
+		if trailKind then
+			Fx.trail(model, trailKind, strikeDuration)
+		end
+		-- coup qui part en avant au sol : poussière sous les pieds
+		if root and move.selfVelocity and math.abs(move.selfVelocity.X) >= 20 and move.selfVelocity.Y <= 0 then
+			Fx.dust(model, 0.6)
 		end
 		if move.hideProp then
 			setPropVisible(model, propName(move.hideProp), false, strikeDuration + move.recovery)
@@ -974,23 +1051,160 @@ function Fx.onMoveStart(model, key, move, startClock, power)
 end
 
 ------------------------------------------------------------------------ Impacts
+-- Étincelle d'impact façon Brawlhalla : éclair blanc, rayons en étoile étirés dans le sens de l'éjection,
+-- et anneau coloré pour les gros coups. power = vitesse d'éjection, dir = +1 / -1 (sens du coup)
+function Fx.hitSpark(position, power, dir, color)
+	local k = math.clamp(power / 120, 0.4, 1.8)
+	color = color or YELLOW
+	local core = part({ Shape = Enum.PartType.Ball, Size = Vector3.new(0.6, 0.6, 0.6), Color = Color3.new(1, 1, 1), Material = Enum.Material.Neon, Position = position + Vector3.new(0, 0, 1.2) })
+	tween(core, 0.06, { Size = Vector3.new(2.2, 2.2, 2.2) * k })
+	task.delay(0.06, function()
+		tween(core, 0.12, { Size = Vector3.new(0.2, 0.2, 0.2), Transparency = 1 })
+	end)
+	cleanup(core, 0.2)
+	local rays = 7 + math.floor(k * 3)
+	for i = 1, rays do
+		local angle = (i / rays) * math.pi * 2 + math.random() * 0.4
+		local v = Vector3.new(math.cos(angle), math.sin(angle), 0)
+		-- les rayons qui partent dans le sens du coup sont plus longs
+		local along = math.max(0, v.X * dir)
+		local length = (1.2 + along * 2.4) * k * (0.8 + math.random() * 0.4)
+		local ray = part({ Size = Vector3.new(0.16, 0.16, length), Color = i % 2 == 0 and color or Color3.new(1, 1, 1), Material = Enum.Material.Neon,
+			CFrame = CFrame.lookAt(position + v * 0.6 + Vector3.new(0, 0, 1.2), position + v * 5 + Vector3.new(0, 0, 1.2)) })
+		local finish = position + v * (length * 1.3) + Vector3.new(0, 0, 1.2)
+		tween(ray, 0.16, { CFrame = CFrame.lookAt(finish, finish + v), Size = Vector3.new(0.04, 0.04, length * 0.3), Transparency = 0.6 }, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+		cleanup(ray, 0.18)
+	end
+	if power > 80 then
+		Fx.ring(position + Vector3.new(0, 0, 1), color, 2.5 * k, 0.22)
+	end
+	if power > 150 then
+		Fx.ring(position + Vector3.new(0, 0, 0.9), Color3.new(1, 1, 1), 4 * k, 0.32)
+	end
+end
+
+-- Éjection : traînée de fumée derrière le perso qui vole (plus le coup est fort, plus elle dure)
+function Fx.launchTrail(model, power)
+	local torso = partOf(model, "UpperTorso")
+	if not torso or power < 70 then
+		return
+	end
+	local duration = math.clamp(power * 0.006, 0.35, 1.3)
+	local a0 = Instance.new("Attachment")
+	a0.Position = Vector3.new(0, 0.9, 0)
+	a0.Parent = torso
+	local a1 = Instance.new("Attachment")
+	a1.Position = Vector3.new(0, -0.9, 0)
+	a1.Parent = torso
+	local trail = Instance.new("Trail")
+	trail.Attachment0, trail.Attachment1 = a0, a1
+	trail.Lifetime = 0.35
+	trail.MinLength = 0
+	trail.Color = ColorSequence.new(Color3.new(1, 1, 1), Color3.fromRGB(190, 190, 200))
+	trail.Transparency = NumberSequence.new(0.25, 1)
+	trail.WidthScale = NumberSequence.new(1, 0.1)
+	trail.LightEmission = 0.4
+	trail.FaceCamera = true
+	trail.Parent = torso
+	if power > 130 then
+		emitterAt(torso, CFrame.new(), {
+			Texture = TEX_SMOKE,
+			Color = ColorSequence.new(Color3.fromRGB(235, 235, 240)),
+			Size = NumberSequence.new(1.1, 2.4),
+			Transparency = NumberSequence.new(0.4, 1),
+			Lifetime = NumberRange.new(0.35, 0.6),
+			Speed = NumberRange.new(0.5, 1.5),
+			Rate = 45,
+		}, duration)
+	end
+	task.delay(duration, function()
+		trail.Enabled = false
+	end)
+	cleanup(trail, duration + 0.4)
+	cleanup(a0, duration + 0.4)
+	cleanup(a1, duration + 0.4)
+end
+
 function Fx.onHit(data)
 	local power = data.power or 30
 	local strong = power > 110
-	Fx.burst(data.position, strong and Color3.fromRGB(255, 120, 40) or Color3.new(1, 1, 1), strong and 4 or 2.2)
+	local huge = power > 160
+	local dir = 1
+	local attackerRoot = data.attacker and data.attacker:FindFirstChild("HumanoidRootPart")
+	if attackerRoot and data.position then
+		dir = data.position.X >= attackerRoot.Position.X and 1 or -1
+	end
+	local color = huge and Color3.fromRGB(255, 80, 40) or strong and Color3.fromRGB(255, 160, 40) or YELLOW
+	Fx.hitSpark(data.position, power, dir, color)
 	Fx.popText(data.position + Vector3.new(0, 1.5, 0), data.text or "PAF !", strong and Color3.fromRGB(255, 90, 40) or YELLOW, strong and 1.4 or 1, 0.75)
+	-- arrêt sur image : plus long pour les gros coups ; la victime tremble pendant ce temps
+	local stop = 0.045 + math.min(power, 220) * 0.0006
 	if data.target then
 		Fx.flash(data.target)
-		Animator.freeze(data.target, 0.05 + math.min(power, 200) * 0.0005)
+		Animator.freeze(data.target, stop, 0.12 + math.min(power, 200) * 0.0008)
+		Fx.launchTrail(data.target, power)
 	end
 	if data.attacker then
-		Animator.freeze(data.attacker, 0.05 + math.min(power, 200) * 0.0005)
+		Animator.freeze(data.attacker, stop)
 	end
-	if strong then
-		Fx.ring(data.position, Color3.fromRGB(255, 200, 80), 5, 0.3)
+	if huge then
+		CameraRig.punch(data.position, 0.9, 0.22)
+		Fx.cheer(1)
 	end
 	CameraRig.shake(math.clamp(power / 220, 0.08, 0.9), 0.25)
 	playSound(SOUND_HIT, nil, 0.6, strong and 0.8 or 1.3)
+end
+
+------------------------------------------------------------------------ Déplacements
+-- Poussière sous les pieds (atterrissage, départ en course, coup qui fonce)
+function Fx.dust(model, amount)
+	local root = model:FindFirstChild("HumanoidRootPart")
+	if not root then
+		return
+	end
+	amount = amount or 1
+	for _, side in ipairs({ -1, 1 }) do
+		-- émetteur posé dans le repère du monde : la poussière part à gauche et à droite sur l'écran
+		local anchor = part({ Size = Vector3.new(0.2, 0.2, 0.2), Transparency = 1, CFrame = CFrame.new(root.Position + Vector3.new(side * 0.8, -2.8, 0.5)) })
+		local emitter = Instance.new("ParticleEmitter")
+		emitter.Texture = TEX_SMOKE
+		emitter.Color = ColorSequence.new(Color3.fromRGB(225, 215, 195))
+		emitter.Size = NumberSequence.new(0.6 * amount, 1.6 * amount)
+		emitter.Transparency = NumberSequence.new(0.35, 1)
+		emitter.Lifetime = NumberRange.new(0.25, 0.45)
+		emitter.Speed = NumberRange.new(3 * amount, 6 * amount)
+		emitter.SpreadAngle = Vector2.new(25, 10)
+		emitter.Acceleration = Vector3.new(0, 2, 0)
+		emitter.EmissionDirection = side > 0 and Enum.NormalId.Right or Enum.NormalId.Left
+		emitter.Rate = 0
+		emitter.Parent = anchor
+		emitter:Emit(math.floor(6 * amount + 0.5))
+		cleanup(anchor, 0.8)
+	end
+end
+
+local function onLand(model, impact)
+	if impact > 0.45 then
+		Fx.dust(model, 0.6 + impact * 0.6)
+	end
+end
+
+local function onTakeoff(model)
+	Fx.dust(model, 0.5)
+end
+
+-- Double saut : petit anneau blanc sous les pieds, comme dans Brawlhalla
+local function onAirJump(model)
+	local root = model:FindFirstChild("HumanoidRootPart")
+	if not root then
+		return
+	end
+	local position = root.Position + Vector3.new(0, -2.6, 0)
+	local ring = part({ Shape = Enum.PartType.Cylinder, Size = Vector3.new(0.15, 1, 1), Color = Color3.new(1, 1, 1), Material = Enum.Material.Neon, Transparency = 0.2,
+		CFrame = CFrame.new(position) * CFrame.Angles(0, 0, math.rad(90)) })
+	tween(ring, 0.25, { Size = Vector3.new(0.05, 4, 4), Transparency = 1 })
+	cleanup(ring, 0.3)
+	playSound(SOUND_SWOOSH, root, 0.25, 1.8)
 end
 
 ------------------------------------------------------------------------ Projectiles
@@ -1501,6 +1715,43 @@ local function hazardFx(data)
 		Fx.popText((data.a + data.b) / 2 + Vector3.new(0, 6, 0), "🎩 ABRACADABRA !", Color3.fromRGB(255, 220, 100), 1.4, 1)
 	elseif kind == "sunbeam" then
 		overlay(Color3.fromRGB(255, 240, 160), 0.45, 0.6, "☀️")
+	end
+end
+
+-- Esquive : silhouettes fantômes laissées derrière le perso (comme les « afterimages » de Brawlhalla)
+function Fx.afterimage(model, count)
+	count = count or 3
+	for n = 0, count - 1 do
+		task.delay(n * 0.05, function()
+			if not model.Parent then
+				return
+			end
+			for _, p in ipairs(model:GetChildren()) do
+				if p:IsA("BasePart") and p.Name ~= "HumanoidRootPart" and p.Transparency < 1 then
+					local ghost = part({ Size = p.Size, CFrame = p.CFrame, Color = Color3.fromRGB(190, 225, 255), Material = Enum.Material.Neon, Transparency = 0.55 })
+					tween(ghost, 0.22, { Transparency = 1 })
+					cleanup(ghost, 0.25)
+				end
+			end
+		end)
+	end
+end
+
+local dodgeSeen = {}
+local function updateDodges()
+	for _, model in ipairs(CollectionService:GetTagged("Fighter")) do
+		local start = model:GetAttribute("DodgeStart")
+		if start and start ~= dodgeSeen[model] then
+			if dodgeSeen[model] ~= nil then
+				Fx.afterimage(model, 3)
+			end
+			dodgeSeen[model] = start
+		end
+	end
+	for model in pairs(dodgeSeen) do
+		if not model.Parent then
+			dodgeSeen[model] = nil
+		end
 	end
 end
 
@@ -2058,6 +2309,9 @@ function Fx.start()
 	Animator.onMoveStart = Fx.onMoveStart
 	Animator.onDash = Fx.dash
 	Animator.onMirror = Fx.onMirror
+	Animator.onLand = onLand
+	Animator.onTakeoff = onTakeoff
+	Animator.onAirJump = onAirJump
 	-- Diagnostic des animations : vert si les 15 articulations sont trouvées, rouge sinon
 	Animator.onReport = function(model, text, ok)
 		if not Config.ANIM_DEBUG or (ok and model ~= Players.LocalPlayer.Character) then
@@ -2120,6 +2374,7 @@ function Fx.start()
 		updateHeldEffects()
 		updateObjects()
 		updateCrowd()
+		updateDodges()
 	end)
 end
 
