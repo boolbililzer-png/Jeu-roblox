@@ -665,7 +665,6 @@ local function anchorOf(model, at)
 	if not root then
 		return nil, CFrame.new()
 	end
-	local dir = facingOf(model)
 	if at == "head" then
 		return partOf(model, "Head") or root, CFrame.new()
 	elseif at == "above" then
@@ -1025,6 +1024,17 @@ function Fx.onMoveStart(model, key, move, startClock, power)
 		if trailKind then
 			Fx.trail(model, trailKind, strikeDuration)
 		end
+		-- signature au sol : le couloir frappé s'illumine devant le perso (tout adversaire à cette hauteur est touché)
+		if move.lane and root and move.hitbox then
+			local super = string.find(key, "SUPER", 1, true) ~= nil
+			local laneColor = super and Color3.fromRGB(255, 200, 60) or Color3.fromRGB(190, 230, 255)
+			if move.laneCentered then
+				Fx.laneSweep(root, 1, move.lane / 2, move.hitbox.size.Y, move.hitbox.offset.Y, laneColor)
+				Fx.laneSweep(root, -1, move.lane / 2, move.hitbox.size.Y, move.hitbox.offset.Y, laneColor)
+			else
+				Fx.laneSweep(root, facingOf(model), move.lane, move.hitbox.size.Y, move.hitbox.offset.Y, laneColor)
+			end
+		end
 		-- coup qui part en avant au sol : poussière sous les pieds
 		if root and move.selfVelocity and math.abs(move.selfVelocity.X) >= 20 and move.selfVelocity.Y <= 0 then
 			Fx.dust(model, 0.6)
@@ -1153,6 +1163,25 @@ function Fx.onHit(data)
 	end
 	CameraRig.shake(math.clamp(power / 220, 0.08, 0.9), 0.25)
 	playSound(SOUND_HIT, nil, 0.6, strong and 0.8 or 1.3)
+end
+
+-- Couloir de signature : une lame de lumière plate qui balaie le couloir devant le perso en un éclair
+function Fx.laneSweep(root, dir, length, height, up, color)
+	local y = root.Position.Y + (up or 0) - 1
+	local sweep = part({ Size = Vector3.new(0.5, math.max(height * 0.35, 1.5), 1.2), Color = color, Transparency = 0.25,
+		CFrame = CFrame.new(root.Position.X + dir * 0.5, y, 1.5) })
+	tween(sweep, 0.1, { Size = Vector3.new(length, math.max(height * 0.35, 1.5), 1.2), CFrame = CFrame.new(root.Position.X + dir * (length / 2 - 1.5), y, 1.5) }, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
+	task.delay(0.1, function()
+		tween(sweep, 0.18, { Transparency = 1, Size = Vector3.new(length, 0.2, 1.2) })
+	end)
+	cleanup(sweep, 0.3)
+	-- petites pointes de vitesse le long du couloir
+	for i = 1, 4 do
+		local x = root.Position.X + dir * (2 + (length - 4) * i / 4)
+		local tick = part({ Size = Vector3.new(1.2, 0.15, 0.15), Color = Color3.new(1, 1, 1), Transparency = 0.2, CFrame = CFrame.new(x, y + 0.6, 1.6) })
+		tween(tick, 0.22, { Transparency = 1, CFrame = CFrame.new(x + dir * 2, y + 0.6, 1.6) })
+		cleanup(tick, 0.25)
+	end
 end
 
 ------------------------------------------------------------------------ Déplacements

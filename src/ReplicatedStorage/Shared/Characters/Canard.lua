@@ -36,6 +36,7 @@ local data = {
 	name = "Capitaine Canard",
 	costume = "Canard",
 	style = "duck",
+	flying = true, -- sait voler : un saut en l\'air de plus, plané, et un ↑L très puissant
 
 	look = {
 		body = { head = SKIN, upper = WHITE, lower = Color3.fromRGB(210, 50, 50), arms = SKIN, hands = SKIN,

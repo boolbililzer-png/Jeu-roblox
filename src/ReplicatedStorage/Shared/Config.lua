@@ -66,7 +66,24 @@ Config.ENERGY_S_COST = 25 -- coût par défaut d'un spécial (chaque coup peut p
 Config.ENERGY_CHARGE_RATE = 45 -- énergie gagnée par seconde de recharge
 -- Portée des spéciaux (L / S) : zones de frappe plus larges et projectiles qui vont plus loin (appliqué au chargement
 -- des persos dans CharacterList, pour tous les spéciaux, avec ou sans Caisse Bizarre)
-Config.S_RANGE = 1.8 -- largeur et allonge des zones de frappe au corps à corps
+Config.S_RANGE = 1.8 -- largeur et allonge des zones de frappe au corps à corps (minimum, voir S_LANE)
+-- Signatures « sûres de toucher » : un L / →L / ↓L au corps à corps frappe tout le couloir devant le perso
+-- (S_LANE studs de long, S_LANE_HEIGHT de haut : tout adversaire à la même hauteur de plateforme est touché).
+-- Les Supers (Y) ont un couloir SUPER_LANE_SCALE fois plus grand. Les projectiles des L et des Y visent
+-- l'adversaire le plus proche à S_AIM_RANGE studs et foncent droit sur lui (S_AIM_HOMING = suivi en vol).
+Config.S_LANE = 16
+Config.S_LANE_HEIGHT = 6
+Config.SUPER_LANE_SCALE = 1.3
+Config.S_AIM_RANGE = 48
+Config.S_AIM_HOMING = 0.9
+-- ↑L : on décolle en diagonale vers l'avant, comme la remontée de Brawlhalla (élan minimal en X et en Y),
+-- et on frappe tout ce qui est sur le passage
+Config.S_UP_LAUNCH = Vector2.new(42, 80)
+-- Persos qui savent voler (champ flying = true de la fiche) : leur ↑L est un coup très puissant (× S_UP_FLYER_DAMAGE)
+Config.S_UP_FLYER_DAMAGE = 1.6
+-- Plus de jauge : les L et les Y se font à l'infini (l'énergie, la jauge Super et les compteurs des persos ne
+-- bloquent plus rien et ne sont plus affichés)
+Config.INFINITE_SPECIALS = true
 Config.S_DAMAGE = 1.35 -- les signatures (L) frappent plus fort que les autres coups…
 Config.S_DAMAGE_OVER_LIGHT = 3 -- …et toujours au moins 3 de plus que la plus forte attaque P / K du perso
 Config.LIGHT_RANGE = 1.15 -- attaques P / K un peu plus larges : les combos touchent plus souvent

@@ -35,10 +35,9 @@ On ne combine jamais deux boutons : la direction tenue au moment de l'appui choi
 | Sauter (double saut en l'air) | Espace | SAUT |
 | **P** attaque rapide | J | P (rouge) |
 | **K** attaque lourde | K | K (bleu) |
-| **S** spécial (maintenu = S chargé) | L | S (jaune) |
+| **S** spécial, sans limite (maintenu = S chargé) | L | S (jaune) |
 | Esquive (puis S = spécial d'esquive) | Maj | ESQ |
-| ⭐ 3 Supers (jauge pleine) : ↑Y, →Y (ou Y), ↓Y ; et coup fatal | Y | ⭐ |
-| ⚡ Recharger l'énergie des spéciaux | T (maintenu) | ⚡ |
+| ⭐ 3 Supers (sans limite) : ↑Y, →Y (ou Y), ↓Y ; et coup fatal | Y | ⭐ |
 | ✋ Ramasser une caisse ou un objet, lancer l'objet, **jeter son arme** (pas de saisie) | U | ✋ |
 | 😀 Emotes | 1, 2, 3, 4 | 😀 |
 | Aide des touches | H | — |
@@ -52,7 +51,13 @@ On ne combine jamais deux boutons : la direction tenue au moment de l'appui choi
   l'adversaire.
 - **Gravity cancel** : esquive en l'air puis P, K ou L tout de suite = le coup « au sol » en plein vol.
 - **Combos** : les coups qui ont une suite soulèvent un peu l'adversaire et le gardent à portée.
-- **Signatures (L)** : toujours plus fortes que les attaques P / K, et plus de portée.
+- **Signatures (L)** : toujours plus fortes que les attaques P / K. L, →L et ↓L frappent tout le couloir devant
+  le perso (16 studs, même hauteur de plateforme) : sûrs de toucher. Leurs projectiles visent l'adversaire et
+  foncent droit sur lui. ↑L fait décoller en diagonale vers l'avant en frappant (remontée façon Brawlhalla).
+- **Supers (Y)** : même principe avec un couloir 1,3 fois plus grand, et plus farfelus.
+- **Sans limite** : plus de jauge d'énergie ni de jauge Super, les L et les Y se font à volonté.
+- **Persos qui volent** (Capitaine Canard, Roi Pigeon, Gaston, Mamie) : un saut en l'air de plus, plané, et
+  un ↑L très puissant.
 - **J et K maintenus au sol** : frappe chargée, comme les smashs.
 - **↑S** sert de remontée et ne coûte pas d'énergie.
 

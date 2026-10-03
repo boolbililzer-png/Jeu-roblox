@@ -46,6 +46,10 @@ local BUTTON_KEYS = {
 	[Enum.KeyCode.Four] = "EMOTE_4",
 }
 
+if Config.INFINITE_SPECIALS then
+	BUTTON_KEYS[Enum.KeyCode.T] = nil -- plus de recharge d'énergie
+end
+
 -- Les 4 emotes du bouton 😀 (voir shared/CommonMoves.lua)
 local EMOTES = { { "EMOTE_1", "👋" }, { "EMOTE_2", "💃" }, { "EMOTE_3", "😂" }, { "EMOTE_4", "💪" } }
 
@@ -211,6 +215,9 @@ function Controls:_buildTouchUi()
 
 	for _, spec in ipairs(BUTTONS) do
 		local name, text, color, position, size = spec[1], spec[2], spec[3], spec[4], spec[5]
+		if name == "CHARGE" and Config.INFINITE_SPECIALS then
+			continue -- plus de jauge d'énergie
+		end
 		local button = Instance.new("TextButton")
 		button.Name = name
 		button.AnchorPoint = Vector2.new(0.5, 0.5)
@@ -262,7 +269,7 @@ function Controls:_buildTouchUi()
 		end)
 		self.buttons[name] = button
 	end
-	self.buttons.SUPER.Visible = false
+	self.buttons.SUPER.Visible = Config.INFINITE_SPECIALS == true
 
 	-- roue des emotes : 4 boutons sous le bouton 😀
 	local panel = Instance.new("Frame")
@@ -336,18 +343,17 @@ local HELP_ROWS = {
 	{ "Coup de poing (P)", "J", "J" },
 	{ "Coup de pied (K)", "K", "K" },
 	{ "Frappe chargée", "maintenir J ou K au sol", "hold J or K on ground" },
-	{ "Spécial (S)", "L, ↑L, →L, ↓L", "L, ↑L, →L, ↓L" },
+	{ "Spécial (S), sans limite", "L, →L, ↓L (sûrs de toucher), ↑L = envol", "L, →L, ↓L (sure hit), ↑L = fly" },
 	{ "Spécial chargé", "maintenir L", "hold L" },
 	{ "Saut / double saut", "Espace", "Space" },
 	{ "Esquive", "Maj gauche", "Left Shift" },
 	{ "Main ✋ : ramasser / lancer", "U (+ flèche pour viser)", "U (+ arrow to aim)" },
 	{ "Passer sous une plateforme", "maintenir bas", "hold down" },
-	{ "3 Supers / fatal", "↑Y, →Y (ou Y), ↓Y", "↑Y, →Y (or Y), ↓Y" },
-	{ "Recharge énergie", "maintenir T", "hold T" },
+	{ "3 Supers / fatal, sans limite", "↑Y, →Y (ou Y), ↓Y", "↑Y, →Y (or Y), ↓Y" },
 	{ "Dash", "2× gauche ou droite", "2× left or right" },
 	{ "Combos J / K", "J J J, J K J, K J K, K K J…", "J J J, J K J, K J K, K K J…" },
 	{ "Combos fléchés", "flèche + J ou K, puis J / K", "arrow + J or K, then J / K" },
-	{ "Finir un combo", "… puis L (coûte de l'énergie)", "… then L (uses energy)" },
+	{ "Finir un combo", "… puis L", "… then L" },
 	{ "En l'air", "saut puis J K J…, L ou ↓ L", "jump then J K J…, L or ↓ L" },
 	{ "Attaque en course", "J, K ou L pendant le dash", "J, K or L while dashing" },
 	{ "Emotes", "1, 2, 3, 4", "1, 2, 3, 4" },

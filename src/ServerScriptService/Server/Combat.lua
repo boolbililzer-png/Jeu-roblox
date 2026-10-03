@@ -378,7 +378,24 @@ local function sendUpdate(id, position, velocity)
 	end
 end
 
-local function launchProjectile(attacker, move, angleDegrees, multiplier, originOverride)
+-- Adversaire visé par un projectile « aimed » : le plus proche à portée (Config.S_AIM_RANGE), toutes hauteurs
+local function aimTarget(attacker, position)
+	local best, bestDistance = nil, Config.S_AIM_RANGE
+	local team = attacker:GetAttribute("Team")
+	for _, model in ipairs(Fighters.all()) do
+		local r = Fighters.root(model)
+		local sameTeam = Config.TEAMS and team ~= nil and team ~= "" and team == model:GetAttribute("Team")
+		if model ~= attacker and r and not model:GetAttribute("Eliminated") and not model:GetAttribute("Away") and not sameTeam then
+			local d = (r.Position - position).Magnitude
+			if d < bestDistance then
+				best, bestDistance = r, d
+			end
+		end
+	end
+	return best
+end
+
+local function launchProjectile(attacker, move, angleDegrees, multiplier, originOverride, aimOverride)
 	local root = Fighters.root(attacker)
 	if not root then
 		return
@@ -391,6 +408,22 @@ local function launchProjectile(attacker, move, angleDegrees, multiplier, origin
 	local size = Vector3.new(spec.size or 1.5, spec.size or 1.5, 6)
 	local gravity = spec.gravity or 0
 	local lifetime = spec.lifetime or 1
+	-- projectile « aimed » (L et Y) : s'il y a un adversaire à portée, il fonce droit sur lui et le suit en vol
+	local homing = spec.homing
+	if spec.aimed and not spec.rain then
+		local target = aimOverride or aimTarget(attacker, position)
+		if target then
+			local toward = target.Position + Vector3.new(0, 0.5, 0) - position
+			if toward.Magnitude > 0.5 then
+				velocity = toward.Unit * spec.speed
+				gravity = 0
+				homing = math.max(homing or 0, Config.S_AIM_HOMING)
+				-- il part toujours en direction de la cible, même si on lui tournait le dos
+				facing = velocity.X >= 0 and 1 or -1
+				lifetime = math.max(lifetime, toward.Magnitude / spec.speed + 0.3)
+			end
+		end
+	end
 
 	nextProjectileId += 1
 	local id = nextProjectileId
@@ -427,12 +460,12 @@ local function launchProjectile(attacker, move, angleDegrees, multiplier, origin
 	connection = RunService.Heartbeat:Connect(function(dt)
 		elapsed += dt
 		if not lingering then
-			-- tête chercheuse : le cap tourne doucement vers l'adversaire le plus proche
-			if spec.homing and not returning then
+			-- tête chercheuse : le cap tourne vers l'adversaire le plus proche
+			if homing and not returning then
 				local target = nearestEnemy(owner, position)
 				if target then
 					local wanted = (target.Position - position).Unit * velocity.Magnitude
-					velocity = velocity:Lerp(wanted, math.clamp(spec.homing * dt * 6, 0, 1))
+					velocity = velocity:Lerp(wanted, math.clamp(homing * dt * 6, 0, 1))
 					sendUpdate(id, position, velocity)
 				end
 			end
@@ -539,6 +572,12 @@ local function doProjectile(attacker, move)
 		local facing = Fighters.facing(attacker)
 		local rain = spec.rain
 		local center = root.Position + Vector3.new(facing * (rain.ahead or 10), rain.height or 22, 0)
+		-- pluie « aimed » : elle tombe sur l'adversaire visé, où qu'il soit à portée
+		local target = spec.aimed and aimTarget(attacker, root.Position)
+		if target then
+			center = Vector3.new(target.Position.X, target.Position.Y + (rain.height or 22), 0)
+			facing = target.Position.X >= root.Position.X and 1 or -1
+		end
 		for i = 1, rain.count or 5 do
 			task.delay((i - 1) * (rain.gap or 0.08), function()
 				local x = center.X + (math.random() - 0.5) * 2 * (rain.spread or 8)
@@ -548,13 +587,18 @@ local function doProjectile(attacker, move)
 		return
 	end
 	if spec.fan then
+		-- éventail « aimed » : chaque projectile vise la cible (ils arrivent tous dessus, en rafale)
+		local root = Fighters.root(attacker)
+		local target = spec.aimed and root and aimTarget(attacker, root.Position) or nil
 		local count = spec.fan.count
 		for i = 0, count - 1 do
 			local t = count > 1 and i / (count - 1) or 0
-			if spec.fan.gap then
-				task.delay(i * spec.fan.gap, launchProjectile, attacker, move, spec.fan.from + (spec.fan.to - spec.fan.from) * t, multiplier)
+			local angle = spec.fan.from + (spec.fan.to - spec.fan.from) * t
+			local gap = spec.fan.gap or (target and 0.07 or nil)
+			if gap then
+				task.delay(i * gap, launchProjectile, attacker, move, angle, multiplier, nil, target)
 			else
-				launchProjectile(attacker, move, spec.fan.from + (spec.fan.to - spec.fan.from) * t, multiplier)
+				launchProjectile(attacker, move, angle, multiplier, nil, target)
 			end
 		end
 	else

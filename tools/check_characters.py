@@ -113,6 +113,7 @@ local AnimCore = require(shared.children.AnimCore)
 local Statuses = require(shared.children.Statuses)
 local CharacterList = require(shared.children.CharacterList)
 local Roster = require(shared.children.Roster)
+local Config = require(shared.children.Config)
 
 local REQUIRED = {
 	"P_neutral", "P_side", "P_down", "P_up", "P_air", "P_dash",
@@ -274,7 +275,7 @@ for _, id in ipairs(Roster.ORDER) do
 					if kind == "wall" and type(m.wall) ~= "table" then note(id, where .. " : wall = { … } conseillé") end
 					if kind == "counter" and type(m.counter) ~= "table" then note(id, where .. " : counter = { … } conseillé") end
 					if kind == "grapple" and type(m.grapple) ~= "table" then note(id, where .. " : grapple = { … } conseillé") end
-					if string.sub(key, 1, 5) == "SUPER" and not m.superCost then err(id, where .. " : superCost manquant") end
+					if string.sub(key, 1, 5) == "SUPER" and not m.superCost and not Config.INFINITE_SPECIALS then err(id, where .. " : superCost manquant") end
 					if m.selfVelocity ~= nil and typeof(m.selfVelocity) ~= "Vector2" then err(id, where .. " : selfVelocity doit être un Vector2") end
 					checkStatus(id, where .. ".status", m.status)
 					if m.counter and m.counter.riposte then checkStatus(id, where .. ".counter.riposte.status", m.counter.riposte.status) end

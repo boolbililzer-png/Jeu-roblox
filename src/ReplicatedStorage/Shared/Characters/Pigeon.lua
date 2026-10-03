@@ -45,6 +45,7 @@ local data = {
 	name = "Le Roi Pigeon",
 	costume = "Pigeon",
 	style = "pigeon",
+	flying = true, -- sait voler : un saut en l\'air de plus, plané, et un ↑L très puissant
 
 	look = {
 		body = { head = SKIN, upper = VELVET, lower = VELVET_DARK, arms = VELVET, hands = WHITE, legs = WHITE,

@@ -150,6 +150,12 @@ function Mechanics.reset(model)
 			model:SetAttribute("BuffUntil", workspace:GetServerTimeNow() + 9999)
 		end
 	end
+	-- persos qui savent voler (flying = true dans la fiche) : un saut en l'air de plus et le plané
+	local data = CharacterList[model:GetAttribute("Character") or ""]
+	if data and data.flying then
+		model:SetAttribute("AirJumpsBonus", math.max(model:GetAttribute("AirJumpsBonus") or 0, 1))
+		model:SetAttribute("Glide", true)
+	end
 	model:SetAttribute("MeterMax", max)
 	model:SetAttribute("Meter", math.min(start, max > 0 and max or start))
 	lastLanded[model] = nil
@@ -168,6 +174,9 @@ end
 ------------------------------------------------------------------------ Coûts
 -- Coups qui consomment la jauge du perso (pression du Canard, pigeons, réservoir…)
 function Mechanics.canPay(model, move)
+	if Config.INFINITE_SPECIALS then
+		return true
+	end
 	return not move.meterCost or Mechanics.meter(model) >= move.meterCost
 end
 

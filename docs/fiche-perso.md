@@ -99,6 +99,24 @@ Une pose est `{ Articulation = { rx, ry, rz } }` (degrés), ou `{ rx, ry, rz, px
 - Le bras qui tient l'arme est le **droit** : poignet `RW`, l'arme part vers −Y de la main (le long de
   l'avant-bras quand le poignet est à 0).
 
+## Signatures (L) et Supers (Y) : « sûrs de toucher », sans limite
+
+Le moteur transforme lui-même ces coups au chargement (`CharacterList.lua`), la fiche n'écrit qu'un minimum :
+
+- **L / →L / ↓L au corps à corps** : la zone devient un couloir de 16 studs devant le perso, 6 de haut, qui
+  commence juste derrière lui. Tout adversaire à la même hauteur de plateforme est touché. Une zone déjà très
+  large et centrée (onde, cri, monologue, `box(30, 8, 0, 2)`) est gardée des deux côtés.
+- **↑L** : décollage en diagonale vers l'avant (élan ≥ (42, 80), comme la remontée de Brawlhalla) et couloir
+  qui monte avec le perso. Écrire une pose de vol en diagonale. Un perso qui vole (`flying = true` dans la
+  fiche : un saut en l'air de plus, plané) a un ↑L très puissant (dégâts × 1,6).
+- **Projectiles** des L et des Y : ils visent l'adversaire le plus proche à 48 studs et foncent droit sur lui,
+  en le suivant en vol (une pluie tombe sur lui, un éventail arrive sur lui en rafale). `aim = false` dans
+  `projectile` pour garder une trajectoire libre (ex. une bombe posée).
+- **Y (Supers)** : même chose avec un couloir 1,3 fois plus grand. Ils sont plus farfelus que les L.
+- **Sans limite** : plus de jauge d'énergie ni de jauge Super, plus de `energyCost` / `superCost` / `meterCost`
+  (ignorés). L'équilibrage se fait par `startup` (0,2 à 0,45 s) et `recovery` (0,4 à 0,9 s), plus longs que les P / K.
+- Les dégâts des L sont relevés automatiquement au-dessus des P / K ; écrire 12 à 18 pour un L, 20 à 28 pour un Y.
+
 ## Un coup
 
 ```lua

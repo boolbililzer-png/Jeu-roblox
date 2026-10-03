@@ -54,6 +54,7 @@ local data = {
 	name = "Gaston le Magnifique",
 	costume = "Gaston",
 	style = "magician",
+	flying = true, -- sait voler : un saut en l\'air de plus, plané, et un ↑L très puissant
 
 	look = {
 		body = { head = SKIN, upper = TUX, lower = TUX, arms = TUX, hands = WHITE, legs = TUX,

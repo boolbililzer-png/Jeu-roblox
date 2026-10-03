@@ -84,11 +84,6 @@ if player.Character then
 	task.spawn(onCharacter, player.Character)
 end
 
-local function statusActive(name)
-	return character ~= nil
-		and character:GetAttribute("Status") == name
-		and (character:GetAttribute("StatusUntil") or 0) > workspace:GetServerTimeNow()
-end
 
 local function isObese()
 	return character ~= nil and (character:GetAttribute("ObeseUntil") or 0) > workspace:GetServerTimeNow()
@@ -156,6 +151,9 @@ local function characterData()
 end
 
 local function energyCost(move, key)
+	if Config.INFINITE_SPECIALS then
+		return 0
+	end
 	if move.energyCost then
 		return move.energyCost
 	end
@@ -402,18 +400,6 @@ local function setCharging(on)
 	ActionRemote:FireServer(on and "CHARGE" or "CHARGE_END")
 end
 
-local function nearestEnemyInFront(range)
-	for _, model in ipairs(CollectionService:GetTagged("Fighter")) do
-		local otherRoot = model:FindFirstChild("HumanoidRootPart")
-		if model ~= character and otherRoot and not model:GetAttribute("Eliminated") then
-			local dx = otherRoot.Position.X - root.Position.X
-			if math.abs(dx) <= range and math.abs(otherRoot.Position.Y - root.Position.Y) < 4 and dx * facing >= 0 then
-				return model
-			end
-		end
-	end
-	return nil
-end
 
 -- Objet posé à portée (les objets sont dans workspace.Objets, avec l'attribut ItemId)
 local function nearestPickup()
@@ -633,7 +619,9 @@ controls.Pressed:Connect(function(name)
 		return
 	end
 	if name == "CHARGE" then
-		if (character:GetAttribute("Energy") or 0) >= Config.ENERGY_MAX then
+		if Config.INFINITE_SPECIALS then
+			return
+		elseif (character:GetAttribute("Energy") or 0) >= Config.ENERGY_MAX then
 			Fx.popText(root.Position + Vector3.new(0, 4, 1), "⚡ ÉNERGIE PLEINE", Color3.fromRGB(120, 200, 255), 0.8, 0.8)
 		elseif not isGrounded() then
 			Fx.popText(root.Position + Vector3.new(0, 4, 1), "⚡ AU SOL SEULEMENT", Color3.fromRGB(120, 200, 255), 0.8, 0.8)
@@ -880,7 +868,11 @@ RunService.Heartbeat:Connect(function(dt)
 	end
 
 	-- ⭐ visible si la jauge Super est pleine ou si un coup fatal est possible
-	controls:setSuperReady((character:GetAttribute("Super") or 0) >= Config.MAX_SUPER or Hud.findFinishable(character) ~= nil)
+	controls:setSuperReady(Config.INFINITE_SPECIALS or (character:GetAttribute("Super") or 0) >= Config.MAX_SUPER or Hud.findFinishable(character) ~= nil)
 	-- bouton S grisé quand l'énergie ne suffit plus pour un spécial, ⚡ qui pulse pendant la recharge
-	controls:setEnergy((character:GetAttribute("Energy") or 0) / Config.ENERGY_MAX, (character:GetAttribute("Energy") or 0) >= Config.ENERGY_S_COST, charging)
+	if Config.INFINITE_SPECIALS then
+		controls:setEnergy(1, true, false)
+	else
+		controls:setEnergy((character:GetAttribute("Energy") or 0) / Config.ENERGY_MAX, (character:GetAttribute("Energy") or 0) >= Config.ENERGY_S_COST, charging)
+	end
 end)

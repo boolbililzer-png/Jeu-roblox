@@ -146,6 +146,9 @@ function Fighters.clearSmash(model)
 end
 
 function Fighters.energyCost(move, key)
+	if Config.INFINITE_SPECIALS then
+		return 0
+	end
 	if move.energyCost then
 		return move.energyCost
 	end

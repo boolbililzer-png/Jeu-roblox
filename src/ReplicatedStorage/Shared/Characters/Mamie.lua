@@ -42,6 +42,7 @@ local data = {
 	name = "Mamie Tricot",
 	costume = "Mamie",
 	style = "granny",
+	flying = true, -- sait voler : un saut en l\'air de plus, plané, et un ↑L très puissant
 
 	-- Costume : chignon blanc, lunettes triple foyer, châle violet, robe bleue, chaussons, et ses deux chats
 	-- (Minou le roux sur l'épaule droite, Pompon le gris sur la gauche)

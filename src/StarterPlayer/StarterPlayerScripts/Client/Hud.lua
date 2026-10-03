@@ -112,6 +112,17 @@ local function createCard(parent)
 	end
 	refs.super = gauge(0.61, Color3.fromRGB(255, 170, 0), "⭐")
 	refs.energy = gauge(0.73, ENERGY_COLOR, "⚡")
+	if Config.INFINITE_SPECIALS then
+		-- plus de jauges : les L et les Y se font à l'infini
+		for _, fill in ipairs({ refs.super, refs.energy }) do
+			fill.Parent.Visible = false
+		end
+		for _, child in ipairs(card:GetChildren()) do
+			if child:IsA("TextLabel") and (child.Text == "⭐" or child.Text == "⚡") then
+				child.Visible = false
+			end
+		end
+	end
 	refs.status = textLabel(card, UDim2.new(1, -10, 0.15, 0), UDim2.new(0, 5, 0.84, 0))
 	refs.stroke = Instance.new("UIStroke")
 	refs.stroke.Thickness = 3

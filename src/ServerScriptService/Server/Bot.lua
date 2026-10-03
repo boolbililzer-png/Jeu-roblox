@@ -257,8 +257,8 @@ local function think(brain, now)
 	end
 
 	-- recharge d'énergie quand on est loin et à sec
-	local energy = model:GetAttribute("Energy") or 0
-	if distance > 25 and energy < 40 and onGround and not busy then
+	local energy = Config.INFINITE_SPECIALS and 100 or (model:GetAttribute("Energy") or 0)
+	if not Config.INFINITE_SPECIALS and distance > 25 and energy < 40 and onGround and not busy then
 		brain.wantMove = 0
 		act(brain, "CHARGE")
 		return
@@ -292,10 +292,10 @@ local function think(brain, now)
 	if busy then
 		return
 	end
-	local super = (model:GetAttribute("Super") or 0) >= Config.MAX_SUPER
+	local super = Config.INFINITE_SPECIALS and rng:NextNumber() < 0.04 * d or (model:GetAttribute("Super") or 0) >= Config.MAX_SUPER
 	local roll = rng:NextNumber()
 	local key
-	if super and rng:NextNumber() < 0.5 then
+	if super and (Config.INFINITE_SPECIALS or rng:NextNumber() < 0.5) then
 		-- un des 3 Supers selon la position de l'adversaire
 		key = pick(brain, dy > 3 and { "SUPER_up", "SUPER" } or (rng:NextNumber() < 0.5 and { "SUPER_down", "SUPER" } or { "SUPER" }))
 	elseif not onGround then

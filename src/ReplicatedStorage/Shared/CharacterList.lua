@@ -8,24 +8,72 @@ local CommonMoves = require(script.Parent:WaitForChild("CommonMoves"))
 local Roster = require(script.Parent:WaitForChild("Roster"))
 local Config = require(script.Parent:WaitForChild("Config"))
 
--- Spéciaux (S_…) : portée augmentée (Config.S_RANGE). Chaque coup n'est agrandi qu'une fois.
-local function widenSpecial(move)
+-- Spéciaux (S_…) et Supers (SUPER…) « sûrs de toucher » (voir Config.S_LANE) :
+--   corps à corps : la zone devient un couloir devant le perso, à la même hauteur de plateforme, plus large que
+--     toutes les attaques P / K (scale = 1 pour un L, SUPER_LANE_SCALE pour un Y) ; la zone écrite dans la fiche
+--     n'est qu'un minimum ;
+--   ↑L : décollage en diagonale (Config.S_UP_LAUNCH) et couloir qui monte avec le perso ;
+--   projectiles : marqués aimed (ils visent l'adversaire le plus proche, voir server/Combat.lua) et plus longs.
+-- Chaque coup n'est transformé qu'une fois.
+local function widenSpecial(move, key, scale, flying)
 	if move._widened then
 		return
 	end
 	move._widened = true
+	local kind = move.kind or "melee"
 	local box = move.hitbox
-	if box and box.size and box.offset then
+	local isUp = key == "S_up"
+	local isAir = string.find(key, "air", 1, true) ~= nil
+	if isUp then
+		-- remontée façon Brawlhalla : élan en diagonale vers l'avant, le coup frappe sur tout le passage
+		local launch = move.selfVelocity or Vector2.new(0, 0)
+		move.selfVelocity = Vector2.new(math.max(launch.X, Config.S_UP_LAUNCH.X), math.max(launch.Y, Config.S_UP_LAUNCH.Y))
+		if box and box.size then
+			move.hitbox = { size = Vector3.new(math.max(box.size.X, 10), math.max(box.size.Y, 11), box.size.Z), offset = Vector2.new(3, 4) }
+		end
+		if flying and (move.damage or 0) > 0 then
+			move.damage = math.floor(move.damage * Config.S_UP_FLYER_DAMAGE + 0.5)
+		end
+	elseif box and box.size and box.offset and (kind == "melee" or kind == "absorb" or kind == "counter" or kind == "wall") then
 		local size, offset = box.size, box.offset
-		move.hitbox = {
-			size = Vector3.new(size.X * Config.S_RANGE, size.Y * (1 + (Config.S_RANGE - 1) * 0.5), size.Z),
-			offset = Vector2.new(offset.X * Config.S_RANGE, offset.Y),
-		}
+		local lane = Config.S_LANE * scale
+		local height = Config.S_LANE_HEIGHT * scale
+		if isAir then
+			-- en l'air : zone très large tout autour (vers le bas pour un plongeon)
+			move.hitbox = {
+				size = Vector3.new(math.max(size.X * Config.S_RANGE, lane * 0.6), math.max(size.Y * Config.S_RANGE, height), size.Z),
+				offset = Vector2.new(offset.X * Config.S_RANGE, offset.Y),
+			}
+		elseif size.X >= 12 and math.abs(offset.X) <= size.X * 0.25 then
+			-- zone déjà très large et centrée sur le perso (onde, cri, monologue…) : on la garde des deux côtés
+			move.hitbox = { size = Vector3.new(size.X, math.max(size.Y, height), size.Z), offset = Vector2.new(offset.X, offset.Y) }
+			move.lane = size.X
+			move.laneCentered = true
+		else
+			-- au sol : couloir devant le perso, qui commence juste derrière lui (touche aussi à bout portant)
+			local length = math.max(size.X * Config.S_RANGE, lane)
+			move.hitbox = {
+				size = Vector3.new(length, math.max(size.Y, height), size.Z),
+				offset = Vector2.new(length / 2 - 1.5, math.max(offset.Y, 0.5)),
+			}
+			move.lane = length
+		end
 	end
-	if move.projectile and move.projectile.lifetime then
+	if move.projectile then
 		local projectile = table.clone(move.projectile)
-		projectile.lifetime *= Config.S_PROJECTILE_RANGE
+		if projectile.lifetime then
+			projectile.lifetime *= Config.S_PROJECTILE_RANGE
+		end
+		if projectile.aim ~= false then
+			projectile.aimed = true
+		end
 		move.projectile = projectile
+	end
+	-- plus de jauges : rien ne coûte plus rien
+	if Config.INFINITE_SPECIALS then
+		move.energyCost = 0
+		move.superCost = nil
+		move.meterCost = nil
 	end
 end
 
@@ -84,7 +132,9 @@ for _, data in pairs(list) do
 		local _, base = MoveSets.split(key)
 		local prefix = string.sub(base, 1, 2)
 		if prefix == "S_" then
-			widenSpecial(move)
+			widenSpecial(move, base, 1, data.flying == true)
+		elseif string.sub(base, 1, 5) == "SUPER" then
+			widenSpecial(move, base, Config.SUPER_LANE_SCALE, false)
 		elseif prefix == "P_" or prefix == "K_" then
 			widenLight(move)
 		end
