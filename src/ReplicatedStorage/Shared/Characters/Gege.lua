@@ -12,7 +12,7 @@
 --              "back_K" (à l'opposé). Sans suite pour cette direction, on prend celle du bouton seul.
 --              La fenêtre s'ouvre à l'impact du coup et se ferme peu après son retour en garde.
 --
--- Énergie (barre bleue, rechargée en maintenant O ou le bouton ⚡)
+-- Énergie (barre bleue, rechargée en maintenant T ou le bouton ⚡)
 --   energyCost : énergie consommée. Par défaut Config.ENERGY_S_COST pour les spéciaux (S_), 0 pour le reste.
 --   charge     : animation du perso pendant la recharge (boucle de poses, voir plus bas)
 --
@@ -714,7 +714,7 @@ local data = {
 	-- Mécanique : jauge de Bulles (Petite gorgée, ↓S), voir server/Mechanics.lua
 	passive = { kind = "bulles", name = "Bulles", icon = "🫧" },
 
-	-- Recharge d'énergie (maintenir O / bouton ⚡) : Gégé boit au goulot à grandes gorgées en se tapotant
+	-- Recharge d'énergie (maintenir T / bouton ⚡) : Gégé boit au goulot à grandes gorgées en se tapotant
 	-- la bedaine, puis lâche un petit rot. keys = { temps, pose partielle } joués en boucle sur loop secondes ;
 	-- beats = effets lancés à ce moment de chaque boucle (voir client/Fx.lua).
 	charge = {

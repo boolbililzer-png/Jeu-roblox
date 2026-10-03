@@ -1155,7 +1155,7 @@ function Fx.noEnergy(model)
 		return
 	end
 	lastNoEnergy = os.clock()
-	Fx.popText(root.Position + Vector3.new(0, 4, 1), "PLUS D'ÉNERGIE ! (O)", Color3.fromRGB(150, 160, 190), 0.8, 0.9)
+	Fx.popText(root.Position + Vector3.new(0, 4, 1), "PLUS D'ÉNERGIE ! (T)", Color3.fromRGB(150, 160, 190), 0.8, 0.9)
 end
 
 function Fx.spawnProjectile(data)

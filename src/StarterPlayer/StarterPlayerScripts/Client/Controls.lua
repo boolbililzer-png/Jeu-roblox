@@ -4,7 +4,7 @@
 -- Clavier : Roblox lit la POSITION des touches (disposition QWERTY), pas la lettre imprimée.
 -- Les mêmes touches physiques donnent donc ZQSD sur un clavier AZERTY et WASD sur un QWERTY.
 --   Direction : ZQSD (AZERTY) / WASD (QWERTY) ou flèches
---   J = P, K = K, L = S (maintenir = S chargé), Espace = SAUT, Maj gauche = ESQUIVE, I = SUPER
+--   J = P, K = K, L = S (maintenir = S chargé), Espace = SAUT, Maj gauche = ESQUIVE, Y = SUPER, T = recharge ⚡
 --   O maintenu = recharge d'énergie (bouton ⚡ sur téléphone)
 --   U = MAIN (✋) : ramasser un objet, lancer l'objet tenu, saisir puis projeter l'adversaire
 --   H = afficher / cacher l'aide des touches
@@ -36,8 +36,8 @@ local BUTTON_KEYS = {
 	[Enum.KeyCode.L] = "S",
 	[Enum.KeyCode.Space] = "SAUT",
 	[Enum.KeyCode.LeftShift] = "ESQUIVE",
-	[Enum.KeyCode.I] = "SUPER",
-	[Enum.KeyCode.O] = "CHARGE",
+	[Enum.KeyCode.Y] = "SUPER",
+	[Enum.KeyCode.T] = "CHARGE",
 	[Enum.KeyCode.U] = "MAIN",
 	-- emotes (à part des attaques)
 	[Enum.KeyCode.One] = "EMOTE_1",
@@ -126,7 +126,7 @@ end
 
 function Controls:_bindKeyboard()
 	UserInputService.InputBegan:Connect(function(input, processed)
-		-- I et O servent au zoom de la caméra Roblox par défaut, Maj au verrouillage de caméra : Roblox les marque
+		-- Maj sert au verrouillage de caméra Roblox par défaut (et d'autres touches à Roblox) : Roblox les marque
 		-- « déjà traitées » alors que notre caméra est scriptée. On ne les ignore que si l'on tape dans un champ texte.
 		if processed and (UserInputService:GetFocusedTextBox() ~= nil or not (BUTTON_KEYS[input.KeyCode] or DIRECTION_KEYS[input.KeyCode])) then
 			return
@@ -342,8 +342,8 @@ local HELP_ROWS = {
 	{ "Esquive", "Maj gauche", "Left Shift" },
 	{ "Main ✋ : ramasser / lancer", "U (+ flèche pour viser)", "U (+ arrow to aim)" },
 	{ "Passer sous une plateforme", "maintenir bas", "hold down" },
-	{ "3 Supers / fatal", "↑I, →I (ou I), ↓I", "↑I, →I (or I), ↓I" },
-	{ "Recharge énergie", "maintenir O", "hold O" },
+	{ "3 Supers / fatal", "↑Y, →Y (ou Y), ↓Y", "↑Y, →Y (or Y), ↓Y" },
+	{ "Recharge énergie", "maintenir T", "hold T" },
 	{ "Dash", "2× gauche ou droite", "2× left or right" },
 	{ "Combos J / K", "J J J, J K J, K J K, K K J…", "J J J, J K J, K J K, K K J…" },
 	{ "Combos fléchés", "flèche + J ou K, puis J / K", "arrow + J or K, then J / K" },

@@ -37,8 +37,8 @@ On ne combine jamais deux boutons : la direction tenue au moment de l'appui choi
 | **K** attaque lourde | K | K (bleu) |
 | **S** spécial (maintenu = S chargé) | L | S (jaune) |
 | Esquive (puis S = spécial d'esquive) | Maj | ESQ |
-| ⭐ 3 Supers (jauge pleine) : ↑I, →I (ou I), ↓I ; et coup fatal | I | ⭐ |
-| ⚡ Recharger l'énergie des spéciaux | O (maintenu) | ⚡ |
+| ⭐ 3 Supers (jauge pleine) : ↑Y, →Y (ou Y), ↓Y ; et coup fatal | Y | ⭐ |
+| ⚡ Recharger l'énergie des spéciaux | T (maintenu) | ⚡ |
 | ✋ Ramasser une caisse ou un objet, lancer l'objet, **jeter son arme** (pas de saisie) | U | ✋ |
 | 😀 Emotes | 1, 2, 3, 4 | 😀 |
 | Aide des touches | H | — |

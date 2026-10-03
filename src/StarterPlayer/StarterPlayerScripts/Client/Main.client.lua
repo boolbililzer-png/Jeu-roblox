@@ -255,7 +255,7 @@ local function resolveMove(button)
 	elseif button == "S_HOLD" then
 		return pickMove({ "S_hold", "S_neutral" })
 	elseif button == "SUPER" then
-		-- 3 Supers : ↑I, →I (ou I seul) et ↓I
+		-- 3 Supers : ↑Y, →Y (ou Y seul) et ↓Y
 		if dir == "up" then
 			return pickMove({ "SUPER_up", "SUPER" })
 		elseif dir == "down" then
