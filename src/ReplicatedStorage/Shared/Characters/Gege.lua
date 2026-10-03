@@ -12,8 +12,9 @@
 --              "back_K" (à l'opposé). Sans suite pour cette direction, on prend celle du bouton seul.
 --              La fenêtre s'ouvre à l'impact du coup et se ferme peu après son retour en garde.
 --
--- Énergie (barre bleue, rechargée en maintenant T ou le bouton ⚡)
---   energyCost : énergie consommée. Par défaut Config.ENERGY_S_COST pour les spéciaux (S_), 0 pour le reste.
+-- Signatures (S_, bouton L) et Supers (SUPER…, bouton Y) : sans limite, plus d'energyCost ni de superCost. Le moteur
+--   en fait des coups sûrs de toucher (couloir de 16 studs devant lui, projectiles qui visent l'adversaire, ↑L en
+--   diagonale, voir docs/fiche-perso.md) : on écrit ici des gestes qui balaient tout le couloir.
 --   charge     : animation du perso pendant la recharge (boucle de poses, voir plus bas)
 --
 -- Gameplay
@@ -268,78 +269,81 @@ local data = {
 		},
 
 		------------------------------------------------------------------ Spéciaux (S)
-		-- Jet de soda douteux : il secoue la bouteille à deux mains, puis vise et arrose (recul du jet)
+		-- Jet de soda douteux : il secoue la bouteille à deux mains et la giclée pétillante fonce droit dans la figure de l'adversaire (il voit tout à l'envers)
 		S_neutral = {
-			label = "Jet de soda douteux", energyCost = 20, kind = "projectile", startup = 0.15, active = 0, recovery = 0.3,
-			damage = 7, kbBase = 15, kbGrowth = 15, kbAngle = 20,
-			projectile = { speed = 70, angle = 0, gravity = 0, lifetime = 0.45, size = 1.6, color = SODA, visual = "soda" },
+			label = "Jet de soda douteux", kind = "projectile", startup = 0.18, active = 0, recovery = 0.4,
+			damage = 12, kbBase = 28, kbGrowth = 45, kbAngle = 25,
+			projectile = { speed = 80, angle = 0, gravity = 0, lifetime = 0.6, size = 2, color = SODA, visual = "soda" },
 			status = { name = "inverted", duration = 3 },
-			windup = { Root = { 0, -12, 0, 0, -0.2, 0.1 }, Waist = { 0, -18, 0 }, RS = { 75, 0, 5 }, RE = { 95, 0, 0 }, RW = { 15, 0, 0 }, LS = { 65, 0, 20 }, LE = { 85, 0, 0 } },
-			strike = { Root = { -6, 10, 0, 0, -0.25, -0.15 }, Waist = { -8, 14, 0 }, RS = { 92, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 85, 0, 18 }, LE = { 25, 0, 0 } },
-			follow = { Root = { 2, 10, 0, 0, -0.25, 0.15 }, Waist = { 6, 14, 0 }, RS = { 98, 0, 0 }, RE = { 5, 0, 0 }, RW = { 8, 0, 0 }, LS = { 88, 0, 18 }, LE = { 30, 0, 0 } },
-			shake = true, windupFx = { "sodaShake" }, text = "PSCHHH !", hitText = "SPLASH !",
+			windup = { Root = { 4, -14, 0, 0, -0.2, 0.15 }, Waist = { 4, -20, 0 }, Neck = { 6, 12, 0 }, RS = { 70, 0, -10 }, RE = { 100, 0, 0 }, RW = { 20, 0, 0 }, LS = { 70, 0, 10 }, LE = { 100, 0, 0 } },
+			strike = { Root = { -10, 12, 0, 0, -0.3, -0.3 }, Waist = { -14, 16, 0 }, Neck = { -4, -10, 0 }, RS = { 96, 0, -4 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 92, 0, 6 }, LE = { 5, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.35 } },
+			follow = { Root = { -12, 14, 0, 0, -0.32, -0.35 }, Waist = { -16, 18, 0 }, Neck = { -6, -12, 0 }, RS = { 100, 0, -6 }, RE = { 4, 0, 0 }, RW = { 6, 0, 0 }, LS = { 95, 0, 8 }, LE = { 5, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.35 } },
+			shake = true, windupFx = { "sodaShake" }, fx = { { "beam", color = SODA, length = 10, width = 1.8, at = "hand" } }, text = "PSCHHH !", hitText = "SPLASH ! TOUT À L'ENVERS !",
 		},
-		-- Bouteille lancée : grand lancer par-dessus l'épaule, pas en avant du pied gauche
+		-- Bouteille-fusée : il la secoue, la cale sur l'épaule comme un bazooka et la pression l'expédie droit sur l'adversaire
 		S_side = {
-			label = "Bouteille lancée", energyCost = 25, kind = "projectile", startup = 0.2, active = 0, recovery = 0.35,
-			damage = 10, kbBase = 25, kbGrowth = 55, kbAngle = 45,
-			projectile = { speed = 55, angle = 35, gravity = 110, lifetime = 1.5, size = 1.8, color = BOTTLE, visual = "bottle" },
-			windup = { Root = { 8, -28, 0, 0, -0.15, 0.3 }, Waist = { 12, -36, 0 }, RS = { 195, 0, 25 }, RE = { 95, 0, 0 }, RW = { 0, 0, 0 }, LS = { 95, 0, -15 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
-			strike = { Root = { -12, 24, 0, 0, -0.35, -0.35 }, Waist = { -25, 36, 0 }, RS = { 60, 0, 0 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { -25, 0, -30 }, LE = { 80, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
-			follow = { Root = { -16, 32, 0, 0, -0.42, -0.45 }, Waist = { -32, 46, 0 }, RS = { 20, 0, -18 }, RE = { 20, 0, 0 }, RW = { -10, 0, 0 }, LS = { -35, 0, -35 }, LE = { 85, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
-			hideProp = "bottle", text = "HOP !", hitText = "CLONK !",
+			label = "Bouteille-fusée", kind = "projectile", startup = 0.22, active = 0, recovery = 0.45,
+			damage = 14, kbBase = 30, kbGrowth = 60, kbAngle = 40,
+			projectile = { speed = 85, angle = 0, gravity = 0, lifetime = 0.7, size = 2, color = BOTTLE, visual = "bottle" },
+			windup = { Root = { 6, -24, 0, 0, -0.2, 0.25 }, Waist = { 8, -30, 0 }, Neck = { 4, 20, 0 }, RS = { 150, 0, 30 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, -10 }, LE = { 20, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+			strike = { Root = { -10, 18, 0, 0, -0.3, -0.35 }, Waist = { -14, 24, 0 }, Neck = { 0, -14, 0 }, RS = { 96, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -40 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+			follow = { Root = { -14, 22, 0, 0, -0.34, -0.42 }, Waist = { -18, 28, 0 }, Neck = { 0, -16, 0 }, RS = { 100, 0, 6 }, RE = { 6, 0, 0 }, RW = { -8, 0, 0 }, LS = { 55, 0, -45 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+			shake = true, hideProp = "bottle", windupFx = { "sodaShake" },
+			fx = { { "burst", color = SODA, size = 2.5, at = "hand" }, { "particles", tex = "spark", color = SODA, dir = "front", at = "hand", time = 0.3, speed = 18, size = 0.5, rate = 80 } },
+			text = "FUSÉE !", hitText = "CLONK !",
 		},
-		-- Rot sonique : il gonfle le ventre… et le rot part droit dans la figure de l'adversaire, tête en avant, bras rejetés en arrière
+		-- Rot sonique (après une esquive) : il gonfle le ventre… et le rot part en onde de choc sur tout le couloir, tête en avant, bras rejetés en arrière
 		S_dodge = {
-			label = "Rot sonique", energyCost = 20, startup = 0.12, active = 0.15, recovery = 0.3,
-			damage = 6, hitbox = box(7, 5, 3.5, 1), kbBase = 40, kbGrowth = 30, kbAngle = 15,
+			label = "Rot sonique", startup = 0.15, active = 0.2, recovery = 0.45,
+			damage = 12, hitbox = box(14, 6, 7, 1), kbBase = 42, kbGrowth = 35, kbAngle = 15,
 			windup = { Root = { 8, 0, 0, 0, -0.3, 0.2 }, Waist = { 22, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 30, 0, -22 }, RE = { 105, 0, 0 }, LS = { 30, 0, 22 }, LE = { 105, 0, 0 } },
 			strike = { Root = { -14, 0, 0, 0, -0.3, -0.4 }, Waist = { -26, 0, 0 }, Neck = { -20, 0, 0 }, RS = { -50, 0, 50 }, RE = { 15, 0, 0 }, LS = { -50, 0, -50 }, LE = { 15, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
 			follow = { Root = { -16, 0, 0, 0, -0.32, -0.45 }, Waist = { -30, 0, 0 }, Neck = { -24, 0, 0 }, RS = { -58, 0, 55 }, RE = { 15, 0, 0 }, LS = { -58, 0, -55 }, LE = { 15, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
-			shake = true, fx = { "burp", { "ring", color = SODA, radius = 4, at = "front" } }, text = "BUUURP !", hitText = "BEURK !",
+			shake = true, fx = { "burp", { "ring", color = SODA, radius = 5, at = "front" }, { "beam", color = SODA, length = 14, width = 4, at = "head" } }, text = "BUUURP !", hitText = "BEURK !",
 		},
-		-- Gorgée et crachat : il boit au goulot (+1 bulle), gonfle les joues et recrache une giclée pétillante droit devant, qui laisse une flaque glissante (gratuit)
+		-- Gorgée et grand crachat : il boit au goulot (+1 bulle), gonfle les joues et crache un jet pétillant qui arrose tout le couloir et laisse une flaque glissante
 		S_down = {
-			label = "Gorgée et crachat", energyCost = 0, effect = "sip", startup = 0.1, active = 0.15, recovery = 0.5,
-			hitbox = box(6.5, 3.5, 3.5, 0.5), kbBase = 25, kbGrowth = 45, kbAngle = 40,
-			damage = 8, status = { name = "slippery", duration = 2 }, hitText = "PTOU ! ÇA GLISSE !",
+			label = "Gorgée et grand crachat", effect = "sip", startup = 0.2, active = 0.15, recovery = 0.5,
+			hitbox = box(14, 5, 7, 0.8), kbBase = 26, kbGrowth = 45, kbAngle = 35,
+			damage = 12, status = { name = "slippery", duration = 2 }, hitText = "PTOU ! ÇA GLISSE !",
 			windup = { Root = { 6, 0, 0, 0, -0.1, 0.1 }, Waist = { 14, 0, 0 }, Neck = { 32, 0, 0 }, RS = { 140, 0, -22 }, RE = { 118, 0, 0 }, RW = { -118, 0, 0 }, LS = { 10, 0, -30 }, LE = { 30, 0, 0 } },
-			strike = { Root = { -12, 0, 0, 0, -0.3, -0.4 }, Waist = { -22, 0, 0 }, Neck = { -16, 0, 0 }, RS = { 30, 0, 40 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, -10 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+			strike = { Root = { -14, 0, 0, 0, -0.3, -0.4 }, Waist = { -24, 0, 0 }, Neck = { -22, 0, 0 }, RS = { 30, 0, 40 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, -10 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
 			follow = { Root = { -14, 0, 0, 0, -0.32, -0.45 }, Waist = { -26, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 25, 0, 42 }, RE = { 40, 0, 0 }, RW = { -10, 0, 0 }, LS = { 95, 0, -12 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
-			hold = 0.15, windupFx = { "sip" }, fx = { "puddle", { "particles", tex = "spark", color = SODA, dir = "front", at = "head", time = 0.25, speed = 16, size = 0.5, rate = 80 } }, text = "GLOU… PTOU !",
+			hold = 0.15, windupFx = { "sip" }, fx = { "puddle", { "beam", color = SODA, length = 14, width = 2, at = "head" }, { "particles", tex = "spark", color = SODA, dir = "front", at = "head", time = 0.25, speed = 20, size = 0.5, rate = 80 } }, text = "GLOU… PTOU !",
 		},
-		-- Lampadaire : accroupi, il bondit en s'accrochant au lampadaire qui sort du sol et tourne autour
-		-- (gratuit : c'est la remontée, on ne doit jamais tomber faute d'énergie)
+		-- Lampadaire-catapulte (↑L) : accroupi, il s'accroche au lampadaire qui jaillit du sol ; le lampadaire se plie comme une
+		-- catapulte et le lance en diagonale vers l'avant, bouteille tendue, jambes qui traînent derrière
 		S_up = {
-			label = "Lampadaire", energyCost = 0, startup = 0.05, active = 0.3, recovery = 0.3,
-			damage = 7, hitbox = box(5, 7, 0.5, 2), kbBase = 30, kbGrowth = 40, kbAngle = 80, selfVelocity = Vector2.new(10, 85),
-			windup = { Root = { 0, 0, 0, 0, -0.8, 0 }, Waist = { -15, 0, 0 }, RS = { 150, 0, 20 }, LS = { 150, 0, -20 } },
-			strike = { Root = { 0, 0, 0, 0, 0.4, 0 }, RS = { 175, 0, 10 }, RE = { 10, 0, 0 }, LS = { 175, 0, -10 }, LE = { 10, 0, 0 }, RH = { 10, 0, 0 }, RK = { -20, 0, 0 }, LH = { 20, 0, 0 }, LK = { -40, 0, 0 } },
-			follow = { Root = { 0, 0, 0, 0, 0.4, 0 }, Waist = { 8, 0, 0 }, RS = { 180, 0, 5 }, RE = { 15, 0, 0 }, LS = { 180, 0, -5 }, LE = { 15, 0, 0 }, RH = { 30, 0, 10 }, RK = { -50, 0, 0 }, LH = { -10, 0, -10 }, LK = { -30, 0, 0 } },
-			spin = { axis = "y", degrees = 360 }, fx = { "lamp" }, hitText = "DING !",
+			label = "Lampadaire-catapulte", startup = 0.1, active = 0.3, recovery = 0.4,
+			damage = 13, hitbox = box(10, 11, 3, 4), kbBase = 32, kbGrowth = 50, kbAngle = 70, selfVelocity = Vector2.new(42, 80),
+			windup = { Root = { 4, 0, 0, 0, -0.8, 0.1 }, Waist = { -12, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 150, 0, 20 }, RE = { 30, 0, 0 }, LS = { 150, 0, -20 }, LE = { 30, 0, 0 } },
+			strike = { Root = { -42, 0, 0, 0, 0.4, -0.2 }, Waist = { -6, 0, 0 }, Neck = { 32, 0, 0 }, RS = { 172, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -35, 0, -30 }, LE = { 20, 0, 0 }, RH = { -25, 0, 5 }, RK = { -30, 0, 0 }, LH = { -15, 0, -5 }, LK = { -50, 0, 0 } },
+			follow = { Root = { -46, 0, 0, 0, 0.45, -0.25 }, Waist = { -8, 0, 0 }, Neck = { 34, 0, 0 }, RS = { 176, 0, 12 }, RE = { 0, 0, 0 }, RW = { -8, 0, 0 }, LS = { -40, 0, -35 }, LE = { 20, 0, 0 }, RH = { -30, 0, 6 }, RK = { -35, 0, 0 }, LH = { -20, 0, -6 }, LK = { -55, 0, 0 } },
+			trail = "bottle", fx = { "lamp", { "burst", color = SODA, size = 3, at = "feet" }, { "ring", color = SODA, radius = 5, at = "feet" }, { "particles", tex = "smoke", color = Color3.fromRGB(230, 230, 230), dir = "down", at = "feet", time = 0.35, speed = 12 } },
+			text = "CATAPULTÉ !", hitText = "DING !",
 		},
-		-- Haleine-briquet : briquet devant la bouche, il souffle une flamme en se penchant en avant
+		-- Haleine-briquet (S maintenu) : briquet devant la bouche, il se penche et souffle une longue flamme cartoon qui traverse tout le couloir
 		S_hold = {
-			label = "Haleine-briquet", energyCost = 35, startup = 0.15, active = 0.25, recovery = 0.4,
-			damage = 14, hitbox = box(9, 3, 5, 1), kbBase = 30, kbGrowth = 80, kbAngle = 30,
+			label = "Haleine-briquet", startup = 0.28, active = 0.3, recovery = 0.5,
+			damage = 15, hitbox = box(15, 5, 7.5, 1), kbBase = 30, kbGrowth = 75, kbAngle = 30,
 			windup = { Root = { 6, 0, 0, 0, -0.1, 0.2 }, Waist = { 10, 0, 0 }, Neck = { 8, 0, 0 }, RS = { 30, 0, 25 }, LS = { 115, 0, 22 }, LE = { 105, 0, 0 } },
-			strike = { Root = { -8, 0, 0, 0, -0.25, -0.2 }, Waist = { -14, 0, 0 }, Neck = { -12, 0, 0 }, RS = { -25, 0, 40 }, LS = { 92, 0, 15 }, LE = { 75, 0, 0 } },
-			follow = { Root = { -10, 0, 0, 0, -0.28, -0.3 }, Waist = { -18, 0, 0 }, Neck = { -16, 0, 0 }, RS = { -30, 0, 45 }, LS = { 95, 0, 12 }, LE = { 70, 0, 0 } },
-			prop = "lighter", fx = { "fire" }, text = "FOUUU !", hitText = "FLAMBÉ !",
+			strike = { Root = { -12, 0, 0, 0, -0.3, -0.3 }, Waist = { -18, 0, 0 }, Neck = { -12, 0, 0 }, RS = { -25, 0, 40 }, LS = { 92, 0, 15 }, LE = { 75, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.35 } },
+			follow = { Root = { -14, 0, 0, 0, -0.32, -0.38 }, Waist = { -22, 0, 0 }, Neck = { -16, 0, 0 }, RS = { -30, 0, 45 }, LS = { 95, 0, 12 }, LE = { 70, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+			prop = "lighter", fx = { "fire", { "beam", color = Color3.fromRGB(255, 140, 40), length = 14, width = 3, at = "head" } }, text = "FOUUU !", hitText = "FLAMBÉ !",
 		},
-		-- Titubade folle : charge en zigzag, bras grands ouverts
+		-- Titubade folle (→→S) : charge en zigzag bras grands ouverts, il encaisse tout et fauche le couloir entier
 		S_dash = {
-			label = "Titubade folle", energyCost = 25, startup = 0.05, active = 0.3, recovery = 0.3,
-			damage = 10, hitbox = box(5, 4, 2, 0.5), kbBase = 30, kbGrowth = 60, kbAngle = 35, selfVelocity = Vector2.new(60, 0), invuln = 0.2, armor = true,
+			label = "Titubade folle", startup = 0.15, active = 0.35, recovery = 0.4,
+			damage = 13, hitbox = box(14, 5, 6, 0.5), kbBase = 30, kbGrowth = 60, kbAngle = 35, selfVelocity = Vector2.new(60, 0), invuln = 0.2, armor = true,
 			windup = { Root = { -10, 0, 0 }, RS = { 60, 0, 50 }, LS = { 60, 0, -50 } },
 			strike = { Root = { -25, 0, 0 }, Waist = { -10, 0, 0 }, RS = { 80, 0, 70 }, RE = { 30, 0, 0 }, LS = { 80, 0, -70 }, LE = { 30, 0, 0 } },
 			follow = { Root = { -22, 0, 0 }, Waist = { -8, 0, 0 }, RS = { 70, 0, 80 }, RE = { 40, 0, 0 }, LS = { 70, 0, -80 }, LE = { 40, 0, 0 } },
-			wobble = true, fx = { "dust" }, hitText = "BOUM !",
+			wobble = true, trail = "body", fx = { "dust" }, hitText = "BOUM !",
 		},
-		-- Plongeon du comptoir : plat ventre en piqué, bras tendus devant
+		-- Plongeon du comptoir (S en l'air) : plat ventre en piqué, bras tendus devant, il s'écrase sur l'adversaire
 		S_air = {
-			label = "Plongeon du comptoir", energyCost = 20, startup = 0.12, active = 0.35, recovery = 0.3,
-			damage = 11, hitbox = box(5, 4, 1.5, -1), kbBase = 25, kbGrowth = 55, kbAngle = -35, selfVelocity = Vector2.new(25, -70),
+			label = "Plongeon du comptoir", startup = 0.15, active = 0.35, recovery = 0.4,
+			damage = 13, hitbox = box(6, 5, 2, -1), kbBase = 25, kbGrowth = 55, kbAngle = -35, selfVelocity = Vector2.new(25, -70),
 			windup = { Root = { 20, 0, 0 }, Waist = { 10, 0, 0 }, RS = { 150, 0, 30 }, LS = { 150, 0, -30 }, RH = { 60, 0, 0 }, RK = { -90, 0, 0 }, LH = { 60, 0, 0 }, LK = { -90, 0, 0 } },
 			strike = { Root = { -70, 0, 0 }, Waist = { -10, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 175, 0, 10 }, RE = { 0, 0, 0 }, LS = { 175, 0, -10 }, LE = { 0, 0, 0 }, RH = { -10, 0, 0 }, RK = { -10, 0, 0 }, LH = { -10, 0, 0 }, LK = { -25, 0, 0 } },
 			follow = { Root = { -78, 0, 0 }, Waist = { -12, 0, 0 }, Neck = { 25, 0, 0 }, RS = { 178, 0, 15 }, RE = { 0, 0, 0 }, LS = { 178, 0, -15 }, LE = { 0, 0, 0 }, RH = { -15, 0, 5 }, RK = { -30, 0, 0 }, LH = { -5, 0, -5 }, LK = { -15, 0, 0 } },
@@ -549,7 +553,7 @@ local data = {
 		------------------------------------------------------------------ Finitions avec L (dans un enchaînement)
 		-- Gerbe de soda : il secoue et arrose devant lui en balayant (de près)
 		S_finish_spray = {
-			label = "Gerbe de soda", energyCost = 20, startup = 0.16, active = 0.2, recovery = 0.3,
+			label = "Gerbe de soda", startup = 0.16, active = 0.2, recovery = 0.3,
 			damage = 9, hitbox = box(7, 4, 4, 0.5), kbBase = 30, kbGrowth = 50, kbAngle = 30,
 			windup = { Root = { 0, -12, 0, 0, -0.2, 0.1 }, Waist = { 0, -18, 0 }, RS = { 75, 0, 5 }, RE = { 95, 0, 0 }, RW = { 15, 0, 0 }, LS = { 65, 0, 20 }, LE = { 85, 0, 0 } },
 			strike = { Root = { -6, -10, 0, 0, -0.25, -0.15 }, Waist = { -8, -10, 0 }, RS = { 92, 0, 15 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 85, 0, 25 }, LE = { 25, 0, 0 } },
@@ -558,7 +562,7 @@ local data = {
 		},
 		-- Toupie de bouteille : bras écartés, il tourne deux fois sur lui-même
 		S_finish_spin = {
-			label = "Toupie de bouteille", energyCost = 25, startup = 0.1, active = 0.3, recovery = 0.3,
+			label = "Toupie de bouteille", startup = 0.1, active = 0.3, recovery = 0.3,
 			damage = 11, hitbox = box(8, 4, 0, 0.5), kbBase = 32, kbGrowth = 65, kbAngle = 45,
 			windup = { Root = { 0, -30, 0, 0, -0.3, 0 }, Waist = { 0, -20, 0 }, RS = { 60, 0, 40 }, LS = { 60, 0, -40 } },
 			strike = { Root = { 0, 0, 0, 0, -0.1, 0 }, Neck = { -10, 0, 0 }, RS = { 90, 0, 85 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, -85 }, LE = { 0, 0, 0 } },
@@ -567,7 +571,7 @@ local data = {
 		},
 		-- Bouchon explosif : bouteille pointée, il fait sauter la capsule du pouce
 		S_finish_cap = {
-			label = "Bouchon explosif", kind = "projectile", energyCost = 20, startup = 0.12, active = 0, recovery = 0.28,
+			label = "Bouchon explosif", kind = "projectile", startup = 0.12, active = 0, recovery = 0.28,
 			damage = 8, kbBase = 30, kbGrowth = 55, kbAngle = 40,
 			projectile = { speed = 90, angle = 5, gravity = 0, lifetime = 0.25, size = 1.2, color = Color3.fromRGB(220, 50, 40), visual = "cap" },
 			windup = { Root = { 0, -10, 0, 0, -0.15, 0.1 }, Waist = { 0, -12, 0 }, RS = { 80, 0, -10 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 80, 0, 15 }, LE = { 60, 0, 0 } },
@@ -575,11 +579,11 @@ local data = {
 			follow = { Root = { 10, 12, 0, 0, -0.2, 0.25 }, Waist = { 12, 14, 0 }, RS = { 110, 0, 0 }, RE = { 5, 0, 0 }, RW = { -10, 0, 0 }, LS = { 55, 0, -35 }, LE = { 30, 0, 0 } },
 			shake = true, windupFx = { "sodaShake" }, text = "POP !", hitText = "POP !",
 		},
-		-- Pluie de soda (en l'air + ↓ + L) : il arrose vers le bas et le jet le fait remonter
+		-- Pluie de soda (en l'air + ↓ + L) : il arrose vers le bas et la giclée fonce sur l'adversaire, le jet le fait remonter
 		S_air_down = {
-			label = "Pluie de soda", kind = "projectile", energyCost = 25, startup = 0.12, active = 0, recovery = 0.3,
-			damage = 8, kbBase = 25, kbGrowth = 45, kbAngle = -45, selfVelocity = Vector2.new(0, 35),
-			projectile = { speed = 75, angle = -70, gravity = 0, lifetime = 0.5, size = 1.8, color = SODA, visual = "soda" },
+			label = "Pluie de soda", kind = "projectile", startup = 0.15, active = 0, recovery = 0.4,
+			damage = 12, kbBase = 25, kbGrowth = 45, kbAngle = -45, selfVelocity = Vector2.new(0, 35),
+			projectile = { speed = 80, angle = -70, gravity = 0, lifetime = 0.6, size = 2, color = SODA, visual = "soda" },
 			windup = { Root = { -10, 0, 0 }, RS = { 100, 0, 20 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -40 }, LE = { 40, 0, 0 }, RH = { 60, 0, 0 }, RK = { -90, 0, 0 }, LH = { 50, 0, 0 }, LK = { -90, 0, 0 } },
 			strike = { Root = { -20, 0, 0 }, Waist = { -20, 0, 0 }, RS = { 40, 0, 5 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, -60 }, LE = { 20, 0, 0 }, RH = { 30, 0, 0 }, RK = { -60, 0, 0 }, LH = { 20, 0, 0 }, LK = { -70, 0, 0 } },
 			follow = { Root = { -16, 0, 0 }, Waist = { -18, 0, 0 }, RS = { 35, 0, 5 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 95, 0, -65 }, LE = { 20, 0, 0 }, RH = { 25, 0, 0 }, RK = { -55, 0, 0 }, LH = { 15, 0, 0 }, LK = { -65, 0, 0 } },
@@ -587,31 +591,32 @@ local data = {
 		},
 
 		------------------------------------------------------------------ Supers
-		-- Tournée générale : il rassemble les bouteilles, puis les jette en éventail à deux mains
+		-- Tournée générale (Y) : un plateau de six bouteilles apparaît, il les jette toutes à deux mains et elles foncent sur l'adversaire en rafale (tout à l'envers)
 		SUPER = {
-			label = "Tournée générale !", kind = "projectile", superCost = 100, startup = 0.3, active = 0, recovery = 0.5,
-			damage = 6, kbBase = 25, kbGrowth = 40, kbAngle = 40,
-			projectile = { speed = 60, gravity = 60, lifetime = 1.4, size = 1.6, color = BOTTLE, visual = "bottle", fan = { count = 6, from = -10, to = 60 } },
+			label = "Tournée générale !", kind = "projectile", startup = 0.35, active = 0, recovery = 0.6,
+			damage = 4, kbBase = 25, kbGrowth = 40, kbAngle = 40,
+			projectile = { speed = 70, gravity = 0, lifetime = 1.0, size = 1.8, color = BOTTLE, visual = "bottle", fan = { count = 6, from = -15, to = 45 } },
 			status = { name = "inverted", duration = 3 },
 			windup = { Root = { 0, 0, 0, 0, -0.85, 0.15 }, Waist = { -25, 0, 0 }, RS = { 60, 0, -40 }, RE = { 90, 0, 0 }, LS = { 60, 0, 40 }, LE = { 90, 0, 0 } },
 			strike = { Root = { 0, 0, 0, 0, 0.3, 0 }, Waist = { 20, 0, 0 }, Neck = { 25, 0, 0 }, RS = { 150, 0, 70 }, RE = { 0, 0, 0 }, LS = { 150, 0, -70 }, LE = { 0, 0, 0 }, FR = { 0, 0, 0, 0, 0.2, 0 }, FL = { 0, 0, 0, 0, 0.2, 0 } },
 			follow = { Root = { 4, 0, 0, 0, 0.2, 0 }, Waist = { 24, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 160, 0, 80 }, RE = { 5, 0, 0 }, LS = { 160, 0, -80 }, LE = { 5, 0, 0 } },
-			windupFx = { "super" }, text = "TOURNÉE GÉNÉRALE !", hitText = "GLOUPS !",
+			windupFx = { "super", { "symbols", symbols = { "🥤" }, count = 6, radius = 3, color = SODA } }, text = "TOURNÉE GÉNÉRALE !", hitText = "GLOUPS !",
 		},
-		-- Super ↑ : accroupi, il secoue la bouteille entre ses genoux, puis la pointe au ciel : le bouchon saute et le jet le propulse en vrille
+		-- Geyser de soda douteux (↑Y) : accroupi, il secoue la bouteille entre ses genoux et la pointe au ciel : le bouchon saute,
+		-- un geyser de soda roule sur tout le couloir et emporte tout au plafond, lui en vrille
 		SUPER_up = {
-			label = "Bouchon de champagne !", superCost = 100, startup = 0.3, active = 0.3, recovery = 0.55,
-			damage = 22, hitbox = box(7, 12, 1.5, 4), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
+			label = "Geyser de soda douteux !", startup = 0.35, active = 0.3, recovery = 0.7,
+			damage = 24, hitbox = box(16, 12, 8, 5), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
 			windup = { Root = { -10, 0, 0, 0, -0.95, 0 }, Waist = { -32, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 40, 0, -20 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, 20 }, LE = { 110, 0, 0 } },
 			strike = { Root = { 6, 0, 0, 0, 0.5, 0 }, Waist = { 18, 0, 0 }, Neck = { 50, 0, 0 }, RS = { 186, 0, 6 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -80 }, LE = { 10, 0, 0 }, RH = { 40, 0, 10 }, RK = { -90, 0, 0 }, LH = { 20, 0, -15 }, LK = { -60, 0, 0 } },
 			follow = { Root = { 10, 0, 0, 0, 0.55, 0 }, Waist = { 24, 0, 0 }, Neck = { 56, 0, 0 }, RS = { 188, 0, 10 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 70, 0, -88 }, LE = { 10, 0, 0 }, RH = { 60, 0, 20 }, RK = { -110, 0, 0 }, LH = { 10, 0, -25 }, LK = { -40, 0, 0 } },
 			hold = 0.2, shake = true, spin = { axis = "y", degrees = 360 }, selfVelocity = Vector2.new(0, 55),
-			windupFx = { "super", "sodaShake" }, trail = "bottle", fx = { { "pillar", color = SODA, height = 22, width = 3, at = "front" }, { "burst", color = Color3.fromRGB(255, 240, 150), size = 4, at = "above" }, { "particles", tex = "spark", color = SODA, dir = "down", at = "feet", time = 0.5, speed = 14 }, { "ring", color = SODA, radius = 5, at = "feet" } }, text = "SANTÉ !", hitText = "PLOP !",
+			windupFx = { "super", "sodaShake" }, trail = "bottle", fx = { { "pillar", color = SODA, height = 22, width = 3, at = "front" }, { "beam", color = SODA, length = 16, width = 5, at = "feet" }, { "burst", color = Color3.fromRGB(255, 240, 150), size = 4, at = "above" }, { "particles", tex = "spark", color = SODA, dir = "down", at = "feet", time = 0.5, speed = 14 }, { "ring", color = SODA, radius = 6, at = "feet" } }, text = "SANTÉ !", hitText = "PLOP !",
 		},
-		-- Karaoké : micro à la main gauche, bras droit tendu vers le ciel, il se balance en chantant
+		-- Karaoké de fin de soirée (↓Y) : micro à la main gauche, bras droit tendu vers le ciel, il chante faux à pleins poumons : les ondes assomment tout l'écran
 		SUPER_down = {
-			label = "Karaoké de fin de soirée !", superCost = 100, startup = 0.4, active = 0.2, recovery = 0.6,
-			damage = 8, hitbox = box(70, 50, 0, 10), kbBase = 10, kbGrowth = 10, kbAngle = 60,
+			label = "Karaoké de fin de soirée !", startup = 0.4, active = 0.2, recovery = 0.7,
+			damage = 20, hitbox = box(70, 50, 0, 10), kbBase = 10, kbGrowth = 10, kbAngle = 60,
 			status = { name = "stunned", duration = 2 },
 			windup = { Root = { 0, 10, 0, 0, -0.2, 0 }, Neck = { 10, 0, 0 }, RS = { 120, 0, 60 }, RE = { 20, 0, 0 }, LS = { 110, 0, 0 }, LE = { 110, 0, 0 } },
 			strike = { Root = { 6, 0, -6, 0, -0.1, 0 }, Waist = { 25, 0, -6 }, Neck = { 35, 0, 0 }, RS = { 170, 0, 40 }, RE = { 0, 0, 0 }, LS = { 100, 0, 0 }, LE = { 100, 0, 0 } },

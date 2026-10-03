@@ -21,6 +21,19 @@ local GAS = Color3.fromRGB(255, 160, 210)
 local RINSE = Color3.fromRGB(60, 150, 255)
 local SPARK = Color3.fromRGB(255, 255, 220)
 local CHAIR = Color3.fromRGB(90, 200, 200)
+local TOOTH = Color3.fromRGB(255, 255, 250)
+
+-- Molaire géante (projectile de la Dent de sagesse) et fauteuil à roulettes (projectile du Fauteuil fou)
+local MOLAR = { shape = "block", size = 1.6, color = TOOTH, spin = 8, parts = {
+	{ "ball", Vector3.new(0.5, 0.9, 0.5), Vector3.new(0.45, -0.9, 0), TOOTH },
+	{ "ball", Vector3.new(0.5, 0.9, 0.5), Vector3.new(-0.45, -0.9, 0), TOOTH },
+} }
+local CHAIR_SHOT = { shape = "block", size = 2.4, color = CHAIR, spin = 4, parts = {
+	{ "block", Vector3.new(2.2, 2.4, 0.5), Vector3.new(0, 1.6, 0.9), CHAIR },
+	{ "block", Vector3.new(1.4, 0.4, 0.4), Vector3.new(0, 2.1, 1.3), COAT },
+	{ "cyl", Vector3.new(0.3, 0.5, 0.5), Vector3.new(0.9, -1.4, 0), DARK },
+	{ "cyl", Vector3.new(0.3, 0.5, 0.5), Vector3.new(-0.9, -1.4, 0), DARK },
+} }
 
 local data = {
 	id = "Fraise",
@@ -411,113 +424,117 @@ local data = {
 		},
 
 		------------------------------------------------------------------ Spéciaux (S)
-		-- Gaz hilarant : il ouvre la bonbonne, une grosse bulle rose reste en suspens devant lui (fou rire)
+		-- Bulle de gaz hilarant : il ouvre la bonbonne et souffle une grosse bulle rose qui fonce éclater au nez de l'adversaire (fou rire)
 		S_neutral = {
-			label = "Bulle de gaz hilarant", energyCost = 25, kind = "projectile", startup = 0.18, active = 0, recovery = 0.32,
-			damage = 5, kbBase = 12, kbGrowth = 10, kbAngle = 45,
-			projectile = { speed = 18, angle = 0, gravity = 0, lifetime = 0.5, linger = 2.5, size = 3.5, color = GAS, pierce = true,
+			label = "Bulle de gaz hilarant", kind = "projectile", startup = 0.2, active = 0, recovery = 0.42,
+			damage = 12, kbBase = 16, kbGrowth = 22, kbAngle = 45,
+			projectile = { speed = 46, angle = 0, gravity = 0, lifetime = 0.6, size = 3.5, color = GAS,
 				visual = { shape = "ball", size = 3.2, color = GAS, transparency = 0.45, spin = 2, text = "HA" } },
 			status = { name = "laughing", duration = 3 },
-			windup = { Root = { 0, 12, 0, 0, -0.1, 0.1 }, Waist = { 2, 10, 0 }, Neck = { 6, -10, 0 }, LS = { 70, 0, -10 }, LE = { 110, 0, 0 }, LW = { 30, 0, 0 }, RS = { 25, 0, 25 }, RE = { 70, 0, 0 } },
-			strike = { Root = { -4, -4, 0, 0, -0.15, -0.1 }, Waist = { -4, -6, 0 }, Neck = { 10, 0, 0 }, LS = { 90, 0, 10 }, LE = { 20, 0, 0 }, LW = { -30, 0, 0 }, RS = { 25, 0, 25 }, RE = { 70, 0, 0 } },
-			follow = { Root = { -4, -6, 0, 0, -0.15, -0.12 }, Waist = { -4, -8, 0 }, Neck = { 12, 0, 0 }, LS = { 92, 0, 14 }, LE = { 15, 0, 0 }, LW = { -40, 0, 0 }, RS = { 25, 0, 25 }, RE = { 70, 0, 0 } },
+			windup = { Root = { 6, 12, 0, 0, -0.1, 0.15 }, Waist = { 8, 10, 0 }, Neck = { 14, -10, 0 }, LS = { 70, 0, -10 }, LE = { 120, 0, 0 }, LW = { 30, 0, 0 }, RS = { 25, 0, 25 }, RE = { 70, 0, 0 } },
+			strike = { Root = { -8, -6, 0, 0, -0.2, -0.25 }, Waist = { -8, -8, 0 }, Neck = { -6, 0, 0 }, LS = { 95, 0, 8 }, LE = { 0, 0, 0 }, LW = { -20, 0, 0 }, RS = { 25, 0, 25 }, RE = { 70, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+			follow = { Root = { -10, -8, 0, 0, -0.22, -0.3 }, Waist = { -10, -10, 0 }, Neck = { -8, 0, 0 }, LS = { 100, 0, 12 }, LE = { 0, 0, 0 }, LW = { -30, 0, 0 }, RS = { 25, 0, 25 }, RE = { 70, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
 			hold = 0.1, windupFx = { { "particles", tex = "smoke", color = GAS, at = "lhand", dir = "front", time = 0.2, rate = 50, speed = 5, size = 0.8 } },
-			fx = { { "symbols", symbols = { "HA", "HI", "HO" }, color = GAS, count = 5, radius = 3, at = "front" } },
+			fx = { { "burst", color = GAS, size = 3, at = "lhand" }, { "symbols", symbols = { "HA", "HI", "HO" }, color = GAS, count = 5, radius = 3, at = "front" } },
 			text = "PSSSHH…", hitText = "HAHAHA !",
 		},
-		-- Fraise perforante : il charge la fraise à deux mains puis fonce, la roulette géante grignote quatre fois
+		-- Fraise perforante : fraise à deux mains, il fonce d'un bout à l'autre du couloir et la roulette géante perfore tout sur son passage
 		S_side = {
-			label = "Fraise perforante", energyCost = 30, startup = 0.22, active = 0.32, recovery = 0.34, hits = 4,
-			damage = 3.5, hitbox = box(5, 3, 3, 0.5), kbBase = 30, kbGrowth = 55, kbAngle = 28, selfVelocity = Vector2.new(55, 0),
+			label = "Fraise perforante", startup = 0.2, active = 0.3, recovery = 0.45,
+			damage = 15, hitbox = box(14, 6, 7, 1), kbBase = 32, kbGrowth = 70, kbAngle = 30, selfVelocity = Vector2.new(60, 0),
 			windup = { Root = { 6, -16, 0, 0, -0.3, 0.35 }, Waist = { 8, -18, 0 }, Neck = { 0, 10, 0 }, RS = { 40, 0, 20 }, RE = { 100, 0, 0 }, RW = { 80, 0, 0 }, LS = { 50, 0, 10 }, LE = { 110, 0, 0 } },
-			strike = { Root = { -18, 0, 0, 0, -0.4, -0.4 }, Waist = { -10, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 90, 0, -4 }, RE = { 0, 0, 0 }, RW = { 88, 0, 0 }, LS = { 85, 0, 22 }, LE = { 20, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
-			follow = { Root = { -20, 0, 0, 0, -0.42, -0.45 }, Waist = { -12, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 92, 0, -4 }, RE = { 0, 0, 0 }, RW = { 90, 0, 0 }, LS = { 88, 0, 20 }, LE = { 18, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.55 } },
+			strike = { Root = { -20, 0, 0, 0, -0.4, -0.45 }, Waist = { -12, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 92, 0, -4 }, RE = { 0, 0, 0 }, RW = { 88, 0, 0 }, LS = { 86, 0, 20 }, LE = { 18, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.55 } },
+			follow = { Root = { -22, 0, 0, 0, -0.42, -0.5 }, Waist = { -14, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 95, 0, -4 }, RE = { 0, 0, 0 }, RW = { 90, 0, 0 }, LS = { 88, 0, 18 }, LE = { 16, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.6 } },
 			shake = true, wobble = true, trail = "prop",
 			windupFx = { { "particles", tex = "spark", color = SPARK, at = "hand", dir = "all", time = 0.2, rate = 60, speed = 6, size = 0.3 } },
-			fx = { { "particles", tex = "spark", color = SPARK, at = "hand", dir = "front", time = 0.32, rate = 120, speed = 14, size = 0.35 } },
+			fx = { "dust", { "particles", tex = "spark", color = SPARK, at = "hand", dir = "front", time = 0.3, rate = 120, speed = 16, size = 0.35 }, { "beam", color = SPARK, length = 14, width = 0.8, at = "hand" } },
 			text = "BZZZZZZ !", hitText = "PERFORÉ !",
 		},
-		-- Bain de bouche : il gargarise, se penche et crache une grande flaque bleue glissante au sol
+		-- Grand rinçage : il gargarise le gobelet entier et crache une vague de bain de bouche qui balaie tout le couloir au ras du sol (ça glisse)
 		S_down = {
-			label = "Bain de bouche", energyCost = 25, kind = "trap", startup = 0.2, active = 0.1, recovery = 0.3,
-			damage = 4, kbBase = 10, kbGrowth = 10, kbAngle = 20,
+			label = "Grand rinçage", startup = 0.24, active = 0.2, recovery = 0.5,
+			damage = 13, hitbox = box(14, 5, 7, 0.5), kbBase = 28, kbGrowth = 50, kbAngle = 25,
 			status = { name = "slippery", duration = 2.5 },
-			trap = { size = Vector3.new(6, 1.5, 6), offset = 3.5, lifetime = 8, max = 2, color = RINSE,
-				visual = { shape = "disc", size = 5, color = RINSE, transparency = 0.35, trail = false } },
-			windup = { Root = { 8, 0, 0, 0, -0.05, 0.1 }, Waist = { 10, 0, 0 }, Neck = { 30, 0, 0 }, LS = { 110, 0, -10 }, LE = { 120, 0, 0 }, RS = { 25, 0, 25 }, RE = { 70, 0, 0 } },
-			strike = { Root = { -14, 0, 0, 0, -0.35, -0.15 }, Waist = { -24, 0, 0 }, Neck = { -20, 0, 0 }, LS = { 30, 0, -40 }, LE = { 60, 0, 0 }, RS = { 20, 0, 40 }, RE = { 60, 0, 0 } },
-			follow = { Root = { -16, 0, 0, 0, -0.38, -0.18 }, Waist = { -26, 0, 0 }, Neck = { -24, 0, 0 }, LS = { 25, 0, -42 }, LE = { 60, 0, 0 }, RS = { 18, 0, 42 }, RE = { 60, 0, 0 } },
-			prop = "gobelet", shake = true, fx = { { "puddle", color = RINSE, width = 6 } }, text = "GLOUGLOU… PTOU !",
+			windup = { Root = { 8, 0, 0, 0, -0.05, 0.1 }, Waist = { 10, 0, 0 }, Neck = { 30, 0, 0 }, LS = { 110, 0, -10 }, LE = { 120, 0, 0 }, LW = { -40, 0, 0 }, RS = { 25, 0, 25 }, RE = { 70, 0, 0 } },
+			strike = { Root = { -16, 0, 0, 0, -0.4, -0.2 }, Waist = { -26, 0, 0 }, Neck = { -22, 0, 0 }, LS = { 40, 0, -40 }, LE = { 50, 0, 0 }, LW = { 0, 0, 0 }, RS = { 20, 0, 40 }, RE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+			follow = { Root = { -18, 0, 0, 0, -0.42, -0.25 }, Waist = { -28, 0, 0 }, Neck = { -26, 0, 0 }, LS = { 34, 0, -42 }, LE = { 50, 0, 0 }, LW = { 0, 0, 0 }, RS = { 18, 0, 42 }, RE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+			hold = 0.1, prop = "gobelet", shake = true,
+			fx = { { "puddle", color = RINSE, width = 16 }, { "beam", color = RINSE, length = 14, width = 1.6, at = "head" }, { "toss", shape = "ball", color = RINSE, size = 0.5, count = 6, speed = 20, lift = 10 } },
+			text = "GLOUGLOU… PTOUUU !", hitText = "ÇA GLISSE !",
 		},
-		-- Fauteuil éjectable (remontée, gratuite) : accroupi, un fauteuil jaillit du sol et le catapulte en l'air
+		-- Fauteuil éjectable (remontée) : le tabouret jaillit sous lui comme un siège éjectable et il file en diagonale, fraise pointée devant, blouse au vent
 		S_up = {
-			label = "Fauteuil éjectable", energyCost = 0, startup = 0.06, active = 0.28, recovery = 0.3,
-			damage = 7, hitbox = box(5, 6, 0.5, 2), kbBase = 30, kbGrowth = 40, kbAngle = 82, selfVelocity = Vector2.new(8, 88),
-			windup = { Root = { -6, 0, 0, 0, -0.9, 0 }, Waist = { -10, 0, 0 }, RS = { 40, 0, 30 }, RE = { 80, 0, 0 }, LS = { 40, 0, -30 }, LE = { 80, 0, 0 } },
-			strike = { Root = { 8, 0, 0, 0, 0.3, 0 }, Waist = { 10, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 170, 0, 20 }, RE = { 10, 0, 0 }, LS = { 170, 0, -20 }, LE = { 10, 0, 0 }, RH = { 80, 0, 0 }, RK = { -90, 0, 0 }, LH = { 80, 0, 0 }, LK = { -90, 0, 0 } },
-			follow = { Root = { 10, 0, 0, 0, 0.3, 0 }, Waist = { 12, 0, 0 }, Neck = { 24, 0, 0 }, RS = { 178, 0, 25 }, RE = { 10, 0, 0 }, LS = { 178, 0, -25 }, LE = { 10, 0, 0 }, RH = { 30, 0, 0 }, RK = { -50, 0, 0 }, LH = { 10, 0, 0 }, LK = { -40, 0, 0 } },
-			fx = { { "pillar", color = CHAIR, height = 7, width = 3, time = 0.5 }, { "burst", color = SPARK, size = 3, at = "feet" } },
+			label = "Fauteuil éjectable", startup = 0.15, active = 0.3, recovery = 0.42,
+			damage = 14, hitbox = box(10, 11, 3, 4), kbBase = 32, kbGrowth = 50, kbAngle = 80, selfVelocity = Vector2.new(44, 84),
+			windup = { Root = { 4, 0, 0, 0, -0.85, 0.1 }, Waist = { -8, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 40, 0, 25 }, RE = { 90, 0, 0 }, RW = { 60, 0, 0 }, LS = { -30, 0, -20 }, LE = { 60, 0, 0 } },
+			strike = { Root = { -42, 0, 0, 0, 0.3, -0.2 }, Waist = { -6, 0, 0 }, Neck = { 26, 0, 0 }, RS = { 165, 0, 8 }, RE = { 0, 0, 0 }, RW = { 88, 0, 0 }, LS = { -40, 0, -25 }, LE = { 30, 0, 0 }, RH = { -24, 0, 4 }, RK = { -30, 0, 0 }, RA = { -30, 0, 0 }, LH = { -30, 0, -4 }, LK = { -40, 0, 0 }, LA = { -30, 0, 0 } },
+			follow = { Root = { -46, 0, 0, 0, 0.35, -0.25 }, Waist = { -8, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 170, 0, 10 }, RE = { 0, 0, 0 }, RW = { 90, 0, 0 }, LS = { -44, 0, -28 }, LE = { 30, 0, 0 }, RH = { -28, 0, 4 }, RK = { -36, 0, 0 }, RA = { -30, 0, 0 }, LH = { -34, 0, -4 }, LK = { -46, 0, 0 }, LA = { -30, 0, 0 } },
+			prop = "tabouret", trail = "prop", shake = true,
+			fx = { { "pillar", color = CHAIR, height = 8, width = 3, at = "root", time = 0.4 }, { "burst", color = SPARK, size = 3.5, at = "feet" }, { "ring", color = CHAIR, radius = 5, at = "feet" },
+				{ "particles", tex = "smoke", color = COAT, at = "feet", dir = "down", time = 0.35, rate = 70, speed = 14, size = 0.9 } },
 			text = "ÉJECTION !", hitText = "BOING !",
 		},
-		-- Lasso de fil dentaire (esquive puis S) : il fait tourner le fil au-dessus de sa tête et le lance au loin
+		-- Lasso de fil dentaire (esquive puis L) : il fait tourner le fil au-dessus de sa tête et le lance à travers tout le couloir pour ramener l'adversaire
 		S_dodge = {
-			label = "Lasso de fil dentaire", energyCost = 25, kind = "grapple", startup = 0.16, active = 0.1, recovery = 0.3,
-			damage = 7, kbBase = 22, kbGrowth = 20, kbAngle = 15,
-			grapple = { range = 24, angle = 0, speed = 80, pullEnemy = true },
+			label = "Lasso de fil dentaire", kind = "grapple", startup = 0.18, active = 0.12, recovery = 0.42,
+			damage = 12, kbBase = 22, kbGrowth = 20, kbAngle = 15,
+			grapple = { range = 30, angle = 0, speed = 85, pullEnemy = true },
 			windup = { Root = { 2, 10, 0, 0, -0.15, 0.1 }, Waist = { 4, 8, 0 }, Neck = { 10, 0, 0 }, LS = { 170, 0, -30 }, LE = { 40, 0, 0 }, RS = { 25, 0, 25 }, RE = { 70, 0, 0 } },
-			strike = { Root = { -8, -10, 0, 0, -0.25, -0.2 }, Waist = { -8, -12, 0 }, Neck = { 0, 6, 0 }, LS = { 95, 0, 5 }, LE = { 0, 0, 0 }, LW = { -10, 0, 0 }, RS = { 20, 0, 30 }, RE = { 70, 0, 0 } },
+			strike = { Root = { -10, -10, 0, 0, -0.25, -0.3 }, Waist = { -10, -12, 0 }, Neck = { 0, 6, 0 }, LS = { 96, 0, 4 }, LE = { 0, 0, 0 }, LW = { -10, 0, 0 }, RS = { 20, 0, 30 }, RE = { 70, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
 			follow = { Root = { 6, 4, 0, 0, -0.2, 0.2 }, Waist = { 8, 4, 0 }, Neck = { 6, 0, 0 }, LS = { 60, 0, -20 }, LE = { 100, 0, 0 }, LW = { 0, 0, 0 }, RS = { 20, 0, 30 }, RE = { 70, 0, 0 } },
-			prop = "fil", windupFx = { { "ring", color = Color3.fromRGB(250, 250, 250), radius = 2.5, at = "above" } }, text = "YIHAA !", hitText = "ATTRAPÉ !",
+			prop = "fil", trail = "leftHand", windupFx = { { "ring", color = Color3.fromRGB(250, 250, 250), radius = 2.5, at = "above" } },
+			fx = { { "beam", color = Color3.fromRGB(250, 250, 250), length = 16, width = 0.3, at = "lhand" } }, text = "YIHAA !", hitText = "ATTRAPÉ !",
 		},
-		-- Anesthésie (S maintenu) : seringue levée, petite giclée de vérification, puis piqûre : l'adversaire devient mou
+		-- Anesthésie (L maintenu) : seringue géante levée, petite giclée de vérification, puis il se fend en avant et pique tout le couloir : l'adversaire devient mou
 		S_hold = {
-			label = "Anesthésie", energyCost = 30, startup = 0.24, active = 0.12, recovery = 0.36,
-			damage = 9, hitbox = box(4.5, 3, 2.6, 0.6), kbBase = 20, kbGrowth = 35, kbAngle = 25,
+			label = "Anesthésie", startup = 0.28, active = 0.16, recovery = 0.5,
+			damage = 13, hitbox = box(14, 6, 7, 1), kbBase = 24, kbGrowth = 40, kbAngle = 25, selfVelocity = Vector2.new(26, 0),
 			status = { name = "slowed", duration = 3 },
 			windup = { Root = { 4, 14, 0, 0, -0.05, 0.15 }, Waist = { 6, 12, 0 }, Neck = { 20, -10, 0 }, LS = { 160, 0, -15 }, LE = { 40, 0, 0 }, LW = { 0, 0, 0 }, RS = { 25, 0, 25 }, RE = { 70, 0, 0 } },
-			strike = { Root = { -10, -10, 0, 0, -0.25, -0.3 }, Waist = { -8, -12, 0 }, Neck = { -4, 8, 0 }, LS = { 92, 0, 6 }, LE = { 2, 0, 0 }, LW = { 0, 0, 0 }, RS = { 25, 0, 25 }, RE = { 70, 0, 0 } },
-			follow = { Root = { -11, -12, 0, 0, -0.27, -0.33 }, Waist = { -9, -14, 0 }, Neck = { -4, 10, 0 }, LS = { 92, 0, 10 }, LE = { 2, 0, 0 }, LW = { -10, 0, 0 }, RS = { 25, 0, 25 }, RE = { 70, 0, 0 } },
-			hold = 0.15, prop = "seringue", windupFx = { { "particles", tex = "spark", color = Color3.fromRGB(180, 140, 255), at = "lhand", dir = "up", time = 0.15, rate = 40, speed = 6, size = 0.25 } },
-			fx = { { "symbols", symbols = { "💉", "~" }, color = Color3.fromRGB(180, 140, 255), count = 4, radius = 2.5, at = "front" } },
+			strike = { Root = { -16, -12, 0, 0, -0.35, -0.45 }, Waist = { -14, -14, 0 }, Neck = { -4, 8, 0 }, LS = { 96, 0, 4 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 }, RS = { 20, 0, 30 }, RE = { 70, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.6 } },
+			follow = { Root = { -18, -14, 0, 0, -0.37, -0.5 }, Waist = { -16, -16, 0 }, Neck = { -4, 10, 0 }, LS = { 98, 0, 8 }, LE = { 0, 0, 0 }, LW = { -10, 0, 0 }, RS = { 20, 0, 30 }, RE = { 70, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.65 } },
+			hold = 0.15, prop = "seringue", trail = "leftHand", windupFx = { { "particles", tex = "spark", color = Color3.fromRGB(180, 140, 255), at = "lhand", dir = "up", time = 0.15, rate = 40, speed = 6, size = 0.25 } },
+			fx = { { "beam", color = Color3.fromRGB(180, 140, 255), length = 12, width = 0.8, at = "lhand" }, { "symbols", symbols = { "💉", "~" }, color = Color3.fromRGB(180, 140, 255), count = 4, radius = 2.5, at = "front" } },
 			text = "PETITE PIQÛRE…", hitText = "TOUT MOU…",
 		},
-		-- Charge en fauteuil (→→S) : assis sur le tabouret, il fonce en avant jambes tendues et bras croisés
+		-- Charge en fauteuil (→→L) : assis sur le tabouret à roulettes, il traverse tout le couloir jambes tendues et bras croisés, impassible
 		S_dash = {
-			label = "Charge en fauteuil", energyCost = 25, startup = 0.06, active = 0.32, recovery = 0.3,
-			damage = 10, hitbox = box(5, 3.5, 2.5, 0), kbBase = 30, kbGrowth = 60, kbAngle = 35, selfVelocity = Vector2.new(62, 0), invuln = 0.15,
+			label = "Charge en fauteuil", startup = 0.15, active = 0.32, recovery = 0.42,
+			damage = 14, hitbox = box(14, 5, 7, 0.5), kbBase = 32, kbGrowth = 65, kbAngle = 35, selfVelocity = Vector2.new(64, 0), invuln = 0.15,
 			windup = { Root = { 0, 0, 0, 0, -0.6, 0.1 }, Waist = { 4, 0, 0 }, RS = { 40, 0, 30 }, RE = { 60, 0, 0 }, LS = { 40, 0, -30 }, LE = { 60, 0, 0 } },
 			strike = { Root = { 10, 0, 0, 0, -0.95, 0 }, Waist = { 6, 0, 0 }, Neck = { 0, 0, 0 }, RS = { 70, 0, -30 }, RE = { 110, 0, 0 }, LS = { 70, 0, 30 }, LE = { 110, 0, 0 }, RH = { 85, 0, 0 }, RK = { -30, 0, 0 }, LH = { 85, 0, 0 }, LK = { -30, 0, 0 } },
 			follow = { Root = { 12, 0, 0, 0, -0.95, 0 }, Waist = { 8, 0, 0 }, Neck = { 2, 0, 0 }, RS = { 72, 0, -32 }, RE = { 112, 0, 0 }, LS = { 72, 0, 32 }, LE = { 112, 0, 0 }, RH = { 88, 0, 0 }, RK = { -26, 0, 0 }, LH = { 88, 0, 0 }, LK = { -26, 0, 0 } },
-			fx = { "dust" }, text = "PLACE AU DOCTEUR !", hitText = "BADABOUM !",
+			trail = "bothFeet", fx = { "dust", { "particles", tex = "spark", color = SPARK, at = "feet", dir = "front", time = 0.3, rate = 60, speed = 10, size = 0.3 } },
+			text = "PLACE AU DOCTEUR !", hitText = "BADABOUM !",
 		},
-		-- Dents de lait (S en l'air) : il jette une poignée de dents en sucre en éventail vers le bas
+		-- Dent de sagesse (L en l'air) : il sort une molaire géante de sa poche et la jette de toutes ses forces sur l'adversaire
 		S_air = {
-			label = "Dents de lait", energyCost = 20, kind = "projectile", startup = 0.14, active = 0, recovery = 0.3,
-			damage = 4, kbBase = 18, kbGrowth = 25, kbAngle = 30,
-			projectile = { speed = 60, angle = -30, gravity = 40, lifetime = 0.7, size = 1.2, color = Color3.fromRGB(255, 255, 255), fan = { count = 3, from = -45, to = -10 },
-				visual = { shape = "block", size = 0.8, color = Color3.fromRGB(255, 255, 250), spin = 12, parts = { { "ball", Vector3.new(0.5, 0.5, 0.5), Vector3.new(0, -0.45, 0), Color3.fromRGB(255, 200, 220) } } } },
-			windup = { Root = { 10, 15, 0 }, Waist = { 10, 15, 0 }, LS = { 150, 0, -40 }, LE = { 70, 0, 0 }, RS = { 50, 0, 40 }, RE = { 60, 0, 0 }, RH = { 60, 0, 0 }, RK = { -90, 0, 0 }, LH = { 40, 0, 0 }, LK = { -80, 0, 0 } },
-			strike = { Root = { -14, -8, 0 }, Waist = { -14, -10, 0 }, LS = { 50, 0, 15 }, LE = { 10, 0, 0 }, LW = { -30, 0, 0 }, RS = { 40, 0, 50 }, RE = { 50, 0, 0 }, RH = { 30, 0, 0 }, RK = { -60, 0, 0 }, LH = { 50, 0, 0 }, LK = { -90, 0, 0 } },
-			follow = { Root = { -16, -10, 0 }, Waist = { -16, -12, 0 }, LS = { 40, 0, 20 }, LE = { 10, 0, 0 }, LW = { -35, 0, 0 }, RS = { 38, 0, 52 }, RE = { 50, 0, 0 }, RH = { 28, 0, 0 }, RK = { -55, 0, 0 }, LH = { 52, 0, 0 }, LK = { -92, 0, 0 } },
+			label = "Dent de sagesse", kind = "projectile", startup = 0.18, active = 0, recovery = 0.42,
+			damage = 13, kbBase = 24, kbGrowth = 45, kbAngle = 35,
+			projectile = { speed = 62, angle = -20, gravity = 30, lifetime = 0.8, size = 1.8, color = TOOTH, visual = MOLAR },
+			windup = { Root = { 10, 15, 0 }, Waist = { 10, 15, 0 }, Neck = { 6, -10, 0 }, LS = { 165, 0, -40 }, LE = { 70, 0, 0 }, RS = { 50, 0, 40 }, RE = { 60, 0, 0 }, RH = { 60, 0, 0 }, RK = { -90, 0, 0 }, LH = { 40, 0, 0 }, LK = { -80, 0, 0 } },
+			strike = { Root = { -16, -10, 0 }, Waist = { -16, -12, 0 }, Neck = { -4, 8, 0 }, LS = { 70, 0, 10 }, LE = { 5, 0, 0 }, LW = { -30, 0, 0 }, RS = { 40, 0, 50 }, RE = { 50, 0, 0 }, RH = { 30, 0, 0 }, RK = { -60, 0, 0 }, LH = { 50, 0, 0 }, LK = { -90, 0, 0 } },
+			follow = { Root = { -18, -12, 0 }, Waist = { -18, -14, 0 }, Neck = { -6, 10, 0 }, LS = { 60, 0, 16 }, LE = { 10, 0, 0 }, LW = { -35, 0, 0 }, RS = { 38, 0, 52 }, RE = { 50, 0, 0 }, RH = { 28, 0, 0 }, RK = { -55, 0, 0 }, LH = { 52, 0, 0 }, LK = { -92, 0, 0 } },
+			trail = "leftHand", fx = { { "symbols", symbols = { "🦷", "✨" }, color = TOOTH, count = 3, radius = 2, at = "lhand" } },
 			text = "CADEAU !", hitText = "CRAC !",
 		},
-		-- Pluie de dents (↓S en l'air) : il tombe tout droit, bras écartés, en semant des dents en sucre autour de lui
+		-- Plongeon de la fraise (↓L en l'air) : il pique tout droit vers le sol, fraise pointée dessous, et perce tout ce qui est en dessous
 		S_air_down = {
-			label = "Pluie de dents", energyCost = 25, startup = 0.14, active = 0.35, recovery = 0.32,
-			damage = 11, hitbox = box(6, 4, 0, -1.5), kbBase = 26, kbGrowth = 55, kbAngle = -60, selfVelocity = Vector2.new(0, -85),
-			windup = { Root = { -8, 0, 0 }, Waist = { -10, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 160, 0, 20 }, RE = { 30, 0, 0 }, LS = { 160, 0, -20 }, LE = { 30, 0, 0 }, RH = { 90, 0, 0 }, RK = { -120, 0, 0 }, LH = { 90, 0, 0 }, LK = { -120, 0, 0 } },
-			strike = { Root = { 4, 0, 0 }, Waist = { 4, 0, 0 }, Neck = { -15, 0, 0 }, RS = { 100, 0, 80 }, RE = { 10, 0, 0 }, LS = { 100, 0, -80 }, LE = { 10, 0, 0 }, RH = { 5, 0, 8 }, RK = { -5, 0, 0 }, RA = { -15, 0, 0 }, LH = { 5, 0, -8 }, LK = { -5, 0, 0 }, LA = { -15, 0, 0 } },
-			follow = { Root = { 4, 0, 0 }, Waist = { 4, 0, 0 }, Neck = { -18, 0, 0 }, RS = { 105, 0, 85 }, RE = { 10, 0, 0 }, LS = { 105, 0, -85 }, LE = { 10, 0, 0 }, RH = { 5, 0, 10 }, RK = { -8, 0, 0 }, RA = { -15, 0, 0 }, LH = { 5, 0, -10 }, LK = { -8, 0, 0 }, LA = { -15, 0, 0 } },
-			trail = "body", fx = { { "rain", shape = "block", color = Color3.fromRGB(255, 255, 250), count = 12, radius = 6, size = 0.6 }, { "shake", amount = 0.4 } },
-			text = "PLUIE DE DENTS !", hitText = "CRAC CRAC !",
+			label = "Plongeon de la fraise", startup = 0.16, active = 0.36, recovery = 0.45,
+			damage = 14, hitbox = box(8, 6, 1, -2), kbBase = 28, kbGrowth = 60, kbAngle = -60, selfVelocity = Vector2.new(6, -88),
+			windup = { Root = { -8, 0, 0 }, Waist = { -10, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 170, 0, 20 }, RE = { 20, 0, 0 }, RW = { 60, 0, 0 }, LS = { 150, 0, -30 }, LE = { 40, 0, 0 }, RH = { 80, 0, 0 }, RK = { -110, 0, 0 }, LH = { 80, 0, 0 }, LK = { -110, 0, 0 } },
+			strike = { Root = { -30, 0, 0 }, Waist = { -30, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 20, 0, 12 }, RE = { 0, 0, 0 }, RW = { 88, 0, 0 }, LS = { 60, 0, -60 }, LE = { 20, 0, 0 }, RH = { -10, 0, 6 }, RK = { -10, 0, 0 }, RA = { -20, 0, 0 }, LH = { -10, 0, -6 }, LK = { -10, 0, 0 }, LA = { -20, 0, 0 } },
+			follow = { Root = { -34, 0, 0 }, Waist = { -32, 0, 0 }, Neck = { -22, 0, 0 }, RS = { 22, 0, 14 }, RE = { 0, 0, 0 }, RW = { 90, 0, 0 }, LS = { 64, 0, -64 }, LE = { 20, 0, 0 }, RH = { -12, 0, 6 }, RK = { -14, 0, 0 }, RA = { -20, 0, 0 }, LH = { -12, 0, -6 }, LK = { -14, 0, 0 }, LA = { -20, 0, 0 } },
+			trail = "prop", wobble = true, fx = { { "particles", tex = "spark", color = SPARK, at = "hand", dir = "down", time = 0.36, rate = 100, speed = 14, size = 0.35 }, { "burst", color = SPARK, size = 3, at = "feet" }, { "shake", amount = 0.4 } },
+			text = "ON PERCE !", hitText = "CRAC CRAC !",
 		},
 
 		------------------------------------------------------------------ Finition avec S (dans un enchaînement)
-		-- Jet de rinçage : il presse la poire à eau et envoie un jet bleu qui repousse
+		-- Jet de rinçage : il presse la poire à eau et envoie un jet bleu qui file droit sur l'adversaire
 		S_finish_rinse = {
-			label = "Jet de rinçage", energyCost = 20, kind = "projectile", startup = 0.12, active = 0, recovery = 0.28,
-			damage = 8, kbBase = 30, kbGrowth = 55, kbAngle = 30,
-			projectile = { speed = 85, angle = 0, gravity = 0, lifetime = 0.3, size = 1.6, color = RINSE,
+			label = "Jet de rinçage", kind = "projectile", startup = 0.15, active = 0, recovery = 0.4,
+			damage = 12, kbBase = 30, kbGrowth = 55, kbAngle = 30,
+			projectile = { speed = 85, angle = 0, gravity = 0, lifetime = 0.35, size = 1.6, color = RINSE,
 				visual = { shape = "ball", size = 1.4, color = RINSE, neon = true, transparency = 0.2 } },
 			windup = { Root = { 0, 12, 0, 0, -0.1, 0.1 }, Waist = { 0, 10, 0 }, LS = { 80, 0, -20 }, LE = { 100, 0, 0 }, RS = { 25, 0, 25 }, RE = { 70, 0, 0 } },
 			strike = { Root = { -4, -6, 0, 0, -0.15, -0.1 }, Waist = { -4, -8, 0 }, LS = { 92, 0, 6 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 }, RS = { 25, 0, 25 }, RE = { 70, 0, 0 } },
@@ -526,34 +543,36 @@ local data = {
 		},
 
 		------------------------------------------------------------------ Supers
-		-- Détartrage : il avance en vrombissant, fraise en avant, six passes rapides sur les dents de l'adversaire
+		-- Fauteuil fou : il pousse son fauteuil à roulettes d'un grand coup de pied, le fauteuil traverse l'arène et installe l'adversaire de force
 		SUPER = {
-			label = "Détartrage !", superCost = 100, startup = 0.3, active = 0.6, recovery = 0.45, hits = 6,
-			damage = 4, hitbox = box(5.5, 4, 3, 0.6), kbBase = 36, kbGrowth = 70, kbAngle = 35, selfVelocity = Vector2.new(28, 0),
-			windup = { Root = { 6, -20, 0, 0, -0.2, 0.3 }, Waist = { 8, -20, 0 }, Neck = { 6, 15, 0 }, RS = { 170, 0, 20 }, RE = { 60, 0, 0 }, RW = { 60, 0, 0 }, LS = { 30, 0, -50 }, LE = { 140, 0, 0 } },
-			strike = { Root = { -12, 8, 0, 0, -0.3, -0.35 }, Waist = { -10, 10, 0 }, Neck = { 6, 0, 0 }, RS = { 92, 0, -8 }, RE = { 5, 0, 0 }, RW = { 88, 0, 0 }, LS = { 70, 0, -40 }, LE = { 120, 0, 0 } },
-			follow = { Root = { -14, 14, 0, 0, -0.32, -0.45 }, Waist = { -12, 16, 0 }, Neck = { 8, 0, 0 }, RS = { 96, 0, 10 }, RE = { 5, 0, 0 }, RW = { 90, 0, 0 }, LS = { 72, 0, -42 }, LE = { 120, 0, 0 } },
-			wobble = true, trail = "prop", windupFx = { "super" },
-			fx = { { "particles", tex = "spark", color = SPARK, at = "hand", dir = "all", time = 0.6, rate = 150, speed = 14, size = 0.35 }, { "shake", amount = 0.3, time = 0.6 } },
-			text = "DÉTARTRAGE !", hitText = "BZZZRRRIIIK !",
+			label = "Fauteuil fou !", kind = "projectile", startup = 0.35, active = 0, recovery = 0.65,
+			damage = 24, kbBase = 36, kbGrowth = 70, kbAngle = 40,
+			projectile = { speed = 60, angle = 0, gravity = 0, lifetime = 0.8, size = 3, color = CHAIR, from = "feet", visual = CHAIR_SHOT },
+			status = { name = "stunned", duration = 1.2 },
+			windup = { Root = { 6, -10, 0, 0, -0.2, 0.3 }, Waist = { 8, -12, 0 }, Neck = { 10, 6, 0 }, RS = { 60, 0, 30 }, RE = { 90, 0, 0 }, RW = { 40, 0, 0 }, LS = { 70, 0, -30 }, LE = { 100, 0, 0 }, LW = { -20, 0, 0 } },
+			strike = { Root = { -12, 10, 0, 0, -0.1, -0.3 }, Waist = { -10, 12, 0 }, Neck = { 4, -6, 0 }, RS = { 40, 0, 50 }, RE = { 60, 0, 0 }, LS = { 120, 0, -50 }, LE = { 20, 0, 0 }, RH = { 95, 0, 6 }, RK = { -5, 0, 0 }, RA = { 10, 0, 0 } },
+			follow = { Root = { -14, 12, 0, 0, -0.12, -0.35 }, Waist = { -12, 14, 0 }, Neck = { 6, -8, 0 }, RS = { 36, 0, 54 }, RE = { 60, 0, 0 }, LS = { 126, 0, -54 }, LE = { 20, 0, 0 }, RH = { 100, 0, 8 }, RK = { -8, 0, 0 }, RA = { 10, 0, 0 } },
+			hold = 0.1, trail = "rightFoot", windupFx = { "super", { "symbols", symbols = { "🪑", "💺" }, color = CHAIR, count = 3, radius = 2, at = "front" } },
+			fx = { { "burst", color = CHAIR, size = 3.5, at = "front" }, "dust", { "shake", amount = 0.3 } },
+			text = "INSTALLEZ-VOUS !", hitText = "OUVREZ GRAND !",
 		},
-		-- Super ↑ : Extraction royale, la pince géante agrippe la « dent » au ras du sol et l'arrache d'un coup de reins vers le ciel
+		-- Super ↑ : Extraction royale, la pince géante racle tout le couloir au ras du sol, agrippe la « dent » et l'arrache d'un coup de reins vers le ciel
 		SUPER_up = {
-			label = "Extraction royale !", superCost = 100, startup = 0.3, active = 0.25, recovery = 0.55,
-			damage = 22, hitbox = box(7, 10, 2, 4), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
+			label = "Extraction royale !", startup = 0.35, active = 0.25, recovery = 0.7,
+			damage = 24, hitbox = box(14, 10, 7, 4), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
 			windup = { Root = { -14, 10, 0, 0, -0.65, -0.1 }, Waist = { -26, 12, 0 }, Neck = { 10, -6, 0 }, LS = { 60, 0, -10 }, LE = { 10, 0, 0 }, LW = { -20, 0, 0 }, RS = { -30, 0, 40 }, RE = { 90, 0, 0 }, RW = { 60, 0, 0 } },
 			strike = { Root = { 14, 0, 0, 0, 0.5, 0.1 }, Waist = { 22, 0, 0 }, Neck = { 45, 0, 0 }, LS = { 185, 0, -20 }, LE = { 10, 0, 0 }, LW = { 0, 0, 0 }, RS = { 40, 0, 85 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, FR = { 0, 0, 0, 0, 0.35, 0 }, FL = { 0, 0, 0, 0, 0.35, 0 } },
 			follow = { Root = { 18, 0, 0, 0, 0.55, 0.15 }, Waist = { 26, 0, 0 }, Neck = { 52, 0, 0 }, LS = { 192, 0, -26 }, LE = { 8, 0, 0 }, LW = { -10, 0, 0 }, RS = { 45, 0, 90 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, FR = { 0, 0, 0, 0, 0.45, 0 }, FL = { 0, 0, 0, 0, 0.4, 0 } },
 			hold = 0.25, selfVelocity = Vector2.new(0, 45), shake = true, prop = "pince", trail = "leftHand",
 			windupFx = { "super", { "particles", tex = "spark", color = STEEL, at = "lhand", dir = "all", time = 0.3, rate = 50, speed = 6, size = 0.3 } },
 			status = { name = "laughing", duration = 2 },
-			fx = { { "pillar", color = SPARK, height = 22, width = 3, at = "front" }, { "text", text = "🦷", at = "above" }, { "burst", color = GLOVE, size = 4, at = "lhand" } },
+			fx = { { "pillar", color = SPARK, height = 22, width = 3, at = "front" }, { "text", text = "🦷", at = "above" }, { "burst", color = GLOVE, size = 4, at = "lhand" }, { "shake", amount = 0.4 } },
 			text = "OUVREZ GRAND !", hitText = "ARRACHÉ !",
 		},
-		-- Grand fou rire : il ouvre en grand toutes les bonbonnes, l'arène entière se remplit de gaz rose
+		-- Grand fou rire : il ouvre en grand toutes les bonbonnes, l'arène entière se remplit de gaz rose et tout le monde est plié en deux
 		SUPER_down = {
-			label = "Grand fou rire !", superCost = 100, startup = 0.4, active = 0.2, recovery = 0.6,
-			damage = 9, hitbox = box(70, 50, 0, 10), kbBase = 10, kbGrowth = 10, kbAngle = 60,
+			label = "Grand fou rire !", startup = 0.4, active = 0.2, recovery = 0.7,
+			damage = 20, hitbox = box(70, 50, 0, 10), kbBase = 10, kbGrowth = 10, kbAngle = 60,
 			status = { name = "laughing", duration = 3 },
 			windup = { Root = { 0, 0, 0, 0, -0.3, 0 }, Waist = { -10, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 40, 0, 20 }, RE = { 100, 0, 0 }, LS = { 40, 0, -20 }, LE = { 100, 0, 0 } },
 			strike = { Root = { 6, 0, 0, 0, 0.1, 0 }, Waist = { 14, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 150, 0, 60 }, RE = { 10, 0, 0 }, LS = { 150, 0, -60 }, LE = { 10, 0, 0 } },

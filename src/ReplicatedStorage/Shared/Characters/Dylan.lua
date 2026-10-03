@@ -383,12 +383,12 @@ local data = {
 		},
 
 		------------------------------------------------------------------ Spéciaux (S)
-		-- Pizza frisbee : il sort une pizza du sac et la lance en revers comme un frisbee, très vite
+		-- Pizza frisbee : il sort une pizza du sac cube et la lance comme un frisbee, elle fonce droit sur la tête de l'adversaire
 		S_neutral = {
-			label = "Pizza frisbee", kind = "projectile", energyCost = 20, startup = 0.12, active = 0, recovery = 0.26,
-			damage = 7, kbBase = 18, kbGrowth = 30, kbAngle = 15,
-			projectile = { speed = 95, angle = 0, gravity = 0, lifetime = 0.5, size = 1.8, color = PIZZA,
-				visual = { shape = "disc", size = 1.8, color = PIZZA, spin = 20, parts = {
+			label = "Pizza frisbee", kind = "projectile", startup = 0.16, active = 0, recovery = 0.4,
+			damage = 12, kbBase = 22, kbGrowth = 40, kbAngle = 20,
+			projectile = { speed = 95, angle = 0, gravity = 0, lifetime = 0.6, size = 2, color = PIZZA,
+				visual = { shape = "disc", size = 2, color = PIZZA, spin = 20, parts = {
 					{ "cyl", Vector3.new(0.28, 0.4, 0.4), Vector3.new(0.4, 0.2, 0), Color3.fromRGB(200, 40, 30) },
 					{ "cyl", Vector3.new(0.28, 0.4, 0.4), Vector3.new(-0.3, -0.35, 0), Color3.fromRGB(200, 40, 30) },
 				} } },
@@ -397,59 +397,60 @@ local data = {
 			follow = { Root = { -6, -22, 0, 0, -0.25, -0.22 }, Waist = { -6, -28, 0 }, Neck = { 0, 15, 0 }, RS = { 25, 0, 25 }, RE = { 60, 0, 0 }, LS = { 85, 0, -65 }, LE = { 5, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.28 } },
 			text = "PIZZA !", hitText = "SPLAF !",
 		},
-		-- Rush trottinette : il saute sur la trottinette et traverse l'arène à fond
+		-- Rush trottinette : il saute sur la trottinette et traverse tout le couloir à fond, guidon en avant
 		S_side = {
-			label = "Rush trottinette", energyCost = 25, startup = 0.1, active = 0.4, recovery = 0.3,
-			damage = 10, hitbox = box(5, 3.5, 2.5, 0), kbBase = 32, kbGrowth = 60, kbAngle = 30, selfVelocity = Vector2.new(85, 0),
+			label = "Rush trottinette", startup = 0.15, active = 0.4, recovery = 0.4,
+			damage = 14, hitbox = box(14, 5, 6, 0.5), kbBase = 32, kbGrowth = 60, kbAngle = 30, selfVelocity = Vector2.new(85, 0),
 			windup = { Root = { -6, 0, 0, 0, -0.3, 0.1 }, Waist = { -10, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 60, 0, 0 }, RE = { 50, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, 10 }, LE = { 50, 0, 0 } },
 			strike = { Root = { -14, 0, 0, 0, -0.2, -0.2 }, Waist = { -14, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 70, 0, -10 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, 18 }, LE = { 20, 0, 0 }, LH = { -40, 0, 0 }, LK = { -20, 0, 0 }, LA = { -20, 0, 0 } },
 			follow = { Root = { -16, 0, 0, 0, -0.2, -0.22 }, Waist = { -16, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 72, 0, -10 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 72, 0, 18 }, LE = { 20, 0, 0 }, LH = { -45, 0, 0 }, LK = { -25, 0, 0 }, LA = { -20, 0, 0 } },
 			trail = "body", fx = { { "particles", tex = "spark", color = ORANGE, dir = "up", at = "feet", time = 0.4, speed = 8 } }, text = "EN RETAAAARD !", hitText = "PAF !",
 		},
-		-- Colis « Livré ! » : il pose un colis piégé au sol ; il explose en confettis peu après qu'on y touche
+		-- Livraison glissée : il pose le colis piégé au sol et le pousse d'un coup de pied ; il file droit sur l'adversaire et explose en confettis
 		S_down = {
-			label = "Colis « Livré ! »", kind = "trap", energyCost = 20, startup = 0.14, active = 0, recovery = 0.28,
-			damage = 10, kbBase = 30, kbGrowth = 55, kbAngle = 70,
-			trap = { size = Vector3.new(3, 2.5, 6), offset = 3, lifetime = 8, max = 2, armTime = 0.8, color = CARDBOARD, visual = PARCEL },
+			label = "Livraison glissée", kind = "projectile", startup = 0.18, active = 0, recovery = 0.4,
+			damage = 13, kbBase = 30, kbGrowth = 55, kbAngle = 70,
+			projectile = { speed = 62, angle = 0, gravity = 0, lifetime = 0.8, size = 1.8, from = "feet", color = CARDBOARD, visual = PARCEL },
 			windup = { Root = { -6, 0, 0, 0, -0.3, 0.1 }, Waist = { -16, 0, 0 }, Neck = { 0, 0, 0 }, RS = { 30, 0, 20 }, RE = { 60, 0, 0 }, LS = { 60, 0, -10 }, LE = { 80, 0, 0 } },
-			strike = { Root = { -14, 0, 0, 0, -0.75, -0.1 }, Waist = { -30, 0, 0 }, Neck = { 15, 0, 0 }, RS = { 30, 0, 25 }, RE = { 60, 0, 0 }, LS = { 70, 0, 0 }, LE = { 10, 0, 0 } },
-			follow = { Root = { -2, 0, 0, 0, -0.2, 0.1 }, Waist = { -4, 0, 0 }, Neck = { 15, 0, 0 }, RS = { 30, 0, 25 }, RE = { 60, 0, 0 }, LS = { 150, 0, -20 }, LE = { 30, 0, 0 } },
-			fx = { { "symbols", symbols = { "📦" }, count = 1, radius = 1, at = "front" } }, text = "LIVRÉ !", hitText = "CONFETTIS !",
+			strike = { Root = { -14, 0, 0, 0, -0.4, -0.2 }, Waist = { -20, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 30, 0, 25 }, RE = { 60, 0, 0 }, LS = { 40, 0, -10 }, LE = { 10, 0, 0 }, RH = { 70, 0, 0 }, RK = { -10, 0, 0 }, RA = { 10, 0, 0 } },
+			follow = { Root = { -16, 0, 0, 0, -0.4, -0.25 }, Waist = { -22, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 30, 0, 25 }, RE = { 60, 0, 0 }, LS = { 35, 0, -12 }, LE = { 10, 0, 0 }, RH = { 80, 0, 0 }, RK = { -5, 0, 0 }, RA = { 15, 0, 0 } },
+			trail = "rightFoot", windupFx = { { "symbols", symbols = { "📦" }, count = 1, radius = 1, at = "front" } }, fx = { { "burst", color = CARDBOARD, size = 2, at = "feet" } }, text = "LIVRÉ !", hitText = "CONFETTIS !",
 		},
-		-- Dérapage (après une esquive) : il revient en glissade, la trottinette en travers au ras du sol
+		-- Dérapage (après une esquive) : il revient en glissade, la trottinette en travers rase tout le couloir
 		S_dodge = {
-			label = "Dérapage", energyCost = 20, startup = 0.08, active = 0.3, recovery = 0.3,
-			damage = 9, hitbox = box(7, 2, 3.5, -1.8), kbBase = 28, kbGrowth = 55, kbAngle = 65, selfVelocity = Vector2.new(50, 0),
+			label = "Dérapage", startup = 0.15, active = 0.3, recovery = 0.4,
+			damage = 12, hitbox = box(14, 4, 7, -1), kbBase = 28, kbGrowth = 55, kbAngle = 65, selfVelocity = Vector2.new(50, 0),
 			windup = { Root = { -6, 30, 0, 0, -0.5, 0 }, Waist = { -10, 20, 0 }, Neck = { 0, -20, 0 }, RS = { 40, 0, 30 }, RE = { 50, 0, 0 }, LS = { 40, 0, -30 }, LE = { 50, 0, 0 } },
 			strike = { Root = { -10, 60, 0, 0, -0.9, -0.2 }, Waist = { -14, 20, 0 }, Neck = { 0, -40, 0 }, RS = { 60, 0, -20 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -60 }, LE = { 20, 0, 0 } },
 			follow = { Root = { -10, 75, 0, 0, -0.9, -0.25 }, Waist = { -14, 24, 0 }, Neck = { 0, -50, 0 }, RS = { 55, 0, -25 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 18, 0, -65 }, LE = { 20, 0, 0 } },
 			trail = "prop", fx = { { "particles", tex = "smoke", color = Color3.fromRGB(210, 210, 210), dir = "up", at = "feet", time = 0.35, speed = 7 } }, text = "SKRRRT !", hitText = "DÉRAPÉ !",
 		},
-		-- Wheelie (remontée, gratuite) : il cabre la trottinette vers le haut et monte, roue avant devant lui
+		-- Saut de rampe (↑L) : il cabre la trottinette, roule sur une rampe imaginaire et décolle en diagonale vers l'avant,
+		-- roue avant en premier, corps couché sur le guidon et jambes qui traînent derrière
 		S_up = {
-			label = "Wheelie", energyCost = 0, startup = 0.05, active = 0.3, recovery = 0.3,
-			damage = 7, hitbox = box(4, 6, 1, 2), kbBase = 30, kbGrowth = 40, kbAngle = 80, selfVelocity = Vector2.new(15, 88),
-			windup = { Root = { -6, 0, 0, 0, -0.7, 0 }, Waist = { -14, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 40, 0, 10 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, 0 }, LE = { 40, 0, 0 } },
-			strike = { Root = { 8, 0, 0, 0, 0.3, 0 }, Waist = { 10, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 160, 0, 5 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 155, 0, 10 }, LE = { 10, 0, 0 }, RH = { 20, 0, 0 }, RK = { -50, 0, 0 }, LH = { -10, 0, 0 }, LK = { -30, 0, 0 } },
-			follow = { Root = { 12, 0, 0, 0, 0.3, 0 }, Waist = { 12, 0, 0 }, Neck = { 24, 0, 0 }, RS = { 175, 0, 5 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 170, 0, 10 }, LE = { 10, 0, 0 }, RH = { 30, 0, 0 }, RK = { -60, 0, 0 }, LH = { -15, 0, 0 }, LK = { -35, 0, 0 } },
-			trail = "prop", text = "WHEELIIIE !", hitText = "VROUM !",
+			label = "Saut de rampe", startup = 0.1, active = 0.3, recovery = 0.4,
+			damage = 13, hitbox = box(10, 11, 3, 4), kbBase = 32, kbGrowth = 50, kbAngle = 72, selfVelocity = Vector2.new(42, 80),
+			windup = { Root = { -6, 0, 0, 0, -0.7, 0 }, Waist = { -14, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 60, 0, 10 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -10 }, LE = { 40, 0, 0 } },
+			strike = { Root = { -40, 0, 0, 0, 0.4, -0.2 }, Waist = { -5, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 165, 0, 8 }, RE = { 5, 0, 0 }, RW = { 0, 0, 0 }, LS = { 160, 0, -8 }, LE = { 5, 0, 0 }, RH = { -25, 0, 5 }, RK = { -35, 0, 0 }, LH = { -15, 0, -5 }, LK = { -50, 0, 0 } },
+			follow = { Root = { -44, 0, 0, 0, 0.45, -0.25 }, Waist = { -7, 0, 0 }, Neck = { 32, 0, 0 }, RS = { 170, 0, 10 }, RE = { 5, 0, 0 }, RW = { -8, 0, 0 }, LS = { 165, 0, -10 }, LE = { 5, 0, 0 }, RH = { -30, 0, 6 }, RK = { -40, 0, 0 }, LH = { -20, 0, -6 }, LK = { -55, 0, 0 } },
+			trail = "prop", fx = { { "ring", color = ORANGE, radius = 5, at = "feet" }, { "burst", color = STAR, size = 3, at = "feet" }, { "particles", tex = "spark", color = ORANGE, dir = "down", at = "feet", time = 0.35, speed = 14 } }, text = "RAMPE !", hitText = "VROUM !",
 		},
-		-- Charge batterie (S maintenu) : la trottinette crépite au bout du bras, puis il l'enfonce comme un taser dans le ventre : turbo et une étoile de plus
+		-- Charge batterie (S maintenu) : la trottinette crépite au bout du bras, puis il la tend comme un taser : l'arc électrique court sur tout le couloir (turbo et une étoile de plus)
 		S_hold = {
-			label = "Charge batterie", energyCost = 25, startup = 0.3, active = 0.12, recovery = 0.35,
-			hitbox = box(6, 4, 3, 0.6), kbBase = 30, kbGrowth = 55, kbAngle = 35,
-			damage = 9, selfEffect = { buff = { "turbo", 3 }, meter = 1 },
+			label = "Charge batterie", startup = 0.3, active = 0.15, recovery = 0.45,
+			hitbox = box(14, 5, 7, 0.8), kbBase = 30, kbGrowth = 55, kbAngle = 35,
+			damage = 14, selfEffect = { buff = { "turbo", 3 }, meter = 1 },
 			windup = { Root = { 0, -10, 0, 0, -0.3, 0.1 }, Waist = { -6, -12, 0 }, Neck = { 10, 10, 0 }, RS = { 120, 0, 10 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -20 }, LE = { 90, 0, 0 } },
 			strike = { Root = { -12, 16, 0, 0, -0.3, -0.45 }, Waist = { -14, 20, 0 }, Neck = { 0, -14, 0 }, RS = { 96, 0, -6 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -20, 0, -35 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
 			follow = { Root = { -14, 20, 0, 0, -0.32, -0.5 }, Waist = { -16, 24, 0 }, Neck = { 0, -16, 0 }, RS = { 98, 0, -10 }, RE = { 0, 0, 0 }, RW = { -8, 0, 0 }, LS = { -25, 0, -38 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
 			hold = 0.1, shake = true, trail = "prop", windupFx = { { "particles", tex = "spark", color = STAR, dir = "all", at = "hand", time = 0.4, speed = 6 } },
-			fx = { { "burst", color = STAR, size = 3, at = "front" }, { "particles", tex = "spark", color = SCREEN, dir = "all", at = "front", time = 0.3, speed = 10 }, { "text", text = "BATTERIE 100 % !", color = STAR } }, text = "BZZZT !", hitText = "TASÉ !",
+			fx = { { "burst", color = STAR, size = 3, at = "front" }, { "beam", color = SCREEN, length = 14, width = 2, at = "hand" }, { "particles", tex = "spark", color = SCREEN, dir = "all", at = "front", time = 0.3, speed = 10 }, { "text", text = "BATTERIE 100 % !", color = STAR } }, text = "BZZZT !", hitText = "TASÉ !",
 		},
-		-- Raccourci GPS (→→S) : « Recalcul de l'itinéraire… », il disparaît, réapparaît plus loin et balance le sac cube dans le dos de l'adversaire d'un tour sur lui-même
+		-- Raccourci GPS (→→S) : « Recalcul de l'itinéraire… », il disparaît, réapparaît plus loin et fait un grand tour sur lui-même, sac cube tendu : tout ce qui est autour de lui est balayé
 		S_dash = {
-			label = "Raccourci GPS", energyCost = 25, startup = 0.1, active = 0.12, recovery = 0.22,
-			hitbox = box(6, 4, 2.5, 0.6), kbBase = 30, kbGrowth = 55, kbAngle = 35,
-			damage = 9, teleport = 12, invuln = 0.25,
+			label = "Raccourci GPS", startup = 0.15, active = 0.2, recovery = 0.4,
+			hitbox = box(24, 6, 0, 0.8), kbBase = 30, kbGrowth = 55, kbAngle = 35,
+			damage = 13, teleport = 12, invuln = 0.25,
 			windup = { Root = { -6, 0, 0, 0, -0.3, 0 }, Waist = { -10, 0, 0 }, Neck = { 30, 15, 0 }, RS = { 30, 0, 30 }, RE = { 50, 0, 0 }, LS = { 150, 0, 30 }, LE = { 120, 0, 0 } },
 			strike = { Root = { -10, -40, 0, 0, -0.3, -0.3 }, Waist = { -10, -30, 0 }, Neck = { 0, 30, 0 }, RS = { 40, 0, 70 }, RE = { 20, 0, 0 }, LS = { 40, 0, -70 }, LE = { 20, 0, 0 } },
 			follow = { Root = { -10, -60, 0, 0, -0.3, -0.35 }, Waist = { -10, -40, 0 }, Neck = { 0, 40, 0 }, RS = { 42, 0, 75 }, RE = { 20, 0, 0 }, LS = { 42, 0, -75 }, LE = { 20, 0, 0 } },
@@ -457,20 +458,20 @@ local data = {
 			fx = { { "burst", color = SCREEN, size = 3, at = "root" }, { "text", text = "ITINÉRAIRE RECALCULÉ", color = SCREEN, at = "head" } },
 			text = "RECALCUL DE L'ITINÉRAIRE…", hitText = "RACCOURCI !",
 		},
-		-- Colis express (S en l'air) : il lâche un colis qui rebondit une fois au sol
+		-- Colis express (S en l'air) : il lâche un colis qui fonce droit sur l'adversaire
 		S_air = {
-			label = "Colis express", kind = "projectile", energyCost = 20, startup = 0.12, active = 0, recovery = 0.28,
-			damage = 8, kbBase = 24, kbGrowth = 45, kbAngle = 40,
-			projectile = { speed = 50, angle = -30, gravity = 60, lifetime = 0.9, size = 1.6, bounce = 1, color = CARDBOARD, visual = PARCEL },
+			label = "Colis express", kind = "projectile", startup = 0.15, active = 0, recovery = 0.4,
+			damage = 12, kbBase = 24, kbGrowth = 45, kbAngle = 40,
+			projectile = { speed = 65, angle = -30, gravity = 0, lifetime = 0.8, size = 1.8, color = CARDBOARD, visual = PARCEL },
 			windup = { Root = { -6, 0, 0 }, Waist = { -8, 0, 0 }, Neck = { 0, 0, 0 }, RS = { 40, 0, 40 }, RE = { 60, 0, 0 }, LS = { 150, 0, -10 }, LE = { 60, 0, 0 }, RH = { 60, 0, 0 }, RK = { -90, 0, 0 }, LH = { 50, 0, 0 }, LK = { -90, 0, 0 } },
 			strike = { Root = { -14, 0, 0 }, Waist = { -14, 0, 0 }, Neck = { 15, 0, 0 }, RS = { 40, 0, 45 }, RE = { 60, 0, 0 }, LS = { 50, 0, -10 }, LE = { 5, 0, 0 }, RH = { 30, 0, 0 }, RK = { -60, 0, 0 }, LH = { 20, 0, 0 }, LK = { -70, 0, 0 } },
 			follow = { Root = { -12, 0, 0 }, Waist = { -12, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 40, 0, 45 }, RE = { 60, 0, 0 }, LS = { 40, 0, -12 }, LE = { 5, 0, 0 }, RH = { 25, 0, 0 }, RK = { -55, 0, 0 }, LH = { 15, 0, 0 }, LK = { -65, 0, 0 } },
 			text = "ATTENTION, FRAGILE !", hitText = "BOING !",
 		},
-		-- Livraison parachutée (↓S en l'air, plongeon) : bien droit, il tombe en piqué comme un colis largué
+		-- Livraison parachutée (↓S en l'air, plongeon) : bien droit, il tombe en piqué sur l'adversaire comme un colis largué
 		S_air_down = {
-			label = "Livraison parachutée", energyCost = 25, startup = 0.1, active = 0.35, recovery = 0.3,
-			damage = 11, hitbox = box(4, 4, 0.5, -2), kbBase = 25, kbGrowth = 55, kbAngle = -80, selfVelocity = Vector2.new(0, -90),
+			label = "Livraison parachutée", startup = 0.15, active = 0.35, recovery = 0.4,
+			damage = 13, hitbox = box(5, 5, 1, -2), kbBase = 25, kbGrowth = 55, kbAngle = -80, selfVelocity = Vector2.new(0, -90),
 			windup = { Root = { 0, 0, 0 }, Waist = { 6, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 170, 0, 30 }, RE = { 20, 0, 0 }, LS = { 170, 0, -30 }, LE = { 20, 0, 0 }, RH = { 60, 0, 0 }, RK = { -100, 0, 0 }, LH = { 60, 0, 0 }, LK = { -100, 0, 0 } },
 			strike = { Root = { 0, 0, 0 }, Waist = { 0, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 175, 0, 15 }, RE = { 10, 0, 0 }, LS = { 175, 0, -15 }, LE = { 10, 0, 0 }, RH = { 0, 0, 4 }, RK = { 0, 0, 0 }, RA = { -15, 0, 0 }, LH = { 0, 0, -4 }, LK = { 0, 0, 0 }, LA = { -15, 0, 0 } },
 			follow = { Root = { 0, 0, 0 }, Waist = { 0, 0, 0 }, Neck = { -12, 0, 0 }, RS = { 178, 0, 18 }, RE = { 10, 0, 0 }, LS = { 178, 0, -18 }, LE = { 10, 0, 0 }, RH = { 0, 0, 5 }, RK = { -4, 0, 0 }, RA = { -15, 0, 0 }, LH = { 0, 0, -5 }, LK = { -4, 0, 0 }, LA = { -15, 0, 0 } },
@@ -478,7 +479,7 @@ local data = {
 		},
 		-- Saut de trottoir (finition d'enchaînement, anti-air) : il saute comme sur un trottoir, genou et casque en avant
 		S_finish_trottoir = {
-			label = "Saut de trottoir", energyCost = 20, startup = 0.1, active = 0.15, recovery = 0.3,
+			label = "Saut de trottoir", startup = 0.1, active = 0.15, recovery = 0.3,
 			damage = 9, hitbox = box(5, 5, 2.5, 2.5), kbBase = 32, kbGrowth = 58, kbAngle = 82, selfVelocity = Vector2.new(8, 45),
 			windup = { Root = { -10, 0, 0, 0, -0.75, 0.1 }, Waist = { -20, 0, 0 }, Neck = { -10, 0, 0 }, RS = { -20, 0, 30 }, RE = { 40, 0, 0 }, LS = { -20, 0, -30 }, LE = { 40, 0, 0 } },
 			strike = { Root = { 10, 0, 0, 0, 0.3, -0.1 }, Waist = { 10, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 150, 0, 20 }, RE = { 20, 0, 0 }, LS = { -30, 0, -40 }, LE = { 20, 0, 0 }, RH = { 110, 0, 0 }, RK = { -120, 0, 0 }, LH = { -10, 0, 0 }, LK = { -20, 0, 0 } },
@@ -487,12 +488,12 @@ local data = {
 		},
 
 		------------------------------------------------------------------ Supers
-		-- Commande groupée : il tape sur son téléphone… et une vingtaine de colis tombent du ciel devant lui
+		-- Commande groupée (Y) : il valide sur son téléphone… et une pluie de colis tombe du ciel droit sur l'adversaire
 		SUPER = {
-			label = "Commande groupée !", kind = "projectile", superCost = 100, startup = 0.4, active = 0, recovery = 0.5,
+			label = "Commande groupée !", kind = "projectile", startup = 0.4, active = 0, recovery = 0.6,
 			damage = 3, kbBase = 20, kbGrowth = 30, kbAngle = 60,
-			projectile = { speed = 60, gravity = 0, lifetime = 0.7, size = 1.8, color = CARDBOARD, visual = PARCEL,
-				rain = { count = 16, spread = 10, ahead = 9, height = 22, gap = 0.06 } },
+			projectile = { speed = 60, gravity = 0, lifetime = 0.8, size = 2, color = CARDBOARD, visual = PARCEL,
+				rain = { count = 12, spread = 6, ahead = 9, height = 22, gap = 0.06 } },
 			windup = { Root = { 0, 0, 0, 0, -0.15, 0 }, Waist = { -6, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 30, 0, 25 }, RE = { 60, 0, 0 }, LS = { 50, 0, 20 }, LE = { 110, 0, 0 } },
 			strike = { Root = { 4, 0, 0, 0, 0, 0 }, Waist = { 10, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 30, 0, 25 }, RE = { 60, 0, 0 }, LS = { 170, 0, -10 }, LE = { 10, 0, 0 } },
 			follow = { Root = { 4, 0, 0, 0, 0, 0 }, Waist = { 10, 0, 0 }, Neck = { 34, 0, 0 }, RS = { 30, 0, 25 }, RE = { 60, 0, 0 }, LS = { 172, 0, -15 }, LE = { 10, 0, 0 } },
@@ -500,10 +501,11 @@ local data = {
 			fx = { { "symbols", symbols = { "📦", "📦", "⭐" }, count = 8, radius = 5, at = "above" }, { "shake", amount = 0.4 } },
 			text = "COMMANDE GROUPÉE !", hitText = "LIVRÉ !",
 		},
-		-- Super ↑ : accroupi sur la trottinette, il cabre à la verticale et décolle en vrille, roue avant au ciel, comme un colis-fusée
+		-- Livraison express en orbite (↑Y) : une rampe de lancement sort du sol, il cabre à la verticale et décolle en vrille,
+		-- roue avant au ciel : tout le couloir part en orbite avec lui comme un colis-fusée
 		SUPER_up = {
-			label = "Livraison express en orbite !", superCost = 100, startup = 0.25, active = 0.45, recovery = 0.55,
-			damage = 22, hitbox = box(7, 12, 1, 4), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
+			label = "Livraison express en orbite !", startup = 0.3, active = 0.45, recovery = 0.7,
+			damage = 24, hitbox = box(16, 12, 8, 4), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
 			windup = { Root = { -14, 0, 0, 0, -0.75, 0 }, Waist = { -22, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 55, 0, 12 }, RE = { 70, 0, 0 }, RW = { 0, 0, 0 }, LS = { 55, 0, -12 }, LE = { 70, 0, 0 } },
 			strike = { Root = { 10, 0, 0, 0, 0.5, 0 }, Waist = { 14, 0, 0 }, Neck = { 45, 0, 0 }, RS = { 185, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 182, 0, -10 }, LE = { 0, 0, 0 }, RH = { 70, 0, 0 }, RK = { -110, 0, 0 }, LH = { 60, 0, 0 }, LK = { -100, 0, 0 } },
 			follow = { Root = { 14, 0, 0, 0, 0.5, 0 }, Waist = { 18, 0, 0 }, Neck = { 50, 0, 0 }, RS = { 180, 0, 35 }, RE = { 5, 0, 0 }, RW = { -10, 0, 0 }, LS = { 178, 0, -40 }, LE = { 5, 0, 0 }, RH = { 20, 0, 25 }, RK = { -30, 0, 0 }, LH = { 20, 0, -25 }, LK = { -30, 0, 0 } },
@@ -512,16 +514,16 @@ local data = {
 			fx = { { "pillar", color = ORANGE, height = 18, width = 3, at = "root" }, { "ring", color = ORANGE, radius = 6, at = "feet" }, { "particles", tex = "fire", color = STAR, dir = "down", at = "feet", time = 0.6, speed = 14 }, { "symbols", symbols = { "📦", "⭐", "🚀" }, count = 6, radius = 4, at = "above", color = STAR } },
 			text = "LIVRÉ EN 2 MIN !", hitText = "COLIS EN ORBITE !",
 		},
-		-- Mode Turbo : il tape « livraison express » sur son casque, ses baskets s'enflamment et il décoche un coup de pied fumant : vitesse et note en hausse
+		-- Mode Turbo (↓Y) : il tape « livraison express » sur son casque, ses baskets s'enflamment et son coup de pied fumant traverse tout le couloir : vitesse et note en hausse
 		SUPER_down = {
-			label = "Mode Turbo !", superCost = 100, startup = 0.35, active = 0.15, recovery = 0.3,
-			hitbox = box(7, 4.5, 3, 0.8), kbBase = 45, kbGrowth = 90, kbAngle = 45,
-			damage = 18, selfEffect = { buff = { "turbo", 5 }, meter = 2, energy = 30 },
+			label = "Mode Turbo !", startup = 0.35, active = 0.2, recovery = 0.6,
+			hitbox = box(16, 5, 8, 0.8), kbBase = 45, kbGrowth = 90, kbAngle = 45,
+			damage = 22, selfEffect = { buff = { "turbo", 5 }, meter = 2 },
 			windup = { Root = { 0, 0, 0, 0, -0.5, 0 }, Waist = { -16, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 30, 0, 30 }, RE = { 60, 0, 0 }, LS = { 150, 0, 30 }, LE = { 130, 0, 0 }, RH = { 60, 0, 0 }, RK = { -110, 0, 0 } },
 			strike = { Root = { 14, 0, 0, 0, -0.1, -0.2 }, Waist = { 12, 0, 0 }, Neck = { -6, 0, 0 }, RS = { -30, 0, 50 }, RE = { 20, 0, 0 }, LS = { -30, 0, -50 }, LE = { 20, 0, 0 }, RH = { 100, 0, 0 }, RK = { 0, 0, 0 }, RA = { 20, 0, 0 } },
 			follow = { Root = { 18, 0, 0, 0, -0.1, -0.25 }, Waist = { 14, 0, 0 }, Neck = { -8, 0, 0 }, RS = { -38, 0, 55 }, RE = { 20, 0, 0 }, LS = { -38, 0, -55 }, LE = { 20, 0, 0 }, RH = { 108, 0, 0 }, RK = { 0, 0, 0 }, RA = { 25, 0, 0 } },
 			hold = 0.15, trail = "rightFoot", windupFx = { { "screen", color = ORANGE, alpha = 0.3 }, { "text", text = "LIVRAISON EXPRESS ✔", color = SCREEN } },
-			fx = { { "particles", tex = "fire", color = ORANGE, dir = "front", at = "feet", time = 0.6, speed = 14 }, { "burst", color = ORANGE, size = 4, at = "front" }, { "pillar", color = ORANGE, height = 10, width = 3 } },
+			fx = { { "particles", tex = "fire", color = ORANGE, dir = "front", at = "feet", time = 0.6, speed = 14 }, { "beam", color = ORANGE, length = 16, width = 3, at = "feet" }, { "burst", color = ORANGE, size = 4, at = "front" }, { "pillar", color = ORANGE, height = 10, width = 3 } },
 			text = "MODE TURBO !", hitText = "CRAMÉ !",
 		},
 

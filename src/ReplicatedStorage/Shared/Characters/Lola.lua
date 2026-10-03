@@ -395,108 +395,113 @@ local data = {
 		},
 
 		------------------------------------------------------------------ Signatures (S)
-		-- Le Flash : téléphone braqué sur l'adversaire, gros flash blanc qui l'étourdit 0,5 s (de quoi placer un combo)
+		-- Le Flash : téléphone braqué devant elle, un flash énorme éclaire tout le couloir et étourdit tout ce qu'il y a dedans
 		S_neutral = {
-			label = "Le Flash", energyCost = 25, startup = 0.14, active = 0.1, recovery = 0.28,
-			damage = 6, hitbox = box(7, 5, 3.5, 1), kbBase = 10, kbGrowth = 10, kbAngle = 20,
-			status = { name = "stunned", duration = 0.5 },
+			label = "Le Flash", startup = 0.18, active = 0.12, recovery = 0.42,
+			damage = 12, hitbox = box(14, 6, 7, 1), kbBase = 12, kbGrowth = 12, kbAngle = 20,
+			status = { name = "stunned", duration = 0.6 },
 			windup = { Root = { 4, -10, 0, 0, -0.15, 0.15 }, Waist = { 4, -10, 0 }, Neck = { 0, 10, 0 }, RS = { 70, 0, 10 }, RE = { 70, 0, 0 }, RW = { 0, 0, 0 }, LS = { 140, 0, 30 }, LE = { 140, 0, 0 } },
-			strike = { Root = { -4, 8, 0, 0, -0.2, -0.15 }, Waist = { -4, 8, 0 }, Neck = { -6, -8, 0 }, RS = { 95, 0, 0 }, RE = { 0, 0, 0 }, RW = { 15, 0, 0 }, LS = { 150, 0, 40 }, LE = { 140, 0, 0 } },
-			follow = { Root = { -4, 10, 0, 0, -0.2, -0.18 }, Waist = { -4, 10, 0 }, Neck = { -6, -10, 0 }, RS = { 96, 0, 0 }, RE = { 0, 0, 0 }, RW = { 18, 0, 0 }, LS = { 152, 0, 40 }, LE = { 142, 0, 0 } },
-			hold = 0.1, fx = { { "burst", color = FLASH, size = 5, at = "front" }, { "ring", color = FLASH, radius = 4, at = "front" } },
+			strike = { Root = { -8, 8, 0, 0, -0.25, -0.3 }, Waist = { -6, 8, 0 }, Neck = { -6, -8, 0 }, RS = { 98, 0, 0 }, RE = { 0, 0, 0 }, RW = { 15, 0, 0 }, LS = { 150, 0, 40 }, LE = { 140, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+			follow = { Root = { -8, 10, 0, 0, -0.25, -0.32 }, Waist = { -6, 10, 0 }, Neck = { -6, -10, 0 }, RS = { 100, 0, 0 }, RE = { 0, 0, 0 }, RW = { 18, 0, 0 }, LS = { 152, 0, 40 }, LE = { 142, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+			hold = 0.1, trail = "prop", fx = { { "burst", color = FLASH, size = 6, at = "front" }, { "beam", color = FLASH, length = 16, width = 4, at = "hand" }, { "screen", color = FLASH, alpha = 0.2 } },
 			text = "FLASH !", hitText = "ÉBLOUI !",
 		},
-		-- Hashtag : elle tape le hashtag sur son téléphone et un gros # bleu part à l'horizontale
+		-- Hashtag : elle tape le hashtag sur son téléphone et un gros # bleu fonce droit sur la tête de l'adversaire
 		S_side = {
-			label = "Hashtag", energyCost = 25, kind = "projectile", startup = 0.18, active = 0, recovery = 0.32,
-			damage = 10, kbBase = 25, kbGrowth = 50, kbAngle = 30,
-			projectile = { speed = 42, angle = 0, gravity = 0, lifetime = 1.1, size = 2.2, color = BLEU,
-				visual = { shape = "block", size = 1.8, color = BLEU, neon = true, transparency = 0.15, text = "#", spin = 3 } },
+			label = "Hashtag", kind = "projectile", startup = 0.22, active = 0, recovery = 0.45,
+			damage = 14, kbBase = 26, kbGrowth = 52, kbAngle = 30,
+			projectile = { speed = 48, angle = 0, gravity = 0, lifetime = 1.0, size = 2.4, color = BLEU, homing = 0.3,
+				visual = { shape = "block", size = 2, color = BLEU, neon = true, transparency = 0.15, text = "#", spin = 3 } },
 			windup = { Root = { 2, -14, 0, 0, -0.15, 0.15 }, Waist = { 0, -12, 0 }, Neck = { -12, 0, 0 }, RS = { 80, 0, -20 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, 20 }, LE = { 110, 0, 0 } },
 			strike = { Root = { -8, 16, 0, 0, -0.25, -0.3 }, Waist = { -8, 18, 0 }, Neck = { 6, -10, 0 }, RS = { 50, 0, 40 }, RE = { 50, 0, 0 }, RW = { 0, 0, 0 }, LS = { 92, 0, -6 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.35 } },
 			follow = { Root = { -10, 18, 0, 0, -0.25, -0.35 }, Waist = { -10, 20, 0 }, Neck = { 8, -12, 0 }, RS = { 48, 0, 42 }, RE = { 50, 0, 0 }, RW = { 0, 0, 0 }, LS = { 94, 0, -8 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.38 } },
-			trail = "leftHand", text = "#BAGARRE !", hitText = "#OUILLE !",
+			trail = "leftHand", fx = { { "symbols", symbols = { "#" }, count = 3, radius = 2, at = "lhand", color = BLEU } }, text = "#BAGARRE !", hitText = "#OUILLE !",
 		},
-		-- Filtre chien (piège) : elle pose un filtre au sol ; qui marche dessus a des oreilles de chien (portée réduite 3 s)
+		-- Filtre chien : elle tape sur l'écran et le filtre tombe du ciel pile sur la tête de l'adversaire : oreilles de chien,
+		-- plus de signatures ni de coups lourds pendant 3 s
 		S_down = {
-			label = "Filtre chien", energyCost = 25, kind = "trap", startup = 0.18, active = 0, recovery = 0.3,
-			damage = 4, kbBase = 10, kbGrowth = 10, kbAngle = 60,
+			label = "Filtre chien", kind = "projectile", startup = 0.22, active = 0, recovery = 0.45,
+			damage = 12, kbBase = 14, kbGrowth = 14, kbAngle = 60,
 			status = { name = "dog", duration = 3 },
-			trap = { size = Vector3.new(3, 2, 6), offset = 3, lifetime = 10, max = 2, color = ROSE,
-				visual = { shape = "disc", size = 2.4, color = ROSE, neon = true, transparency = 0.2, text = "🐶", trail = false } },
-			windup = { Root = { -4, -10, 0, 0, -0.5, 0.1 }, Waist = { -14, -8, 0 }, Neck = { -10, 0, 0 }, RS = { 60, 0, 20 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -10 }, LE = { 90, 0, 0 } },
-			strike = { Root = { -12, 6, 0, 0, -0.8, -0.1 }, Waist = { -24, 6, 0 }, Neck = { -6, 0, 0 }, RS = { 30, 0, 30 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -20 }, LE = { 10, 0, 0 } },
-			follow = { Root = { -12, 8, 0, 0, -0.8, -0.12 }, Waist = { -24, 8, 0 }, Neck = { 6, -10, 0 }, RS = { 28, 0, 32 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 120, 0, -10 }, LE = { 130, 0, 0 } },
-			fx = { { "symbols", symbols = { "🐶", "✨" }, count = 4, radius = 2, at = "front" } }, text = "FILTRE CHIEN !", hitText = "OUAF !",
+			projectile = { speed = 55, gravity = 50, lifetime = 0.9, size = 3, color = ROSE, rain = { count = 1, spread = 0.5, ahead = 8, height = 18 },
+				visual = { shape = "disc", size = 2.6, color = ROSE, neon = true, transparency = 0.2, text = "🐶", spin = 4 } },
+			windup = { Root = { -4, -10, 0, 0, -0.2, 0.1 }, Waist = { -8, -8, 0 }, Neck = { -14, 0, 0 }, RS = { 60, 0, 10 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, 20 }, LE = { 120, 0, 0 } },
+			strike = { Root = { 6, 10, 0, 0, 0.05, 0 }, Waist = { 10, 10, 0 }, Neck = { 28, 0, 0 }, RS = { 176, 0, 12 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 120, 0, -30 }, LE = { 120, 0, 0 }, FR = { 0, 0, 0, 0, 0.15, 0 }, FL = { 0, 0, 0, 0, 0.15, 0 } },
+			follow = { Root = { 6, 12, 0, 0, 0.05, 0 }, Waist = { 10, 12, 0 }, Neck = { 30, 0, 0 }, RS = { 180, 0, 14 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 122, 0, -32 }, LE = { 120, 0, 0 } },
+			trail = "prop", fx = { { "symbols", symbols = { "🐶", "✨" }, count = 5, radius = 3, at = "above" }, { "burst", color = ROSE, size = 2.5, at = "above" } }, text = "FILTRE CHIEN !", hitText = "OUAF !",
 		},
-		-- Drone caméra (remontée, gratuite) : elle attrape son drone de vlog qui la tire en diagonale vers le haut
+		-- Drone caméra (remontée) : elle attrape son drone de vlog qui l'emporte en diagonale vers l'avant, bras tendu vers
+		-- le ciel, jambes qui flottent derrière, et elle filme tout ce qu'elle percute au passage
 		S_up = {
-			label = "Drone caméra", energyCost = 0, startup = 0.06, active = 0.3, recovery = 0.3,
-			damage = 6, hitbox = box(5, 5, 1.5, 2.5), kbBase = 28, kbGrowth = 40, kbAngle = 70, selfVelocity = Vector2.new(38, 84),
-			windup = { Root = { -6, 0, 0, 0, -0.5, 0 }, Waist = { -10, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 150, 0, 15 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -30 }, LE = { 60, 0, 0 } },
-			strike = { Root = { -14, 0, 0, 0, 0.3, 0 }, Waist = { -6, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 165, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -60 }, LE = { 20, 0, 0 }, RH = { 10, 0, 0 }, RK = { -60, 0, 0 }, LH = { -10, 0, 0 }, LK = { -20, 0, 0 } },
-			follow = { Root = { -16, 0, 0, 0, 0.3, 0 }, Waist = { -6, 0, 0 }, Neck = { 32, 0, 0 }, RS = { 168, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, -70 }, LE = { 20, 0, 0 }, RH = { 30, 0, 0 }, RK = { -90, 0, 0 }, LH = { 5, 0, 0 }, LK = { -40, 0, 0 } },
-			prop = "drone", hideProp = "perche", trail = "body", text = "DRONE !", hitText = "VZZZ !",
+			label = "Drone caméra", startup = 0.15, active = 0.32, recovery = 0.4,
+			damage = 14, hitbox = box(10, 11, 3, 4), kbBase = 30, kbGrowth = 52, kbAngle = 70, selfVelocity = Vector2.new(44, 86),
+			windup = { Root = { 4, 0, 0, 0, -0.6, 0.1 }, Waist = { -12, 0, 0 }, Neck = { 22, 0, 0 }, RS = { 150, 0, 15 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { -20, 0, -30 }, LE = { 50, 0, 0 } },
+			strike = { Root = { -40, 0, 0, 0, 0.3, 0 }, Waist = { -6, 0, 0 }, Neck = { 34, 0, 0 }, RS = { 170, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 110, 0, -50 }, LE = { 30, 0, 0 }, RH = { -22, 0, 6 }, RK = { -35, 0, 0 }, RA = { -30, 0, 0 }, LH = { -36, 0, -6 }, LK = { -50, 0, 0 }, LA = { -30, 0, 0 } },
+			follow = { Root = { -44, 0, 0, 0, 0.35, 0 }, Waist = { -8, 0, 0 }, Neck = { 36, 0, 0 }, RS = { 174, 0, 12 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 115, 0, -55 }, LE = { 30, 0, 0 }, RH = { -30, 0, 8 }, RK = { -45, 0, 0 }, RA = { -30, 0, 0 }, LH = { -42, 0, -8 }, LK = { -60, 0, 0 }, LA = { -30, 0, 0 } },
+			prop = "drone", hideProp = "perche", trail = "body",
+			windupFx = { { "symbols", symbols = { "🔴" }, count = 1, radius = 1.5, at = "hand", color = Color3.fromRGB(255, 60, 60) } },
+			fx = { { "ring", color = ARGENT, radius = 4, at = "feet" }, { "particles", tex = "smoke", color = BLANC, dir = "down", at = "hand", time = 0.35, speed = 16, size = 0.7, rate = 70 }, { "symbols", symbols = { "📹", "✨" }, count = 3, radius = 2 } },
+			text = "DRONE !", hitText = "VZZZ !",
 		},
-		-- Pluie de cœurs (plongeon, ↓S en l'air) : elle pique vers le sol perche en avant dans une cascade de cœurs (+likes)
+		-- Pluie de cœurs (plongeon) : elle pique vers le sol perche en avant dans une cascade de cœurs, sur tout ce qu'il y a dessous (+likes)
 		S_air_down = {
-			label = "Pluie de cœurs", energyCost = 25, startup = 0.14, active = 0.35, recovery = 0.3,
-			damage = 10, hitbox = box(5, 4, 0.5, -2.5), kbBase = 25, kbGrowth = 50, kbAngle = -60, selfVelocity = Vector2.new(8, -80),
+			label = "Pluie de cœurs", startup = 0.16, active = 0.35, recovery = 0.45,
+			damage = 14, hitbox = box(8, 6, 1, -2), kbBase = 28, kbGrowth = 55, kbAngle = -60, selfVelocity = Vector2.new(8, -82),
 			selfEffect = { meter = 100 },
 			windup = { Root = { 10, 0, 0 }, Waist = { 10, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 170, 0, 20 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, -30 }, LE = { 30, 0, 0 }, RH = { 70, 0, 0 }, RK = { -110, 0, 0 }, LH = { 70, 0, 0 }, LK = { -110, 0, 0 } },
 			strike = { Root = { -30, 0, 0 }, Waist = { -10, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 30, 0, 5 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 160, 0, -40 }, LE = { 20, 0, 0 }, RH = { -10, 0, 0 }, RK = { -40, 0, 0 }, LH = { 10, 0, 0 }, LK = { -60, 0, 0 } },
 			follow = { Root = { -34, 0, 0 }, Waist = { -12, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 25, 0, 5 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 165, 0, -45 }, LE = { 20, 0, 0 }, RH = { -12, 0, 0 }, RK = { -40, 0, 0 }, LH = { 8, 0, 0 }, LK = { -58, 0, 0 } },
-			trail = "prop", fx = { { "rain", shape = "ball", color = ROSE_VIF, count = 10, radius = 5, size = 0.6 }, { "symbols", symbols = { "❤️", "💖" }, count = 6, radius = 4 } },
+			trail = "prop", fx = { { "rain", shape = "ball", color = ROSE_VIF, count = 12, radius = 6, size = 0.6 }, { "ring", color = ROSE, radius = 6, at = "feet" }, { "symbols", symbols = { "❤️", "💖" }, count = 6, radius = 4 } },
 			text = "LOVE !", hitText = "+100 ❤️",
 		},
-		-- Bloquer l'utilisateur (esquive puis S) : ring light brandie en bouclier et poussée d'un coup sec dans la figure ;
-		-- le prochain coup reçu est bloqué et elle riposte
+		-- Bloquer l'utilisateur (esquive puis S) : ring light brandie en bouclier, puis poussée d'un coup sec sur toute la
+		-- longueur du couloir ; le prochain coup reçu pendant la pose est bloqué et elle riposte
 		S_dodge = {
-			label = "Bloquer l'utilisateur", energyCost = 20, kind = "counter", startup = 0.04, active = 0.45, recovery = 0.3,
-			damage = 7, hitbox = box(5.5, 4.5, 3, 0.8),
-			counter = { window = 0.45, text = "BLOQUÉ !", riposte = { damage = 11, kbBase = 38, kbGrowth = 70, kbAngle = 35, hitText = "UTILISATEUR BLOQUÉ !" } },
+			label = "Bloquer l'utilisateur", kind = "counter", startup = 0.15, active = 0.4, recovery = 0.45,
+			damage = 12, hitbox = box(14, 6, 7, 1), kbBase = 32, kbGrowth = 56, kbAngle = 32,
+			counter = { window = 0.6, text = "BLOQUÉ !", riposte = { damage = 16, kbBase = 40, kbGrowth = 75, kbAngle = 35, hitText = "UTILISATEUR BLOQUÉ !" } },
 			windup = { Root = { 6, 0, 0, 0, -0.2, 0.15 }, Waist = { 6, 0, 0 }, Neck = { 6, 20, 0 }, RS = { 60, 0, 10 }, RE = { 110, 0, 0 }, RW = { -70, 0, 0 }, LS = { 30, 0, -30 }, LE = { 60, 0, 0 } },
-			strike = { Root = { -10, 0, 0, 0, -0.3, -0.35 }, Waist = { -8, 0, 0 }, Neck = { 6, 30, 0 }, RS = { 96, 0, -6 }, RE = { 0, 0, 0 }, RW = { -75, 0, 0 }, LS = { 10, 0, -45 }, LE = { 110, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
-			follow = { Root = { -10, 0, 0, 0, -0.3, -0.35 }, Waist = { -8, 0, 0 }, Neck = { 8, 32, 0 }, RS = { 97, 0, -6 }, RE = { 0, 0, 0 }, RW = { -76, 0, 0 }, LS = { 10, 0, -46 }, LE = { 112, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
-			prop = "ringlight", hideProp = "perche", trail = "prop", fx = { { "ring", color = FLASH, radius = 3, at = "front" } }, text = "BLOQUÉE !", hitText = "UTILISATEUR BLOQUÉ !",
+			strike = { Root = { -14, 0, 0, 0, -0.35, -0.45 }, Waist = { -10, 0, 0 }, Neck = { 6, 30, 0 }, RS = { 98, 0, -6 }, RE = { 0, 0, 0 }, RW = { -75, 0, 0 }, LS = { 10, 0, -45 }, LE = { 110, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+			follow = { Root = { -14, 0, 0, 0, -0.35, -0.45 }, Waist = { -10, 0, 0 }, Neck = { 8, 32, 0 }, RS = { 100, 0, -6 }, RE = { 0, 0, 0 }, RW = { -76, 0, 0 }, LS = { 10, 0, -46 }, LE = { 112, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+			hold = 0.2, prop = "ringlight", hideProp = "perche", trail = "prop", fx = { { "ring", color = FLASH, radius = 4, at = "front" }, { "beam", color = FLASH, length = 14, width = 3, at = "hand" } }, text = "BLOQUÉE !", hitText = "UTILISATEUR BLOQUÉ !",
 		},
-		-- Live (S maintenu) : elle lance le direct en plantant la perche dans le nez d'en face (« dis bonjour aux abonnés ! »),
-		-- puis salue ses abonnés, perche levée ; les likes pleuvent (+300 likes)
+		-- Panoramique en live (S maintenu) : elle lance le direct et balaie tout le couloir d'un grand panoramique de perche,
+		-- de gauche à droite (« dis bonjour aux abonnés ! »), puis salue ses abonnés ; les likes pleuvent (+300 likes)
 		S_hold = {
-			label = "Live", energyCost = 30, startup = 0.22, active = 0.12, recovery = 0.45,
-			damage = 9, hitbox = box(6, 4.5, 3.5, 1), kbBase = 30, kbGrowth = 55, kbAngle = 35,
+			label = "Panoramique en live", startup = 0.26, active = 0.16, recovery = 0.5,
+			damage = 13, hitbox = box(14, 6, 7, 1), kbBase = 32, kbGrowth = 58, kbAngle = 35,
 			selfEffect = { meter = 300 },
-			windup = { Root = { 4, -14, 4, 0, -0.15, 0.1 }, Waist = { 4, -14, 6 }, Neck = { 10, 10, 0 }, RS = { 60, 0, 10 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -30 }, LE = { 60, 0, 0 } },
-			strike = { Root = { -12, 10, 0, 0, -0.3, -0.4 }, Waist = { -10, 12, 0 }, Neck = { 0, -8, 0 }, RS = { 96, 0, -4 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -35 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+			windup = { Root = { 4, -34, 4, 0, -0.15, 0.1 }, Waist = { 4, -30, 6 }, Neck = { 10, 16, 0 }, RS = { 80, 0, 70 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -30 }, LE = { 60, 0, 0 } },
+			strike = { Root = { -12, 26, 0, 0, -0.3, -0.4 }, Waist = { -10, 30, 0 }, Neck = { 0, -16, 0 }, RS = { 98, 0, -24 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -35 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
 			follow = { Root = { 4, 10, 6, 0, -0.1, 0 }, Waist = { 6, 8, 8 }, Neck = { 20, -6, 6 }, RS = { 145, 0, 10 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, -10 }, LE = { 40, 0, 0 } },
-			hold = 0.45, trail = "prop", fx = { { "symbols", symbols = { "❤️", "👍", "💬" }, count = 8, radius = 4 }, { "text", text = "🔴 LIVE", color = Color3.fromRGB(255, 60, 60), at = "above" } },
+			hold = 0.4, trail = "prop", fx = { { "symbols", symbols = { "❤️", "👍", "💬" }, count = 8, radius = 4 }, { "text", text = "🔴 LIVE", color = Color3.fromRGB(255, 60, 60), at = "above" }, { "ring", color = ROSE, radius = 5, at = "front" } },
 			text = "COUCOU LES LOLAS !", hitText = "DIS BONJOUR !",
 		},
-		-- Swipe (→→S) : grand geste de swipe de la main gauche et elle file de côté en un éclair
+		-- Swipe (→→S) : grand geste de swipe de la main gauche et elle file en un éclair d'un bout à l'autre du couloir
 		S_dash = {
-			label = "Swipe", energyCost = 25, startup = 0.05, active = 0.22, recovery = 0.3,
-			damage = 9, hitbox = box(4.5, 3.5, 2, 0.5), kbBase = 30, kbGrowth = 55, kbAngle = 25, selfVelocity = Vector2.new(80, 0), invuln = 0.2,
+			label = "Swipe", startup = 0.15, active = 0.24, recovery = 0.42,
+			damage = 13, hitbox = box(12, 5, 5, 0.5), kbBase = 32, kbGrowth = 58, kbAngle = 25, selfVelocity = Vector2.new(80, 0), invuln = 0.2,
 			windup = { Root = { -6, -20, 0, 0, -0.25, 0.1 }, Waist = { -4, -20, 0 }, RS = { 40, 0, 30 }, RE = { 80, 0, 0 }, LS = { 80, 0, 60 }, LE = { 30, 0, 0 } },
 			strike = { Root = { -18, 10, 0, 0, -0.35, -0.2 }, Waist = { -8, 16, 0 }, Neck = { 10, -10, 0 }, RS = { -20, 0, 40 }, RE = { 40, 0, 0 }, LS = { 90, 0, -80 }, LE = { 5, 0, 0 } },
 			follow = { Root = { -20, 12, 0, 0, -0.35, -0.25 }, Waist = { -8, 18, 0 }, Neck = { 12, -12, 0 }, RS = { -25, 0, 42 }, RE = { 40, 0, 0 }, LS = { 85, 0, -95 }, LE = { 5, 0, 0 } },
-			trail = "body", fx = { "dust" }, text = "SWIPE !", hitText = "SKIP !",
+			trail = "body", fx = { "dust", { "symbols", symbols = { "👉", "✨" }, count = 3, radius = 2 } }, text = "SWIPE !", hitText = "SKIP !",
 		},
-		-- Cœurs en rafale (S en l'air) : elle envoie trois cœurs à tête chercheuse vers le bas, devant elle
+		-- Gros cœur (S en l'air) : elle envoie un gros cœur à tête chercheuse qui file droit sur l'adversaire, depuis les airs
 		S_air = {
-			label = "Cœurs en rafale", energyCost = 22, kind = "projectile", startup = 0.14, active = 0, recovery = 0.3,
-			damage = 4, kbBase = 16, kbGrowth = 30, kbAngle = 35,
-			projectile = { speed = 50, gravity = 0, lifetime = 0.65, size = 1.3, color = ROSE_VIF, homing = 0.25, fan = { count = 3, from = -40, to = -10 },
-				visual = { shape = "ball", size = 1.0, color = ROSE_VIF, neon = true, text = "❤" } },
+			label = "Gros cœur", kind = "projectile", startup = 0.18, active = 0, recovery = 0.42,
+			damage = 13, kbBase = 24, kbGrowth = 45, kbAngle = 35,
+			projectile = { speed = 55, angle = -20, gravity = 0, lifetime = 0.7, size = 2.2, color = ROSE_VIF, homing = 0.5,
+				visual = { shape = "ball", size = 1.8, color = ROSE_VIF, neon = true, text = "❤", spin = 2 } },
 			windup = { Root = { -6, 0, 0 }, Waist = { -6, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 60, 0, 30 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 120, 0, 20 }, LE = { 130, 0, 0 }, RH = { 60, 0, 0 }, RK = { -90, 0, 0 }, LH = { 40, 0, 0 }, LK = { -80, 0, 0 } },
-			strike = { Root = { -14, 0, 0 }, Waist = { -10, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 70, 0, 40 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -10 }, LE = { 5, 0, 0 }, RH = { 50, 0, 0 }, RK = { -80, 0, 0 }, LH = { 20, 0, 0 }, LK = { -60, 0, 0 } },
-			follow = { Root = { -16, 0, 0 }, Waist = { -12, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 72, 0, 42 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -12 }, LE = { 5, 0, 0 }, RH = { 48, 0, 0 }, RK = { -78, 0, 0 }, LH = { 18, 0, 0 }, LK = { -58, 0, 0 } },
-			trail = "leftHand", text = "BISOUS !", hitText = "❤️",
+			strike = { Root = { -14, 0, 0 }, Waist = { -10, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 70, 0, 40 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, -10 }, LE = { 0, 0, 0 }, RH = { 50, 0, 0 }, RK = { -80, 0, 0 }, LH = { 20, 0, 0 }, LK = { -60, 0, 0 } },
+			follow = { Root = { -16, 0, 0 }, Waist = { -12, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 72, 0, 42 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -12 }, LE = { 0, 0, 0 }, RH = { 48, 0, 0 }, RK = { -78, 0, 0 }, LH = { 18, 0, 0 }, LK = { -58, 0, 0 } },
+			trail = "leftHand", fx = { { "symbols", symbols = { "❤️", "💖" }, count = 4, radius = 2, at = "lhand" } }, text = "BISOUS !", hitText = "❤️",
 		},
 
 		------------------------------------------------------------------ Finitions avec S (dans un enchaînement)
 		-- Pose finale : grand balayage de perche, puis flash de la photo de fin
 		S_finish_pose = {
-			label = "Pose finale", energyCost = 20, startup = 0.15, active = 0.14, recovery = 0.3,
+			label = "Pose finale", startup = 0.15, active = 0.14, recovery = 0.3,
 			damage = 10, hitbox = box(7, 4, 3.5, 0.8), kbBase = 32, kbGrowth = 65, kbAngle = 35,
 			windup = { Root = { 6, -30, 0, 0, -0.2, 0.25 }, Waist = { 6, -30, 0 }, Neck = { 0, 20, 0 }, RS = { 90, 0, 80 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 10, 0, -40 }, LE = { 115, 0, 0 } },
 			strike = { Root = { -8, 22, 0, 0, -0.3, -0.35 }, Waist = { -10, 28, 0 }, Neck = { 0, -14, 0 }, RS = { 92, 0, -20 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 10, 0, -45 }, LE = { 118, 0, 0 } },
@@ -505,7 +510,7 @@ local data = {
 		},
 		-- Ring light tournante : elle sort la ring light et tourne deux fois sur elle-même, cercle de lumière à bout de bras
 		S_finish_ring = {
-			label = "Ring light tournante", energyCost = 25, startup = 0.1, active = 0.3, recovery = 0.3,
+			label = "Ring light tournante", startup = 0.1, active = 0.3, recovery = 0.3,
 			damage = 11, hitbox = box(8, 4, 0, 0.5), kbBase = 32, kbGrowth = 65, kbAngle = 45,
 			windup = { Root = { 0, -30, 0, 0, -0.3, 0 }, Waist = { 0, -20, 0 }, RS = { 60, 0, 40 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -40 }, LE = { 40, 0, 0 } },
 			strike = { Root = { 0, 0, 0, 0, -0.1, 0 }, Neck = { -10, 0, 0 }, RS = { 90, 0, 85 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, -85 }, LE = { 0, 0, 0 } },
@@ -514,48 +519,48 @@ local data = {
 		},
 
 		------------------------------------------------------------------ Supers
-		-- Virale ! : elle publie la vidéo, une avalanche de notifications tombe du ciel et elle devient virale
+		-- Virale ! (Y) : elle publie la vidéo, une avalanche de notifications tombe du ciel pile sur l'adversaire et elle devient virale
 		SUPER = {
-			label = "Virale !", kind = "projectile", superCost = 100, startup = 0.35, active = 0, recovery = 0.5,
-			damage = 3, kbBase = 18, kbGrowth = 20, kbAngle = 50,
+			label = "Virale !", kind = "projectile", startup = 0.4, active = 0, recovery = 0.7,
+			damage = 4, kbBase = 18, kbGrowth = 22, kbAngle = 50,
 			selfEffect = { buff = { "viral", 4 } },
-			projectile = { speed = 55, gravity = 30, lifetime = 1.2, size = 1.8, color = ROSE_VIF, rain = { count = 6, spread = 7, ahead = 9, height = 22 },
+			projectile = { speed = 55, gravity = 30, lifetime = 1.2, size = 2, color = ROSE_VIF, rain = { count = 6, spread = 5, ahead = 9, height = 22 },
 				visual = { shape = "block", size = 1.5, color = BLANC, text = "🔔", parts = { { "ball", Vector3.new(0.6, 0.6, 0.6), Vector3.new(0.8, 0.8, 0), ROSE_VIF } } } },
 			windup = { Root = { 0, 0, 0, 0, -0.3, 0 }, Waist = { -10, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 90, 0, -20 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, 20 }, LE = { 120, 0, 0 } },
 			strike = { Root = { 6, 10, 4, 0, 0.1, 0 }, Waist = { 12, 10, 6 }, Neck = { 26, 0, 0 }, RS = { 170, 0, 30 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, -50 }, LE = { 20, 0, 0 }, FR = { 0, 0, 0, 0, 0.2, 0 }, FL = { 0, 0, 0, 0, 0.2, 0 } },
 			follow = { Root = { 6, 14, 6, 0, 0.1, 0 }, Waist = { 14, 12, 8 }, Neck = { 30, 0, 6 }, RS = { 172, 0, 32 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 155, 0, -55 }, LE = { 20, 0, 0 } },
 			hold = 0.3, windupFx = { "super", { "text", text = "PUBLIER…", color = BLEU } },
-			fx = { { "symbols", symbols = { "🔔", "❤️", "💬", "📈" }, count = 10, radius = 6 }, { "screen", color = ROSE, alpha = 0.25 } },
+			fx = { { "symbols", symbols = { "🔔", "❤️", "💬", "📈" }, count = 12, radius = 6 }, { "screen", color = ROSE, alpha = 0.25 }, { "ring", color = ROSE_VIF, radius = 8, at = "above" } },
 			text = "JE SUIS VIRALE !", hitText = "DING DING DING !",
 		},
-		-- Super ↑ : accroupie, elle sort la ring light, se dresse sur les pointes et la brandit au-dessus de sa tête en
-		-- tournant sur elle-même : une auréole de lumière qui aspire tout vers le ciel (et aveugle)
+		-- Auréole de ring light (Y↑) : accroupie, elle sort la ring light, se dresse sur les pointes et la brandit au-dessus de sa
+		-- tête en tournant : une auréole de lumière qui aspire tout le couloir vers le ciel (et aveugle)
 		SUPER_up = {
-			label = "Auréole de ring light !", superCost = 100, startup = 0.32, active = 0.3, recovery = 0.55,
-			damage = 22, hitbox = box(7, 12, 1.5, 5), kbBase = 46, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
+			label = "Auréole de ring light !", startup = 0.35, active = 0.3, recovery = 0.7,
+			damage = 24, hitbox = box(14, 12, 7, 3), kbBase = 46, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
 			status = { name = "blinded", duration = 1.5 },
 			windup = { Root = { -8, 0, 0, 0, -0.7, 0.05 }, Waist = { -16, 0, 0 }, Neck = { -24, 0, 0 }, RS = { 40, 0, 10 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -10 }, LE = { 60, 0, 0 } },
 			strike = { Root = { 4, 0, 0, 0, 0.35, 0 }, Waist = { 8, 0, 0 }, Neck = { 34, 0, 0 }, RS = { 182, 0, 6 }, RE = { 0, 0, 0 }, RW = { 90, 0, 0 }, LS = { 182, 0, -6 }, LE = { 0, 0, 0 }, LW = { 90, 0, 0 }, FR = { 0, 0, 0, 0, 0.35, 0 }, FL = { 0, 0, 0, 0, 0.35, 0 } },
 			follow = { Root = { 6, 0, 0, 0, 0.4, 0 }, Waist = { 10, 0, 0 }, Neck = { 38, 0, 0 }, RS = { 185, 0, 8 }, RE = { 0, 0, 0 }, RW = { 90, 0, 0 }, LS = { 185, 0, -8 }, LE = { 0, 0, 0 }, LW = { 90, 0, 0 }, FR = { 0, 0, 0, 0, 0.4, 0 }, FL = { 0, 0, 0, 0, 0.4, 0 } },
 			hold = 0.35, spin = { axis = "y", degrees = 360 }, selfVelocity = Vector2.new(0, 40), prop = "ringlight", hideProp = "perche", trail = "prop",
 			windupFx = { "super", { "text", text = "LUMIÈRE…", color = FLASH, at = "above" } },
-			fx = { { "pillar", color = FLASH, height = 24, width = 5, at = "root" }, { "screen", color = FLASH, alpha = 0.45 }, { "burst", color = ROSE_VIF, size = 5, at = "above" }, { "symbols", symbols = { "✨", "📸", "😇" }, count = 8, radius = 4 } },
+			fx = { { "pillar", color = FLASH, height = 24, width = 7, at = "front" }, { "screen", color = FLASH, alpha = 0.45 }, { "burst", color = ROSE_VIF, size = 5, at = "above" }, { "symbols", symbols = { "✨", "📸", "😇" }, count = 8, radius = 4 } },
 			text = "AURÉOLE !", hitText = "SAINTE LOLA !",
 		},
-		-- Collab ! : elle lance un appel en live et un perso du roster débarque pour un coup (3 invités possibles)
+		-- Collab ! (Y↓) : elle lance un appel en live et un perso du roster débarque pour balayer tout le couloir (3 invités possibles)
 		SUPER_down = {
-			label = "Collab !", superCost = 100, startup = 0.45, active = 0.2, recovery = 0.55,
-			damage = 20, hitbox = box(12, 8, 6, 1), kbBase = 35, kbGrowth = 70, kbAngle = 45,
+			label = "Collab !", startup = 0.45, active = 0.2, recovery = 0.75,
+			damage = 24, hitbox = box(14, 8, 7, 1), kbBase = 36, kbGrowth = 72, kbAngle = 45,
 			variants = {
 				{ label = "Collab avec Gégé !", status = { name = "inverted", duration = 3 }, hitText = "SODA DOUTEUX !" },
 				{ label = "Collab avec Mamie !", status = { name = "rooted", duration = 2 }, hitText = "LIGOTÉ PAR MAMIE !" },
 				{ label = "Collab avec Chef Flambé !", burn = true, hitText = "FLAMBÉ !" },
 			},
 			windup = { Root = { 2, 10, 0, 0, -0.15, 0 }, Waist = { 4, 10, 0 }, Neck = { 10, -10, 0 }, RS = { 140, 0, 10 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, 40 }, LE = { 130, 0, 0 } },
-			strike = { Root = { -6, -10, 0, 0, -0.2, -0.2 }, Waist = { -6, -10, 0 }, Neck = { 0, 10, 0 }, RS = { 150, 0, 20 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 92, 0, -10 }, LE = { 0, 0, 0 } },
-			follow = { Root = { -6, -12, 0, 0, -0.2, -0.22 }, Waist = { -6, -12, 0 }, Neck = { 0, 12, 0 }, RS = { 152, 0, 22 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 94, 0, -12 }, LE = { 0, 0, 0 } },
+			strike = { Root = { -6, -10, 0, 0, -0.2, -0.2 }, Waist = { -6, -10, 0 }, Neck = { 0, 10, 0 }, RS = { 150, 0, 20 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 96, 0, -10 }, LE = { 0, 0, 0 } },
+			follow = { Root = { -6, -12, 0, 0, -0.2, -0.22 }, Waist = { -6, -12, 0 }, Neck = { 0, 12, 0 }, RS = { 152, 0, 22 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 98, 0, -12 }, LE = { 0, 0, 0 } },
 			hold = 0.4, windupFx = { "super", { "text", text = "📞 APPEL EN LIVE…", color = BLEU, at = "above" } },
-			fx = { { "pillar", color = BLEU, height = 14, width = 3, at = "front" }, { "burst", color = FLASH, size = 5, at = "front" }, { "symbols", symbols = { "🤝", "✨", "📸" }, count = 8, radius = 5 } },
+			fx = { { "pillar", color = BLEU, height = 14, width = 4, at = "front" }, { "burst", color = FLASH, size = 5, at = "front" }, { "beam", color = FLASH, length = 18, width = 4, at = "front" }, { "symbols", symbols = { "🤝", "✨", "📸" }, count = 8, radius = 5 } },
 			text = "COLLAB !", hitText = "SURPRISE !",
 		},
 

@@ -24,6 +24,13 @@ local CLAY = Color3.fromRGB(205, 170, 120)
 local WIDE_R = { 0, 0, 0, 0.35, 0, 0 }
 local WIDE_L = { 0, 0, 0, -0.35, 0, 0 }
 
+-- Le canard en plastique de son ventre (projectile du Canard catapulté)
+local DUCK_SHOT = { shape = "ball", size = 1.4, color = DUCK, spin = 0, parts = {
+	{ "ball", Vector3.new(0.9, 0.9, 0.9), Vector3.new(0.4, 0.8, 0), DUCK },
+	{ "block", Vector3.new(0.5, 0.18, 0.4), Vector3.new(0.9, 0.75, 0), BEAK },
+	{ "ball", Vector3.new(0.18, 0.18, 0.18), Vector3.new(0.65, 1.0, -0.3), HAIR },
+} }
+
 local data = {
 	id = "Sumo",
 	name = "Sumo Gélatine",
@@ -385,106 +392,109 @@ local data = {
 		},
 
 		------------------------------------------------------------------ Spéciaux (S)
-		-- Boulette de gelée : il arrache un bout de son ventre et le lance en cloche (projectile ralentissant)
+		-- Boulette de gelée : il s'arrache un gros bout de bedaine et le lance de toutes ses forces, la boulette fonce se coller sur l'adversaire (ralenti)
 		S_neutral = {
-			label = "Boulette de gelée", energyCost = 25, kind = "projectile", startup = 0.2, active = 0, recovery = 0.32,
-			damage = 8, kbBase = 18, kbGrowth = 25, kbAngle = 35,
-			projectile = { speed = 55, angle = 18, gravity = 70, lifetime = 1.2, size = 1.8, color = JELLY,
-				visual = { shape = "ball", size = 1.6, color = JELLY, transparency = 0.3, spin = 6 } },
+			label = "Boulette de gelée", kind = "projectile", startup = 0.22, active = 0, recovery = 0.45,
+			damage = 12, kbBase = 20, kbGrowth = 30, kbAngle = 35,
+			projectile = { speed = 60, angle = 0, gravity = 0, lifetime = 0.7, size = 2.2, color = JELLY,
+				visual = { shape = "ball", size = 2, color = JELLY, transparency = 0.3, spin = 6 } },
 			status = { name = "slowed", duration = 2 },
 			windup = { Root = { -4, -14, 0, 0, -0.35, 0.2 }, Waist = { -10, -16, 0 }, Neck = { -20, 0, 0 }, RS = { 40, 0, -25 }, RE = { 110, 0, 0 }, LS = { 40, 0, -20 }, LE = { 80, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
-			strike = { Root = { -8, 14, 0, 0, -0.4, -0.25 }, Waist = { -10, 18, 0 }, Neck = { 6, 0, 0 }, RS = { 120, 0, 5 }, RE = { 10, 0, 0 }, RW = { -30, 0, 0 }, LS = { 20, 0, -40 }, LE = { 60, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
-			follow = { Root = { -10, 18, 0, 0, -0.42, -0.3 }, Waist = { -12, 22, 0 }, Neck = { 8, 0, 0 }, RS = { 100, 0, -5 }, RE = { 10, 0, 0 }, RW = { -40, 0, 0 }, LS = { 15, 0, -42 }, LE = { 60, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
-			shake = true, windupFx = { { "burst", color = JELLY, size = 1.5, at = "root" } }, text = "SCHLOUP !", hitText = "SPLOTCH !",
+			strike = { Root = { -10, 14, 0, 0, -0.4, -0.3 }, Waist = { -12, 18, 0 }, Neck = { 6, 0, 0 }, RS = { 96, 0, 5 }, RE = { 0, 0, 0 }, RW = { -30, 0, 0 }, LS = { 20, 0, -40 }, LE = { 60, 0, 0 }, FR = WIDE_R, FL = { 0, 0, 0, -0.35, 0, -0.4 } },
+			follow = { Root = { -12, 18, 0, 0, -0.42, -0.35 }, Waist = { -14, 22, 0 }, Neck = { 8, 0, 0 }, RS = { 100, 0, 0 }, RE = { 5, 0, 0 }, RW = { -40, 0, 0 }, LS = { 15, 0, -42 }, LE = { 60, 0, 0 }, FR = WIDE_R, FL = { 0, 0, 0, -0.35, 0, -0.45 } },
+			shake = true, trail = "rightHand", windupFx = { { "burst", color = JELLY, size = 1.5, at = "root" } }, fx = { { "burst", color = JELLY, size = 2, at = "hand" } },
+			text = "SCHLOUP !", hitText = "SPLOTCH !",
 		},
-		-- Charge Sumo : tête baissée, mains en avant, il fonce et rien ne l'arrête (super-armure)
+		-- Charge Sumo : tête baissée, paumes en avant, il traverse tout le couloir comme un bulldozer de gelée et rien ne l'arrête (super-armure)
 		S_side = {
-			label = "Charge Sumo", energyCost = 30, startup = 0.18, active = 0.36, recovery = 0.36,
-			damage = 12, hitbox = box(5, 4, 2.4, 0.4), kbBase = 34, kbGrowth = 74, kbAngle = 28, selfVelocity = Vector2.new(62, 0), armor = true,
+			label = "Charge Sumo", startup = 0.2, active = 0.34, recovery = 0.45,
+			damage = 15, hitbox = box(14, 6, 7, 1), kbBase = 34, kbGrowth = 74, kbAngle = 28, selfVelocity = Vector2.new(62, 0), armor = true,
 			windup = { Root = { -10, 0, 0, 0, -0.8, 0.3 }, Waist = { -18, 0, 0 }, Neck = { 22, 0, 0 }, RS = { 40, 0, 30 }, RE = { 100, 0, 0 }, LS = { 40, 0, -30 }, LE = { 100, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
 			strike = { Root = { -24, 0, 0, 0, -0.55, -0.35 }, Waist = { -12, 0, 0 }, Neck = { 24, 0, 0 }, RS = { 88, 0, 12 }, RE = { 20, 0, 0 }, RW = { -70, 0, 0 }, LS = { 88, 0, -12 }, LE = { 20, 0, 0 }, LW = { -70, 0, 0 } },
 			follow = { Root = { -26, 0, 0, 0, -0.56, -0.4 }, Waist = { -13, 0, 0 }, Neck = { 25, 0, 0 }, RS = { 90, 0, 10 }, RE = { 18, 0, 0 }, RW = { -72, 0, 0 }, LS = { 90, 0, -10 }, LE = { 18, 0, 0 }, LW = { -72, 0, 0 } },
-			wobble = true, trail = "body", fx = { "dust", { "shake", amount = 0.3 } }, text = "CHARGE SUMO !", hitText = "BOUM !",
+			wobble = true, trail = "body", fx = { "dust", { "ring", color = JELLY, radius = 4, at = "front" }, { "shake", amount = 0.3 } }, text = "CHARGE SUMO !", hitText = "BOUM !",
 		},
-		-- La Flaque : il se liquéfie en flaque (les tirs passent au-dessus), puis rejaillit en uppercut massif
+		-- La Flaque : il se liquéfie en flaque (les tirs passent au-dessus), la gelée coule tout le long du couloir… et rejaillit en geyser sous l'adversaire
 		S_down = {
-			label = "La Flaque", energyCost = 30, startup = 0.4, active = 0.14, recovery = 0.36, invuln = 0.4,
-			damage = 14, hitbox = box(5, 7, 1.5, 2.5), kbBase = 34, kbGrowth = 82, kbAngle = 86,
+			label = "La Flaque", startup = 0.3, active = 0.18, recovery = 0.5, invuln = 0.3,
+			damage = 14, hitbox = box(14, 7, 7, 2), kbBase = 34, kbGrowth = 82, kbAngle = 86,
 			windup = { Root = { 0, 0, 0, 0, -1.8, 0 }, Waist = { -40, 0, 0 }, Neck = { -30, 0, 0 }, RS = { 30, 0, 85 }, RE = { 10, 0, 0 }, LS = { 30, 0, -85 }, LE = { 10, 0, 0 }, RH = { 80, 0, 40 }, RK = { -120, 0, 0 }, LH = { 80, 0, -40 }, LK = { -120, 0, 0 } },
 			strike = { Root = { 8, 0, 0, 0, 0.35, 0 }, Waist = { 14, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 175, 0, 15 }, RE = { 5, 0, 0 }, LS = { 175, 0, -15 }, LE = { 5, 0, 0 }, FR = { 0, 0, 0, 0.3, 0.35, 0 }, FL = { 0, 0, 0, -0.3, 0.35, 0 } },
 			follow = { Root = { 10, 0, 0, 0, 0.4, 0 }, Waist = { 16, 0, 0 }, Neck = { 34, 0, 0 }, RS = { 180, 0, 20 }, RE = { 5, 0, 0 }, LS = { 180, 0, -20 }, LE = { 5, 0, 0 }, FR = { 0, 0, 0, 0.3, 0.4, 0 }, FL = { 0, 0, 0, -0.3, 0.4, 0 } },
-			wobble = true, windupFx = { { "puddle", color = JELLY, width = 6, time = 0.5 } },
-			fx = { { "pillar", color = JELLY, height = 9, width = 3.5, at = "front", time = 0.5 }, { "toss", shape = "ball", color = JELLY, size = 0.8, count = 5, speed = 14, lift = 26 } },
+			wobble = true, windupFx = { { "puddle", color = JELLY, width = 16, time = 0.6 } },
+			fx = { { "pillar", color = JELLY, height = 10, width = 4, at = "front", time = 0.5 }, { "toss", shape = "ball", color = JELLY, size = 0.8, count = 6, speed = 16, lift = 26 }, { "shake", amount = 0.3 } },
 			text = "GLOUBI…", hitText = "BOULGA !",
 		},
-		-- Tremblote géante (remontée, gratuite) : il s'étire vers le ciel comme un ressort vert, frappe deux fois
+		-- Tremblote géante (remontée) : il s'étire comme un ressort vert et bondit en diagonale, bedaine en avant, bras écartés, toute la gelée qui tremblote
 		S_up = {
-			label = "Tremblote géante", energyCost = 0, startup = 0.08, active = 0.3, recovery = 0.3, hits = 2,
-			damage = 4, hitbox = box(4.5, 8, 0.5, 3), kbBase = 28, kbGrowth = 38, kbAngle = 84, selfVelocity = Vector2.new(6, 92),
-			windup = { Root = { 0, 0, 0, 0, -1.0, 0 }, Waist = { -16, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 40, 0, 50 }, RE = { 40, 0, 0 }, LS = { 40, 0, -50 }, LE = { 40, 0, 0 } },
-			strike = { Root = { 2, 0, 0, 0, 0.6, 0 }, Waist = { 6, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 180, 0, 6 }, RE = { 0, 0, 0 }, LS = { 180, 0, -6 }, LE = { 0, 0, 0 }, RH = { -4, 0, 3 }, RK = { 0, 0, 0 }, RA = { -20, 0, 0 }, LH = { -4, 0, -3 }, LK = { 0, 0, 0 }, LA = { -20, 0, 0 } },
-			follow = { Root = { 2, 0, 0, 0, 0.6, 0 }, Waist = { 8, 0, 0 }, Neck = { 24, 0, 0 }, RS = { 178, 0, 12 }, RE = { 5, 0, 0 }, LS = { 178, 0, -12 }, LE = { 5, 0, 0 }, RH = { 20, 0, 10 }, RK = { -40, 0, 0 }, LH = { 10, 0, -10 }, LK = { -30, 0, 0 } },
-			wobble = true, trail = "body", fx = { { "pillar", color = JELLY, height = 6, width = 2.5, time = 0.35 } }, text = "BOÏÏÏNG !", hitText = "TCHAC !",
+			label = "Tremblote géante", startup = 0.15, active = 0.3, recovery = 0.42,
+			damage = 14, hitbox = box(10, 11, 3, 4), kbBase = 30, kbGrowth = 44, kbAngle = 82, selfVelocity = Vector2.new(44, 86),
+			windup = { Root = { 0, 0, 0, 0, -1.0, 0 }, Waist = { -16, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 40, 0, 50 }, RE = { 40, 0, 0 }, LS = { 40, 0, -50 }, LE = { 40, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+			strike = { Root = { -40, 0, 0, 0, 0.3, -0.1 }, Waist = { 6, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 60, 0, 85 }, RE = { 0, 0, 0 }, LS = { 60, 0, -85 }, LE = { 0, 0, 0 }, RH = { -24, 0, 6 }, RK = { -30, 0, 0 }, RA = { -25, 0, 0 }, LH = { -30, 0, -6 }, LK = { -40, 0, 0 }, LA = { -25, 0, 0 } },
+			follow = { Root = { -44, 0, 0, 0, 0.35, -0.15 }, Waist = { 8, 0, 0 }, Neck = { 34, 0, 0 }, RS = { 64, 0, 88 }, RE = { 0, 0, 0 }, LS = { 64, 0, -88 }, LE = { 0, 0, 0 }, RH = { -28, 0, 6 }, RK = { -36, 0, 0 }, RA = { -25, 0, 0 }, LH = { -34, 0, -6 }, LK = { -46, 0, 0 }, LA = { -25, 0, 0 } },
+			wobble = true, trail = "body",
+			fx = { { "pillar", color = JELLY, height = 7, width = 3, at = "root", time = 0.35 }, { "burst", color = JELLY, size = 3.5, at = "feet" }, { "ring", color = JELLY, radius = 5, at = "feet" }, { "toss", shape = "ball", color = JELLY, size = 0.6, count = 4, speed = 12, lift = 14 } },
+			text = "BOÏÏÏNG !", hitText = "TCHAC !",
 		},
-		-- Trampoline (esquive puis S) : il se cambre, gonfle le ventre à bloc et le projette en avant : l'adversaire rebondit… et les projectiles aussi
+		-- Trampoline (esquive puis L) : il se cambre, gonfle le ventre à bloc et le projette en avant : tout le couloir rebondit… et les projectiles aussi
 		S_dodge = {
-			label = "Trampoline", energyCost = 25, kind = "wall", startup = 0.1, active = 0.6, recovery = 0.3,
-			damage = 7, hitbox = box(5.5, 4.5, 2.8, 0.4), kbBase = 30, kbGrowth = 45, kbAngle = 30,
+			label = "Trampoline", kind = "wall", startup = 0.16, active = 0.6, recovery = 0.42,
+			damage = 12, hitbox = box(14, 6, 7, 1), kbBase = 30, kbGrowth = 45, kbAngle = 30,
 			wall = { size = Vector3.new(1.5, 6, 6), offset = 2.2, lifetime = 1.4, max = 1, reflect = true, follow = true, solid = false, color = JELLY,
 				visual = { shape = "disc", size = 5.5, color = JELLY, transparency = 0.45, trail = false } },
 			windup = { Root = { -12, 0, 0, 0, -0.5, 0.35 }, Waist = { -22, 0, 0 }, Neck = { -12, 0, 0 }, RS = { 70, 0, 20 }, RE = { 70, 0, 0 }, LS = { 70, 0, -20 }, LE = { 70, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
 			strike = { Root = { 22, 0, 0, 0, -0.3, -0.5 }, Waist = { 28, 0, 0 }, Neck = { -16, 0, 0 }, RS = { 40, 0, 88 }, RE = { 10, 0, 0 }, LS = { 40, 0, -88 }, LE = { 10, 0, 0 }, FR = WIDE_R, FL = { 0, 0, 0, -0.35, 0, -0.4 } },
 			follow = { Root = { 24, 0, 0, 0, -0.3, -0.55 }, Waist = { 30, 0, 0 }, Neck = { -18, 0, 0 }, RS = { 42, 0, 90 }, RE = { 10, 0, 0 }, LS = { 42, 0, -90 }, LE = { 10, 0, 0 }, FR = WIDE_R, FL = { 0, 0, 0, -0.35, 0, -0.45 } },
-			hold = 0.2, wobble = true, trail = "body", fx = { { "ring", color = JELLY, radius = 4, at = "front" }, { "burst", color = JELLY, size = 2.5, at = "front" } }, text = "TRAMPOLINE !", hitText = "BOÏNG !",
+			hold = 0.2, wobble = true, trail = "body", fx = { { "ring", color = JELLY, radius = 6, at = "front" }, { "burst", color = JELLY, size = 3, at = "front" } }, text = "TRAMPOLINE !", hitText = "BOÏNG !",
 		},
-		-- Gonflement (S maintenu) : il inspire, gonfle comme un ballon… et son ventre gonflé à bloc cogne l'adversaire ; il reste inébranlable un moment
+		-- Gonflement (L maintenu) : il inspire, gonfle comme un ballon… et lâche tout d'un coup : une onde de gelée balaie le couloir ; lui reste inébranlable un moment
 		S_hold = {
-			label = "Gonflement", energyCost = 35, startup = 0.3, active = 0.12, recovery = 0.4,
-			damage = 9, hitbox = box(6, 4.5, 2.8, 0.5), kbBase = 30, kbGrowth = 55, kbAngle = 35,
+			label = "Gonflement", startup = 0.3, active = 0.14, recovery = 0.5,
+			damage = 13, hitbox = box(14, 6, 7, 1), kbBase = 30, kbGrowth = 55, kbAngle = 35,
 			selfEffect = { heal = 6, armor = 2.5 },
 			windup = { Root = { -4, 0, 0, 0, -0.5, 0.2 }, Waist = { -10, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 30, 0, 20 }, RE = { 90, 0, 0 }, LS = { 30, 0, -20 }, LE = { 90, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
 			strike = { Root = { 14, 0, 0, 0, -0.1, -0.3 }, Waist = { 26, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 40, 0, 80 }, RE = { 10, 0, 0 }, LS = { 40, 0, -80 }, LE = { 10, 0, 0 }, FR = { 0, 0, 0, 0.5, 0, 0 }, FL = { 0, 0, 0, -0.5, 0, -0.3 } },
 			follow = { Root = { 14, 0, 0, 0, -0.1, -0.3 }, Waist = { 28, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 42, 0, 84 }, RE = { 10, 0, 0 }, LS = { 42, 0, -84 }, LE = { 10, 0, 0 }, FR = { 0, 0, 0, 0.5, 0, 0 }, FL = { 0, 0, 0, -0.5, 0, -0.3 } },
-			hold = 0.4, shake = true, wobble = true, trail = "body", fx = { { "ring", color = JELLY, radius = 5, at = "root" }, { "symbols", symbols = { "💪", "🍮" }, color = JELLY, count = 4, radius = 3 } },
+			hold = 0.4, shake = true, wobble = true, trail = "body",
+			fx = { { "ring", color = JELLY, radius = 8, at = "front" }, { "burst", color = JELLY, size = 4, at = "front" }, { "symbols", symbols = { "💪", "🍮" }, color = JELLY, count = 4, radius = 3 } },
 			text = "INÉBRANLABLE !", hitText = "BLOUMP !",
 		},
-		-- Roulade gluante (→→S) : il se met en boule et roule deux fois en avant
+		-- Roulade gluante (→→L) : il se met en boule et roule d'un bout à l'autre du couloir en laissant une traînée de gelée
 		S_dash = {
-			label = "Roulade gluante", energyCost = 25, startup = 0.08, active = 0.34, recovery = 0.32, hits = 2,
-			damage = 5, hitbox = box(5, 4, 1.8, 0), kbBase = 28, kbGrowth = 55, kbAngle = 40, selfVelocity = Vector2.new(58, 0), invuln = 0.12,
+			label = "Roulade gluante", startup = 0.15, active = 0.34, recovery = 0.45,
+			damage = 14, hitbox = box(14, 5, 7, 0.5), kbBase = 30, kbGrowth = 60, kbAngle = 40, selfVelocity = Vector2.new(60, 0), invuln = 0.12,
 			windup = { Root = { -16, 0, 0, 0, -0.7, 0 }, Waist = { -30, 0, 0 }, Neck = { -25, 0, 0 }, RS = { 70, 0, 20 }, RE = { 110, 0, 0 }, LS = { 70, 0, -20 }, LE = { 110, 0, 0 } },
 			strike = { Root = { -30, 0, 0, 0, -1.0, 0 }, Waist = { -40, 0, 0 }, Neck = { -30, 0, 0 }, RS = { 60, 0, -10 }, RE = { 120, 0, 0 }, LS = { 60, 0, 10 }, LE = { 120, 0, 0 }, RH = { 120, 0, 5 }, RK = { -140, 0, 0 }, LH = { 120, 0, -5 }, LK = { -140, 0, 0 } },
 			follow = { Root = { -30, 0, 0, 0, -1.0, 0 }, Waist = { -40, 0, 0 }, Neck = { -30, 0, 0 }, RS = { 60, 0, -10 }, RE = { 120, 0, 0 }, LS = { 60, 0, 10 }, LE = { 120, 0, 0 }, RH = { 120, 0, 5 }, RK = { -140, 0, 0 }, LH = { 120, 0, -5 }, LK = { -140, 0, 0 } },
-			spin = { axis = "x", degrees = 720 }, trail = "body", fx = { { "puddle", color = JELLY, width = 6 } }, text = "ROULÉ-BOULÉ !", hitText = "SPLOTCH !",
+			spin = { axis = "x", degrees = 720 }, trail = "body", fx = { { "puddle", color = JELLY, width = 14 }, "dust" }, text = "ROULÉ-BOULÉ !", hitText = "SPLOTCH !",
 		},
-		-- Pluie de gelée (S en l'air) : il secoue le ventre et trois boulettes de gelée partent vers le bas
+		-- Canard catapulté (L en l'air) : il presse sa bedaine à deux mains et le canard en plastique en jaillit, droit sur la figure de l'adversaire
 		S_air = {
-			label = "Pluie de gelée", energyCost = 20, kind = "projectile", startup = 0.16, active = 0, recovery = 0.3,
-			damage = 5, kbBase = 16, kbGrowth = 22, kbAngle = 30,
-			projectile = { speed = 50, angle = -35, gravity = 50, lifetime = 0.8, size = 1.4, color = JELLY, fan = { count = 3, from = -60, to = -15 },
-				visual = { shape = "ball", size = 1.2, color = JELLY, transparency = 0.3 } },
-			status = { name = "slowed", duration = 1.5 },
-			windup = { Root = { -8, 0, 0 }, Waist = { -14, 0, 0 }, RS = { 40, 0, -20 }, RE = { 110, 0, 0 }, LS = { 40, 0, 20 }, LE = { 110, 0, 0 }, RH = { 70, 0, 10 }, RK = { -100, 0, 0 }, LH = { 70, 0, -10 }, LK = { -100, 0, 0 } },
-			strike = { Root = { 14, 0, 0 }, Waist = { 18, 0, 0 }, Neck = { -15, 0, 0 }, RS = { 70, 0, 60 }, RE = { 10, 0, 0 }, LS = { 70, 0, -60 }, LE = { 10, 0, 0 }, RH = { 20, 0, 10 }, RK = { -50, 0, 0 }, LH = { 20, 0, -10 }, LK = { -50, 0, 0 } },
-			follow = { Root = { 16, 0, 0 }, Waist = { 20, 0, 0 }, Neck = { -16, 0, 0 }, RS = { 72, 0, 64 }, RE = { 10, 0, 0 }, LS = { 72, 0, -64 }, LE = { 10, 0, 0 }, RH = { 18, 0, 10 }, RK = { -48, 0, 0 }, LH = { 18, 0, -10 }, LK = { -48, 0, 0 } },
-			shake = true, wobble = true, text = "SCHLOUP SCHLOUP !", hitText = "SPLOTCH !",
+			label = "Canard catapulté", kind = "projectile", startup = 0.18, active = 0, recovery = 0.42,
+			damage = 13, kbBase = 24, kbGrowth = 45, kbAngle = 30,
+			projectile = { speed = 66, angle = 0, gravity = 0, lifetime = 0.7, size = 1.6, color = DUCK, visual = DUCK_SHOT },
+			windup = { Root = { -8, 0, 0 }, Waist = { -14, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 70, 0, 50 }, RE = { 60, 0, 0 }, LS = { 70, 0, -50 }, LE = { 60, 0, 0 }, RH = { 70, 0, 10 }, RK = { -100, 0, 0 }, LH = { 70, 0, -10 }, LK = { -100, 0, 0 } },
+			strike = { Root = { 10, 0, 0 }, Waist = { 18, 0, 0 }, Neck = { -15, 0, 0 }, RS = { 50, 0, 10 }, RE = { 100, 0, 0 }, LS = { 50, 0, -10 }, LE = { 100, 0, 0 }, RH = { 20, 0, 10 }, RK = { -50, 0, 0 }, LH = { 20, 0, -10 }, LK = { -50, 0, 0 } },
+			follow = { Root = { 12, 0, 0 }, Waist = { 20, 0, 0 }, Neck = { -16, 0, 0 }, RS = { 48, 0, 8 }, RE = { 104, 0, 0 }, LS = { 48, 0, -8 }, LE = { 104, 0, 0 }, RH = { 18, 0, 10 }, RK = { -48, 0, 0 }, LH = { 18, 0, -10 }, LK = { -48, 0, 0 } },
+			shake = true, wobble = true, fx = { { "burst", color = JELLY, size = 2.5, at = "front" }, { "symbols", symbols = { "COIN", "🦆" }, color = DUCK, count = 3, radius = 2, at = "front" } },
+			text = "SCHLOUP… COIN !", hitText = "COUIC !",
 		},
-		-- Le Splash (↓S en l'air) : bombe à eau, il tombe en boule et la gelée gicle de part et d'autre
+		-- Le Splash (↓L en l'air) : bombe à eau, il tombe en boule et la gelée gicle de part et d'autre sur tout ce qui est en dessous
 		S_air_down = {
-			label = "Le Splash", energyCost = 25, startup = 0.16, active = 0.36, recovery = 0.34,
-			damage = 12, hitbox = box(7, 4, 0, -1.5), kbBase = 28, kbGrowth = 60, kbAngle = 45, selfVelocity = Vector2.new(0, -90),
+			label = "Le Splash", startup = 0.16, active = 0.36, recovery = 0.45,
+			damage = 14, hitbox = box(9, 5, 0, -2), kbBase = 28, kbGrowth = 60, kbAngle = 45, selfVelocity = Vector2.new(0, -90),
 			windup = { Root = { -10, 0, 0 }, Waist = { -16, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 160, 0, 30 }, RE = { 20, 0, 0 }, LS = { 160, 0, -30 }, LE = { 20, 0, 0 }, RH = { 60, 0, 10 }, RK = { -90, 0, 0 }, LH = { 60, 0, -10 }, LK = { -90, 0, 0 } },
 			strike = { Root = { -16, 0, 0 }, Waist = { -30, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 60, 0, -10 }, RE = { 110, 0, 0 }, LS = { 60, 0, 10 }, LE = { 110, 0, 0 }, RH = { 120, 0, 5 }, RK = { -140, 0, 0 }, LH = { 120, 0, -5 }, LK = { -140, 0, 0 } },
 			follow = { Root = { -18, 0, 0 }, Waist = { -32, 0, 0 }, Neck = { -22, 0, 0 }, RS = { 62, 0, -12 }, RE = { 112, 0, 0 }, LS = { 62, 0, 12 }, LE = { 112, 0, 0 }, RH = { 122, 0, 5 }, RK = { -140, 0, 0 }, LH = { 122, 0, -5 }, LK = { -140, 0, 0 } },
-			trail = "body", fx = { { "puddle", color = JELLY, width = 9 }, { "toss", shape = "ball", color = JELLY, size = 0.9, count = 6, speed = 18, lift = 20 }, { "shake", amount = 0.5 } },
+			trail = "body", fx = { { "puddle", color = JELLY, width = 10 }, { "toss", shape = "ball", color = JELLY, size = 0.9, count = 6, speed = 18, lift = 20 }, { "shake", amount = 0.5 } },
 			text = "SPLAAASH !", hitText = "PLOUF !",
 		},
 
 		------------------------------------------------------------------ Finition avec S (dans un enchaînement)
-		-- Grand Shiko : les deux bras en l'air puis un piétinement qui fait trembler toute la zone
+		-- Grand Shiko : les deux bras en l'air puis un piétinement qui fait trembler tout le couloir
 		S_finish_shiko = {
-			label = "Grand Shiko", energyCost = 20, startup = 0.22, active = 0.12, recovery = 0.34,
-			damage = 11, hitbox = box(10, 3, 0.5, -1.5), kbBase = 34, kbGrowth = 70, kbAngle = 80,
+			label = "Grand Shiko", startup = 0.22, active = 0.12, recovery = 0.4,
+			damage = 12, hitbox = box(14, 4, 7, 0), kbBase = 34, kbGrowth = 70, kbAngle = 80,
 			windup = { Root = { 0, 0, -16, -0.35, -0.1, 0 }, Waist = { 4, 0, -12 }, Neck = { 10, 0, 10 }, RS = { 170, 0, 30 }, RE = { 10, 0, 0 }, LS = { 170, 0, -30 }, LE = { 10, 0, 0 }, RH = { 30, 0, 80 }, RK = { -20, 0, 0 }, FL = WIDE_L },
 			strike = { Root = { 8, 0, 0, 0, -0.75, 0 }, Waist = { 12, 0, 0 }, Neck = { -12, 0, 0 }, RS = { 30, 0, 30 }, RE = { 100, 0, 0 }, LS = { 30, 0, -30 }, LE = { 100, 0, 0 }, FR = { 0, 0, 0, 0.5, 0, 0 }, FL = WIDE_L },
 			follow = { Root = { 10, 0, 0, 0, -0.8, 0 }, Waist = { 14, 0, 0 }, Neck = { -14, 0, 0 }, RS = { 28, 0, 32 }, RE = { 105, 0, 0 }, LS = { 28, 0, -32 }, LE = { 105, 0, 0 }, FR = { 0, 0, 0, 0.5, 0, 0 }, FL = WIDE_L },
@@ -492,11 +502,11 @@ local data = {
 		},
 
 		------------------------------------------------------------------ Supers
-		-- Division : il se secoue, se coupe en trois et trois mini-sumos roulent vers l'adversaire
+		-- Division : il se secoue, se coupe en trois et trois mini-sumos bondissent en rafale sur l'adversaire
 		SUPER = {
-			label = "Division !", kind = "projectile", superCost = 100, startup = 0.35, active = 0, recovery = 0.5,
+			label = "Division !", kind = "projectile", startup = 0.4, active = 0, recovery = 0.7,
 			damage = 8, kbBase = 30, kbGrowth = 55, kbAngle = 40,
-			projectile = { speed = 40, angle = 12, gravity = 80, lifetime = 1.8, size = 2.4, color = JELLY, bounce = 3, fan = { count = 3, from = 0, to = 35 },
+			projectile = { speed = 48, angle = 12, gravity = 80, lifetime = 1.4, size = 2.4, color = JELLY, bounce = 3, fan = { count = 3, from = 0, to = 35, gap = 0.1 },
 				visual = { shape = "ball", size = 2.2, color = JELLY, transparency = 0.25, spin = 4, parts = {
 					{ "ball", Vector3.new(0.6, 0.5, 0.6), Vector3.new(0, 1.15, 0), HAIR },
 					{ "block", Vector3.new(2.2, 0.5, 2.2), Vector3.new(0, -0.4, 0), MAWASHI },
@@ -504,31 +514,32 @@ local data = {
 			windup = { Root = { 0, 0, 0, 0, -0.6, 0 }, Waist = { -10, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 60, 0, 60 }, RE = { 40, 0, 0 }, LS = { 60, 0, -60 }, LE = { 40, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
 			strike = { Root = { 6, 0, 0, 0, 0.1, 0 }, Waist = { 14, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 140, 0, 70 }, RE = { 0, 0, 0 }, LS = { 140, 0, -70 }, LE = { 0, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
 			follow = { Root = { 8, 0, 0, 0, 0.12, 0 }, Waist = { 16, 0, 0 }, Neck = { 24, 0, 0 }, RS = { 150, 0, 75 }, RE = { 0, 0, 0 }, LS = { 150, 0, -75 }, LE = { 0, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
-			shake = true, windupFx = { "super" }, fx = { { "burst", color = JELLY, size = 4, at = "root" } }, text = "DIVISION !", hitText = "TRIPLE BOÏNG !",
+			shake = true, wobble = true, windupFx = { "super" }, fx = { { "burst", color = JELLY, size = 4, at = "root" }, { "symbols", symbols = { "🍮", "🍮", "🍮" }, color = JELLY, count = 3, radius = 3, at = "above" } },
+			text = "DIVISION !", hitText = "TRIPLE BOÏNG !",
 		},
-		-- Super ↑ : Shiko volcanique, jambe levée très haut puis un piétinement si fort que la gelée du sol jaillit en geyser et le fait rebondir au ciel
+		-- Super ↑ : Shiko volcanique, jambe levée très haut puis un piétinement si fort que la gelée du sol jaillit en geyser sur tout le couloir et le fait rebondir au ciel
 		SUPER_up = {
-			label = "Shiko volcanique !", superCost = 100, startup = 0.4, active = 0.3, recovery = 0.6,
-			damage = 22, hitbox = box(8, 14, 4, 6), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
+			label = "Shiko volcanique !", startup = 0.4, active = 0.3, recovery = 0.7,
+			damage = 24, hitbox = box(14, 14, 7, 6), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
 			windup = { Root = { 0, 0, -18, -0.35, -0.15, 0 }, Waist = { 4, 0, -14 }, Neck = { 0, 0, 12 }, RS = { 170, 0, 40 }, RE = { 10, 0, 0 }, LS = { 150, 0, -30 }, LE = { 20, 0, 0 }, RH = { 30, 0, 95 }, RK = { -30, 0, 0 }, FL = WIDE_L },
 			strike = { Root = { 10, 0, 0, 0, -0.85, 0 }, Waist = { 16, 0, 0 }, Neck = { -14, 0, 0 }, RS = { 185, 0, 20 }, RE = { 5, 0, 0 }, LS = { 185, 0, -20 }, LE = { 5, 0, 0 }, FR = { 0, 0, 0, 0.55, 0, 0 }, FL = WIDE_L },
 			follow = { Root = { 6, 0, 0, 0, 0.45, 0 }, Waist = { 10, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 190, 0, 30 }, RE = { 5, 0, 0 }, LS = { 190, 0, -30 }, LE = { 5, 0, 0 }, FR = { 0, 0, 0, 0.5, 0.3, 0 }, FL = { 0, 0, 0, -0.5, 0.3, 0 } },
 			hold = 0.3, shake = true, wobble = true, trail = "rightFoot", selfVelocity = Vector2.new(0, 38),
 			windupFx = { "super" }, status = { name = "slowed", duration = 2 },
-			fx = { { "pillar", color = JELLY, height = 20, width = 6, at = "front" }, { "ring", color = JELLY, radius = 10, at = "feet" }, { "toss", shape = "ball", color = JELLY, size = 1, count = 8, speed = 20, lift = 30 }, { "shake", amount = 0.8 } },
+			fx = { { "pillar", color = JELLY, height = 20, width = 6, at = "front" }, { "ring", color = JELLY, radius = 12, at = "feet" }, { "toss", shape = "ball", color = JELLY, size = 1, count = 8, speed = 20, lift = 30 }, { "shake", amount = 0.8 } },
 			text = "DOSUKOIII !", hitText = "GEYSER !",
 		},
-		-- Tsunami de gelée : il frappe le sol à deux mains, une énorme vague verte traverse l'arène
+		-- Tsunami de gelée : il frappe le sol à deux mains, une énorme vague verte roule au ras du sol et traverse toute l'arène (trajectoire libre)
 		SUPER_down = {
-			label = "Tsunami de gelée !", kind = "projectile", superCost = 100, startup = 0.4, active = 0, recovery = 0.55,
-			damage = 20, kbBase = 34, kbGrowth = 70, kbAngle = 40,
-			projectile = { speed = 45, angle = 0, gravity = 0, lifetime = 1.3, size = 6, color = JELLY, pierce = true, from = "feet",
+			label = "Tsunami de gelée !", kind = "projectile", startup = 0.4, active = 0, recovery = 0.7,
+			damage = 22, kbBase = 34, kbGrowth = 70, kbAngle = 40,
+			projectile = { speed = 55, angle = 0, gravity = 0, lifetime = 1.3, size = 6, color = JELLY, pierce = true, from = "feet", aim = false,
 				visual = { shape = "block", size = 6, color = JELLY, transparency = 0.35, parts = { { "ball", Vector3.new(4, 2.5, 4), Vector3.new(0, 3, 0), JELLY } } } },
 			status = { name = "slowed", duration = 3 },
 			windup = { Root = { 6, 0, 0, 0, 0.2, 0.2 }, Waist = { 14, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 180, 0, 20 }, RE = { 10, 0, 0 }, LS = { 180, 0, -20 }, LE = { 10, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
 			strike = { Root = { -20, 0, 0, 0, -0.9, -0.2 }, Waist = { -30, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 60, 0, 10 }, RE = { 0, 0, 0 }, RW = { -60, 0, 0 }, LS = { 60, 0, -10 }, LE = { 0, 0, 0 }, LW = { -60, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
 			follow = { Root = { -22, 0, 0, 0, -0.95, -0.25 }, Waist = { -32, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 55, 0, 12 }, RE = { 0, 0, 0 }, RW = { -65, 0, 0 }, LS = { 55, 0, -12 }, LE = { 0, 0, 0 }, LW = { -65, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
-			hold = 0.3, windupFx = { "super" }, fx = { { "shake", amount = 0.8, time = 0.6 }, { "puddle", color = JELLY, width = 12, time = 1.5 } },
+			hold = 0.3, windupFx = { "super" }, fx = { { "shake", amount = 0.8, time = 0.6 }, { "puddle", color = JELLY, width = 14, time = 1.5 }, { "burst", color = JELLY, size = 4, at = "front" } },
 			text = "TSUNAMI DE GELÉE !", hitText = "GLOUGLOUBLOUB !",
 		},
 

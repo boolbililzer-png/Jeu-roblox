@@ -391,107 +391,114 @@ local data = {
 		},
 
 		------------------------------------------------------------------ Spéciaux (S)
-		-- Hurlement : il gonfle les joues, se cambre poings serrés et pousse un cri qui repousse tout autour de lui
+		-- Hurlement de bébé : il gonfle les joues, se cambre poings serrés et pousse un cri qui repousse tout, des deux côtés,
+		-- sur toute la plateforme
 		S_neutral = {
-			label = "Hurlement", energyCost = 25, startup = 0.18, active = 0.2, recovery = 0.35,
-			damage = 9, hitbox = box(10, 8, 0, 1), kbBase = 45, kbGrowth = 55, kbAngle = 30,
+			label = "Hurlement de bébé", startup = 0.22, active = 0.22, recovery = 0.45,
+			damage = 13, hitbox = box(34, 8, 0, 2), kbBase = 46, kbGrowth = 58, kbAngle = 30,
 			windup = { Root = { 6, 0, 0, 0, -0.3, 0.1 }, Waist = { 14, 0, 0 }, Neck = { 25, 0, 0 }, RS = { 10, 0, 15 }, RE = { 110, 0, 0 }, LS = { 10, 0, -15 }, LE = { 110, 0, 0 } },
 			strike = { Root = { -4, 0, 0, 0, -0.15, 0 }, Waist = { -6, 0, 0 }, Neck = { 20, 0, 0 }, RS = { -25, 0, 35 }, RE = { 10, 0, 0 }, LS = { -25, 0, -35 }, LE = { 10, 0, 0 }, FR = { 0, 0, 0, 0, 0.1, 0 }, FL = { 0, 0, 0, 0, 0.1, 0 } },
 			follow = { Root = { -4, 0, 0, 0, -0.15, 0 }, Waist = { -8, 0, 0 }, Neck = { 25, 0, 0 }, RS = { -30, 0, 40 }, RE = { 10, 0, 0 }, LS = { -30, 0, -40 }, LE = { 10, 0, 0 } },
 			hold = 0.15, shake = true,
-			fx = { { "ring", color = TEARS, radius = 6, at = "head" }, { "ring", color = Color3.new(1, 1, 1), radius = 9, at = "head", time = 0.5 }, { "symbols", symbols = { "😭", "WAAAH" }, count = 5, radius = 4, color = TEARS }, { "shake", amount = 0.5 } },
+			fx = { { "ring", color = TEARS, radius = 8, at = "head" }, { "ring", color = Color3.new(1, 1, 1), radius = 14, at = "head", time = 0.5 }, { "symbols", symbols = { "😭", "WAAAH" }, count = 6, radius = 5, color = TEARS }, { "shake", amount = 0.6 } },
 			text = "OUIIIIIN !", hitText = "MES OREILLES !",
 		},
-		-- Charge à quatre pattes : il fonce à quatre pattes, attrape l'adversaire au passage et le jette par-dessus
-		-- son épaule (l'adversaire part derrière lui)
+		-- Charge à quatre pattes : il fonce à quatre pattes d'un bout à l'autre du couloir, attrape l'adversaire au passage
+		-- et le jette par-dessus son épaule (l'adversaire part derrière lui)
 		S_side = {
-			label = "Charge à quatre pattes", energyCost = 25, startup = 0.1, active = 0.3, recovery = 0.32,
-			damage = 11, hitbox = box(4.5, 3, 2.2, -1), kbBase = 34, kbGrowth = 60, kbAngle = 140, selfVelocity = Vector2.new(55, 0),
+			label = "Charge à quatre pattes", startup = 0.18, active = 0.32, recovery = 0.45,
+			damage = 14, hitbox = box(14, 6, 7, 0.5), kbBase = 36, kbGrowth = 62, kbAngle = 140, selfVelocity = Vector2.new(58, 0), armor = true,
 			windup = { Root = { -40, 0, 0, 0, -0.8, 0 }, Waist = { -20, 0, 0 }, Neck = { 40, 0, 0 }, RS = { 90, 0, 20 }, RE = { 20, 0, 0 }, LS = { 90, 0, -20 }, LE = { 20, 0, 0 }, RH = { 60, 0, 0 }, RK = { -90, 0, 0 }, LH = { 60, 0, 0 }, LK = { -90, 0, 0 } },
 			strike = { Root = { -60, 0, 0, 0, -1.1, -0.2 }, Waist = { -10, 0, 0 }, Neck = { 50, 0, 0 }, RS = { 120, 0, 15 }, RE = { 10, 0, 0 }, LS = { 50, 0, -15 }, LE = { 20, 0, 0 }, RH = { 70, 0, 0 }, RK = { -110, 0, 0 }, LH = { 40, 0, 0 }, LK = { -70, 0, 0 } },
 			follow = { Root = { 10, 0, 0, 0, -0.4, 0.1 }, Waist = { 20, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 200, 0, 10 }, RE = { 20, 0, 0 }, LS = { 200, 0, -10 }, LE = { 20, 0, 0 } },
-			wobble = true, fx = { "dust" }, text = "ATTRAPÉ !", hitText = "PAR-DESSUS !",
+			wobble = true, fx = { "dust", { "burst", color = CHEEK, size = 3, at = "front" } }, text = "ATTRAPÉ !", hitText = "PAR-DESSUS !",
 		},
-		-- Colère sismique : il frappe le sol des deux poings en hurlant, un séisme de courte portée renverse tout
+		-- Colère sismique : il frappe le sol des deux poings en hurlant ; une fissure file sur toute la longueur du couloir et renverse tout
 		S_down = {
-			label = "Colère sismique", energyCost = 25, startup = 0.2, active = 0.15, recovery = 0.35,
-			damage = 11, hitbox = box(10, 2.5, 0, -2), kbBase = 32, kbGrowth = 55, kbAngle = 82,
+			label = "Colère sismique", startup = 0.24, active = 0.16, recovery = 0.5,
+			damage = 14, hitbox = box(14, 6, 7, 0.5), kbBase = 34, kbGrowth = 58, kbAngle = 82,
 			windup = { Root = { 8, 0, 0, 0, 0, 0.15 }, Waist = { 14, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 185, 0, 20 }, RE = { 50, 0, 0 }, LS = { 185, 0, -20 }, LE = { 50, 0, 0 } },
-			strike = { Root = { -20, 0, 0, 0, -0.9, -0.2 }, Waist = { -40, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 70, 0, 15 }, RE = { 10, 0, 0 }, LS = { 70, 0, -15 }, LE = { 10, 0, 0 } },
-			follow = { Root = { -22, 0, 0, 0, -0.95, -0.2 }, Waist = { -44, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 60, 0, 20 }, RE = { 10, 0, 0 }, LS = { 60, 0, -20 }, LE = { 10, 0, 0 } },
-			shake = true,
-			fx = { { "ring", color = WOOD, radius = 6, at = "feet" }, { "shake", amount = 0.7 }, { "particles", tex = "smoke", color = Color3.fromRGB(190, 170, 140), dir = "up", at = "feet", time = 0.3, speed = 8, size = 1.2 } },
+			strike = { Root = { -22, 0, 0, 0, -0.9, -0.25 }, Waist = { -42, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 72, 0, 15 }, RE = { 5, 0, 0 }, LS = { 72, 0, -15 }, LE = { 5, 0, 0 } },
+			follow = { Root = { -24, 0, 0, 0, -0.95, -0.25 }, Waist = { -46, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 62, 0, 20 }, RE = { 5, 0, 0 }, LS = { 62, 0, -20 }, LE = { 5, 0, 0 } },
+			shake = true, trail = "bothHands",
+			fx = { { "ring", color = WOOD, radius = 6, at = "feet" }, { "pillar", color = WOOD, height = 3, width = 8, at = "front", time = 0.5 }, { "shake", amount = 0.7 }, { "particles", tex = "smoke", color = Color3.fromRGB(190, 170, 140), dir = "front", at = "feet", time = 0.35, speed = 24, size = 1.2, rate = 80 } },
 			text = "NAAAN !", hitText = "BRRROUM !",
 		},
-		-- Saut du lit : un lit à barreaux élastique apparaît sous lui, il rebondit dessus bras en l'air
-		-- (gratuit : c'est la remontée)
+		-- Bond du lit à barreaux (remontée) : un lit à barreaux élastique sort du sol sous lui, il rebondit dessus et file en
+		-- diagonale vers l'avant, hochet brandi devant lui, petites jambes potelées qui pédalent derrière
 		S_up = {
-			label = "Saut du lit", energyCost = 0, startup = 0.06, active = 0.3, recovery = 0.3,
-			damage = 8, hitbox = box(5, 6, 0.5, 3), kbBase = 30, kbGrowth = 40, kbAngle = 85, selfVelocity = Vector2.new(5, 95),
-			windup = { Root = { 0, 0, 0, 0, -0.85, 0 }, Waist = { -10, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 40, 0, 40 }, RE = { 60, 0, 0 }, LS = { 40, 0, -40 }, LE = { 60, 0, 0 } },
-			strike = { Root = { 0, 0, 0, 0, 0.4, 0 }, Waist = { 8, 0, 0 }, Neck = { 25, 0, 0 }, RS = { 175, 0, 25 }, RE = { 10, 0, 0 }, LS = { 175, 0, -25 }, LE = { 10, 0, 0 }, RH = { 20, 0, 10 }, RK = { -40, 0, 0 }, LH = { 20, 0, -10 }, LK = { -40, 0, 0 } },
-			follow = { Root = { 4, 0, 0, 0, 0.4, 0 }, Waist = { 10, 0, 0 }, Neck = { 28, 0, 0 }, RS = { 160, 0, 50 }, RE = { 10, 0, 0 }, LS = { 160, 0, -50 }, LE = { 10, 0, 0 }, RH = { 40, 0, 15 }, RK = { -70, 0, 0 }, LH = { 40, 0, -15 }, LK = { -70, 0, 0 } },
-			fx = { { "pillar", color = WOOD, height = 2.5, width = 6, at = "root", neon = false, time = 0.5 }, { "ring", color = BLUE, radius = 4, at = "feet" } }, text = "BOING !", hitText = "DEBOUT !",
+			label = "Bond du lit à barreaux", startup = 0.15, active = 0.32, recovery = 0.4,
+			damage = 15, hitbox = box(10, 11, 3, 4), kbBase = 32, kbGrowth = 55, kbAngle = 72, selfVelocity = Vector2.new(44, 86),
+			windup = { Root = { 6, 0, 0, 0, -0.8, 0.1 }, Waist = { -12, 0, 0 }, Neck = { 14, 0, 0 }, RS = { -20, 0, 30 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { -20, 0, -30 }, LE = { 60, 0, 0 } },
+			strike = { Root = { -40, 0, 0, 0, 0.3, 0 }, Waist = { -6, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 166, 0, 14 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 130, 0, -45 }, LE = { 25, 0, 0 }, RH = { -20, 0, 8 }, RK = { -35, 0, 0 }, RA = { -25, 0, 0 }, LH = { -34, 0, -8 }, LK = { -50, 0, 0 }, LA = { -25, 0, 0 } },
+			follow = { Root = { -44, 0, 0, 0, 0.35, 0 }, Waist = { -8, 0, 0 }, Neck = { 32, 0, 0 }, RS = { 170, 0, 16 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 135, 0, -50 }, LE = { 25, 0, 0 }, RH = { -34, 0, 10 }, RK = { -55, 0, 0 }, RA = { -25, 0, 0 }, LH = { -22, 0, -10 }, LK = { -40, 0, 0 }, LA = { -25, 0, 0 } },
+			trail = "prop",
+			fx = { { "pillar", color = WOOD, height = 2.5, width = 6, at = "root", time = 0.5 }, { "ring", color = BLUE, radius = 5, at = "feet" }, { "burst", color = YELLOW, size = 3, at = "feet" }, { "symbols", symbols = { "BOING", "🧸" }, count = 3, radius = 2, color = BLUE } },
+			text = "BOING !", hitText = "DEBOUT !",
 		},
-		-- Plongeon Dodo (en l'air + ↓ + S) : il tombe lourdement sur le ventre et s'endort une fraction de seconde
+		-- Plongeon Dodo (plongeon) : il tombe lourdement sur le ventre sur tout ce qu'il y a dessous et s'endort une fraction
+		-- de seconde ; l'adversaire écrasé pique aussi du nez
 		S_air_down = {
-			label = "Plongeon Dodo", energyCost = 25, startup = 0.12, active = 0.35, recovery = 0.5,
-			damage = 12, hitbox = box(5.5, 3.5, 0.8, -1.8), kbBase = 26, kbGrowth = 55, kbAngle = -70, selfVelocity = Vector2.new(10, -80),
+			label = "Plongeon Dodo", startup = 0.16, active = 0.35, recovery = 0.5,
+			damage = 14, hitbox = box(8, 6, 1, -2), kbBase = 28, kbGrowth = 58, kbAngle = -70, selfVelocity = Vector2.new(10, -82),
+			status = { name = "asleep", duration = 0.8 },
 			windup = { Root = { 10, 0, 0 }, Waist = { 10, 0, 0 }, Neck = { 15, 0, 0 }, RS = { 160, 0, 30 }, RE = { 20, 0, 0 }, LS = { 160, 0, -30 }, LE = { 20, 0, 0 }, RH = { 60, 0, 0 }, RK = { -90, 0, 0 }, LH = { 60, 0, 0 }, LK = { -90, 0, 0 } },
 			strike = { Root = { -75, 0, 0 }, Waist = { -10, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 170, 0, 50 }, RE = { 10, 0, 0 }, LS = { 170, 0, -50 }, LE = { 10, 0, 0 }, RH = { -10, 0, 15 }, RK = { -10, 0, 0 }, LH = { -10, 0, -15 }, LK = { -10, 0, 0 } },
 			follow = { Root = { -80, 0, 0 }, Waist = { -12, 0, 0 }, Neck = { 10, 0, 20 }, RS = { 120, 0, 70 }, RE = { 30, 0, 0 }, LS = { 120, 0, -70 }, LE = { 30, 0, 0 }, RH = { -12, 0, 18 }, RK = { -15, 0, 0 }, LH = { -12, 0, -18 }, LK = { -15, 0, 0 } },
-			trail = "body", fx = { { "shake", amount = 0.5 }, { "symbols", symbols = { "Z", "z", "💤" }, count = 4, radius = 2, color = Color3.fromRGB(170, 200, 255) } }, text = "DODO !", hitText = "ZZZ-BAM !",
+			trail = "body", fx = { { "shake", amount = 0.5 }, { "ring", color = TEARS, radius = 6, at = "feet" }, { "symbols", symbols = { "Z", "z", "💤" }, count = 4, radius = 2, color = Color3.fromRGB(170, 200, 255) } }, text = "DODO !", hitText = "ZZZ-BAM !",
 		},
-		-- Biberon (esquive puis S) : il sort son biberon, l'abat sur le crâne d'en face comme un gourdin… puis s'assoit
-		-- et le tète les yeux fermés pour se soigner (vulnérable pendant la tétée)
+		-- Biberon (esquive puis S) : il sort son biberon géant et le fauche d'un grand revers sur toute la longueur du couloir,
+		-- lait qui gicle… puis s'assoit et le tète les yeux fermés pour se soigner (vulnérable pendant la tétée)
 		S_dodge = {
-			label = "Biberon", energyCost = 25, startup = 0.14, active = 0.1, recovery = 0.75,
-			damage = 9, hitbox = box(5.5, 4.5, 3, 1), kbBase = 30, kbGrowth = 55, kbAngle = 35,
+			label = "Biberon", startup = 0.2, active = 0.14, recovery = 0.7,
+			damage = 13, hitbox = box(14, 6, 7, 1), kbBase = 32, kbGrowth = 58, kbAngle = 35,
 			selfEffect = { heal = 6 },
-			windup = { Root = { 6, 0, 0, 0, -0.1, 0.15 }, Waist = { 10, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 190, 0, 15 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -40 }, LE = { 60, 0, 0 } },
-			strike = { Root = { -14, 0, 0, 0, -0.35, -0.4 }, Waist = { -18, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 80, 0, 5 }, RE = { 0, 0, 0 }, RW = { -30, 0, 0 }, LS = { 30, 0, -40 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+			windup = { Root = { 6, -25, 0, 0, -0.1, 0.2 }, Waist = { 10, -28, 0 }, Neck = { 12, 10, 0 }, RS = { 60, 0, 85 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -40 }, LE = { 60, 0, 0 } },
+			strike = { Root = { -14, 24, 0, 0, -0.35, -0.45 }, Waist = { -18, 30, 0 }, Neck = { -8, -14, 0 }, RS = { 92, 0, -30 }, RE = { 0, 0, 0 }, RW = { -30, 0, 0 }, LS = { 30, 0, -40 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
 			follow = { Root = { -6, 0, 0, 0, -0.5, 0.15 }, Waist = { 12, 0, 0 }, Neck = { 36, 0, 0 }, RS = { 145, 0, -15 }, RE = { 118, 0, 0 }, RW = { -115, 0, 0 }, LS = { 135, 0, 15 }, LE = { 118, 0, 0 } },
 			hold = 0.4, prop = "biberon", hideProp = "hochet", trail = "prop",
-			fx = { { "burst", color = MILK, size = 2.5, at = "front" }, { "symbols", symbols = { "🍼", "♥" }, count = 3, radius = 2, color = MILK } }, text = "GLOU GLOU", hitText = "BIBERONNÉ !",
+			fx = { { "burst", color = MILK, size = 3, at = "front" }, { "particles", tex = "smoke", color = MILK, dir = "front", at = "hand", time = 0.3, speed = 20, size = 0.7, rate = 60 }, { "symbols", symbols = { "🍼", "♥" }, count = 3, radius = 2, color = MILK } },
+			text = "GLOU GLOU", hitText = "BIBERONNÉ !",
 		},
-		-- Cri supersonique (S maintenu) : il retient sa respiration, devient tout rouge… et lâche une onde de cri qui traverse tout
+		-- Cri supersonique (S maintenu) : il retient sa respiration, devient tout rouge… et lâche une onde de cri qui fonce
+		-- droit sur l'adversaire et traverse tout ce qu'elle croise
 		S_hold = {
-			label = "Cri supersonique", energyCost = 35, kind = "projectile", startup = 0.24, active = 0, recovery = 0.4,
-			damage = 13, kbBase = 38, kbGrowth = 75, kbAngle = 25,
-			projectile = { speed = 55, angle = 0, gravity = 0, lifetime = 0.6, size = 3.5, color = TEARS, pierce = true,
-				visual = { shape = "disc", size = 3.5, color = TEARS, transparency = 0.45, neon = true, trail = false } },
+			label = "Cri supersonique", kind = "projectile", startup = 0.28, active = 0, recovery = 0.5,
+			damage = 14, kbBase = 40, kbGrowth = 75, kbAngle = 25,
+			projectile = { speed = 60, angle = 0, gravity = 0, lifetime = 0.7, size = 4, color = TEARS, pierce = true,
+				visual = { shape = "disc", size = 4, color = TEARS, transparency = 0.45, neon = true, trail = false } },
 			windup = { Root = { 8, 0, 0, 0, -0.35, 0.2 }, Waist = { 16, 0, 0 }, Neck = { 22, 0, 0 }, RS = { 20, 0, 10 }, RE = { 120, 0, 0 }, LS = { 20, 0, -10 }, LE = { 120, 0, 0 } },
 			strike = { Root = { -8, 0, 0, 0, -0.3, -0.2 }, Waist = { -12, 0, 0 }, Neck = { -10, 0, 0 }, RS = { -30, 0, 40 }, RE = { 10, 0, 0 }, LS = { -30, 0, -40 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
 			follow = { Root = { -10, 0, 0, 0, -0.3, -0.25 }, Waist = { -14, 0, 0 }, Neck = { -12, 0, 0 }, RS = { -35, 0, 45 }, RE = { 10, 0, 0 }, LS = { -35, 0, -45 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
 			shake = true, windupFx = { { "symbols", symbols = { "😤" }, count = 1, radius = 1.5, color = Color3.fromRGB(255, 90, 90) } },
-			fx = { { "ring", color = TEARS, radius = 4, at = "front" }, { "shake", amount = 0.4 } }, text = "AAAAAAAH !", hitText = "TYMPANS !",
+			fx = { { "ring", color = TEARS, radius = 5, at = "front" }, { "shake", amount = 0.4 } }, text = "AAAAAAAH !", hitText = "TYMPANS !",
 		},
-		-- Rampe éclair (→→S) : il file à quatre pattes à une vitesse indécente, tête la première
+		-- Rampe éclair (→→S) : il file à quatre pattes à une vitesse indécente, tête la première, d'un bout à l'autre du couloir
 		S_dash = {
-			label = "Rampe éclair", energyCost = 25, startup = 0.06, active = 0.3, recovery = 0.3,
-			damage = 10, hitbox = box(5, 2.5, 2.2, -1.2), kbBase = 30, kbGrowth = 60, kbAngle = 40, selfVelocity = Vector2.new(65, 0), invuln = 0.15,
+			label = "Rampe éclair", startup = 0.15, active = 0.32, recovery = 0.4,
+			damage = 13, hitbox = box(12, 5, 5, -0.5), kbBase = 32, kbGrowth = 62, kbAngle = 40, selfVelocity = Vector2.new(68, 0), invuln = 0.15,
 			windup = { Root = { -40, 0, 0, 0, -0.8, 0 }, Waist = { -20, 0, 0 }, Neck = { 40, 0, 0 }, RS = { 80, 0, 20 }, RE = { 10, 0, 0 }, LS = { 80, 0, -20 }, LE = { 10, 0, 0 }, RH = { 60, 0, 0 }, RK = { -90, 0, 0 }, LH = { 60, 0, 0 }, LK = { -90, 0, 0 } },
 			strike = { Root = { -62, 0, 0, 0, -1.15, -0.2 }, Waist = { -8, 0, 0 }, Neck = { 50, 0, 0 }, RS = { 110, 0, 15 }, RE = { 10, 0, 0 }, LS = { 50, 0, -15 }, LE = { 10, 0, 0 }, RH = { 40, 0, 0 }, RK = { -70, 0, 0 }, LH = { 75, 0, 0 }, LK = { -110, 0, 0 } },
 			follow = { Root = { -62, 0, 0, 0, -1.15, -0.2 }, Waist = { -8, 0, 0 }, Neck = { 50, 0, 0 }, RS = { 50, 0, 15 }, RE = { 10, 0, 0 }, LS = { 110, 0, -15 }, LE = { 10, 0, 0 }, RH = { 75, 0, 0 }, RK = { -110, 0, 0 }, LH = { 40, 0, 0 }, LK = { -70, 0, 0 } },
 			wobble = true, fx = { "dust" }, text = "GAGA-GOUGOU !", hitText = "BAM !",
 		},
-		-- Bol de purée (S en l'air) : il renverse tout le bol par-dessus bord, la purée pleut devant lui et colle les pieds
+		-- Bol de purée (S en l'air) : il balance tout le bol, qui fonce droit sur la figure de l'adversaire ; la purée colle (ralenti)
 		S_air = {
-			label = "Bol de purée", energyCost = 25, kind = "projectile", startup = 0.14, active = 0, recovery = 0.3,
-			damage = 3, kbBase = 12, kbGrowth = 20, kbAngle = 60,
+			label = "Bol de purée", kind = "projectile", startup = 0.18, active = 0, recovery = 0.42,
+			damage = 13, kbBase = 22, kbGrowth = 40, kbAngle = 45,
 			status = { name = "slowed", duration = 1.5 },
-			projectile = { speed = 35, gravity = 30, lifetime = 0.9, size = 1.6, color = PUREE, rain = { count = 4, spread = 5, ahead = 7, height = 16 },
-				visual = { shape = "ball", size = 1.3, color = PUREE, parts = { { "ball", Vector3.new(0.6, 0.5, 0.6), Vector3.new(0.4, 0.3, 0), PUREE } } } },
-			windup = { Root = { 8, 0, 0 }, Waist = { 10, 0, 0 }, RS = { 40, 0, 40 }, RE = { 40, 0, 0 }, LS = { 60, 0, -20 }, LE = { 90, 0, 0 }, RH = { 60, 0, 0 }, RK = { -90, 0, 0 }, LH = { 50, 0, 0 }, LK = { -90, 0, 0 } },
-			strike = { Root = { -6, 0, 0 }, Waist = { -4, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 40, 0, 50 }, RE = { 40, 0, 0 }, LS = { 165, 0, -10 }, LE = { 10, 0, 0 }, LW = { 0, 0, 90 }, RH = { 30, 0, 0 }, RK = { -60, 0, 0 }, LH = { 20, 0, 0 }, LK = { -70, 0, 0 } },
-			follow = { Root = { -8, 0, 0 }, Waist = { -6, 0, 0 }, Neck = { 24, 0, 0 }, RS = { 40, 0, 52 }, RE = { 40, 0, 0 }, LS = { 170, 0, -10 }, LE = { 10, 0, 0 }, LW = { 0, 0, 120 }, RH = { 25, 0, 0 }, RK = { -55, 0, 0 }, LH = { 15, 0, 0 }, LK = { -65, 0, 0 } },
-			prop = "puree", text = "PAS MANGÉ !", hitText = "SPLOTCH !",
+			projectile = { speed = 58, angle = 0, gravity = 0, lifetime = 0.8, size = 2.2, color = PUREE,
+				visual = { shape = "ball", size = 1.5, color = BLUE, spin = 8, parts = { { "ball", Vector3.new(1.3, 0.6, 1.3), Vector3.new(0, 0.5, 0), PUREE } } } },
+			windup = { Root = { 8, 20, 0 }, Waist = { 10, 24, 0 }, Neck = { 0, -10, 0 }, RS = { 40, 0, 40 }, RE = { 40, 0, 0 }, LS = { 120, 0, -60 }, LE = { 90, 0, 0 }, LW = { 0, 0, 60 }, RH = { 60, 0, 0 }, RK = { -90, 0, 0 }, LH = { 50, 0, 0 }, LK = { -90, 0, 0 } },
+			strike = { Root = { -10, -16, 0 }, Waist = { -8, -20, 0 }, Neck = { 6, 10, 0 }, RS = { 40, 0, 50 }, RE = { 40, 0, 0 }, LS = { 96, 0, -4 }, LE = { 0, 0, 0 }, LW = { 0, 0, 90 }, RH = { 30, 0, 0 }, RK = { -60, 0, 0 }, LH = { 20, 0, 0 }, LK = { -70, 0, 0 } },
+			follow = { Root = { -12, -20, 0 }, Waist = { -10, -24, 0 }, Neck = { 8, 12, 0 }, RS = { 40, 0, 52 }, RE = { 40, 0, 0 }, LS = { 100, 0, -6 }, LE = { 0, 0, 0 }, LW = { 0, 0, 120 }, RH = { 25, 0, 0 }, RK = { -55, 0, 0 }, LH = { 15, 0, 0 }, LK = { -65, 0, 0 } },
+			prop = "puree", trail = "leftHand", fx = { { "toss", shape = "ball", color = PUREE, size = 0.5, count = 4, speed = 18 } }, text = "PAS MANGÉ !", hitText = "SPLOTCH !",
 		},
 
 		------------------------------------------------------------------ Finitions avec S (dans un enchaînement)
 		-- Caprice tape-sol : il se jette par terre et tape des poings et des pieds en hurlant (fait décoller)
 		S_finish_caprice = {
-			label = "Caprice tape-sol", energyCost = 20, startup = 0.12, active = 0.3, recovery = 0.35,
+			label = "Caprice tape-sol", startup = 0.12, active = 0.3, recovery = 0.35,
 			damage = 4, hits = 3, hitbox = box(6, 3, 1.5, -1.5), kbBase = 26, kbGrowth = 45, kbAngle = 72,
 			windup = { Root = { 10, 0, 0, 0, -0.5, 0.1 }, Waist = { 10, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 160, 0, 30 }, RE = { 40, 0, 0 }, LS = { 160, 0, -30 }, LE = { 40, 0, 0 } },
 			strike = { Root = { -15, 0, 0, 0, -1.1, -0.1 }, Waist = { -30, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 60, 0, 25 }, RE = { 10, 0, 0 }, LS = { 120, 0, -25 }, LE = { 30, 0, 0 } },
@@ -500,7 +507,7 @@ local data = {
 		},
 		-- Petit cri : un cri bref et perçant, bouche grande ouverte, qui éjecte à l'horizontale
 		S_finish_cri = {
-			label = "Petit cri", energyCost = 20, startup = 0.1, active = 0.15, recovery = 0.3,
+			label = "Petit cri", startup = 0.1, active = 0.15, recovery = 0.3,
 			damage = 9, hitbox = box(7, 5, 3.5, 0.8), kbBase = 38, kbGrowth = 60, kbAngle = 25,
 			windup = { Root = { 6, 0, 0, 0, -0.25, 0.1 }, Waist = { 12, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 20, 0, 20 }, RE = { 100, 0, 0 }, LS = { 20, 0, -20 }, LE = { 100, 0, 0 } },
 			strike = { Root = { -6, 0, 0, 0, -0.2, -0.15 }, Waist = { -10, 0, 0 }, Neck = { -8, 0, 0 }, RS = { -20, 0, 40 }, RE = { 10, 0, 0 }, LS = { -20, 0, -40 }, LE = { 10, 0, 0 } },
@@ -509,45 +516,45 @@ local data = {
 		},
 
 		------------------------------------------------------------------ Supers
-		-- Crise de larmes : il éclate en sanglots et un torrent de larmes balaie l'écran devant lui (trempe)
+		-- Crise de larmes (Y) : il éclate en sanglots et un raz-de-marée de larmes fonce droit sur l'adversaire, le trempe et l'emporte
 		SUPER = {
-			label = "Crise de larmes !", kind = "projectile", superCost = 100, startup = 0.4, active = 0, recovery = 0.6,
-			damage = 22, kbBase = 35, kbGrowth = 70, kbAngle = 25,
+			label = "Crise de larmes !", kind = "projectile", startup = 0.4, active = 0, recovery = 0.7,
+			damage = 22, kbBase = 36, kbGrowth = 72, kbAngle = 25,
 			status = { name = "wet", duration = 2.5 },
-			projectile = { speed = 45, angle = 0, gravity = 0, lifetime = 1.4, size = 6, color = TEARS, pierce = true, from = "feet",
-				visual = { shape = "block", size = 4.5, color = TEARS, transparency = 0.35, trail = false,
-					parts = { { "ball", Vector3.new(5, 1.5, 3), Vector3.new(0, 2.6, 0), Color3.fromRGB(220, 240, 255) }, { "ball", Vector3.new(1.4, 1.4, 1.4), Vector3.new(1.5, 3.2, 0), Color3.fromRGB(220, 240, 255) } } } },
+			projectile = { speed = 50, angle = 0, gravity = 0, lifetime = 1.4, size = 7, color = TEARS, pierce = true, from = "feet",
+				visual = { shape = "block", size = 5, color = TEARS, transparency = 0.35, trail = false,
+					parts = { { "ball", Vector3.new(6, 1.8, 3.5), Vector3.new(0, 2.9, 0), Color3.fromRGB(220, 240, 255) }, { "ball", Vector3.new(1.6, 1.6, 1.6), Vector3.new(1.8, 3.6, 0), Color3.fromRGB(220, 240, 255) }, { "ball", Vector3.new(1.2, 1.2, 1.2), Vector3.new(-1.8, 3.4, 0), Color3.fromRGB(220, 240, 255) } } } },
 			windup = { Root = { 0, 0, 0, 0, -0.3, 0 }, Waist = { -10, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 120, 0, -30 }, RE = { 140, 0, 0 }, LS = { 120, 0, 30 }, LE = { 140, 0, 0 } },
 			strike = { Root = { 8, 0, 0, 0, -0.2, 0.1 }, Waist = { 16, 0, 0 }, Neck = { 35, 0, 0 }, RS = { 40, 0, 60 }, RE = { 30, 0, 0 }, LS = { 40, 0, -60 }, LE = { 30, 0, 0 } },
 			follow = { Root = { 8, 0, 0, 0, -0.2, 0.1 }, Waist = { 18, 0, 0 }, Neck = { 40, 0, 0 }, RS = { 50, 0, 70 }, RE = { 30, 0, 0 }, LS = { 50, 0, -70 }, LE = { 30, 0, 0 } },
 			hold = 0.3, shake = true, windupFx = { "super", { "symbols", symbols = { "😭", "💧" }, count = 6, radius = 2.5, color = TEARS } },
-			fx = { { "screen", color = TEARS, alpha = 0.35 }, { "puddle", color = TEARS, width = 10, time = 2 }, { "particles", tex = "smoke", color = TEARS, dir = "front", at = "head", time = 0.8, speed = 18, size = 1, rate = 90 } },
+			fx = { { "screen", color = TEARS, alpha = 0.35 }, { "puddle", color = TEARS, width = 12, time = 2 }, { "particles", tex = "smoke", color = TEARS, dir = "front", at = "head", time = 0.8, speed = 22, size = 1.2, rate = 100 }, { "shake", amount = 0.4 } },
 			text = "BOUHOUHOUUU !", hitText = "PLOUF !",
 		},
-		-- Super ↑ : il aspire un grand coup, les joues gonflées à bloc… et crache sa tétine vers le ciel comme une fusée ;
-		-- tout ce qui passe au-dessus part en orbite avec elle
+		-- Tétine-fusée (Y↑) : il aspire un grand coup, les joues gonflées à bloc… et crache sa tétine comme une fusée : elle fonce
+		-- droit sur l'adversaire et l'emporte en orbite avec elle
 		SUPER_up = {
-			label = "Tétine-fusée !", kind = "projectile", superCost = 100, startup = 0.35, active = 0, recovery = 0.6,
-			damage = 22, kbBase = 46, kbGrowth = 95, kbAngle = 88,
-			projectile = { speed = 80, angle = 90, gravity = 15, lifetime = 0.9, size = 3.2, color = PINK, pierce = true, from = "above",
-				visual = { shape = "ball", size = 2.4, color = PINK, neon = true, spin = 6,
-					parts = { { "block", Vector3.new(2.6, 0.3, 2.6), Vector3.new(0, -1.1, 0), YELLOW }, { "ball", Vector3.new(1.2, 1.2, 1.2), Vector3.new(0, -1.9, 0), PINK } } } },
+			label = "Tétine-fusée !", kind = "projectile", startup = 0.35, active = 0, recovery = 0.7,
+			damage = 24, kbBase = 46, kbGrowth = 95, kbAngle = 88,
+			projectile = { speed = 85, angle = 60, gravity = 0, lifetime = 1.0, size = 3.4, color = PINK, pierce = true, from = "above",
+				visual = { shape = "ball", size = 2.6, color = PINK, neon = true, spin = 6,
+					parts = { { "block", Vector3.new(2.8, 0.3, 2.8), Vector3.new(0, -1.2, 0), YELLOW }, { "ball", Vector3.new(1.3, 1.3, 1.3), Vector3.new(0, -2, 0), PINK } } } },
 			windup = { Root = { 8, 0, 0, 0, -0.35, 0.1 }, Waist = { 14, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 30, 0, 20 }, RE = { 120, 0, 0 }, LS = { 30, 0, -20 }, LE = { 120, 0, 0 } },
-			strike = { Root = { 10, 0, 0, 0, 0.3, 0 }, Waist = { 20, 0, 0 }, Neck = { 55, 0, 0 }, RS = { -40, 0, 50 }, RE = { 10, 0, 0 }, LS = { -40, 0, -50 }, LE = { 10, 0, 0 }, FR = { 0, 0, 0, 0, 0.3, 0 }, FL = { 0, 0, 0, 0, 0.3, 0 } },
+			strike = { Root = { -8, 0, 0, 0, 0.2, -0.1 }, Waist = { -6, 0, 0 }, Neck = { 30, 0, 0 }, RS = { -40, 0, 50 }, RE = { 10, 0, 0 }, LS = { -40, 0, -50 }, LE = { 10, 0, 0 }, FR = { 0, 0, 0, 0, 0.3, 0 }, FL = { 0, 0, 0, 0, 0.3, 0 } },
 			follow = { Root = { 6, 0, 0, 0, 0.15, 0 }, Waist = { 14, 0, 0 }, Neck = { 50, 0, 0 }, RS = { 120, 0, -30 }, RE = { 130, 0, 0 }, LS = { 120, 0, 30 }, LE = { 130, 0, 0 } },
 			hold = 0.3, shake = true,
 			windupFx = { "super", { "symbols", symbols = { "😤", "💨" }, count = 3, radius = 2, color = CHEEK } },
-			fx = { { "pillar", color = PINK, height = 24, width = 3, at = "root" }, { "burst", color = YELLOW, size = 4, at = "head" }, { "particles", tex = "fire", color = PINK, dir = "up", at = "head", time = 0.5, speed = 20, size = 1 }, { "shake", amount = 0.4 } },
+			fx = { { "beam", color = PINK, length = 14, width = 2.5, at = "head" }, { "burst", color = YELLOW, size = 4, at = "head" }, { "particles", tex = "fire", color = PINK, dir = "front", at = "head", time = 0.5, speed = 24, size = 1 }, { "shake", amount = 0.4 } },
 			text = "PTHOUU !", hitText = "TÉTINE EN ORBITE !",
 		},
-		-- « Encore ! » : il attrape l'adversaire comme un jouet et le fait tourner autour de lui à toute vitesse
+		-- « Encore ! » (Y↓) : il aspire tout le couloir dans ses bras comme un jouet et fait tourner l'adversaire autour de lui à toute vitesse
 		SUPER_down = {
-			label = "Encore !", superCost = 100, startup = 0.3, active = 0.9, recovery = 0.5,
-			damage = 4, hits = 5, pull = true, hitbox = box(6, 5, 1.5, 1), kbBase = 16, kbGrowth = 20, kbAngle = 80,
-			windup = { Root = { 4, 0, 0, 0, -0.2, 0.1 }, Waist = { 10, 0, 0 }, Neck = { 15, 0, 0 }, RS = { 110, 0, 50 }, RE = { 20, 0, 0 }, LS = { 110, 0, -50 }, LE = { 20, 0, 0 } },
+			label = "Encore !", startup = 0.35, active = 0.9, recovery = 0.65,
+			damage = 5, hits = 5, pull = true, hitbox = box(14, 6, 7, 1), kbBase = 16, kbGrowth = 20, kbAngle = 80,
+			windup = { Root = { 4, 0, 0, 0, -0.2, 0.1 }, Waist = { 10, 0, 0 }, Neck = { 15, 0, 0 }, RS = { 110, 0, 70 }, RE = { 20, 0, 0 }, LS = { 110, 0, -70 }, LE = { 20, 0, 0 } },
 			strike = { Root = { -10, 0, 0, 0, -0.2, 0 }, Waist = { 10, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 120, 0, 10 }, RE = { 10, 0, 0 }, LS = { 120, 0, -10 }, LE = { 10, 0, 0 } },
 			follow = { Root = { -12, 0, 0, 0, -0.2, 0 }, Waist = { 12, 0, 0 }, Neck = { 25, 0, 0 }, RS = { 130, 0, 10 }, RE = { 10, 0, 0 }, LS = { 130, 0, -10 }, LE = { 10, 0, 0 } },
-			spin = { axis = "y", degrees = 1080 }, windupFx = { "super" }, fx = { { "symbols", symbols = { "ENCORE !", "😆" }, count = 5, radius = 4, color = YELLOW } },
+			spin = { axis = "y", degrees = 1080 }, windupFx = { "super" }, fx = { { "ring", color = YELLOW, radius = 7, at = "front" }, { "symbols", symbols = { "ENCORE !", "😆" }, count = 6, radius = 5, color = YELLOW } },
 			text = "ENCORE ! ENCORE !", hitText = "WIIIIZ !",
 		},
 

@@ -397,102 +397,101 @@ local data = {
 		},
 
 		------------------------------------------------------------------ Spéciaux (S)
-		-- Crêpe volante : il fait sauter une crêpe d'un coup de poignet, elle plane en zigzag vers l'adversaire
+		-- Crêpe volante : une crêpe part de la poêle comme un frisbee et fonce droit sur la figure de l'adversaire
 		S_neutral = {
-			label = "Crêpe volante", energyCost = 20, kind = "projectile", startup = 0.14, active = 0, recovery = 0.3,
-			damage = 8, kbBase = 20, kbGrowth = 45, kbAngle = 35,
-			projectile = { speed = 42, angle = 8, gravity = 10, lifetime = 1.3, size = 2, color = CREPE, homing = 0.25,
+			label = "Crêpe volante", kind = "projectile", startup = 0.16, active = 0, recovery = 0.4,
+			damage = 12, kbBase = 22, kbGrowth = 45, kbAngle = 35,
+			projectile = { speed = 60, angle = 5, gravity = 0, lifetime = 1.0, size = 2, color = CREPE,
 				visual = { shape = "disc", size = 2, color = CREPE, spin = 14, parts = { { "block", Vector3.new(0.35, 0.35, 0.35), Vector3.new(0.2, 0, 0), Color3.fromRGB(255, 235, 120) } } } },
 			windup = { Root = { 4, -15, 0, 0, -0.3, 0.1 }, Waist = { 6, -18, 0 }, Neck = { 12, 10, 0 }, RS = { 35, 0, 20 }, RE = { 60, 0, 0 }, RW = { -80, 0, 0 }, LS = { 5, 0, -40 }, LE = { 90, 0, 0 } },
 			strike = { Root = { -4, 10, 0, 0, -0.15, -0.15 }, Waist = { 8, 12, 0 }, Neck = { 22, -6, 0 }, RS = { 100, 0, 5 }, RE = { 10, 0, 0 }, RW = { -95, 0, 0 }, LS = { 5, 0, -42 }, LE = { 90, 0, 0 } },
 			follow = { Root = { -4, 12, 0, 0, -0.12, -0.18 }, Waist = { 10, 14, 0 }, Neck = { 26, -8, 0 }, RS = { 115, 0, 5 }, RE = { 10, 0, 0 }, RW = { -60, 0, 0 }, LS = { 5, 0, -42 }, LE = { 90, 0, 0 } },
 			text = "HOP !", hitText = "SPLAF !",
 		},
-		-- Flambage : il prend une grande inspiration, torse bombé, et crache un jet de flammes court mais très large
+		-- Flambage : grande inspiration, torse bombé, et il crache un jet de flammes qui traverse tout le couloir (brûle)
 		S_side = {
-			label = "Flambage", energyCost = 30, startup = 0.18, active = 0.24, recovery = 0.35,
-			damage = 5, hits = 2, burn = true, hitbox = box(7, 5, 4, 0.8), kbBase = 26, kbGrowth = 55, kbAngle = 30,
+			label = "Flambage", startup = 0.2, active = 0.25, recovery = 0.45,
+			damage = 14, burn = true, hitbox = box(15, 5, 7.5, 1), kbBase = 26, kbGrowth = 55, kbAngle = 30,
 			windup = { Root = { 10, 0, 0, 0, -0.1, 0.25 }, Waist = { 18, 0, 0 }, Neck = { 24, 0, 0 }, RS = { 30, 0, 60 }, RE = { 40, 0, 0 }, LS = { 30, 0, -60 }, LE = { 40, 0, 0 } },
 			strike = { Root = { -8, 0, 0, 0, -0.25, -0.2 }, Waist = { -14, 0, 0 }, Neck = { -18, 0, 0 }, RS = { 60, 0, 85 }, RE = { 10, 0, 0 }, LS = { 60, 0, -85 }, LE = { 10, 0, 0 } },
 			follow = { Root = { -10, 0, 0, 0, -0.28, -0.25 }, Waist = { -16, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 70, 0, 90 }, RE = { 10, 0, 0 }, LS = { 70, 0, -90 }, LE = { 10, 0, 0 } },
 			shake = true, windupFx = { { "particles", tex = "smoke", color = Color3.fromRGB(90, 90, 90), dir = "up", at = "head", time = 0.2, speed = 4 } },
-			fx = { "fire", { "beam", color = FIRE, length = 7, width = 3.4, at = "head" }, { "particles", tex = "fire", color = FLAME, dir = "front", at = "head", time = 0.3, speed = 22, size = 1.4, rate = 90 } },
+			fx = { "fire", { "beam", color = FIRE, length = 14, width = 3.4, at = "head" }, { "particles", tex = "fire", color = FLAME, dir = "front", at = "head", time = 0.3, speed = 26, size = 1.4, rate = 90 } },
 			text = "FLAMBÉÉÉ !", hitText = "CRAMÉ !",
 		},
-		-- Oignon émincé : il émince un oignon à toute vitesse sous le nez de l'adversaire, qui fond en larmes
+		-- Oignon émincé : il émince un oignon à toute vitesse et le nuage de larmes envahit tout le couloir : l'adversaire fond en larmes, écran flou
 		S_down = {
-			label = "Oignon émincé", energyCost = 25, startup = 0.16, active = 0.25, recovery = 0.3,
-			damage = 8, hitbox = box(8, 4, 1.5, 0.5), kbBase = 14, kbGrowth = 20, kbAngle = 40,
+			label = "Oignon émincé", startup = 0.18, active = 0.25, recovery = 0.4,
+			damage = 12, hitbox = box(14, 5, 7, 0.8), kbBase = 16, kbGrowth = 25, kbAngle = 40,
 			status = { name = "blinded", duration = 1.5 },
 			windup = { Root = { 4, -10, 0, 0, -0.3, 0 }, Waist = { -10, -10, 0 }, Neck = { -15, 0, 0 }, RS = { 120, 0, 10 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, 20 }, LE = { 80, 0, 0 } },
 			strike = { Root = { -4, 10, 0, 0, -0.35, -0.1 }, Waist = { -18, 10, 0 }, Neck = { -20, 0, 0 }, RS = { 70, 0, 5 }, RE = { 60, 0, 0 }, RW = { 20, 0, 0 }, LS = { 60, 0, 22 }, LE = { 85, 0, 0 } },
 			follow = { Root = { -4, 10, 0, 0, -0.35, -0.1 }, Waist = { -18, 10, 0 }, Neck = { -20, 0, 0 }, RS = { 110, 0, 5 }, RE = { 90, 0, 0 }, RW = { -10, 0, 0 }, LS = { 60, 0, 22 }, LE = { 85, 0, 0 } },
 			wobble = true, prop = "oignon", hideProp = "poele",
-			fx = { { "symbols", symbols = { "💧", "😭", "💧" }, color = Color3.fromRGB(120, 180, 255), count = 7, radius = 3, at = "front" }, { "toss", shape = "flat", color = Color3.fromRGB(235, 215, 230), size = 0.4, count = 5, speed = 10 } },
+			fx = { { "symbols", symbols = { "💧", "😭", "💧" }, color = Color3.fromRGB(120, 180, 255), count = 7, radius = 3, at = "front" }, { "beam", color = Color3.fromRGB(235, 215, 230), length = 14, width = 4, at = "head" }, { "toss", shape = "flat", color = Color3.fromRGB(235, 215, 230), size = 0.4, count = 5, speed = 10 } },
 			text = "TCHAC TCHAC TCHAC !", hitText = "SNIF !",
 		},
-		-- Sauté à la poêle : il frappe l'air sous ses pieds avec la poêle géante et rebondit dessus, toque au vent
-		-- (gratuit : c'est la remontée)
+		-- Flambée-fusée (↑L) : il allume la poêle, la flambée l'éjecte en diagonale vers l'avant comme une fusée, poêle brûlante
+		-- tendue devant lui, toque au vent, jambes qui traînent derrière (brûle)
 		S_up = {
-			label = "Sauté à la poêle", energyCost = 0, startup = 0.06, active = 0.3, recovery = 0.3,
-			damage = 7, hitbox = box(5, 6, 0.5, 2.5), kbBase = 30, kbGrowth = 40, kbAngle = 85, selfVelocity = Vector2.new(8, 88),
-			windup = { Root = { 0, 0, 0, 0, -0.7, 0 }, Waist = { -10, 0, 0 }, RS = { 160, 0, 30 }, RE = { 30, 0, 0 }, RW = { -60, 0, 0 }, LS = { 60, 0, -50 }, LE = { 40, 0, 0 } },
-			strike = { Root = { 0, 0, 0, 0, 0.3, 0 }, Waist = { 10, 0, 0 }, Neck = { 20, 0, 0 }, RS = { -20, 0, 30 }, RE = { 0, 0, 0 }, RW = { -80, 0, 0 }, LS = { 170, 0, -20 }, LE = { 10, 0, 0 }, RH = { 60, 0, 0 }, RK = { -110, 0, 0 }, LH = { 50, 0, 0 }, LK = { -100, 0, 0 } },
-			follow = { Root = { 6, 0, 0, 0, 0.35, 0 }, Waist = { 14, 0, 0 }, Neck = { 26, 0, 0 }, RS = { 40, 0, 40 }, RE = { 30, 0, 0 }, RW = { -40, 0, 0 }, LS = { 178, 0, -12 }, LE = { 5, 0, 0 }, RH = { 20, 0, 0 }, RK = { -40, 0, 0 }, LH = { -10, 0, 0 }, LK = { -30, 0, 0 } },
-			trail = "prop", fx = { { "ring", color = SILVER, radius = 4, at = "feet" }, { "burst", color = Color3.fromRGB(255, 240, 200), size = 3, at = "feet" } }, text = "SAUTÉ !", hitText = "BOING !",
+			label = "Flambée-fusée", startup = 0.1, active = 0.3, recovery = 0.4,
+			damage = 14, burn = true, hitbox = box(10, 11, 3, 4), kbBase = 32, kbGrowth = 50, kbAngle = 75, selfVelocity = Vector2.new(42, 80),
+			windup = { Root = { 0, 0, 0, 0, -0.7, 0 }, Waist = { -12, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 60, 0, 20 }, RE = { 30, 0, 0 }, RW = { -60, 0, 0 }, LS = { 60, 0, -40 }, LE = { 40, 0, 0 } },
+			strike = { Root = { -42, 0, 0, 0, 0.4, -0.2 }, Waist = { -6, 0, 0 }, Neck = { 32, 0, 0 }, RS = { 172, 0, 8 }, RE = { 0, 0, 0 }, RW = { -90, 0, 0 }, LS = { -30, 0, -30 }, LE = { 20, 0, 0 }, RH = { -25, 0, 5 }, RK = { -30, 0, 0 }, LH = { -15, 0, -5 }, LK = { -50, 0, 0 } },
+			follow = { Root = { -46, 0, 0, 0, 0.45, -0.25 }, Waist = { -8, 0, 0 }, Neck = { 34, 0, 0 }, RS = { 176, 0, 10 }, RE = { 0, 0, 0 }, RW = { -90, 0, 0 }, LS = { -35, 0, -35 }, LE = { 20, 0, 0 }, RH = { -30, 0, 6 }, RK = { -35, 0, 0 }, LH = { -20, 0, -6 }, LK = { -55, 0, 0 } },
+			trail = "prop", windupFx = { { "particles", tex = "fire", color = FIRE, dir = "up", at = "hand", time = 0.15, speed = 6, size = 0.9 } },
+			fx = { { "burst", color = FLAME, size = 3.5, at = "feet" }, { "ring", color = FIRE, radius = 5, at = "feet" }, { "particles", tex = "fire", color = FLAME, dir = "down", at = "feet", time = 0.4, speed = 16, size = 1.2, rate = 90 } },
+			text = "FLAMBÉE-FUSÉE !", hitText = "GRILLÉ EN VOL !",
 		},
-		-- Pluie de spaghettis (en l'air + ↓ + S) : poêle pleine au-dessus de la tête, il tombe comme une enclume
+		-- Pluie de spaghettis (en l'air + ↓ + S) : poêle pleine au-dessus de la tête, il tombe comme une enclume sur l'adversaire
 		-- et les spaghettis ligotent ceux qui sont dessous
 		S_air_down = {
-			label = "Pluie de spaghettis", energyCost = 25, startup = 0.12, active = 0.35, recovery = 0.35,
-			damage = 11, hitbox = box(6, 4, 0.5, -2), kbBase = 18, kbGrowth = 35, kbAngle = -40, selfVelocity = Vector2.new(0, -80),
+			label = "Pluie de spaghettis", startup = 0.15, active = 0.35, recovery = 0.4,
+			damage = 13, hitbox = box(6, 5, 1, -2), kbBase = 18, kbGrowth = 35, kbAngle = -40, selfVelocity = Vector2.new(0, -80),
 			status = { name = "rooted", duration = 1.2 },
 			windup = { Root = { 10, 0, 0 }, Waist = { 12, 0, 0 }, Neck = { 15, 0, 0 }, RS = { 175, 0, 10 }, RE = { 40, 0, 0 }, RW = { -90, 0, 0 }, LS = { 175, 0, -10 }, LE = { 40, 0, 0 }, RH = { 80, 0, 0 }, RK = { -120, 0, 0 }, LH = { 80, 0, 0 }, LK = { -120, 0, 0 } },
 			strike = { Root = { 0, 0, 0 }, Waist = { 0, 0, 0 }, Neck = { -15, 0, 0 }, RS = { 170, 0, 15 }, RE = { 30, 0, 0 }, RW = { -90, 0, 0 }, LS = { 170, 0, -15 }, LE = { 30, 0, 0 }, RH = { 0, 0, 5 }, RK = { 0, 0, 0 }, RA = { -10, 0, 0 }, LH = { 0, 0, -5 }, LK = { 0, 0, 0 }, LA = { -10, 0, 0 } },
 			follow = { Root = { 0, 0, 0 }, Waist = { 4, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 120, 0, 60 }, RE = { 20, 0, 0 }, RW = { -40, 0, 0 }, LS = { 120, 0, -60 }, LE = { 20, 0, 0 }, RH = { 2, 0, 8 }, RK = { -5, 0, 0 }, RA = { -10, 0, 0 }, LH = { 2, 0, -8 }, LK = { -5, 0, 0 }, LA = { -10, 0, 0 } },
 			trail = "body", fx = { { "rain", shape = "cyl", color = PASTA, count = 16, radius = 4, size = 1.2 }, { "shake", amount = 0.4 } }, text = "AL DENTE !", hitText = "LIGOTÉ !",
 		},
-		-- Sol huilé (esquive puis S) : il vide un filet d'huile d'olive sur le carrelage, la flaque fait glisser
+		-- Sol huilé (esquive puis S) : il penche la poêle et vide un torrent d'huile d'olive : la nappe couvre tout le couloir et tout le monde glisse
 		S_dodge = {
-			label = "Sol huilé", energyCost = 20, kind = "trap", startup = 0.12, active = 0, recovery = 0.3,
-			damage = 3, kbBase = 12, kbGrowth = 10, kbAngle = 70,
+			label = "Sol huilé", startup = 0.18, active = 0.2, recovery = 0.45,
+			damage = 12, hitbox = box(14, 4, 7, 0.5), kbBase = 20, kbGrowth = 30, kbAngle = 60,
 			status = { name = "slippery", duration = 2.5 },
-			trap = { size = Vector3.new(5, 1, 6), offset = 2.5, lifetime = 8, max = 1, color = OIL,
-				visual = { shape = "ball", size = 0.6, color = OIL, transparency = 0.25, trail = false,
-					parts = { { "block", Vector3.new(4.5, 0.12, 3), Vector3.new(0, -0.25, 0), OIL }, { "ball", Vector3.new(0.9, 0.12, 0.9), Vector3.new(2.6, -0.25, 0.4), OIL } } } },
 			windup = { Root = { 6, -10, 0, 0, -0.15, 0.1 }, Waist = { 10, -10, 0 }, Neck = { 14, 0, 0 }, RS = { 110, 0, 20 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 10, 0, -40 }, LE = { 85, 0, 0 } },
-			strike = { Root = { -4, 6, 0, 0, -0.2, -0.05 }, Waist = { -6, 6, 0 }, Neck = { -10, 0, 0 }, RS = { 95, 0, 20 }, RE = { 20, 0, 0 }, RW = { 0, 0, 80 }, LS = { 10, 0, -40 }, LE = { 85, 0, 0 } },
-			follow = { Root = { -4, 6, 0, 0, -0.2, -0.05 }, Waist = { -6, 6, 0 }, Neck = { -10, 0, 0 }, RS = { 92, 0, 25 }, RE = { 20, 0, 0 }, RW = { 0, 0, 95 }, LS = { 10, 0, -40 }, LE = { 85, 0, 0 } },
-			hold = 0.15, fx = { { "puddle", color = OIL, width = 6, time = 1.5 } }, text = "UN FILET D'HUILE…", hitText = "OUPS !",
+			strike = { Root = { -10, 8, 0, 0, -0.3, -0.25 }, Waist = { -16, 8, 0 }, Neck = { -10, 0, 0 }, RS = { 100, 0, 15 }, RE = { 10, 0, 0 }, RW = { 0, 0, 90 }, LS = { 10, 0, -40 }, LE = { 85, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.35 } },
+			follow = { Root = { -12, 10, 0, 0, -0.32, -0.3 }, Waist = { -18, 10, 0 }, Neck = { -12, 0, 0 }, RS = { 70, 0, 30 }, RE = { 10, 0, 0 }, RW = { 0, 0, 100 }, LS = { 10, 0, -40 }, LE = { 85, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.35 } },
+			hold = 0.1, trail = "prop", fx = { { "puddle", color = OIL, width = 14, time = 2 }, { "beam", color = OIL, length = 14, width = 2, at = "feet" } }, text = "UN FILET D'HUILE…", hitText = "ÇA GLISSE !",
 		},
-		-- Mijotage (S maintenu) : la poêle rougit sur un feu imaginaire, puis il l'abat brûlante (le coup brûle)
+		-- Mijotage (S maintenu) : la poêle rougit sur un feu imaginaire, puis il l'abat : la vague de chaleur roule sur tout le couloir (brûle)
 		S_hold = {
-			label = "Mijotage", energyCost = 35, startup = 0.2, active = 0.15, recovery = 0.4,
-			damage = 14, burn = true, hitbox = box(6, 4.5, 3, 0.8), kbBase = 32, kbGrowth = 82, kbAngle = 38,
+			label = "Mijotage", startup = 0.3, active = 0.15, recovery = 0.5,
+			damage = 16, burn = true, hitbox = box(14, 5, 7, 0.8), kbBase = 32, kbGrowth = 82, kbAngle = 38,
 			windup = { Root = { 8, -15, 0, 0, -0.3, 0.25 }, Waist = { 14, -18, 0 }, Neck = { 10, 15, 0 }, RS = { 185, 0, 30 }, RE = { 50, 0, 0 }, RW = { 0, 0, 0 }, LS = { 80, 0, -50 }, LE = { 40, 0, 0 } },
 			strike = { Root = { -16, 12, 0, 0, -0.5, -0.45 }, Waist = { -30, 14, 0 }, Neck = { -10, -6, 0 }, RS = { 75, 0, 0 }, RE = { 0, 0, 0 }, RW = { -70, 0, 0 }, LS = { -20, 0, -50 }, LE = { 40, 0, 0 } },
 			follow = { Root = { -18, 14, 0, 0, -0.55, -0.5 }, Waist = { -34, 16, 0 }, Neck = { -12, -8, 0 }, RS = { 55, 0, 0 }, RE = { 0, 0, 0 }, RW = { -80, 0, 0 }, LS = { -25, 0, -52 }, LE = { 40, 0, 0 } },
 			shake = true, trail = "prop",
 			windupFx = { { "particles", tex = "fire", color = FIRE, dir = "up", at = "hand", time = 0.25, speed = 6, size = 0.9 } },
-			fx = { { "burst", color = FIRE, size = 3.5, at = "front" }, { "particles", tex = "fire", color = FLAME, dir = "all", at = "front", time = 0.25, speed = 10, size = 1 } },
+			fx = { { "burst", color = FIRE, size = 3.5, at = "front" }, { "beam", color = FIRE, length = 14, width = 3, at = "feet" }, { "particles", tex = "fire", color = FLAME, dir = "all", at = "front", time = 0.25, speed = 10, size = 1 } },
 			text = "ÇA MIJOTE !", hitText = "TSSSS !",
 		},
-		-- Service rapide (→→S) : plateau d'argent levé comme un serveur pressé, il fonce et sert le plateau au visage
+		-- Service rapide (→→S) : plateau d'argent levé comme un serveur pressé, il traverse tout le couloir et sert le plateau au visage
 		S_dash = {
-			label = "Service rapide", energyCost = 25, startup = 0.06, active = 0.3, recovery = 0.3,
-			damage = 10, hitbox = box(5, 4, 2.5, 0.8), kbBase = 30, kbGrowth = 60, kbAngle = 30, selfVelocity = Vector2.new(60, 0), invuln = 0.15,
+			label = "Service rapide", startup = 0.15, active = 0.3, recovery = 0.4,
+			damage = 13, hitbox = box(14, 5, 6, 0.8), kbBase = 30, kbGrowth = 60, kbAngle = 30, selfVelocity = Vector2.new(60, 0), invuln = 0.15,
 			windup = { Root = { -6, 0, 0, 0, -0.2, 0 }, Waist = { 6, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 150, 0, 25 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { -10, 0, -30 }, LE = { 100, 0, 0 } },
 			strike = { Root = { -22, 0, 0, 0, -0.3, -0.2 }, Waist = { -6, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 100, 0, 5 }, RE = { 15, 0, 0 }, RW = { 0, 0, 0 }, LS = { -30, 0, -35 }, LE = { 90, 0, 0 } },
 			follow = { Root = { -20, 0, 0, 0, -0.3, -0.25 }, Waist = { -6, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 98, 0, 0 }, RE = { 15, 0, 0 }, RW = { 0, 0, 0 }, LS = { -35, 0, -38 }, LE = { 90, 0, 0 } },
 			prop = "plateau", hideProp = "poele", fx = { "dust" }, text = "SERVICE !", hitText = "BON APPÉTIT !",
 		},
-		-- Assiette de spaghettis (S en l'air) : il lance une assiette au ciel, les spaghettis retombent devant lui et ligotent
+		-- Assiette de spaghettis (S en l'air) : il lance l'assiette entière, qui fonce sur l'adversaire : les spaghettis le ligotent
 		S_air = {
-			label = "Assiette de spaghettis", energyCost = 25, kind = "projectile", startup = 0.14, active = 0, recovery = 0.3,
-			damage = 3, kbBase = 12, kbGrowth = 20, kbAngle = 60,
+			label = "Assiette de spaghettis", kind = "projectile", startup = 0.16, active = 0, recovery = 0.4,
+			damage = 12, kbBase = 16, kbGrowth = 25, kbAngle = 60,
 			status = { name = "rooted", duration = 1 },
-			projectile = { speed = 35, gravity = 30, lifetime = 0.9, size = 1.6, color = PASTA, rain = { count = 5, spread = 6, ahead = 8, height = 16 },
-				visual = { shape = "ball", size = 1.2, color = PASTA, parts = { { "ball", Vector3.new(0.5, 0.5, 0.5), Vector3.new(0.25, 0.35, 0), SAUCE } } } },
+			projectile = { speed = 58, angle = -20, gravity = 0, lifetime = 0.8, size = 1.8, color = PASTA,
+				visual = { shape = "disc", size = 1.8, color = WHITE, spin = 6, parts = { { "ball", Vector3.new(1.2, 1.2, 1.2), Vector3.new(0, 0, -0.4), PASTA }, { "ball", Vector3.new(0.5, 0.5, 0.5), Vector3.new(0.25, 0.3, -0.9), SAUCE } } } },
 			windup = { Root = { 10, 0, 0 }, Waist = { 12, 0, 0 }, RS = { 40, 0, 20 }, RE = { 80, 0, 0 }, RW = { -80, 0, 0 }, LS = { 40, 0, -40 }, LE = { 60, 0, 0 }, RH = { 60, 0, 0 }, RK = { -90, 0, 0 }, LH = { 50, 0, 0 }, LK = { -90, 0, 0 } },
 			strike = { Root = { -6, 0, 0 }, Waist = { -4, 0, 0 }, Neck = { 25, 0, 0 }, RS = { 165, 0, 10 }, RE = { 10, 0, 0 }, RW = { -90, 0, 0 }, LS = { 20, 0, -60 }, LE = { 40, 0, 0 }, RH = { 30, 0, 0 }, RK = { -60, 0, 0 }, LH = { 20, 0, 0 }, LK = { -70, 0, 0 } },
 			follow = { Root = { -8, 0, 0 }, Waist = { -6, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 175, 0, 10 }, RE = { 10, 0, 0 }, RW = { -60, 0, 0 }, LS = { 15, 0, -62 }, LE = { 40, 0, 0 }, RH = { 25, 0, 0 }, RK = { -55, 0, 0 }, LH = { 15, 0, 0 }, LK = { -65, 0, 0 } },
@@ -502,19 +501,19 @@ local data = {
 		------------------------------------------------------------------ Finitions avec S (dans un enchaînement)
 		-- Flambé minute : il balaie l'air de la poêle en feu en demi-cercle (brûle)
 		S_finish_flambe = {
-			label = "Flambé minute", energyCost = 25, startup = 0.14, active = 0.2, recovery = 0.32,
+			label = "Flambé minute", startup = 0.14, active = 0.2, recovery = 0.32,
 			damage = 10, burn = true, hitbox = box(7, 4, 3, 0.8), kbBase = 30, kbGrowth = 62, kbAngle = 35,
 			windup = { Root = { 4, -35, 0, 0, -0.3, 0.2 }, Waist = { 6, -35, 0 }, Neck = { 0, 30, 0 }, RS = { 70, 0, 90 }, RE = { 30, 0, 0 }, RW = { -80, 0, 0 }, LS = { 50, 0, -30 }, LE = { 70, 0, 0 } },
 			strike = { Root = { -8, 20, 0, 0, -0.35, -0.3 }, Waist = { -10, 25, 0 }, Neck = { 0, -15, 0 }, RS = { 95, 0, 0 }, RE = { 5, 0, 0 }, RW = { -85, 0, 0 }, LS = { -10, 0, -45 }, LE = { 50, 0, 0 } },
 			follow = { Root = { -10, 35, 0, 0, -0.35, -0.35 }, Waist = { -12, 40, 0 }, Neck = { 0, -25, 0 }, RS = { 90, 0, -40 }, RE = { 10, 0, 0 }, RW = { -85, 0, 0 }, LS = { -15, 0, -48 }, LE = { 50, 0, 0 } },
 			trail = "prop", fx = { { "particles", tex = "fire", color = FIRE, dir = "up", at = "hand", time = 0.3, speed = 9, size = 1.1, rate = 90 } }, text = "FLAMBÉ MINUTE !", hitText = "GRILLÉ !",
 		},
-		-- Trois crêpes : trois crêpes partent en éventail d'un seul coup de poêle
+		-- Trois crêpes : trois crêpes empilées partent d'un seul coup de poêle, droit sur l'adversaire
 		S_finish_crepes = {
-			label = "Trois crêpes", kind = "projectile", energyCost = 20, startup = 0.12, active = 0, recovery = 0.3,
-			damage = 5, kbBase = 22, kbGrowth = 45, kbAngle = 35,
-			projectile = { speed = 55, gravity = 20, lifetime = 0.7, size = 1.8, color = CREPE, fan = { count = 3, from = -5, to = 25 },
-				visual = { shape = "disc", size = 1.8, color = CREPE, spin = 16 } },
+			label = "Trois crêpes", kind = "projectile", startup = 0.12, active = 0, recovery = 0.3,
+			damage = 12, kbBase = 22, kbGrowth = 45, kbAngle = 35,
+			projectile = { speed = 55, angle = 5, gravity = 0, lifetime = 0.7, size = 1.8, color = CREPE,
+				visual = { shape = "disc", size = 1.8, color = CREPE, spin = 16, parts = { { "block", Vector3.new(1.5, 1.5, 0.15), Vector3.new(0.15, -0.1, 0.3), CREPE }, { "block", Vector3.new(1.5, 1.5, 0.15), Vector3.new(-0.15, 0.1, 0.6), Color3.fromRGB(225, 175, 95) } } } },
 			windup = { Root = { 4, -12, 0, 0, -0.3, 0.1 }, Waist = { 6, -14, 0 }, RS = { 30, 0, 20 }, RE = { 60, 0, 0 }, RW = { -80, 0, 0 }, LS = { 10, 0, -40 }, LE = { 85, 0, 0 } },
 			strike = { Root = { -6, 10, 0, 0, -0.2, -0.15 }, Waist = { -6, 12, 0 }, Neck = { 12, 0, 0 }, RS = { 105, 0, 0 }, RE = { 5, 0, 0 }, RW = { -95, 0, 0 }, LS = { 10, 0, -42 }, LE = { 85, 0, 0 } },
 			follow = { Root = { -6, 12, 0, 0, -0.2, -0.18 }, Waist = { -6, 14, 0 }, Neck = { 14, 0, 0 }, RS = { 118, 0, 0 }, RE = { 5, 0, 0 }, RW = { -60, 0, 0 }, LS = { 10, 0, -42 }, LE = { 85, 0, 0 } },
@@ -522,10 +521,10 @@ local data = {
 		},
 
 		------------------------------------------------------------------ Supers
-		-- Flambée Impériale : il lève la poêle au ciel et une colonne de feu géante jaillit devant lui (brûle)
+		-- Flambée Impériale (Y) : il lève la poêle au ciel et une muraille de feu roule sur tout le couloir (brûle)
 		SUPER = {
-			label = "Flambée Impériale !", superCost = 100, startup = 0.35, active = 0.45, recovery = 0.5,
-			damage = 8, hits = 3, burn = true, hitbox = box(8, 22, 4, 9), kbBase = 30, kbGrowth = 60, kbAngle = 82,
+			label = "Flambée Impériale !", startup = 0.4, active = 0.45, recovery = 0.7,
+			damage = 8, hits = 3, burn = true, hitbox = box(16, 22, 8, 9), kbBase = 30, kbGrowth = 60, kbAngle = 82,
 			windup = { Root = { 6, 0, 0, 0, -0.6, 0.15 }, Waist = { 14, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 60, 0, 60 }, RE = { 90, 0, 0 }, LS = { 60, 0, -60 }, LE = { 90, 0, 0 } },
 			strike = { Root = { 10, 0, 0, 0, 0.2, 0 }, Waist = { 22, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 178, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 130, 0, -60 }, LE = { 10, 0, 0 }, FR = { 0, 0, 0, 0, 0.2, 0 }, FL = { 0, 0, 0, 0, 0.2, 0 } },
 			follow = { Root = { 12, 0, 0, 0, 0.25, 0 }, Waist = { 25, 0, 0 }, Neck = { 34, 0, 0 }, RS = { 180, 0, 15 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 140, 0, -70 }, LE = { 10, 0, 0 } },
@@ -533,10 +532,10 @@ local data = {
 			fx = { { "pillar", color = FIRE, height = 24, width = 5, at = "front" }, { "particles", tex = "fire", color = FLAME, dir = "up", at = "front", time = 0.7, speed = 30, size = 2.2, rate = 120 }, { "screen", color = FIRE, alpha = 0.3 }, { "shake", amount = 0.7 } },
 			text = "FLAMBÉE IMPÉRIALE !", hitText = "BIEN CUIT !",
 		},
-		-- Super ↑ : poêle glissée sous l'adversaire, il la retourne d'un coup de reins : crêpe suzette flambée jusqu'au plafond
+		-- Crêpe suzette en orbite (↑Y) : poêle glissée sous le couloir entier, il la retourne d'un coup de reins : crêpe suzette flambée jusqu'au plafond, tout le monde avec
 		SUPER_up = {
-			label = "Crêpe suzette en orbite !", superCost = 100, startup = 0.35, active = 0.3, recovery = 0.6,
-			damage = 22, hitbox = box(8, 14, 3, 6), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
+			label = "Crêpe suzette en orbite !", startup = 0.4, active = 0.3, recovery = 0.7,
+			damage = 24, hitbox = box(16, 14, 8, 6), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
 			windup = { Root = { -14, -8, 0, 0, -0.9, 0.1 }, Waist = { -30, -8, 0 }, Neck = { 16, 6, 0 }, RS = { 25, 0, 15 }, RE = { 15, 0, 0 }, RW = { -85, 0, 0 }, LS = { 25, 0, -15 }, LE = { 20, 0, 0 }, LW = { 0, 0, 0 } },
 			strike = { Root = { 10, 6, 0, 0, 0.45, -0.1 }, Waist = { 22, 6, 0 }, Neck = { 42, 0, 0 }, RS = { 182, 0, 12 }, RE = { 8, 0, 0 }, RW = { -95, 0, 0 }, LS = { 176, 0, -18 }, LE = { 10, 0, 0 }, LW = { 0, 0, 0 }, FR = { 0, 0, 0, 0, 0.35, 0 }, FL = { 0, 0, 0, 0, 0.35, 0 } },
 			follow = { Root = { 12, 8, 0, 0, 0.5, -0.12 }, Waist = { 26, 8, 0 }, Neck = { 46, 0, 0 }, RS = { 170, 0, 45 }, RE = { 10, 0, 0 }, RW = { -60, 0, 0 }, LS = { 165, 0, -50 }, LE = { 10, 0, 0 }, LW = { 0, 0, 0 }, FR = { 0, 0, 0, 0, 0.4, 0 }, FL = { 0, 0, 0, 0, 0.4, 0 } },
@@ -545,10 +544,10 @@ local data = {
 			fx = { { "pillar", color = FIRE, height = 24, width = 4, at = "front" }, { "particles", tex = "fire", color = FLAME, dir = "up", at = "front", time = 0.7, speed = 20, size = 1.8, rate = 110 }, { "toss", shape = "flat", color = CREPE, size = 1.4, count = 5, speed = 14, lift = 40 }, { "burst", color = FLAME, size = 4, at = "above" } },
 			text = "CRÊPE SUZETTE !", hitText = "FLAMBÉE AU PLAFOND !",
 		},
-		-- Menu Dégustation : plateau en main, il sert sept plats d'affilée au visage de l'adversaire
+		-- Menu Dégustation (↓Y) : plateau en main, il sert sept plats d'affilée au visage : tout le couloir est servi
 		SUPER_down = {
-			label = "Menu Dégustation !", superCost = 100, startup = 0.3, active = 0.7, recovery = 0.5,
-			damage = 3, hits = 7, hitbox = box(5, 4.5, 2.6, 0.8), kbBase = 12, kbGrowth = 25, kbAngle = 35,
+			label = "Menu Dégustation !", startup = 0.35, active = 0.7, recovery = 0.6,
+			damage = 4, hits = 7, hitbox = box(14, 5, 7, 0.8), kbBase = 12, kbGrowth = 25, kbAngle = 35,
 			windup = { Root = { 6, 0, 0, 0, -0.1, 0.1 }, Waist = { 10, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 150, 0, 30 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 10, 0, -40 }, LE = { 95, 0, 0 } },
 			strike = { Root = { -8, 10, 0, 0, -0.25, -0.3 }, Waist = { -10, 14, 0 }, Neck = { 10, 0, 0 }, RS = { 95, 0, 0 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 95, 0, 10 }, LE = { 20, 0, 0 } },
 			follow = { Root = { -8, -10, 0, 0, -0.25, -0.3 }, Waist = { -10, -14, 0 }, Neck = { 10, 0, 0 }, RS = { 95, 0, 30 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 95, 0, -20 }, LE = { 20, 0, 0 } },

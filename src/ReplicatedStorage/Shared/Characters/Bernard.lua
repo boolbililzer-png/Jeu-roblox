@@ -397,31 +397,31 @@ local data = {
 		},
 
 		------------------------------------------------------------------ Spéciaux (S)
-		-- Avion en papier : il plie un formulaire en avion et le lance ; l'avion vole mollement vers l'adversaire
+		-- Avion en papier : il plie un formulaire en avion et le lance ; il vire droit sur le nez de l'adversaire et s'y colle
 		S_neutral = {
-			label = "Avion en papier", kind = "projectile", energyCost = 20, startup = 0.16, active = 0, recovery = 0.3,
-			damage = 7, kbBase = 18, kbGrowth = 30, kbAngle = 20,
-			projectile = { speed = 40, angle = 5, gravity = 0, lifetime = 1.4, size = 1.6, homing = 0.25, color = PAPER, visual = PLANE },
+			label = "Avion en papier", kind = "projectile", startup = 0.18, active = 0, recovery = 0.4,
+			damage = 12, kbBase = 20, kbGrowth = 35, kbAngle = 20,
+			projectile = { speed = 55, angle = 5, gravity = 0, lifetime = 1.0, size = 1.8, color = PAPER, visual = PLANE },
 			windup = { Root = { 0, -15, 0, 0, -0.15, 0.15 }, Waist = { 0, -18, 0 }, Neck = { 6, 15, 0 }, RS = { 20, 0, 25 }, RE = { 50, 0, 0 }, LS = { 120, 0, 30 }, LE = { 110, 0, 0 } },
 			strike = { Root = { -6, 12, 0, 0, -0.2, -0.15 }, Waist = { -6, 16, 0 }, Neck = { 0, -10, 0 }, RS = { 20, 0, 25 }, RE = { 50, 0, 0 }, LS = { 100, 0, -5 }, LE = { 5, 0, 0 } },
 			follow = { Root = { -6, 16, 0, 0, -0.2, -0.18 }, Waist = { -6, 20, 0 }, Neck = { 0, -12, 0 }, RS = { 20, 0, 25 }, RE = { 50, 0, 0 }, LS = { 90, 0, -15 }, LE = { 10, 0, 0 } },
 			text = "VEUILLEZ REMPLIR CECI.", hitText = "FORMULAIRE COLLÉ !",
 		},
-		-- Tampon « REFUSÉ » : il charge un grand coup de tampon à deux mains et renverse l'adversaire
+		-- Tampon « REFUSÉ » : il lève le tampon géant à deux mains et l'abat : REFUSÉ s'imprime sur tout le couloir
 		S_side = {
-			label = "Tampon « REFUSÉ »", energyCost = 30, startup = 0.26, active = 0.12, recovery = 0.38,
-			damage = 15, hitbox = box(5.5, 4, 3, 0.5), kbBase = 38, kbGrowth = 80, kbAngle = 25, selfVelocity = Vector2.new(18, 0),
+			label = "Tampon « REFUSÉ »", startup = 0.28, active = 0.15, recovery = 0.5,
+			damage = 16, hitbox = box(14, 5, 7, 0.5), kbBase = 38, kbGrowth = 80, kbAngle = 25, selfVelocity = Vector2.new(18, 0),
 			windup = { Root = { 8, -10, 0, 0, -0.15, 0.3 }, Waist = { 14, -12, 0 }, Neck = { 16, 0, 0 }, RS = { 195, 0, 10 }, RE = { 50, 0, 0 }, RW = { 0, 0, 0 }, LS = { 185, 0, 0 }, LE = { 60, 0, 0 } },
 			strike = { Root = { -18, 8, 0, 0, -0.5, -0.5 }, Waist = { -30, 10, 0 }, Neck = { -6, 0, 0 }, RS = { 80, 0, -5 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 75, 0, 15 }, LE = { 15, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
 			follow = { Root = { -20, 10, 0, 0, -0.55, -0.55 }, Waist = { -34, 12, 0 }, Neck = { -8, 0, 0 }, RS = { 70, 0, -5 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 65, 0, 15 }, LE = { 15, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.55 } },
-			hold = 0.12, shake = true, trail = "prop", fx = { { "burst", color = INK, size = 4 }, { "text", text = "REFUSÉ", color = INK, scale = 1.3 }, { "shake", amount = 0.4 } },
+			hold = 0.12, shake = true, trail = "prop", fx = { { "burst", color = INK, size = 4 }, { "beam", color = INK, length = 14, width = 3, at = "feet" }, { "text", text = "REFUSÉ", color = INK, scale = 1.3 }, { "shake", amount = 0.4 } },
 			text = "DOSSIER…", hitText = "REFUSÉ !",
 		},
-		-- File d'attente : un figurant en carton surgit devant lui et bloque le prochain projectile… et Bernard le pousse des deux mains dans l'adversaire
+		-- File d'attente : un figurant en carton surgit devant lui et bloque le prochain projectile… et Bernard pousse toute la file des deux mains : elle bouscule tout le couloir
 		S_down = {
-			label = "File d'attente", kind = "wall", energyCost = 25, startup = 0.2, active = 0.12, recovery = 0.3,
-			hitbox = box(6, 4, 3, 0.6), kbBase = 30, kbGrowth = 45, kbAngle = 30,
-			damage = 7,
+			label = "File d'attente", kind = "wall", startup = 0.22, active = 0.15, recovery = 0.45,
+			hitbox = box(14, 5, 7, 0.6), kbBase = 30, kbGrowth = 50, kbAngle = 30,
+			damage = 12,
 			wall = { size = Vector3.new(1.5, 6.5, 6), offset = 4, lifetime = 6, max = 2, absorbs = true, solid = false, color = GREY,
 				visual = { shape = "block", size = 1.6, color = GREY, trail = false, parts = {
 					{ "block", Vector3.new(1.8, 3, 1), Vector3.new(0, -0.6, 0), GREY },
@@ -434,74 +434,75 @@ local data = {
 			trail = "bothHands", fx = { { "burst", color = GREY, size = 2.5, at = "front" }, { "symbols", symbols = { "🎫", "42" }, count = 2, radius = 1.5, at = "front", color = PAPER } },
 			text = "PRENEZ UN TICKET ET PATIENTEZ.", hitText = "POUSSÉ DANS LA FILE !",
 		},
-		-- Pause café (après une esquive) : il sirote son mug, récupère un peu… et recrache le café bouillant sur l'adversaire (sans défense pendant la pause)
+		-- Pause café (après une esquive) : il sirote son mug, récupère un peu… et recrache un jet de café bouillant sur tout le couloir (sans défense pendant la pause)
 		S_dodge = {
-			label = "Pause café", energyCost = 30, startup = 0.2, active = 0.12, recovery = 0.8,
-			hitbox = box(6.5, 3.5, 3.5, 0.8), kbBase = 30, kbGrowth = 55, kbAngle = 35,
-			damage = 9, selfEffect = { heal = 6 },
+			label = "Pause café", startup = 0.22, active = 0.15, recovery = 0.8,
+			hitbox = box(14, 5, 7, 0.8), kbBase = 30, kbGrowth = 55, kbAngle = 35,
+			damage = 12, selfEffect = { heal = 6 },
 			windup = { Root = { 6, 0, 0, 0, -0.05, 0.1 }, Waist = { 10, 0, 0 }, Neck = { 28, 0, 0 }, RS = { 20, 0, 25 }, RE = { 50, 0, 0 }, LS = { 130, 0, 25 }, LE = { 140, 0, 0 }, LW = { -30, 0, 0 } },
 			strike = { Root = { -12, 0, 0, 0, -0.25, -0.35 }, Waist = { -18, 0, 0 }, Neck = { -14, 0, 0 }, RS = { 20, 0, 25 }, RE = { 50, 0, 0 }, LS = { 60, 0, -30 }, LE = { 60, 0, 0 }, LW = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.35 } },
 			follow = { Root = { -14, 0, 0, 0, -0.28, -0.4 }, Waist = { -20, 0, 0 }, Neck = { -18, 0, 0 }, RS = { 20, 0, 25 }, RE = { 50, 0, 0 }, LS = { 55, 0, -32 }, LE = { 60, 0, 0 }, LW = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
 			hold = 0.2, prop = "mug", windupFx = { { "particles", tex = "smoke", color = Color3.fromRGB(240, 230, 220), dir = "up", at = "lhand", time = 0.6, speed = 3 }, { "symbols", symbols = { "☕" }, count = 1, radius = 1 } },
-			fx = { { "particles", tex = "smoke", color = Color3.fromRGB(120, 80, 50), dir = "front", at = "head", time = 0.3, speed = 16, size = 0.6, rate = 80 }, { "burst", color = Color3.fromRGB(120, 80, 50), size = 2, at = "front" } },
+			fx = { { "beam", color = Color3.fromRGB(120, 80, 50), length = 14, width = 2, at = "head" }, { "particles", tex = "smoke", color = Color3.fromRGB(120, 80, 50), dir = "front", at = "head", time = 0.3, speed = 18, size = 0.6, rate = 80 }, { "burst", color = Color3.fromRGB(120, 80, 50), size = 2, at = "front" } },
 			text = "PAUSE CAFÉ.", hitText = "CAFÉ BRÛLANT !",
 		},
-		-- Pile de dossiers (remontée, gratuite) : une pile de dossiers jaillit sous lui, il monte assis dessus
+		-- Courrier prioritaire (↑L) : une pile de dossiers jaillit sous lui comme un ressort et l'expédie en diagonale vers l'avant,
+		-- tampon tendu devant lui, timbré URGENT, jambes qui traînent derrière
 		S_up = {
-			label = "Pile de dossiers", energyCost = 0, startup = 0.06, active = 0.3, recovery = 0.3,
-			damage = 7, hitbox = box(5, 6, 0.5, 0.5), kbBase = 30, kbGrowth = 40, kbAngle = 85, selfVelocity = Vector2.new(5, 85),
-			windup = { Root = { 0, 0, 0, 0, -0.6, 0 }, Waist = { -10, 0, 0 }, Neck = { 0, 0, 0 }, RS = { 30, 0, 30 }, RE = { 40, 0, 0 }, LS = { 30, 0, -30 }, LE = { 40, 0, 0 } },
-			strike = { Root = { 10, 0, 0, 0, -0.3, 0 }, Waist = { 4, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 20, 0, 40 }, RE = { 70, 0, 0 }, LS = { 20, 0, -40 }, LE = { 70, 0, 0 }, RH = { 90, 0, 0 }, RK = { -90, 0, 0 }, LH = { 90, 0, 0 }, LK = { -90, 0, 0 } },
-			follow = { Root = { 12, 0, 0, 0, -0.3, 0 }, Waist = { 6, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 18, 0, 42 }, RE = { 75, 0, 0 }, LS = { 18, 0, -42 }, LE = { 75, 0, 0 }, RH = { 92, 0, 0 }, RK = { -92, 0, 0 }, LH = { 92, 0, 0 }, LK = { -92, 0, 0 } },
-			fx = { { "pillar", color = FOLDER, height = 10, width = 2.5, neon = false } }, text = "*SOUPIR*", hitText = "CLASSÉ EN HAUT !",
+			label = "Courrier prioritaire", startup = 0.1, active = 0.3, recovery = 0.4,
+			damage = 13, hitbox = box(10, 11, 3, 4), kbBase = 32, kbGrowth = 50, kbAngle = 75, selfVelocity = Vector2.new(42, 80),
+			windup = { Root = { 0, 0, 0, 0, -0.6, 0 }, Waist = { -12, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 40, 0, 25 }, RE = { 50, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -25 }, LE = { 50, 0, 0 } },
+			strike = { Root = { -40, 0, 0, 0, 0.4, -0.2 }, Waist = { -6, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 172, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -30, 0, -25 }, LE = { 30, 0, 0 }, RH = { -25, 0, 5 }, RK = { -30, 0, 0 }, LH = { -15, 0, -5 }, LK = { -50, 0, 0 } },
+			follow = { Root = { -44, 0, 0, 0, 0.45, -0.25 }, Waist = { -8, 0, 0 }, Neck = { 32, 0, 0 }, RS = { 176, 0, 12 }, RE = { 0, 0, 0 }, RW = { -8, 0, 0 }, LS = { -35, 0, -30 }, LE = { 30, 0, 0 }, RH = { -30, 0, 6 }, RK = { -35, 0, 0 }, LH = { -20, 0, -6 }, LK = { -55, 0, 0 } },
+			trail = "prop", fx = { { "pillar", color = FOLDER, height = 10, width = 2.5, neon = false }, { "toss", shape = "flat", color = PAPER, size = 0.8, count = 6, speed = 16 }, { "ring", color = FOLDER, radius = 5, at = "feet" }, { "symbols", symbols = { "📨", "URGENT" }, count = 3, radius = 2, color = INK } }, text = "COURRIER PRIORITAIRE !", hitText = "TAMPONNÉ EN VOL !",
 		},
-		-- Ticket numéroté (S maintenu) : il distribue un ticket ; à l'appel de son numéro, l'adversaire se fige
+		-- Ticket numéroté (S maintenu) : il tend un ticket qui vole droit sur l'adversaire ; à l'appel de son numéro, il se fige
 		-- (le moteur ne sait pas différer un statut : le ticket touché fige tout de suite)
 		S_hold = {
-			label = "Ticket numéroté", kind = "projectile", energyCost = 30, startup = 0.22, active = 0, recovery = 0.32,
-			damage = 5, kbBase = 6, kbGrowth = 8, kbAngle = 20, status = { name = "stunned", duration = 1.5 },
-			projectile = { speed = 35, angle = 0, gravity = 0, lifetime = 1.2, size = 1.6, color = Color3.fromRGB(255, 200, 220),
-				visual = { shape = "block", size = 0.9, color = Color3.fromRGB(255, 200, 220), text = "42", textColor = BLACK } },
+			label = "Ticket numéroté", kind = "projectile", startup = 0.3, active = 0, recovery = 0.45,
+			damage = 12, kbBase = 10, kbGrowth = 12, kbAngle = 20, status = { name = "stunned", duration = 1.5 },
+			projectile = { speed = 50, angle = 0, gravity = 0, lifetime = 1.0, size = 1.8, color = Color3.fromRGB(255, 200, 220),
+				visual = { shape = "block", size = 1.1, color = Color3.fromRGB(255, 200, 220), text = "42", textColor = BLACK } },
 			windup = { Root = { 0, -10, 0, 0, -0.15, 0.1 }, Waist = { 0, -12, 0 }, Neck = { 10, 10, 0 }, RS = { 20, 0, 25 }, RE = { 50, 0, 0 }, LS = { 60, 0, 10 }, LE = { 110, 0, 0 } },
 			strike = { Root = { -4, 10, 0, 0, -0.2, -0.1 }, Waist = { -4, 12, 0 }, Neck = { 0, -8, 0 }, RS = { 20, 0, 25 }, RE = { 50, 0, 0 }, LS = { 90, 0, -10 }, LE = { 10, 0, 0 } },
 			follow = { Root = { -4, 12, 0, 0, -0.2, -0.12 }, Waist = { -4, 14, 0 }, Neck = { 0, -10, 0 }, RS = { 20, 0, 25 }, RE = { 50, 0, 0 }, LS = { 88, 0, -12 }, LE = { 12, 0, 0 } },
 			hold = 0.1, text = "LE NUMÉRO 42…", hitText = "C'EST VOUS !",
 		},
-		-- Glissade en chaise à roulettes (→→S) : assis sur sa chaise, il traverse l'arène à reculons… puis de face
+		-- Glissade en chaise à roulettes (→→S) : assis sur sa chaise, il traverse tout le couloir et fauche tout au passage avec les pieds
 		S_dash = {
-			label = "Glissade en chaise à roulettes", energyCost = 25, startup = 0.1, active = 0.35, recovery = 0.32,
-			damage = 10, hitbox = box(5, 3, 2.5, -0.3), kbBase = 30, kbGrowth = 60, kbAngle = 30, selfVelocity = Vector2.new(60, 0),
+			label = "Glissade en chaise à roulettes", startup = 0.15, active = 0.35, recovery = 0.4,
+			damage = 13, hitbox = box(14, 5, 6, -0.3), kbBase = 30, kbGrowth = 60, kbAngle = 30, selfVelocity = Vector2.new(60, 0),
 			windup = { Root = { 6, 0, 0, 0, -0.6, 0.1 }, Waist = { 4, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 30, 0, 30 }, RE = { 60, 0, 0 }, LS = { 0, 0, -10 }, LE = { 10, 0, 0 } },
 			strike = { Root = { 10, 0, 0, 0, -0.9, 0 }, Waist = { 6, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 70, 0, 20 }, RE = { 30, 0, 0 }, LS = { -5, 0, -12 }, LE = { 5, 0, 0 }, RH = { 85, 0, 0 }, RK = { -40, 0, 0 }, LH = { 85, 0, 0 }, LK = { -40, 0, 0 } },
 			follow = { Root = { 10, 0, 0, 0, -0.9, 0 }, Waist = { 6, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 72, 0, 22 }, RE = { 30, 0, 0 }, LS = { -5, 0, -12 }, LE = { 5, 0, 0 }, RH = { 88, 0, 0 }, RK = { -35, 0, 0 }, LH = { 88, 0, 0 }, LK = { -35, 0, 0 } },
 			prop = "chaise", trail = "body", fx = { { "particles", tex = "spark", color = Color3.fromRGB(240, 220, 160), dir = "up", at = "feet", time = 0.4, speed = 5 } },
 			text = "GRIIIIIN…", hitText = "BOUM !",
 		},
-		-- Pluie de Post-it (S en l'air) : il secoue un bloc de Post-it, qui pleuvent devant lui
+		-- Bloc de Post-it (S en l'air) : il jette son bloc de Post-it entier, qui fonce sur l'adversaire et s'y colle de partout
 		S_air = {
-			label = "Pluie de Post-it", kind = "projectile", energyCost = 20, startup = 0.14, active = 0, recovery = 0.3,
-			damage = 3, kbBase = 14, kbGrowth = 20, kbAngle = 50,
-			projectile = { speed = 45, gravity = 0, lifetime = 0.5, size = 1.3, color = POSTIT, visual = { shape = "block", size = 0.8, color = POSTIT, spin = 6 },
-				rain = { count = 6, spread = 5, ahead = 6, height = 12, gap = 0.08 } },
+			label = "Bloc de Post-it", kind = "projectile", startup = 0.16, active = 0, recovery = 0.4,
+			damage = 12, kbBase = 20, kbGrowth = 35, kbAngle = 50,
+			projectile = { speed = 60, angle = -20, gravity = 0, lifetime = 0.7, size = 1.6, color = POSTIT,
+				visual = { shape = "block", size = 1.2, color = POSTIT, spin = 6, parts = { { "block", Vector3.new(0.7, 0.05, 0.7), Vector3.new(0.3, 0.65, 0.2), POSTIT }, { "block", Vector3.new(0.7, 0.7, 0.05), Vector3.new(-0.2, 0.2, -0.65), Color3.fromRGB(255, 180, 200) } } } },
 			windup = { Root = { -4, 0, 0 }, Waist = { -6, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 40, 0, 40 }, RE = { 60, 0, 0 }, LS = { 150, 0, -10 }, LE = { 40, 0, 0 }, RH = { 60, 0, 0 }, RK = { -90, 0, 0 }, LH = { 50, 0, 0 }, LK = { -90, 0, 0 } },
 			strike = { Root = { 4, 0, 0 }, Waist = { 6, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 40, 0, 40 }, RE = { 60, 0, 0 }, LS = { 165, 0, -25 }, LE = { 10, 0, 0 }, RH = { 40, 0, 0 }, RK = { -70, 0, 0 }, LH = { 30, 0, 0 }, LK = { -70, 0, 0 } },
 			follow = { Root = { 4, 0, 0 }, Waist = { 6, 0, 0 }, Neck = { 22, 0, 0 }, RS = { 40, 0, 40 }, RE = { 60, 0, 0 }, LS = { 160, 0, 5 }, LE = { 10, 0, 0 }, RH = { 35, 0, 0 }, RK = { -65, 0, 0 }, LH = { 25, 0, 0 }, LK = { -65, 0, 0 } },
 			shake = true, text = "N'OUBLIEZ PAS…", hitText = "COLLÉ !",
 		},
-		-- Plongeon de dossier (↓S en l'air) : bras chargés d'archives, il se laisse tomber de tout son poids
+		-- Plongeon de dossier (↓S en l'air) : bras chargés d'archives, il se laisse tomber de tout son poids sur l'adversaire
 		S_air_down = {
-			label = "Plongeon de dossier", energyCost = 25, startup = 0.12, active = 0.35, recovery = 0.32,
-			damage = 12, hitbox = box(5, 4, 0.8, -2), kbBase = 25, kbGrowth = 55, kbAngle = -80, selfVelocity = Vector2.new(0, -85),
+			label = "Plongeon de dossier", startup = 0.15, active = 0.35, recovery = 0.4,
+			damage = 13, hitbox = box(6, 5, 1, -2), kbBase = 25, kbGrowth = 55, kbAngle = -80, selfVelocity = Vector2.new(0, -85),
 			windup = { Root = { 6, 0, 0 }, Waist = { 8, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 120, 0, -20 }, RE = { 60, 0, 0 }, LS = { 120, 0, 20 }, LE = { 60, 0, 0 }, LW = { 0, 0, 0 }, RH = { 60, 0, 0 }, RK = { -90, 0, 0 }, LH = { 60, 0, 0 }, LK = { -90, 0, 0 } },
 			strike = { Root = { -20, 0, 0 }, Waist = { -14, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 75, 0, -20 }, RE = { 60, 0, 0 }, LS = { 75, 0, 20 }, LE = { 60, 0, 0 }, LW = { 0, 0, 0 }, RH = { 20, 0, 0 }, RK = { -30, 0, 0 }, LH = { 15, 0, 0 }, LK = { -40, 0, 0 } },
 			follow = { Root = { -24, 0, 0 }, Waist = { -16, 0, 0 }, Neck = { 22, 0, 0 }, RS = { 72, 0, -22 }, RE = { 62, 0, 0 }, LS = { 72, 0, 22 }, LE = { 62, 0, 0 }, LW = { 0, 0, 0 }, RH = { 15, 0, 0 }, RK = { -30, 0, 0 }, LH = { 10, 0, 0 }, LK = { -40, 0, 0 } },
 			prop = "dossiers", trail = "body", fx = { { "toss", shape = "flat", color = PAPER, size = 0.8, count = 6, speed = 16 }, { "ring", color = FOLDER, radius = 4, at = "feet" } },
 			text = "ARCHIVES !", hitText = "BLAM !",
 		},
-		-- Agrafage en règle (finition d'enchaînement) : trois coups d'agrafeuse rapides, chacun colle un formulaire
+		-- Agrafage en règle (finition d'enchaînement) : trois coups d'agrafeuse rapides d'un seul geste, qui collent un formulaire
 		S_finish_agrafe = {
-			label = "Agrafage en règle", energyCost = 20, startup = 0.12, active = 0.24, recovery = 0.3,
-			damage = 4, hitbox = box(5, 3.5, 2.6, 0.6), hits = 3, kbBase = 26, kbGrowth = 45, kbAngle = 35,
+			label = "Agrafage en règle", startup = 0.12, active = 0.24, recovery = 0.3,
+			damage = 12, hitbox = box(5, 3.5, 2.6, 0.6), kbBase = 26, kbGrowth = 45, kbAngle = 35,
 			windup = { Root = { -4, 20, 0, 0, -0.2, 0.1 }, Waist = { -4, 24, 0 }, Neck = { 0, -15, 0 }, RS = { 20, 0, 22 }, RE = { 50, 0, 0 }, LS = { 80, 0, -50 }, LE = { 100, 0, 0 }, LW = { 0, 0, 0 } },
 			strike = { Root = { -8, -10, 0, 0, -0.25, -0.25 }, Waist = { -8, -14, 0 }, Neck = { 0, 10, 0 }, RS = { 20, 0, 22 }, RE = { 50, 0, 0 }, LS = { 95, 0, 0 }, LE = { 10, 0, 0 }, LW = { 0, 0, 0 } },
 			follow = { Root = { -8, -12, 0, 0, -0.25, -0.28 }, Waist = { -8, -16, 0 }, Neck = { 0, 12, 0 }, RS = { 20, 0, 22 }, RE = { 50, 0, 0 }, LS = { 92, 0, 5 }, LE = { 30, 0, 0 }, LW = { 0, 0, 0 } },
@@ -509,10 +510,10 @@ local data = {
 		},
 
 		------------------------------------------------------------------ Supers
-		-- Grève générale : il croise les bras, sort sa pancarte imaginaire… et tout le monde se fige, sauf lui
+		-- Grève générale (Y) : il croise les bras, sort sa pancarte imaginaire… et tout l'écran se fige, sauf lui
 		SUPER = {
-			label = "Grève générale !", superCost = 100, startup = 0.45, active = 0.2, recovery = 0.5,
-			damage = 6, hitbox = box(80, 50, 0, 10), kbBase = 8, kbGrowth = 8, kbAngle = 60,
+			label = "Grève générale !", startup = 0.45, active = 0.2, recovery = 0.7,
+			damage = 20, hitbox = box(80, 50, 0, 10), kbBase = 8, kbGrowth = 8, kbAngle = 60,
 			status = { name = "statue", duration = 2.5 },
 			windup = { Root = { 0, 0, 0, 0, -0.1, 0 }, Waist = { 4, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 60, 0, -40 }, RE = { 110, 0, 0 }, LS = { 60, 0, 40 }, LE = { 110, 0, 0 } },
 			strike = { Root = { 4, 0, 0, 0, 0, 0 }, Waist = { 8, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 175, 0, 10 }, RE = { 10, 0, 0 }, LS = { 175, 0, -10 }, LE = { 10, 0, 0 } },
@@ -521,10 +522,11 @@ local data = {
 			fx = { { "symbols", symbols = { "🪧", "✊", "GRÈVE !" }, count = 8, radius = 6 }, { "shake", amount = 0.3 } },
 			text = "GRÈVE GÉNÉRALE !", hitText = "TOUT EST FERMÉ !",
 		},
-		-- Super ↑ : il serre une montagne de dossiers contre lui et la jette au plafond : une tour d'archives jaillit du sol et emporte tout
+		-- Avalanche de dossiers (↑Y) : il serre une montagne de dossiers contre lui et la jette au plafond : une tour d'archives
+		-- jaillit sur tout le couloir et emporte tout le monde en haut
 		SUPER_up = {
-			label = "Avalanche de dossiers !", superCost = 100, startup = 0.35, active = 0.3, recovery = 0.6,
-			damage = 22, hitbox = box(8, 14, 3, 6), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
+			label = "Avalanche de dossiers !", startup = 0.4, active = 0.3, recovery = 0.7,
+			damage = 24, hitbox = box(16, 14, 8, 6), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
 			windup = { Root = { -10, 0, 0, 0, -0.6, 0.1 }, Waist = { -26, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 60, 0, -25 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, 25 }, LE = { 110, 0, 0 }, LW = { 0, 0, 0 } },
 			strike = { Root = { 8, 0, 0, 0, 0.4, 0 }, Waist = { 16, 0, 0 }, Neck = { 40, 0, 0 }, RS = { 182, 0, 18 }, RE = { 5, 0, 0 }, RW = { 0, 0, 0 }, LS = { 182, 0, -18 }, LE = { 5, 0, 0 }, LW = { 0, 0, 0 }, FR = { 0, 0, 0, 0, 0.3, 0 }, FL = { 0, 0, 0, 0, 0.3, 0 } },
 			follow = { Root = { 10, 0, 0, 0, 0.45, 0 }, Waist = { 20, 0, 0 }, Neck = { 46, 0, 0 }, RS = { 165, 0, 60 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 165, 0, -60 }, LE = { 10, 0, 0 }, LW = { 0, 0, 0 }, FR = { 0, 0, 0, 0, 0.35, 0 }, FL = { 0, 0, 0, 0, 0.35, 0 } },
@@ -533,21 +535,21 @@ local data = {
 			fx = { { "pillar", color = FOLDER, height = 24, width = 4.5, at = "front" }, { "rain", shape = "flat", color = PAPER, count = 16, radius = 6, size = 0.9 }, { "text", text = "ARCHIVÉ", color = INK, at = "above" }, { "shake", amount = 0.4 } },
 			text = "AVALANCHE DE DOSSIERS !", hitText = "CLASSÉ TOUT EN HAUT !",
 		},
-		-- Formulaire Cerfa 12-B : il plaque un formulaire interminable sur l'adversaire ; selon qu'il est bien rempli
+		-- Formulaire Cerfa 12-B (↓Y) : il déroule un formulaire interminable sur tout le couloir ; selon qu'il est bien rempli
 		-- ou non, le résultat change (le mini-jeu de saisie n'existe pas dans le moteur : variantes au hasard)
 		SUPER_down = {
-			label = "Formulaire Cerfa 12-B", superCost = 100, startup = 0.4, active = 0.15, recovery = 0.5,
-			damage = 18, hitbox = box(7, 6, 3.5, 1), kbBase = 35, kbGrowth = 70, kbAngle = 35,
+			label = "Formulaire Cerfa 12-B", startup = 0.4, active = 0.2, recovery = 0.7,
+			damage = 20, hitbox = box(16, 6, 8, 1), kbBase = 35, kbGrowth = 70, kbAngle = 35,
 			variants = {
-				{ label = "Cerfa presque rempli", damage = 12, kbBase = 30, kbGrowth = 45, hitText = "IL MANQUE UNE SIGNATURE…" },
-				{ label = "Cerfa en triple exemplaire", damage = 18, status = { name = "waiting", duration = 2 }, hitText = "EN TRIPLE EXEMPLAIRE !" },
-				{ label = "Cerfa refusé", damage = 26, kbBase = 45, kbGrowth = 90, hitText = "DOSSIER REFUSÉ !!" },
+				{ label = "Cerfa presque rempli", damage = 14, kbBase = 30, kbGrowth = 45, hitText = "IL MANQUE UNE SIGNATURE…" },
+				{ label = "Cerfa en triple exemplaire", damage = 20, status = { name = "waiting", duration = 2 }, hitText = "EN TRIPLE EXEMPLAIRE !" },
+				{ label = "Cerfa refusé", damage = 28, kbBase = 45, kbGrowth = 90, hitText = "DOSSIER REFUSÉ !!" },
 			},
 			windup = { Root = { 6, 0, 0, 0, -0.1, 0.2 }, Waist = { 10, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 180, 0, 15 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 120, 0, 30 }, LE = { 80, 0, 0 } },
 			strike = { Root = { -14, 0, 0, 0, -0.4, -0.45 }, Waist = { -24, 0, 0 }, Neck = { -4, 0, 0 }, RS = { 85, 0, -5 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, 10 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
 			follow = { Root = { -16, 0, 0, 0, -0.42, -0.5 }, Waist = { -26, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 80, 0, -5 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 85, 0, 10 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
 			hold = 0.2, prop = "dossiers", windupFx = { { "screen", color = PAPER, alpha = 0.3 }, { "symbols", symbols = { "📋", "✍️", "📎" }, count = 6, radius = 4 } },
-			fx = { { "burst", color = INK, size = 4 }, { "toss", shape = "flat", color = PAPER, size = 1, count = 8, speed = 20 } },
+			fx = { { "burst", color = INK, size = 4 }, { "beam", color = PAPER, length = 16, width = 4, at = "feet" }, { "toss", shape = "flat", color = PAPER, size = 1, count = 8, speed = 20 } },
 			text = "FORMULAIRE CERFA 12-B !", hitText = "TAMPONNÉ !",
 		},
 

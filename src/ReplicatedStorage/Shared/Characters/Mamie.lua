@@ -417,46 +417,45 @@ local data = {
 		},
 
 		------------------------------------------------------------------ Spéciaux (S)
-		-- Lancer de chat : elle attrape Minou sur son épaule et le lance en cloche (anti-air), il griffe 3 fois
+		-- Lancer de chat : elle lance Minou qui file droit sur l'adversaire et lui saute à la figure toutes griffes dehors
 		S_neutral = {
-			label = "Lancer de chat", kind = "projectile", energyCost = 25, startup = 0.18, active = 0, recovery = 0.35,
-			damage = 4, kbBase = 12, kbGrowth = 25, kbAngle = 60,
-			projectile = { speed = 48, angle = 55, gravity = 70, lifetime = 1.2, size = 2, hits = 3, color = MINOU, visual = catVisual(MINOU) },
+			label = "Lancer de chat", kind = "projectile", startup = 0.2, active = 0, recovery = 0.4,
+			damage = 13, kbBase = 26, kbGrowth = 45, kbAngle = 35,
+			projectile = { speed = 62, angle = 0, gravity = 0, lifetime = 0.9, size = 2.2, color = MINOU, visual = catVisual(MINOU) },
 			windup = { Root = { -6, -10, 0, 0, -0.25, 0.15 }, Waist = { -10, -15, 0 }, Neck = { 10, 15, 0 }, RS = { 150, 0, -25 }, RE = { 120, 0, 0 }, LS = { 25, 0, -15 }, LE = { 40, 0, 0 } },
-			strike = { Root = { 4, 10, 0, 0, -0.05, -0.15 }, Waist = { 4, 12, 0 }, Neck = { 28, -5, 0 }, RS = { 145, 0, 10 }, RE = { 10, 0, 0 }, LS = { 20, 0, -20 }, LE = { 40, 0, 0 } },
-			follow = { Root = { 2, 14, 0, 0, -0.1, -0.2 }, Waist = { 0, 16, 0 }, Neck = { 30, -8, 0 }, RS = { 120, 0, 15 }, RE = { 15, 0, 0 }, LS = { 18, 0, -22 }, LE = { 40, 0, 0 } },
-			windupFx = { { "symbols", symbols = { "🐈" }, count = 2, radius = 1.5, color = MINOU } }, text = "VAS-Y MINOU !", hitText = "MIAOU !",
+			strike = { Root = { -8, 12, 0, 0, -0.2, -0.25 }, Waist = { -10, 14, 0 }, Neck = { 26, -6, 0 }, RS = { 100, 0, 4 }, RE = { 5, 0, 0 }, LS = { 20, 0, -20 }, LE = { 40, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+			follow = { Root = { -10, 16, 0, 0, -0.22, -0.3 }, Waist = { -12, 18, 0 }, Neck = { 28, -8, 0 }, RS = { 96, 0, -6 }, RE = { 8, 0, 0 }, LS = { 18, 0, -22 }, LE = { 40, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+			windupFx = { { "symbols", symbols = { "🐈" }, count = 2, radius = 1.5, color = MINOU } }, text = "VAS-Y MINOU !", hitText = "GRIFFÉ !",
 		},
-		-- Charge du déambulateur : elle sort son déambulateur et fonce droit devant à petits pas rageurs
+		-- Charge du déambulateur : elle sort son déambulateur et fonce à petits pas rageurs, tout le couloir y passe (elle encaisse sans broncher)
 		S_side = {
-			label = "Charge du déambulateur", energyCost = 25, startup = 0.12, active = 0.4, recovery = 0.35,
-			damage = 7, hitbox = box(5, 3.5, 2.8, 0), hits = 2, kbBase = 30, kbGrowth = 60, kbAngle = 30, selfVelocity = Vector2.new(55, 0),
+			label = "Charge du déambulateur", startup = 0.18, active = 0.4, recovery = 0.45,
+			damage = 13, hitbox = box(14, 5, 6, 0.5), kbBase = 30, kbGrowth = 60, kbAngle = 30, selfVelocity = Vector2.new(55, 0), armor = true,
 			windup = { Root = { -8, 0, 0, 0, -0.25, 0.1 }, Waist = { -20, 0, 0 }, Neck = { 22, 0, 0 }, RS = { 40, 0, 0 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -5 }, LE = { 40, 0, 0 } },
 			strike = { Root = { -18, 0, 0, 0, -0.3, -0.2 }, Waist = { -24, 0, 0 }, Neck = { 34, 0, 0 }, RS = { 60, 0, -5 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, 5 }, LE = { 10, 0, 0 }, FR = { 0, 0, 0, 0, 0.1, -0.2 } },
 			follow = { Root = { -18, 0, 0, 0, -0.3, -0.25 }, Waist = { -24, 0, 0 }, Neck = { 34, 0, 0 }, RS = { 62, 0, -5 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 62, 0, 5 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0.1, -0.25 } },
 			wobble = true, prop = "deambulateur", hideProp = "sac", fx = { { "particles", tex = "smoke", color = Color3.fromRGB(220, 210, 190), dir = "up", at = "feet", time = 0.4, speed = 6 } },
 			text = "PLACE AUX ANCIENS !", hitText = "CLANG !",
 		},
-		-- Pose de pelote : elle se penche (aïe les reins) et pose une pelote piégée qui ligote qui marche dessus
+		-- Pelote roulée : elle pose une pelote au sol et la pousse d'un coup de canne ; elle roule droit sur l'adversaire et le fil l'entortille
 		S_down = {
-			label = "Pose de pelote", kind = "trap", energyCost = 20, startup = 0.15, active = 0, recovery = 0.3,
-			damage = 4, kbBase = 10, kbGrowth = 10, kbAngle = 60, status = { name = "rooted", duration = 1 },
-			trap = { size = Vector3.new(3, 2, 6), offset = 3, lifetime = 12, color = WOOL,
-				visual = { shape = "ball", size = 1.6, color = WOOL, trail = false, material = "Fabric", parts = {
+			label = "Pelote roulée", kind = "projectile", startup = 0.2, active = 0, recovery = 0.4,
+			damage = 12, kbBase = 20, kbGrowth = 30, kbAngle = 40, status = { name = "rooted", duration = 1.2 },
+			projectile = { speed = 55, angle = 0, gravity = 0, lifetime = 0.9, size = 1.8, from = "feet", color = WOOL,
+				visual = { shape = "ball", size = 1.6, color = WOOL, spin = 12, material = "Fabric", parts = {
 					{ "cyl", Vector3.new(0.12, 1.65, 1.65), Vector3.new(0, 0, 0), Color3.fromRGB(210, 90, 140), "Fabric" },
 					{ "block", Vector3.new(0.1, 2.2, 0.1), Vector3.new(0.3, 0.5, 0), Color3.fromRGB(200, 200, 210), "Metal" },
-					{ "block", Vector3.new(0.1, 2.2, 0.1), Vector3.new(-0.3, 0.5, 0), Color3.fromRGB(200, 200, 210), "Metal" },
 				} } },
 			windup = { Root = { -10, 0, 0, 0, -0.35, 0.1 }, Waist = { -30, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 40, 0, 10 }, RE = { 60, 0, 0 }, LS = { 30, 0, -20 }, LE = { 30, 0, 0 } },
-			strike = { Root = { -16, 0, 0, 0, -0.6, -0.1 }, Waist = { -45, 0, 0 }, Neck = { 40, 0, 0 }, RS = { 65, 0, 5 }, RE = { 10, 0, 0 }, LS = { 30, 0, -20 }, LE = { 20, 0, 0 } },
-			follow = { Root = { -6, 0, 0, 0, -0.3, 0.05 }, Waist = { -10, 0, 0 }, Neck = { 10, 0, 0 }, RS = { -30, 0, 20 }, RE = { 90, 0, 0 }, LS = { -30, 0, -20 }, LE = { 90, 0, 0 } },
-			text = "ATTENTION OÙ TU MARCHES…", hitText = "LIGOTÉ !",
+			strike = { Root = { -16, 0, 0, 0, -0.55, -0.2 }, Waist = { -40, 0, 0 }, Neck = { 36, 0, 0 }, RS = { 30, 0, 15 }, RE = { 40, 0, 0 }, LS = { 95, 0, -10 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+			follow = { Root = { -14, 0, 0, 0, -0.5, -0.25 }, Waist = { -36, 0, 0 }, Neck = { 38, 0, 0 }, RS = { 30, 0, 15 }, RE = { 40, 0, 0 }, LS = { 105, 0, -12 }, LE = { 0, 0, 0 }, LW = { -10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+			trail = "leftHand", fx = { { "ring", color = WOOL, radius = 3, at = "feet" } }, text = "ROULE, MA PELOTE !", hitText = "EMBOBINÉ !",
 		},
-		-- Pelote semée (après une esquive) : elle laisse tomber une pelote derrière elle en filant
+		-- Pelote semée (après une esquive) : elle laisse tomber une pelote piégée entre elle et l'adversaire en filant (mécanique Pelotes : 3 au sol au plus)
 		S_dodge = {
-			label = "Pelote semée", kind = "trap", energyCost = 20, startup = 0.1, active = 0, recovery = 0.25,
-			damage = 4, kbBase = 10, kbGrowth = 10, kbAngle = 60, status = { name = "rooted", duration = 1 },
-			trap = { size = Vector3.new(3, 2, 6), offset = -1.5, lifetime = 10, color = WOOL2,
+			label = "Pelote semée", kind = "trap", startup = 0.12, active = 0, recovery = 0.35,
+			damage = 10, kbBase = 12, kbGrowth = 15, kbAngle = 60, status = { name = "rooted", duration = 1.2 },
+			trap = { size = Vector3.new(4, 2, 6), offset = 3, lifetime = 10, color = WOOL2,
 				visual = { shape = "ball", size = 1.5, color = WOOL2, trail = false, material = "Fabric", parts = {
 					{ "cyl", Vector3.new(0.12, 1.55, 1.55), Vector3.new(0, 0, 0), Color3.fromRGB(80, 160, 200), "Fabric" },
 					{ "block", Vector3.new(0.1, 2, 0.1), Vector3.new(0.2, 0.5, 0), Color3.fromRGB(200, 200, 210), "Metal" },
@@ -466,21 +465,23 @@ local data = {
 			follow = { Root = { -6, -20, 0, 0, -0.25, 0.25 }, Waist = { -14, -20, 0 }, Neck = { 10, 50, 0 }, RS = { -30, 0, 25 }, RE = { 30, 0, 0 }, LS = { 30, 0, -20 }, LE = { 40, 0, 0 } },
 			text = "OUPS, J'AI FAIT TOMBER…", hitText = "LIGOTÉ !",
 		},
-		-- Envol de châle : elle ouvre son châle comme un parachute et s'envole en diagonale haute
-		-- (gratuit : c'est la remontée)
+		-- Châle supersonique (↑L, elle vole) : elle ouvre son châle comme un deltaplane et fend l'air en diagonale, aiguille à
+		-- tricoter tendue devant comme une lance, jambes qui traînent, les deux chats accrochés aux épaules (très puissant)
 		S_up = {
-			label = "Envol de châle", energyCost = 0, startup = 0.06, active = 0.35, recovery = 0.3,
-			damage = 6, hitbox = box(5, 5, 0.5, 2), kbBase = 26, kbGrowth = 35, kbAngle = 75, selfVelocity = Vector2.new(25, 80),
-			windup = { Root = { -10, 0, 0, 0, -0.6, 0 }, Waist = { -24, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 60, 0, -20 }, RE = { 100, 0, 0 }, LS = { 60, 0, 20 }, LE = { 100, 0, 0 } },
-			strike = { Root = { 6, 0, 0, 0, 0.3, 0 }, Waist = { 8, 0, 0 }, Neck = { 25, 0, 0 }, RS = { 160, 0, 55 }, RE = { 10, 0, 0 }, LS = { 160, 0, -55 }, LE = { 10, 0, 0 }, RH = { 10, 0, 0 }, RK = { -30, 0, 0 }, LH = { 20, 0, 0 }, LK = { -50, 0, 0 } },
-			follow = { Root = { 8, 0, 0, 0, 0.3, 0 }, Waist = { 10, 0, 0 }, Neck = { 28, 0, 0 }, RS = { 165, 0, 70 }, RE = { 10, 0, 0 }, LS = { 165, 0, -70 }, LE = { 10, 0, 0 }, RH = { 5, 0, 0 }, RK = { -40, 0, 0 }, LH = { 25, 0, 0 }, LK = { -60, 0, 0 } },
-			fx = { { "particles", tex = "smoke", color = SHAWL, dir = "down", at = "root", time = 0.4, speed = 8 } }, text = "HOP LÀ !", hitText = "FLOUF !",
+			label = "Châle supersonique", startup = 0.12, active = 0.35, recovery = 0.45,
+			damage = 17, hitbox = box(10, 11, 3, 4), kbBase = 40, kbGrowth = 70, kbAngle = 72, selfVelocity = Vector2.new(42, 80),
+			windup = { Root = { -8, 0, 0, 0, -0.65, 0.1 }, Waist = { -26, 0, 0 }, Neck = { 26, 0, 0 }, RS = { 60, 0, -25 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, 25 }, LE = { 110, 0, 0 } },
+			strike = { Root = { -45, 0, 0, 0, 0.4, -0.2 }, Waist = { -6, 0, 0 }, Neck = { 34, 0, 0 }, RS = { 175, 0, 8 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, -70 }, LE = { 10, 0, 0 }, RH = { -25, 0, 6 }, RK = { -30, 0, 0 }, LH = { -15, 0, -6 }, LK = { -45, 0, 0 } },
+			follow = { Root = { -48, 0, 0, 0, 0.45, -0.25 }, Waist = { -8, 0, 0 }, Neck = { 36, 0, 0 }, RS = { 178, 0, 10 }, RE = { 0, 0, 0 }, RW = { -8, 0, 0 }, LS = { 155, 0, -80 }, LE = { 10, 0, 0 }, RH = { -30, 0, 8 }, RK = { -35, 0, 0 }, LH = { -20, 0, -8 }, LK = { -50, 0, 0 } },
+			prop = "aiguille", hideProp = "sac", trail = "rightHand", windupFx = { { "particles", tex = "smoke", color = SHAWL, dir = "all", at = "root", time = 0.2, speed = 6 } },
+			fx = { { "burst", color = SHAWL, size = 3.5, at = "feet" }, { "ring", color = SHAWL, radius = 6, at = "feet" }, { "particles", tex = "smoke", color = SHAWL, dir = "down", at = "feet", time = 0.4, speed = 12 }, { "symbols", symbols = { "🐈", "🐈‍⬛" }, count = 2, radius = 2, color = MINOU } },
+			text = "ACCROCHEZ-VOUS, MES CHÉRIS !", hitText = "EMBROCHÉ !",
 		},
-		-- Tricot express (S maintenu) : elle tricote à toute vitesse un pull-bouclier qui avale le prochain projectile… et pique l'adversaire d'un coup d'aiguille en estoc pour finir le rang
+		-- Tricot express (S maintenu) : elle tricote à toute vitesse un pull-bouclier qui avale le prochain projectile… et finit le rang d'un coup d'aiguille en estoc qui traverse tout le couloir
 		S_hold = {
-			label = "Tricot express", kind = "wall", energyCost = 30, startup = 0.3, active = 0.12, recovery = 0.3,
-			hitbox = box(6.5, 3.5, 3.5, 0.6), kbBase = 30, kbGrowth = 45, kbAngle = 30,
-			damage = 7,
+			label = "Tricot express", kind = "wall", startup = 0.3, active = 0.15, recovery = 0.45,
+			hitbox = box(14, 5, 7, 0.8), kbBase = 30, kbGrowth = 50, kbAngle = 30,
+			damage = 13,
 			wall = { size = Vector3.new(2.5, 5, 6), offset = 2.2, lifetime = 4, max = 1, follow = true, absorbs = true, solid = false, color = WOOL,
 				visual = { shape = "block", size = 2.4, color = WOOL, trail = false, material = "Fabric", parts = {
 					{ "block", Vector3.new(0.8, 2.2, 1.2), Vector3.new(0, 0.2, 1.5), WOOL, "Fabric" },
@@ -492,34 +493,34 @@ local data = {
 			follow = { Root = { -14, 20, 0, 0, -0.32, -0.5 }, Waist = { -20, 26, 0 }, Neck = { 20, -18, 0 }, RS = { 98, 0, -14 }, RE = { 0, 0, 0 }, RW = { -8, 0, 0 }, LS = { -15, 0, -28 }, LE = { 30, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
 			shake = true, prop = "aiguille", hideProp = "sac", trail = "rightHand",
 			windupFx = { { "particles", tex = "spark", color = WOOL, dir = "all", at = "hand", time = 0.3, speed = 4 } },
-			fx = { { "burst", color = WOOL, size = 2.5, at = "front" } },
+			fx = { { "burst", color = WOOL, size = 2.5, at = "front" }, { "beam", color = WOOL, length = 14, width = 1.2, at = "hand" } },
 			text = "TRICOT EXPRESS !", hitText = "PIQUÉ AU PULL !",
 		},
-		-- Chat boomerang (→→S) : elle lance Pompon à l'horizontale, il griffe 3 fois et revient sur son épaule
+		-- Chat boomerang (→→S) : elle lance Pompon à l'horizontale, il fonce sur l'adversaire, le griffe au passage et revient sur son épaule
 		S_dash = {
-			label = "Chat boomerang", kind = "projectile", energyCost = 25, startup = 0.14, active = 0, recovery = 0.3,
-			damage = 4, kbBase = 14, kbGrowth = 25, kbAngle = 25,
-			projectile = { speed = 55, angle = 0, gravity = 0, lifetime = 0.9, size = 2, hits = 3, returns = true, color = POMPON, visual = catVisual(POMPON) },
+			label = "Chat boomerang", kind = "projectile", startup = 0.18, active = 0, recovery = 0.4,
+			damage = 13, kbBase = 24, kbGrowth = 40, kbAngle = 25,
+			projectile = { speed = 60, angle = 0, gravity = 0, lifetime = 1.0, size = 2.2, returns = true, color = POMPON, visual = catVisual(POMPON) },
 			windup = { Root = { -4, -30, 0, 0, -0.2, 0.2 }, Waist = { -12, -35, 0 }, Neck = { 10, 30, 0 }, RS = { 80, 0, 60 }, RE = { 70, 0, 0 }, LS = { 30, 0, -20 }, LE = { 40, 0, 0 } },
 			strike = { Root = { -10, 20, 0, 0, -0.25, -0.3 }, Waist = { -14, 26, 0 }, Neck = { 12, -18, 0 }, RS = { 92, 0, -10 }, RE = { 5, 0, 0 }, LS = { 20, 0, -25 }, LE = { 40, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
 			follow = { Root = { -10, 26, 0, 0, -0.25, -0.35 }, Waist = { -14, 32, 0 }, Neck = { 12, -22, 0 }, RS = { 85, 0, -30 }, RE = { 10, 0, 0 }, LS = { 18, 0, -26 }, LE = { 40, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.35 } },
 			text = "À TOI POMPON !", hitText = "FFFSHHH !",
 		},
-		-- Bonbons en rafale (S en l'air) : elle vide son paquet de bonbons à la menthe en diagonale vers le bas
+		-- Sachet de bonbons (S en l'air) : elle jette tout son sachet de bonbons à la menthe, qui fonce sur l'adversaire et lui éclate à la figure
 		S_air = {
-			label = "Bonbons en rafale", kind = "projectile", energyCost = 20, startup = 0.12, active = 0, recovery = 0.3,
-			damage = 4, kbBase = 16, kbGrowth = 25, kbAngle = -20,
-			projectile = { speed = 60, angle = -35, gravity = 20, lifetime = 0.6, size = 1, color = MINT, fan = { count = 4, from = -55, to = -20 },
-				visual = { shape = "ball", size = 0.8, color = MINT, spin = 10, parts = { { "block", Vector3.new(0.9, 0.12, 0.12), Vector3.new(0, 0, 0), WHITE } } } },
+			label = "Sachet de bonbons", kind = "projectile", startup = 0.15, active = 0, recovery = 0.4,
+			damage = 12, kbBase = 22, kbGrowth = 40, kbAngle = -20,
+			projectile = { speed = 65, angle = -35, gravity = 0, lifetime = 0.7, size = 1.8, color = MINT,
+				visual = { shape = "block", size = 1.3, color = WHITE, spin = 8, parts = { { "ball", Vector3.new(0.5, 0.5, 0.5), Vector3.new(0.4, 0.5, 0.3), MINT }, { "ball", Vector3.new(0.5, 0.5, 0.5), Vector3.new(-0.4, 0.6, -0.2), MINT }, { "ball", Vector3.new(0.45, 0.45, 0.45), Vector3.new(0.1, -0.6, 0.4), MINT } } } },
 			windup = { Root = { -6, 0, 0 }, Waist = { -10, 0, 0 }, Neck = { 0, 0, 0 }, RS = { 130, 0, 20 }, RE = { 60, 0, 0 }, LS = { 60, 0, -40 }, LE = { 60, 0, 0 }, RH = { 60, 0, 0 }, RK = { -90, 0, 0 }, LH = { 40, 0, 0 }, LK = { -80, 0, 0 } },
 			strike = { Root = { -16, 0, 0 }, Waist = { -18, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 50, 0, 5 }, RE = { 0, 0, 0 }, LS = { 70, 0, -50 }, LE = { 40, 0, 0 }, RH = { 30, 0, 0 }, RK = { -60, 0, 0 }, LH = { 25, 0, 0 }, LK = { -70, 0, 0 } },
 			follow = { Root = { -14, 0, 0 }, Waist = { -16, 0, 0 }, Neck = { 22, 0, 0 }, RS = { 45, 0, 10 }, RE = { 5, 0, 0 }, LS = { 72, 0, -52 }, LE = { 40, 0, 0 }, RH = { 25, 0, 0 }, RK = { -55, 0, 0 }, LH = { 20, 0, 0 }, LK = { -65, 0, 0 } },
-			text = "UN BONBON ?", hitText = "TIC !",
+			text = "UN BONBON ?", hitText = "PLEIN LA FIGURE !",
 		},
-		-- Pluie de bonbons (↓S en l'air, plongeon) : elle plonge en diagonale en semant des bonbons durs
+		-- Pluie de bonbons (↓S en l'air, plongeon) : elle plonge en diagonale sur l'adversaire en semant des bonbons durs
 		S_air_down = {
-			label = "Pluie de bonbons", energyCost = 25, startup = 0.12, active = 0.35, recovery = 0.3,
-			damage = 11, hitbox = box(5, 4, 1.5, -1.5), kbBase = 25, kbGrowth = 55, kbAngle = -50, selfVelocity = Vector2.new(30, -75),
+			label = "Pluie de bonbons", startup = 0.15, active = 0.35, recovery = 0.4,
+			damage = 13, hitbox = box(6, 5, 2, -1.5), kbBase = 25, kbGrowth = 55, kbAngle = -50, selfVelocity = Vector2.new(30, -75),
 			windup = { Root = { 12, 0, 0 }, Waist = { 8, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 160, 0, 30 }, RE = { 40, 0, 0 }, LS = { 160, 0, -30 }, LE = { 40, 0, 0 }, RH = { 60, 0, 0 }, RK = { -90, 0, 0 }, LH = { 60, 0, 0 }, LK = { -90, 0, 0 } },
 			strike = { Root = { -45, 0, 0 }, Waist = { -14, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 130, 0, 60 }, RE = { 10, 0, 0 }, LS = { 130, 0, -60 }, LE = { 10, 0, 0 }, RH = { 10, 0, 0 }, RK = { -40, 0, 0 }, LH = { 5, 0, 0 }, LK = { -50, 0, 0 } },
 			follow = { Root = { -50, 0, 0 }, Waist = { -16, 0, 0 }, Neck = { 32, 0, 0 }, RS = { 135, 0, 65 }, RE = { 10, 0, 0 }, LS = { 135, 0, -65 }, LE = { 10, 0, 0 }, RH = { 5, 0, 0 }, RK = { -45, 0, 0 }, LH = { 0, 0, 0 }, LK = { -55, 0, 0 } },
@@ -528,7 +529,7 @@ local data = {
 		},
 		-- Écharpe-fouet (finition d'enchaînement) : elle déroule son écharpe et fouette au ras du sol, très loin
 		S_finish_echarpe = {
-			label = "Écharpe-fouet", energyCost = 20, startup = 0.14, active = 0.12, recovery = 0.32,
+			label = "Écharpe-fouet", startup = 0.14, active = 0.12, recovery = 0.32,
 			damage = 10, hitbox = box(9, 2.2, 5.5, -1), kbBase = 30, kbGrowth = 55, kbAngle = 30,
 			windup = { Root = { -6, -30, 0, 0, -0.3, 0.2 }, Waist = { -16, -30, 0 }, Neck = { 12, 25, 0 }, RS = { 120, 0, 70 }, RE = { 50, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -20 }, LE = { 40, 0, 0 } },
 			strike = { Root = { -14, 20, 0, 0, -0.45, -0.3 }, Waist = { -24, 24, 0 }, Neck = { 22, -15, 0 }, RS = { 70, 0, -5 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -30 }, LE = { 40, 0, 0 } },
@@ -537,11 +538,11 @@ local data = {
 		},
 
 		------------------------------------------------------------------ Supers
-		-- Armée de chats : elle siffle entre ses doigts et six chats de quartier chargent à travers l'arène
+		-- Armée de chats (Y) : elle siffle entre ses doigts et six chats de quartier déboulent, tous droit sur l'adversaire
 		SUPER = {
-			label = "Armée de chats !", kind = "projectile", superCost = 100, startup = 0.35, active = 0, recovery = 0.5,
-			damage = 5, kbBase = 25, kbGrowth = 45, kbAngle = 35,
-			projectile = { speed = 55, angle = 0, gravity = 0, lifetime = 1.2, size = 2, pierce = true, from = "feet", color = MINOU,
+			label = "Armée de chats !", kind = "projectile", startup = 0.4, active = 0, recovery = 0.6,
+			damage = 4, kbBase = 25, kbGrowth = 45, kbAngle = 35,
+			projectile = { speed = 60, angle = 0, gravity = 0, lifetime = 1.2, size = 2, pierce = true, from = "feet", color = MINOU,
 				fan = { count = 6, from = -4, to = 8, gap = 0.12 }, visual = catVisual(MINOU) },
 			windup = { Root = { -4, 0, 0, 0, -0.15, 0.1 }, Waist = { -8, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 20, 0, 25 }, RE = { 50, 0, 0 }, LS = { 120, 0, 35 }, LE = { 140, 0, 0 } },
 			strike = { Root = { -10, 10, 0, 0, -0.25, -0.2 }, Waist = { -14, 12, 0 }, Neck = { 16, -8, 0 }, RS = { 95, 0, -5 }, RE = { 0, 0, 0 }, LS = { 30, 0, -20 }, LE = { 40, 0, 0 } },
@@ -549,10 +550,11 @@ local data = {
 			hold = 0.2, windupFx = { { "screen", color = MINOU, alpha = 0.25 }, { "symbols", symbols = { "🐈", "🐾" }, count = 6, radius = 3, color = MINOU } },
 			fx = { { "shake", amount = 0.4 } }, text = "MES CHÉRIS, À L'ATTAQUE !", hitText = "MIAAAOU !",
 		},
-		-- Super ↑ : elle roule une pelote géante entre ses mains, la jette au plafond et le fil l'entortille en vrille, aiguilles au ciel
+		-- Pelote-fusée (↑Y) : elle roule une pelote géante entre ses mains et la jette au plafond : le fil se déroule sur tout le
+		-- couloir et entortille tout le monde en vrille vers le ciel, aiguilles levées
 		SUPER_up = {
-			label = "Pelote-fusée !", superCost = 100, startup = 0.35, active = 0.3, recovery = 0.6,
-			damage = 22, hitbox = box(8, 14, 2, 6), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
+			label = "Pelote-fusée !", startup = 0.4, active = 0.3, recovery = 0.7,
+			damage = 24, hitbox = box(16, 14, 8, 6), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
 			windup = { Root = { -12, 0, 0, 0, -0.7, 0.1 }, Waist = { -30, 0, 0 }, Neck = { 24, 0, 0 }, RS = { 55, 0, -25 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 55, 0, 25 }, LE = { 110, 0, 0 }, LW = { 0, 0, 0 } },
 			strike = { Root = { 8, 0, 0, 0, 0.45, 0 }, Waist = { 16, 0, 0 }, Neck = { 42, 0, 0 }, RS = { 182, 0, 14 }, RE = { 5, 0, 0 }, RW = { 0, 0, 0 }, LS = { 182, 0, -14 }, LE = { 5, 0, 0 }, LW = { 0, 0, 0 }, FR = { 0, 0, 0, 0, 0.35, 0 }, FL = { 0, 0, 0, 0, 0.35, 0 } },
 			follow = { Root = { 10, 0, 0, 0, 0.5, 0 }, Waist = { 20, 0, 0 }, Neck = { 46, 0, 0 }, RS = { 170, 0, 55 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 170, 0, -55 }, LE = { 10, 0, 0 }, LW = { 0, 0, 0 }, FR = { 0, 0, 0, 0, 0.4, 0 }, FL = { 0, 0, 0, 0, 0.4, 0 } },
@@ -561,10 +563,10 @@ local data = {
 			fx = { { "pillar", color = WOOL, height = 22, width = 4, at = "front" }, { "toss", shape = "ball", color = WOOL2, size = 1.2, count = 8, speed = 12, lift = 40 }, { "ring", color = WOOL, radius = 6, at = "feet" } },
 			text = "ET QUE ÇA MONTE !", hitText = "EMBOBINÉ !",
 		},
-		-- « De mon temps… » : elle raconte sa jeunesse en agitant le doigt, tout le monde s'endort
+		-- « De mon temps… » (↓Y) : elle raconte sa jeunesse en agitant le doigt, tout l'écran s'endort
 		SUPER_down = {
-			label = "« De mon temps… »", superCost = 100, startup = 0.5, active = 0.2, recovery = 0.5,
-			damage = 6, hitbox = box(60, 40, 0, 8), kbBase = 8, kbGrowth = 8, kbAngle = 60,
+			label = "« De mon temps… »", startup = 0.45, active = 0.2, recovery = 0.7,
+			damage = 20, hitbox = box(60, 40, 0, 8), kbBase = 8, kbGrowth = 8, kbAngle = 60,
 			status = { name = "asleep", duration = 2.5 },
 			windup = { Root = { -4, 0, 0, 0, -0.15, 0 }, Waist = { -10, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 120, 0, -10 }, RE = { 120, 0, 0 }, LS = { 20, 0, -12 }, LE = { 40, 0, 0 } },
 			strike = { Root = { -4, 6, 0, 0, -0.15, 0 }, Waist = { -10, 8, 0 }, Neck = { 26, -8, 6 }, RS = { 140, 0, 10 }, RE = { 70, 0, 0 }, RW = { 0, 0, 20 }, LS = { 20, 0, -12 }, LE = { 40, 0, 0 } },

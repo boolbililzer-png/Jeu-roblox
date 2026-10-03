@@ -348,109 +348,114 @@ local data = {
 		},
 
 		------------------------------------------------------------------ Spéciaux (S)
-		-- Coin-coin : corne de brume brandie, il souffle dedans ; l'onde sonore tout autour de lui étourdit
+		-- Coin-coin de brume : corne de brume collée à la bouche, il souffle de toutes ses forces ; l'onde sonore balaie tout le couloir et étourdit
 		S_neutral = {
-			label = "Coin-coin", energyCost = 25, startup = 0.18, active = 0.15, recovery = 0.35,
-			damage = 8, hitbox = box(9, 7, 0, 0.5), kbBase = 24, kbGrowth = 30, kbAngle = 45,
-			status = { name = "stunned", duration = 0.5 },
+			label = "Coin-coin de brume", startup = 0.2, active = 0.18, recovery = 0.45,
+			damage = 13, hitbox = box(14, 7, 7, 1), kbBase = 26, kbGrowth = 36, kbAngle = 45,
+			status = { name = "stunned", duration = 0.6 },
 			windup = { Root = { -6, 0, 0, 0, -0.3, 0.1 }, Waist = { -12, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 30, 0, 30 }, RE = { 60, 0, 0 }, LS = { 120, 0, 20 }, LE = { 120, 0, 0 }, LW = { 0, 0, 0 } },
-			strike = { Root = { 10, 0, 0, 0, -0.15, 0.15 }, Waist = { 16, 0, 0 }, Neck = { 22, 0, 0 }, RS = { 60, 0, 70 }, RE = { 15, 0, 0 }, LS = { 150, 0, 10 }, LE = { 100, 0, 0 }, LW = { 0, 0, 0 } },
-			follow = { Root = { 12, 0, 0, 0, -0.15, 0.2 }, Waist = { 18, 0, 0 }, Neck = { 26, 0, 0 }, RS = { 65, 0, 78 }, RE = { 15, 0, 0 }, LS = { 155, 0, 8 }, LE = { 100, 0, 0 }, LW = { 0, 0, 0 } },
+			strike = { Root = { -12, 0, 0, 0, -0.2, -0.3 }, Waist = { -10, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 60, 0, 70 }, RE = { 15, 0, 0 }, LS = { 150, 0, 10 }, LE = { 100, 0, 0 }, LW = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+			follow = { Root = { -14, 0, 0, 0, -0.2, -0.35 }, Waist = { -12, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 65, 0, 78 }, RE = { 15, 0, 0 }, LS = { 155, 0, 8 }, LE = { 100, 0, 0 }, LW = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
 			hold = 0.15, prop = "corne", shake = true,
-			fx = { { "ring", color = FOAM, radius = 6, at = "root" }, { "ring", color = DUCK, radius = 9, at = "root", time = 0.5 }, { "symbols", symbols = { "COIN", "♪" }, color = DUCK, count = 6, radius = 5 } },
+			fx = { { "ring", color = FOAM, radius = 6, at = "front" }, { "ring", color = DUCK, radius = 10, at = "front", time = 0.5 }, { "beam", color = DUCK, length = 14, width = 3, at = "head" }, { "symbols", symbols = { "COIN", "♪" }, color = DUCK, count = 6, radius = 5, at = "front" } },
 			text = "COIN-COIIIN !", hitText = "BZZZ !",
 		},
-		-- Torpille canard : à l'horizontale, il tire au pistolet vers l'arrière et file en tourbillonnant (vide la Pression)
+		-- Torpille canard : à l'horizontale, il tire au pistolet vers l'arrière et traverse tout le couloir en tourbillonnant, bec de bouée en avant
 		S_side = {
-			label = "Torpille canard", energyCost = 25, meterCost = 15, startup = 0.14, active = 0.35, recovery = 0.3,
-			damage = 12, hitbox = box(5, 3, 2, 0), kbBase = 30, kbGrowth = 70, kbAngle = 30, selfVelocity = Vector2.new(72, 8),
+			label = "Torpille canard", startup = 0.18, active = 0.34, recovery = 0.45,
+			damage = 15, hitbox = box(14, 5, 7, 0.5), kbBase = 30, kbGrowth = 70, kbAngle = 30, selfVelocity = Vector2.new(72, 8),
 			windup = { Root = { -20, 0, 0, 0, -0.5, 0.2 }, Waist = { -10, 0, 0 }, Neck = { 10, 0, 0 }, RS = { -60, 0, 20 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 120, 0, -20 }, LE = { 20, 0, 0 } },
 			strike = { Root = { -80, 0, 0, 0, -0.3, -0.4 }, Waist = { 0, 0, 0 }, Neck = { 40, 0, 0 }, RS = { -10, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 175, 0, -10 }, LE = { 0, 0, 0 }, RH = { -5, 0, 5 }, RK = { -5, 0, 0 }, RA = { -30, 0, 0 }, LH = { -5, 0, -5 }, LK = { -5, 0, 0 }, LA = { -30, 0, 0 } },
 			follow = { Root = { -82, 0, 0, 0, -0.3, -0.45 }, Waist = { 0, 0, 0 }, Neck = { 42, 0, 0 }, RS = { -12, 0, 12 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 178, 0, -8 }, LE = { 0, 0, 0 }, RH = { -8, 0, 5 }, RK = { -8, 0, 0 }, RA = { -30, 0, 0 }, LH = { -8, 0, -5 }, LK = { -8, 0, 0 }, LA = { -30, 0, 0 } },
 			spin = { axis = "y", degrees = 720 }, trail = "body",
-			fx = { { "particles", tex = "smoke", color = WATER, at = "hand", dir = "all", time = 0.35, speed = 12, rate = 90 } },
+			fx = { { "particles", tex = "smoke", color = WATER, at = "hand", dir = "all", time = 0.35, speed = 12, rate = 90 }, { "puddle", color = WATER, width = 12, time = 0.8 } },
 			text = "TORPILLE !", hitText = "SPLONK !",
 		},
-		-- Piscine gonflable : il la jette devant lui, elle se déplie et se remplit ; qui marche dedans est trempé (ralenti)
+		-- Piscine gonflable : il la jette devant lui, elle se déplie sur tout le couloir et se remplit d'un coup ; qui est dedans est trempé (ralenti) et la piscine se dégonfle
 		S_down = {
-			label = "Piscine gonflable", kind = "trap", energyCost = 25, startup = 0.2, active = 0.1, recovery = 0.35,
-			damage = 4, kbBase = 10, kbGrowth = 10, kbAngle = 60,
+			label = "Piscine gonflable", kind = "trap", startup = 0.22, active = 0.12, recovery = 0.45,
+			damage = 12, kbBase = 14, kbGrowth = 14, kbAngle = 60,
 			status = { name = "wet", duration = 2.5 },
-			trap = { size = Vector3.new(7, 1.2, 6), offset = 4, lifetime = 9, max = 1, persist = true, color = WATER,
+			trap = { size = Vector3.new(16, 1.5, 6), offset = 8, lifetime = 8, max = 1, persist = false, color = WATER,
 				visual = { shape = "ball", size = 0.2, color = WATER, trail = false, parts = {
-					{ "block", Vector3.new(6.4, 0.3, 3), Vector3.new(0, -0.25, 0), WATER, "Glass" },
-					{ "cyl", Vector3.new(7, 0.9, 0.9), Vector3.new(0, 0, 1.8), Color3.fromRGB(60, 140, 230) },
-					{ "cyl", Vector3.new(7, 0.9, 0.9), Vector3.new(0, 0, -1.8), Color3.fromRGB(60, 140, 230) },
-					{ "ball", Vector3.new(0.9, 0.9, 4.4), Vector3.new(3.4, 0, 0), DUCK },
-					{ "ball", Vector3.new(0.9, 0.9, 4.4), Vector3.new(-3.4, 0, 0), DUCK },
+					{ "block", Vector3.new(15, 0.3, 3), Vector3.new(0, -0.2, 0), WATER, "Glass" },
+					{ "cyl", Vector3.new(15.5, 0.9, 0.9), Vector3.new(0, 0, 1.8), Color3.fromRGB(60, 140, 230) },
+					{ "cyl", Vector3.new(15.5, 0.9, 0.9), Vector3.new(0, 0, -1.8), Color3.fromRGB(60, 140, 230) },
+					{ "ball", Vector3.new(0.9, 0.9, 4.4), Vector3.new(7.8, 0, 0), DUCK },
+					{ "ball", Vector3.new(0.9, 0.9, 4.4), Vector3.new(-7.8, 0, 0), DUCK },
+					{ "ball", Vector3.new(0.9, 0.7, 1.0), Vector3.new(-4, 0.2, 0), DUCK },
+					{ "ball", Vector3.new(0.9, 0.7, 1.0), Vector3.new(4, 0.2, 0.5), DUCK },
 				} } },
 			windup = { Root = { 6, -20, 0, 0, -0.3, 0.2 }, Waist = { 10, -20, 0 }, RS = { 40, 0, 20 }, RE = { 90, 0, 0 }, LS = { 120, 0, -10 }, LE = { 40, 0, 0 } },
-			strike = { Root = { -14, 14, 0, 0, -0.55, -0.2 }, Waist = { -24, 16, 0 }, Neck = { 10, 0, 0 }, RS = { 60, 0, 30 }, RE = { 20, 0, 0 }, LS = { 70, 0, -30 }, LE = { 10, 0, 0 } },
-			follow = { Root = { -16, 16, 0, 0, -0.6, -0.25 }, Waist = { -26, 18, 0 }, Neck = { 12, 0, 0 }, RS = { 55, 0, 35 }, RE = { 20, 0, 0 }, LS = { 62, 0, -36 }, LE = { 10, 0, 0 } },
-			fx = { { "puddle", color = WATER, width = 7, time = 1.5 } }, text = "PISCINE !", hitText = "TREMPÉ !",
+			strike = { Root = { -14, 14, 0, 0, -0.55, -0.25 }, Waist = { -24, 16, 0 }, Neck = { 10, 0, 0 }, RS = { 60, 0, 30 }, RE = { 20, 0, 0 }, LS = { 92, 0, -20 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+			follow = { Root = { -16, 16, 0, 0, -0.6, -0.3 }, Waist = { -26, 18, 0 }, Neck = { 12, 0, 0 }, RS = { 55, 0, 35 }, RE = { 20, 0, 0 }, LS = { 96, 0, -24 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+			trail = "leftHand", fx = { { "puddle", color = WATER, width = 16, time = 1.5 }, { "toss", shape = "ball", color = WATER, size = 0.5, count = 6, speed = 22, lift = 10 } }, text = "PISCINE !", hitText = "TREMPÉ !",
 		},
-		-- Envol de bouée (remontée, gratuite) : un geyser jaillit sous ses palmes et l'envoie très haut, puis il plane
+		-- Décollage en bouée (remontée) : la bouée canard se gonfle d'un coup et il décolle en diagonale comme une torpille, pistolet pointé devant, palmes qui battent derrière
 		S_up = {
-			label = "Envol de bouée", energyCost = 0, startup = 0.06, active = 0.3, recovery = 0.3,
-			damage = 6, hitbox = box(5, 7, 0.5, 1.5), kbBase = 28, kbGrowth = 40, kbAngle = 82, selfVelocity = Vector2.new(8, 100),
-			windup = { Root = { 0, 0, 0, 0, -0.75, 0 }, Waist = { -14, 0, 0 }, RS = { 20, 0, 50 }, RE = { 20, 0, 0 }, LS = { 20, 0, -50 }, LE = { 20, 0, 0 } },
-			strike = { Root = { 4, 0, 0, 0, 0.4, 0 }, Waist = { 8, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 40, 0, 95 }, RE = { 10, 0, 0 }, LS = { 40, 0, -95 }, LE = { 10, 0, 0 }, RH = { 5, 0, 8 }, RK = { -10, 0, 0 }, RA = { -20, 0, 0 }, LH = { 5, 0, -8 }, LK = { -10, 0, 0 }, LA = { -20, 0, 0 } },
-			follow = { Root = { 4, 0, 0, 0, 0.4, 0 }, Waist = { 10, 0, 0 }, Neck = { 24, 0, 0 }, RS = { 30, 0, 100 }, RE = { 10, 0, 0 }, LS = { 30, 0, -100 }, LE = { 10, 0, 0 }, RH = { 10, 0, 10 }, RK = { -30, 0, 0 }, RA = { -20, 0, 0 }, LH = { 10, 0, -10 }, LK = { -30, 0, 0 }, LA = { -20, 0, 0 } },
-			fx = { { "pillar", color = WATER, height = 14, width = 2.5 }, { "particles", tex = "smoke", color = FOAM, at = "feet", dir = "up", time = 0.4, speed = 18, rate = 90 } },
-			text = "GEYSER !", hitText = "SPLOOSH !",
+			label = "Décollage en bouée", startup = 0.15, active = 0.32, recovery = 0.45,
+			damage = 17, hitbox = box(10, 11, 3, 4), kbBase = 34, kbGrowth = 60, kbAngle = 80, selfVelocity = Vector2.new(46, 88),
+			windup = { Root = { 0, 0, 0, 0, -0.8, 0 }, Waist = { -14, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 20, 0, 50 }, RE = { 20, 0, 0 }, LS = { 20, 0, -50 }, LE = { 20, 0, 0 } },
+			strike = { Root = { -44, 0, 0, 0, 0.3, -0.1 }, Waist = { -4, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 168, 0, 6 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -40, 0, -30 }, LE = { 20, 0, 0 }, RH = { -26, 0, 5 }, RK = { -34, 0, 0 }, RA = { -30, 0, 0 }, LH = { -32, 0, -5 }, LK = { -44, 0, 0 }, LA = { -30, 0, 0 } },
+			follow = { Root = { -48, 0, 0, 0, 0.35, -0.15 }, Waist = { -6, 0, 0 }, Neck = { 34, 0, 0 }, RS = { 174, 0, 8 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -44, 0, -34 }, LE = { 20, 0, 0 }, RH = { -30, 0, 5 }, RK = { -40, 0, 0 }, RA = { -30, 0, 0 }, LH = { -36, 0, -5 }, LK = { -50, 0, 0 }, LA = { -30, 0, 0 } },
+			wobble = true, trail = "body", shake = true,
+			fx = { { "pillar", color = WATER, height = 14, width = 3.5, at = "root", time = 0.45 }, { "burst", color = FOAM, size = 4.5, at = "feet" }, { "ring", color = WATER, radius = 7, at = "feet" }, { "ring", color = DUCK, radius = 4, at = "feet" },
+				{ "particles", tex = "smoke", color = FOAM, at = "feet", dir = "down", time = 0.4, speed = 20, rate = 120, size = 0.9 }, { "symbols", symbols = { "COIN", "🦆", "💦" }, color = DUCK, count = 5, radius = 4, at = "above" }, { "shake", amount = 0.4 } },
+			text = "DÉCOLLAGE !", hitText = "SPLOOSH !",
 		},
-		-- Gonflage (S maintenu) : il gonfle sa bouée à bloc et la cogne en avant d'un coup de bassin ; le prochain coup reçu rebondit dessus et repart à l'envoyeur
+		-- Gonflage (L maintenu) : il gonfle sa bouée à bloc et la cogne en avant d'un grand coup de bassin qui balaie le couloir ; le prochain coup reçu rebondit dessus et repart à l'envoyeur
 		S_hold = {
-			label = "Gonflage", kind = "counter", energyCost = 30, startup = 0.1, active = 0.6, recovery = 0.3,
-			damage = 7, hitbox = box(5, 4, 2.8, 0.3), kbBase = 26, kbGrowth = 40, kbAngle = 35,
-			counter = { window = 0.6, text = "BOING !", riposte = { damage = 12, kbBase = 42, kbGrowth = 70, kbAngle = 40, hitText = "REBOND !" } },
+			label = "Gonflage", kind = "counter", startup = 0.16, active = 0.6, recovery = 0.42,
+			damage = 12, hitbox = box(14, 6, 7, 1), kbBase = 26, kbGrowth = 40, kbAngle = 35,
+			counter = { window = 0.6, text = "BOING !", riposte = { damage = 14, kbBase = 42, kbGrowth = 70, kbAngle = 40, hitText = "REBOND !" } },
 			windup = { Root = { -8, 0, 0, 0, -0.3, 0.25 }, Waist = { -22, 0, 0 }, Neck = { -15, 0, 0 }, RS = { 70, 0, -20 }, RE = { 120, 0, 0 }, LS = { 70, 0, 20 }, LE = { 120, 0, 0 } },
-			strike = { Root = { 12, 0, 0, 0, -0.15, -0.35 }, Waist = { 26, 0, 0 }, Neck = { -14, 0, 0 }, RS = { -40, 0, 45 }, RE = { 20, 0, 0 }, LS = { -40, 0, -45 }, LE = { 20, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
-			follow = { Root = { 10, 0, 0, 0, -0.15, -0.3 }, Waist = { 22, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 40, 0, 88 }, RE = { 30, 0, 0 }, LS = { 40, 0, -88 }, LE = { 30, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
-			hold = 0.3, shake = true, trail = "body", fx = { { "ring", color = DUCK, radius = 4, at = "root" }, { "burst", color = DUCK, size = 2.5, at = "front" }, { "text", text = "GONFLÉ À BLOC !", color = DUCK } },
+			strike = { Root = { 14, 0, 0, 0, -0.15, -0.4 }, Waist = { 28, 0, 0 }, Neck = { -14, 0, 0 }, RS = { -40, 0, 50 }, RE = { 20, 0, 0 }, LS = { -40, 0, -50 }, LE = { 20, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+			follow = { Root = { 12, 0, 0, 0, -0.15, -0.35 }, Waist = { 24, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 40, 0, 88 }, RE = { 30, 0, 0 }, LS = { 40, 0, -88 }, LE = { 30, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+			hold = 0.3, shake = true, trail = "body", fx = { { "ring", color = DUCK, radius = 6, at = "front" }, { "burst", color = DUCK, size = 3.5, at = "front" }, { "text", text = "GONFLÉ À BLOC !", color = DUCK } },
 			text = "PFFFFF… !", hitText = "BOING !",
 		},
-		-- Toboggan aquatique (→→S) : il plonge à plat ventre sur un tapis d'eau et fonce en glissant
+		-- Toboggan aquatique (→→L) : il plonge à plat ventre sur un tapis d'eau et glisse d'un bout à l'autre du couloir, bras tendus devant
 		S_dash = {
-			label = "Toboggan aquatique", energyCost = 25, startup = 0.06, active = 0.35, recovery = 0.3,
-			damage = 11, hitbox = box(5, 2.5, 2, -1.3), kbBase = 30, kbGrowth = 60, kbAngle = 40, selfVelocity = Vector2.new(75, 0), invuln = 0.15,
+			label = "Toboggan aquatique", startup = 0.15, active = 0.34, recovery = 0.45,
+			damage = 14, hitbox = box(14, 5, 7, 0.5), kbBase = 30, kbGrowth = 60, kbAngle = 40, selfVelocity = Vector2.new(74, 0), invuln = 0.15,
 			windup = { Root = { -20, 0, 0, 0, -0.5, 0 }, Waist = { -10, 0, 0 }, RS = { 150, 0, 20 }, LS = { 150, 0, -20 } },
 			strike = { Root = { -80, 0, 0, 0, -1.5, -0.4 }, Waist = { 8, 0, 0 }, Neck = { 40, 0, 0 }, RS = { 178, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 178, 0, -10 }, LE = { 0, 0, 0 }, RH = { -6, 0, 5 }, RK = { -10, 0, 0 }, RA = { -30, 0, 0 }, LH = { -6, 0, -5 }, LK = { -10, 0, 0 }, LA = { -30, 0, 0 } },
 			follow = { Root = { -82, 0, 0, 0, -1.5, -0.45 }, Waist = { 10, 0, 0 }, Neck = { 42, 0, 0 }, RS = { 178, 0, 14 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 178, 0, -14 }, LE = { 0, 0, 0 }, RH = { -8, 0, 5 }, RK = { -25, 0, 0 }, RA = { -30, 0, 0 }, LH = { -8, 0, -5 }, LK = { -15, 0, 0 }, LA = { -30, 0, 0 } },
-			trail = "body", fx = { { "puddle", color = WATER, width = 10, time = 1 }, { "particles", tex = "smoke", color = FOAM, at = "feet", dir = "up", time = 0.35, speed = 8 } },
+			trail = "body", fx = { { "puddle", color = WATER, width = 16, time = 1 }, { "particles", tex = "smoke", color = FOAM, at = "feet", dir = "up", time = 0.35, speed = 8 } },
 			text = "WIIIIIZ !", hitText = "SPLAAASH !",
 		},
-		-- Jet d'eau (ESQUIVE puis S, ex-←S) : pistolet à deux mains, long jet qui traverse l'arène (vide la Pression)
+		-- Jet d'eau (esquive puis L) : pistolet à deux mains, un long jet à haute pression qui fonce droit sur l'adversaire et le trempe
 		S_dodge = {
-			label = "Jet d'eau", kind = "projectile", energyCost = 20, meterCost = 25, startup = 0.14, active = 0, recovery = 0.3,
-			damage = 9, kbBase = 22, kbGrowth = 40, kbAngle = 15,
-			projectile = { speed = 95, angle = 0, gravity = 0, lifetime = 0.55, size = 1.7, color = WATER },
+			label = "Jet d'eau", kind = "projectile", startup = 0.16, active = 0, recovery = 0.42,
+			damage = 13, kbBase = 24, kbGrowth = 42, kbAngle = 15,
+			projectile = { speed = 95, angle = 0, gravity = 0, lifetime = 0.55, size = 1.8, color = WATER,
+				visual = { shape = "ball", size = 1.6, color = WATER, neon = true, transparency = 0.2 } },
 			status = { name = "wet", duration = 2 },
 			windup = { Root = { 0, -10, 0, 0, -0.25, 0.15 }, Waist = { 0, -12, 0 }, RS = { 80, 0, 5 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 75, 0, 25 }, LE = { 55, 0, 0 } },
 			strike = { Root = { 6, 8, 0, 0, -0.28, 0.2 }, Waist = { 8, 10, 0 }, RS = { 92, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 88, 0, 22 }, LE = { 20, 0, 0 } },
 			follow = { Root = { 10, 8, 0, 0, -0.28, 0.3 }, Waist = { 12, 10, 0 }, RS = { 100, 0, 0 }, RE = { 5, 0, 0 }, RW = { 10, 0, 0 }, LS = { 94, 0, 22 }, LE = { 25, 0, 0 } },
-			fx = { { "particles", tex = "smoke", color = FOAM, at = "hand", dir = "front", time = 0.2, speed = 14 } }, text = "PSCHHHH !", hitText = "SPLASH !",
+			shake = true, fx = { { "beam", color = WATER, length = 10, width = 1.2, at = "hand", time = 0.2 }, { "particles", tex = "smoke", color = FOAM, at = "hand", dir = "front", time = 0.2, speed = 14 } }, text = "PSCHHHH !", hitText = "SPLASH !",
 		},
-		-- Bombe à eau lancée (S en l'air) : il lance en cloche un ballon gonflé d'eau qui éclate (vide la Pression)
+		-- Ballon d'eau (L en l'air) : il lance un gros ballon gonflé d'eau qui fonce éclater sur l'adversaire
 		S_air = {
-			label = "Bombe à eau", kind = "projectile", energyCost = 20, meterCost = 20, startup = 0.14, active = 0, recovery = 0.28,
-			damage = 10, kbBase = 26, kbGrowth = 50, kbAngle = 45,
-			projectile = { speed = 50, angle = -15, gravity = 90, lifetime = 1.2, size = 2, color = WATER,
-				visual = { shape = "ball", size = 1.8, color = WATER, transparency = 0.2, parts = { { "ball", Vector3.new(0.4, 0.4, 0.4), Vector3.new(0, 1, 0), Color3.fromRGB(230, 60, 60) } } } },
+			label = "Ballon d'eau", kind = "projectile", startup = 0.18, active = 0, recovery = 0.42,
+			damage = 13, kbBase = 26, kbGrowth = 48, kbAngle = 40,
+			projectile = { speed = 60, angle = -15, gravity = 30, lifetime = 0.8, size = 2.2, color = WATER,
+				visual = { shape = "ball", size = 2, color = WATER, transparency = 0.2, parts = { { "ball", Vector3.new(0.4, 0.4, 0.4), Vector3.new(0, 1.1, 0), Color3.fromRGB(230, 60, 60) } } } },
 			status = { name = "wet", duration = 2 },
 			windup = { Root = { 10, -20, 0 }, Waist = { 12, -24, 0 }, RS = { 60, 0, 20 }, RE = { 60, 0, 0 }, LS = { 185, 0, 10 }, LE = { 70, 0, 0 }, RH = { 60, 0, 0 }, RK = { -90, 0, 0 }, LH = { 30, 0, 0 }, LK = { -70, 0, 0 } },
-			strike = { Root = { -14, 18, 0 }, Waist = { -20, 22, 0 }, RS = { 40, 0, 40 }, RE = { 30, 0, 0 }, LS = { 70, 0, -10 }, LE = { 5, 0, 0 }, RH = { 30, 0, 0 }, RK = { -60, 0, 0 }, LH = { 60, 0, 0 }, LK = { -100, 0, 0 } },
-			follow = { Root = { -18, 22, 0 }, Waist = { -24, 26, 0 }, RS = { 35, 0, 45 }, RE = { 30, 0, 0 }, LS = { 40, 0, -15 }, LE = { 10, 0, 0 }, RH = { 25, 0, 0 }, RK = { -55, 0, 0 }, LH = { 65, 0, 0 }, LK = { -100, 0, 0 } },
-			text = "BOMBE À EAU !", hitText = "SPLOUTCH !",
+			strike = { Root = { -14, 18, 0 }, Waist = { -20, 22, 0 }, RS = { 40, 0, 40 }, RE = { 30, 0, 0 }, LS = { 80, 0, -10 }, LE = { 0, 0, 0 }, LW = { -20, 0, 0 }, RH = { 30, 0, 0 }, RK = { -60, 0, 0 }, LH = { 60, 0, 0 }, LK = { -100, 0, 0 } },
+			follow = { Root = { -18, 22, 0 }, Waist = { -24, 26, 0 }, RS = { 35, 0, 45 }, RE = { 30, 0, 0 }, LS = { 50, 0, -15 }, LE = { 10, 0, 0 }, LW = { -30, 0, 0 }, RH = { 25, 0, 0 }, RK = { -55, 0, 0 }, LH = { 65, 0, 0 }, LK = { -100, 0, 0 } },
+			trail = "leftHand", fx = { { "burst", color = WATER, size = 2, at = "lhand" } }, text = "BALLON D'EAU !", hitText = "SPLOUTCH !",
 		},
-		-- Bombe à eau (↓S en l'air, plongeon) : genoux repliés contre la bouée, il tombe en boule ; grande gerbe à l'arrivée
+		-- Bombe à eau (↓L en l'air, plongeon) : genoux repliés contre la bouée, il tombe en boule ; grande gerbe qui éclabousse tout en dessous
 		S_air_down = {
-			label = "Bombe à eau !", energyCost = 25, startup = 0.12, active = 0.4, recovery = 0.32,
-			damage = 12, hitbox = box(9, 4, 0, -2), kbBase = 28, kbGrowth = 60, kbAngle = 45, selfVelocity = Vector2.new(0, -85),
+			label = "Bombe à eau !", startup = 0.16, active = 0.4, recovery = 0.45,
+			damage = 14, hitbox = box(9, 5, 0, -2), kbBase = 28, kbGrowth = 60, kbAngle = 45, selfVelocity = Vector2.new(0, -85),
 			windup = { Root = { -10, 0, 0 }, Waist = { -10, 0, 0 }, Neck = { 15, 0, 0 }, RS = { 170, 0, 30 }, RE = { 20, 0, 0 }, LS = { 170, 0, -30 }, LE = { 20, 0, 0 }, RH = { 60, 0, 0 }, RK = { -90, 0, 0 }, LH = { 60, 0, 0 }, LK = { -90, 0, 0 } },
 			strike = { Root = { 10, 0, 0 }, Waist = { -25, 0, 0 }, Neck = { -15, 0, 0 }, RS = { 75, 0, -20 }, RE = { 110, 0, 0 }, LS = { 75, 0, 20 }, LE = { 110, 0, 0 }, RH = { 120, 0, 0 }, RK = { -140, 0, 0 }, RA = { 20, 0, 0 }, LH = { 120, 0, 0 }, LK = { -140, 0, 0 }, LA = { 20, 0, 0 } },
 			follow = { Root = { 12, 0, 0 }, Waist = { -28, 0, 0 }, Neck = { -18, 0, 0 }, RS = { 72, 0, -22 }, RE = { 115, 0, 0 }, LS = { 72, 0, 22 }, LE = { 115, 0, 0 }, RH = { 122, 0, 0 }, RK = { -142, 0, 0 }, RA = { 20, 0, 0 }, LH = { 122, 0, 0 }, LK = { -142, 0, 0 }, LA = { 20, 0, 0 } },
-			trail = "body", fx = { { "puddle", color = WATER, width = 12, time = 1.2 }, { "ring", color = FOAM, radius = 7, at = "feet" }, { "toss", shape = "ball", color = WATER, count = 6, size = 0.6, speed = 18 } },
+			trail = "body", fx = { { "puddle", color = WATER, width = 12, time = 1.2 }, { "ring", color = FOAM, radius = 7, at = "feet" }, { "toss", shape = "ball", color = WATER, count = 6, size = 0.6, speed = 18 }, { "shake", amount = 0.4 } },
 			text = "BOMBE !", hitText = "SPLAAAATCH !",
 		},
 
@@ -516,21 +521,21 @@ local data = {
 		},
 
 		------------------------------------------------------------------ Finitions avec S (dans un enchaînement)
-		-- Gerbe d'eau : pistolet secoué puis arrosage en balayant devant lui (de près, vide la Pression)
+		-- Gerbe d'eau : pistolet secoué puis arrosage en balayant tout le couloir devant lui
 		S_finish_jet = {
-			label = "Gerbe d'eau", energyCost = 20, meterCost = 15, startup = 0.14, active = 0.2, recovery = 0.3,
-			damage = 9, hitbox = box(7, 4, 4, 0.5), kbBase = 30, kbGrowth = 50, kbAngle = 30,
+			label = "Gerbe d'eau", startup = 0.15, active = 0.2, recovery = 0.4,
+			damage = 12, hitbox = box(14, 5, 7, 1), kbBase = 30, kbGrowth = 50, kbAngle = 30,
 			status = { name = "wet", duration = 2 },
 			windup = { Root = { 0, -12, 0, 0, -0.2, 0.1 }, Waist = { 0, -18, 0 }, RS = { 75, 0, 5 }, RE = { 70, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, 20 }, LE = { 80, 0, 0 } },
 			strike = { Root = { -6, -10, 0, 0, -0.25, -0.15 }, Waist = { -8, -10, 0 }, RS = { 92, 0, 15 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 85, 0, 25 }, LE = { 25, 0, 0 } },
 			follow = { Root = { -6, 18, 0, 0, -0.25, -0.2 }, Waist = { -8, 24, 0 }, RS = { 95, 0, -25 }, RE = { 5, 0, 0 }, RW = { 0, 0, 0 }, LS = { 88, 0, 0 }, LE = { 30, 0, 0 } },
-			shake = true, fx = { { "beam", color = WATER, length = 7, width = 1.4, at = "hand" }, { "particles", tex = "smoke", color = FOAM, at = "front", dir = "all", time = 0.2, speed = 10 } },
+			shake = true, fx = { { "beam", color = WATER, length = 14, width = 1.4, at = "hand" }, { "particles", tex = "smoke", color = FOAM, at = "front", dir = "all", time = 0.2, speed = 10 } },
 			text = "SPLOOOSH !", hitText = "SPLASH !",
 		},
-		-- Geyser de poche : il vise le sol devant lui, une colonne d'eau jaillit et fait décoller l'adversaire
+		-- Geyser de poche : il vise le sol devant lui, une colonne d'eau jaillit tout le long du couloir et fait décoller l'adversaire
 		S_finish_geyser = {
-			label = "Geyser de poche", energyCost = 25, meterCost = 15, startup = 0.16, active = 0.15, recovery = 0.32,
-			damage = 11, hitbox = box(4, 7, 3.5, 2), kbBase = 32, kbGrowth = 65, kbAngle = 86,
+			label = "Geyser de poche", startup = 0.16, active = 0.15, recovery = 0.4,
+			damage = 12, hitbox = box(14, 7, 7, 2), kbBase = 32, kbGrowth = 65, kbAngle = 86,
 			windup = { Root = { 6, -8, 0, 0, -0.2, 0.15 }, Waist = { 8, -8, 0 }, RS = { 140, 0, 10 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -30 }, LE = { 60, 0, 0 } },
 			strike = { Root = { -10, 6, 0, 0, -0.4, -0.1 }, Waist = { -20, 8, 0 }, Neck = { -10, 0, 0 }, RS = { 45, 0, 5 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -40 }, LE = { 50, 0, 0 } },
 			follow = { Root = { 4, 6, 0, 0, -0.3, 0 }, Waist = { 6, 8, 0 }, Neck = { 30, 0, 0 }, RS = { 60, 0, 5 }, RE = { 5, 0, 0 }, RW = { 10, 0, 0 }, LS = { 30, 0, -45 }, LE = { 50, 0, 0 } },
@@ -538,41 +543,41 @@ local data = {
 		},
 
 		------------------------------------------------------------------ Supers
-		-- Raz-de-marée de canards en plastique : il souffle dans la corne, une vague de canards de bain déferle au sol
+		-- Raz-de-marée de canards en plastique : il souffle dans la corne, une vague de canards de bain déferle au sol et tous foncent sur l'adversaire en rafale
 		SUPER = {
-			label = "Raz-de-marée de canards !", kind = "projectile", superCost = 100, startup = 0.35, active = 0, recovery = 0.5,
-			damage = 5, kbBase = 26, kbGrowth = 40, kbAngle = 35,
-			projectile = { speed = 50, gravity = 0, lifetime = 1.3, size = 1.6, color = DUCK, from = "feet", pierce = true, visual = RUBBER_DUCK, fan = { count = 6, from = -4, to = 18, gap = 0.06 } },
+			label = "Raz-de-marée de canards !", kind = "projectile", startup = 0.4, active = 0, recovery = 0.7,
+			damage = 4, kbBase = 26, kbGrowth = 40, kbAngle = 35,
+			projectile = { speed = 50, gravity = 0, lifetime = 1.2, size = 1.6, color = DUCK, from = "feet", visual = RUBBER_DUCK, fan = { count = 6, from = -4, to = 18, gap = 0.08 } },
 			windup = { Root = { -6, 0, 0, 0, -0.4, 0.15 }, Waist = { -14, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 40, 0, 40 }, RE = { 60, 0, 0 }, LS = { 120, 0, 20 }, LE = { 120, 0, 0 }, LW = { 0, 0, 0 } },
 			strike = { Root = { 8, 0, 0, 0, -0.1, 0 }, Waist = { 18, 0, 0 }, Neck = { 25, 0, 0 }, RS = { 120, 0, 60 }, RE = { 10, 0, 0 }, LS = { 150, 0, 10 }, LE = { 100, 0, 0 }, LW = { 0, 0, 0 } },
 			follow = { Root = { 10, 0, 0, 0, -0.1, 0 }, Waist = { 20, 0, 0 }, Neck = { 28, 0, 0 }, RS = { 135, 0, 70 }, RE = { 10, 0, 0 }, LS = { 155, 0, 8 }, LE = { 100, 0, 0 }, LW = { 0, 0, 0 } },
 			hold = 0.2, prop = "corne", windupFx = { "super" },
-			fx = { { "puddle", color = WATER, width = 14, time = 1.5 }, { "symbols", symbols = { "🦆", "COIN" }, color = DUCK, count = 8, radius = 6 }, { "shake", amount = 0.4 } },
+			fx = { { "puddle", color = WATER, width = 16, time = 1.5 }, { "symbols", symbols = { "🦆", "COIN" }, color = DUCK, count = 8, radius = 6 }, { "shake", amount = 0.4 } },
 			text = "RAZ-DE-MARÉE !", hitText = "COUIIIC !",
 		},
-		-- Super ↑ : Fusée de bain, pistolet à deux mains pointé entre ses palmes, le jet le propulse en vrille verticale comme une fusée
+		-- Super ↑ : Fusée de bain, pistolet à deux mains pointé entre ses palmes, le jet le propulse en vrille verticale comme une fusée et la gerbe fauche tout le couloir
 		SUPER_up = {
-			label = "Fusée de bain !", superCost = 100, startup = 0.4, active = 0.3, recovery = 0.6,
-			damage = 22, hitbox = box(8, 14, 1.5, 6), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
+			label = "Fusée de bain !", startup = 0.4, active = 0.3, recovery = 0.7,
+			damage = 24, hitbox = box(14, 14, 7, 6), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
 			windup = { Root = { -8, 0, 0, 0, -0.75, 0 }, Waist = { -16, 0, 0 }, Neck = { -20, 0, 0 }, RS = { -10, 0, 12 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { -10, 0, -12 }, LE = { 10, 0, 0 }, LW = { 0, 0, 0 } },
 			strike = { Root = { 2, 0, 0, 0, 0.6, 0 }, Waist = { 4, 0, 0 }, Neck = { 35, 0, 0 }, RS = { -15, 0, 8 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -15, 0, -8 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 }, RH = { -6, 0, 2 }, RK = { 0, 0, 0 }, RA = { -30, 0, 0 }, LH = { -6, 0, -2 }, LK = { 0, 0, 0 }, LA = { -30, 0, 0 } },
 			follow = { Root = { 4, 0, 0, 0, 0.65, 0 }, Waist = { 6, 0, 0 }, Neck = { 40, 0, 0 }, RS = { -18, 0, 6 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -18, 0, -6 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 }, RH = { -8, 0, 2 }, RK = { 0, 0, 0 }, RA = { -30, 0, 0 }, LH = { -8, 0, -2 }, LK = { 0, 0, 0 }, LA = { -30, 0, 0 } },
 			hold = 0.2, shake = true, spin = { axis = "y", degrees = 720 }, selfVelocity = Vector2.new(0, 70), trail = "body",
 			windupFx = { "super" }, status = { name = "wet", duration = 2 },
-			fx = { { "pillar", color = WATER, height = 24, width = 4, at = "root" }, { "puddle", color = FOAM, width = 8 }, { "particles", tex = "smoke", color = FOAM, at = "feet", dir = "down", time = 0.5, rate = 120, speed = 20, size = 0.8 }, { "shake", amount = 0.4 } },
+			fx = { { "pillar", color = WATER, height = 24, width = 4, at = "root" }, { "puddle", color = FOAM, width = 14 }, { "particles", tex = "smoke", color = FOAM, at = "feet", dir = "down", time = 0.5, rate = 120, speed = 20, size = 0.8 }, { "shake", amount = 0.5 } },
 			text = "DÉCOLLAGE IMMÉDIAT !", hitText = "SPLAAASH !",
 		},
-		-- Escadrille : il décolle en planant, pistolet pointé vers le bas, et arrose tout l'écran d'une pluie d'eau
+		-- Escadrille : il décolle en planant et siffle ; une escadrille de canards en plastique bombardiers pique du ciel et s'abat sur l'adversaire
 		SUPER_down = {
-			label = "Escadrille !", kind = "projectile", superCost = 100, startup = 0.4, active = 0, recovery = 0.6,
-			damage = 3, kbBase = 20, kbGrowth = 20, kbAngle = 70, selfVelocity = Vector2.new(0, 60),
-			projectile = { speed = 70, gravity = 0, lifetime = 1.2, size = 1.8, color = WATER, rain = { count = 10, spread = 14, ahead = 6, height = 24 } },
+			label = "Escadrille !", kind = "projectile", startup = 0.4, active = 0, recovery = 0.7,
+			damage = 4, kbBase = 22, kbGrowth = 24, kbAngle = 70, selfVelocity = Vector2.new(0, 60),
+			projectile = { speed = 70, gravity = 0, lifetime = 1.2, size = 2, color = DUCK, visual = RUBBER_DUCK, rain = { count = 8, spread = 6, ahead = 8, height = 24 } },
 			status = { name = "wet", duration = 3 },
 			windup = { Root = { 0, 0, 0, 0, -0.7, 0 }, Waist = { -18, 0, 0 }, RS = { 20, 0, 50 }, RE = { 30, 0, 0 }, LS = { 20, 0, -50 }, LE = { 30, 0, 0 } },
 			strike = { Root = { 20, 0, 0, 0, 0.4, 0 }, Waist = { -10, 0, 0 }, Neck = { -25, 0, 0 }, RS = { 40, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -95 }, LE = { 10, 0, 0 }, RH = { 10, 0, 8 }, RK = { -40, 0, 0 }, LH = { 10, 0, -8 }, LK = { -40, 0, 0 } },
 			follow = { Root = { 18, 0, 0, 0, 0.4, 0 }, Waist = { -12, 0, 0 }, Neck = { -28, 0, 0 }, RS = { 25, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -100 }, LE = { 10, 0, 0 }, RH = { 15, 0, 8 }, RK = { -50, 0, 0 }, LH = { 15, 0, -8 }, LK = { -50, 0, 0 } },
-			hold = 0.4, windupFx = { "super" }, fx = { { "rain", shape = "ball", color = WATER, count = 16, radius = 10, size = 0.6 }, { "screen", color = WATER, alpha = 0.25 } },
-			text = "ESCADRILLE, EN AVANT !", hitText = "SPLASH !",
+			hold = 0.4, windupFx = { "super" }, fx = { { "rain", shape = "ball", color = DUCK, count = 12, radius = 8, size = 0.8 }, { "screen", color = WATER, alpha = 0.25 }, { "symbols", symbols = { "🦆", "✈️", "COIN" }, color = DUCK, count = 8, radius = 7, at = "above" } },
+			text = "ESCADRILLE, EN AVANT !", hitText = "COUIC-SPLASH !",
 		},
 
 		------------------------------------------------------------------ Chope (bouton ✋) et projections

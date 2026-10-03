@@ -428,109 +428,106 @@ local data = {
 		},
 
 		------------------------------------------------------------------ Signatures (S)
-		-- Paquet de chips : il sort son paquet et le lance en cloche ; il éclate en un nuage de miettes grasses
+		-- Paquet de chips : il sort son paquet et le balance droit sur la figure de l'adversaire ; il éclate en un nuage de miettes grasses qui reste là
 		S_neutral = {
-			label = "Paquet de chips", energyCost = 22, kind = "projectile", startup = 0.18, active = 0, recovery = 0.3,
-			damage = 8, kbBase = 20, kbGrowth = 35, kbAngle = 35,
-			projectile = { speed = 45, angle = 30, gravity = 70, lifetime = 1.2, size = 2.4, color = CHIPS, linger = 1.2,
-				visual = { shape = "block", size = 1.1, color = CHIPS, material = "Foil", spin = 10, parts = { { "block", Vector3.new(1.15, 0.3, 0.7), Vector3.zero, ROUGE } } } },
+			label = "Paquet de chips", kind = "projectile", startup = 0.2, active = 0, recovery = 0.42,
+			damage = 13, kbBase = 22, kbGrowth = 38, kbAngle = 35,
+			projectile = { speed = 55, angle = 0, gravity = 0, lifetime = 0.8, size = 2.6, color = CHIPS, linger = 1.2,
+				visual = { shape = "block", size = 1.2, color = CHIPS, material = "Foil", spin = 10, parts = { { "block", Vector3.new(1.25, 0.3, 0.75), Vector3.zero, ROUGE } } } },
 			windup = { Root = { 6, -24, 0, 0, -0.15, 0.25 }, Waist = { 10, -30, 0 }, Neck = { 0, 16, 0 }, RS = { 185, 0, 25 }, RE = { 80, 0, 0 }, RW = { 0, 0, 0 }, LS = { 80, 0, -20 }, LE = { 30, 0, 0 } },
-			strike = { Root = { -10, 20, 0, 0, -0.3, -0.3 }, Waist = { -20, 30, 0 }, Neck = { 0, -10, 0 }, RS = { 75, 0, 0 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { -20, 0, -30 }, LE = { 70, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
-			follow = { Root = { -12, 26, 0, 0, -0.35, -0.35 }, Waist = { -24, 38, 0 }, Neck = { 0, -14, 0 }, RS = { 40, 0, -15 }, RE = { 20, 0, 0 }, RW = { -10, 0, 0 }, LS = { -30, 0, -35 }, LE = { 75, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
-			prop = "chips", hideProp = "manette", text = "CRUNCH !", hitText = "MIETTES !",
+			strike = { Root = { -12, 20, 0, 0, -0.3, -0.35 }, Waist = { -22, 30, 0 }, Neck = { 0, -10, 0 }, RS = { 92, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -20, 0, -30 }, LE = { 70, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+			follow = { Root = { -14, 26, 0, 0, -0.35, -0.4 }, Waist = { -26, 38, 0 }, Neck = { 0, -14, 0 }, RS = { 60, 0, -15 }, RE = { 10, 0, 0 }, RW = { -10, 0, 0 }, LS = { -30, 0, -35 }, LE = { 75, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+			prop = "chips", hideProp = "manette", trail = "prop", fx = { { "toss", shape = "flat", color = CHIPS, size = 0.4, count = 5, speed = 20 } }, text = "CRUNCH !", hitText = "MIETTES !",
 		},
-		-- Speedrun : il glisse à genoux à toute vitesse, traverse l'adversaire et ressort derrière lui
+		-- Speedrun : il glisse à genoux à toute vitesse d'un bout à l'autre du couloir, traverse l'adversaire et ressort derrière lui
 		S_side = {
-			label = "Speedrun", energyCost = 25, startup = 0.06, active = 0.22, recovery = 0.3,
-			damage = 10, hitbox = box(4.5, 3, 2, -0.5), kbBase = 28, kbGrowth = 55, kbAngle = 50, selfVelocity = Vector2.new(85, 0),
+			label = "Speedrun", startup = 0.15, active = 0.24, recovery = 0.42,
+			damage = 13, hitbox = box(12, 5, 5, -0.5), kbBase = 30, kbGrowth = 58, kbAngle = 50, selfVelocity = Vector2.new(85, 0),
 			invuln = 0.3, teleport = 7,
 			windup = { Root = { -14, 0, 0, 0, -0.4, 0 }, Waist = { -10, 0, 0 }, Neck = { 10, 0, 0 }, RS = { -30, 0, 30 }, RE = { 40, 0, 0 }, LS = { -30, 0, -30 }, LE = { 40, 0, 0 } },
 			strike = { Root = { 16, 0, 0, 0, -1.2, -0.3 }, Waist = { 10, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 150, 0, 30 }, RE = { 20, 0, 0 }, LS = { 150, 0, -30 }, LE = { 20, 0, 0 }, RH = { 10, 0, 0 }, RK = { -120, 0, 0 }, LH = { 10, 0, 0 }, LK = { -120, 0, 0 } },
 			follow = { Root = { 18, 0, 0, 0, -1.22, -0.35 }, Waist = { 12, 0, 0 }, Neck = { 18, 0, 0 }, RS = { 155, 0, 32 }, RE = { 20, 0, 0 }, LS = { 155, 0, -32 }, LE = { 20, 0, 0 }, RH = { 10, 0, 0 }, RK = { -122, 0, 0 }, LH = { 10, 0, 0 }, LK = { -122, 0, 0 } },
 			trail = "body", fx = { "dust", { "text", text = "WORLD RECORD", color = VERT, at = "above" } }, text = "SPEEDRUN !", hitText = "SKIP !",
 		},
-		-- Câble tendu (piège) : il tend le câble de sa manette au ras du sol ; qui passe dessus trébuche
+		-- Câble tendu : il arrache le câble de la manette, le claque au ras du sol sur toute la longueur du couloir, et tout le monde trébuche
 		S_down = {
-			label = "Câble tendu", energyCost = 25, kind = "trap", startup = 0.18, active = 0, recovery = 0.3,
-			damage = 6, kbBase = 20, kbGrowth = 20, kbAngle = 75,
+			label = "Câble tendu", startup = 0.22, active = 0.16, recovery = 0.48,
+			damage = 13, hitbox = box(14, 6, 7, 0.5), kbBase = 26, kbGrowth = 50, kbAngle = 75,
 			status = { name = "stunned", duration = 0.7 },
-			trap = { size = Vector3.new(4, 1.5, 6), offset = 3, lifetime = 10, max = 2, color = NOIR,
-				visual = { shape = "cyl", size = 3.5, color = NOIR, trail = false, parts = {
-					{ "block", Vector3.new(0.3, 0.4, 0.3), Vector3.new(1.8, 0, 0), VERT, "Neon" },
-					{ "block", Vector3.new(0.3, 0.4, 0.3), Vector3.new(-1.8, 0, 0), VIOLET, "Neon" },
-				} } },
-			windup = { Root = { -6, 0, 0, 0, -0.5, 0.1 }, Waist = { -16, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 60, 0, 30 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -30 }, LE = { 60, 0, 0 } },
-			strike = { Root = { -14, 0, 0, 0, -0.85, -0.1 }, Waist = { -26, 0, 0 }, Neck = { -4, 0, 0 }, RS = { 30, 0, 60 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -60 }, LE = { 10, 0, 0 } },
-			follow = { Root = { -14, 0, 0, 0, -0.85, -0.1 }, Waist = { -26, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 28, 0, 62 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 28, 0, -62 }, LE = { 10, 0, 0 } },
+			windup = { Root = { -6, 0, 0, 0, -0.5, 0.1 }, Waist = { -16, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 170, 0, 30 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 160, 0, -30 }, LE = { 40, 0, 0 } },
+			strike = { Root = { -18, 0, 0, 0, -0.8, -0.3 }, Waist = { -30, 0, 0 }, Neck = { -4, 0, 0 }, RS = { 60, 0, 8 }, RE = { 0, 0, 0 }, RW = { -40, 0, 0 }, LS = { 55, 0, -8 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+			follow = { Root = { -20, 0, 0, 0, -0.85, -0.35 }, Waist = { -32, 0, 0 }, Neck = { 8, 0, 0 }, RS = { 50, 0, 10 }, RE = { 0, 0, 0 }, RW = { -50, 0, 0 }, LS = { 45, 0, -10 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+			trail = "prop", fx = { { "beam", color = NOIR, length = 16, width = 0.4, at = "feet" }, { "ring", color = VERT, radius = 4, at = "front" }, "dust" },
 			text = "CÂBLE TENDU !", hitText = "PATATRAS !",
 		},
-		-- Rage Jump (remontée, gratuite) : poings serrés, il hurle de rage et le cri le propulse vers le haut
+		-- Rage Jump (remontée) : il hurle de rage et le cri le propulse en diagonale vers l'avant, manette tendue devant lui
+		-- comme un bélier, jambes qui gigotent derrière ; tout ce qui est sur le passage prend la rage
 		S_up = {
-			label = "Rage Jump", energyCost = 0, startup = 0.05, active = 0.3, recovery = 0.3,
-			damage = 8, hitbox = box(5, 6, 0.5, 2), kbBase = 30, kbGrowth = 40, kbAngle = 84, selfVelocity = Vector2.new(6, 90),
-			windup = { Root = { -6, 0, 0, 0, -0.85, 0 }, Waist = { -20, 0, 0 }, Neck = { -16, 0, 0 }, RS = { 20, 0, 30 }, RE = { 110, 0, 0 }, LS = { 20, 0, -30 }, LE = { 110, 0, 0 } },
-			strike = { Root = { 6, 0, 0, 0, 0.4, 0 }, Waist = { 16, 0, 0 }, Neck = { 40, 0, 0 }, RS = { 10, 0, 45 }, RE = { 30, 0, 0 }, LS = { 10, 0, -45 }, LE = { 30, 0, 0 }, RH = { -5, 0, 10 }, RK = { -20, 0, 0 }, LH = { -5, 0, -10 }, LK = { -20, 0, 0 } },
-			follow = { Root = { 8, 0, 0, 0, 0.4, 0 }, Waist = { 18, 0, 0 }, Neck = { 42, 0, 0 }, RS = { 170, 0, 30 }, RE = { 30, 0, 0 }, LS = { 170, 0, -30 }, LE = { 30, 0, 0 }, RH = { 30, 0, 10 }, RK = { -70, 0, 0 }, LH = { 10, 0, -10 }, LK = { -40, 0, 0 } },
-			shake = true, trail = "body",
-			fx = { { "pillar", color = VIOLET, height = 10, width = 2, at = "feet" }, { "particles", tex = "spark", color = VERT, dir = "down", at = "feet", time = 0.4, speed = 12 } },
+			label = "Rage Jump", startup = 0.15, active = 0.32, recovery = 0.4,
+			damage = 15, hitbox = box(10, 11, 3, 4), kbBase = 32, kbGrowth = 55, kbAngle = 72, selfVelocity = Vector2.new(44, 86),
+			windup = { Root = { -6, 0, 0, 0, -0.8, 0 }, Waist = { -20, 0, 0 }, Neck = { -14, 0, 0 }, RS = { 20, 0, 30 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -30 }, LE = { 110, 0, 0 } },
+			strike = { Root = { -42, 0, 0, 0, 0.3, 0 }, Waist = { -6, 0, 0 }, Neck = { 34, 0, 0 }, RS = { 168, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -45 }, LE = { 110, 0, 0 }, RH = { -24, 0, 8 }, RK = { -40, 0, 0 }, RA = { -25, 0, 0 }, LH = { -36, 0, -8 }, LK = { -55, 0, 0 }, LA = { -25, 0, 0 } },
+			follow = { Root = { -46, 0, 0, 0, 0.35, 0 }, Waist = { -8, 0, 0 }, Neck = { 36, 0, 0 }, RS = { 172, 0, 12 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 45, 0, -50 }, LE = { 110, 0, 0 }, RH = { -36, 0, 10 }, RK = { -55, 0, 0 }, RA = { -25, 0, 0 }, LH = { -24, 0, -10 }, LK = { -40, 0, 0 }, LA = { -25, 0, 0 } },
+			shake = true, trail = "prop",
+			fx = { { "pillar", color = VIOLET, height = 10, width = 3, at = "feet" }, { "particles", tex = "spark", color = VERT, dir = "down", at = "feet", time = 0.4, speed = 14 }, { "ring", color = ROUGE, radius = 4, at = "feet" }, { "symbols", symbols = { "💢", "RAAH" }, count = 3, radius = 2, color = ROUGE } },
 			text = "RAAAAAH !", hitText = "RAGE !",
 		},
-		-- Écran bleu (plongeon, ↓S en l'air) : il tombe en tenant un vieil écran à bout de bras ; l'impact fige l'adversaire
+		-- Écran bleu (plongeon) : il tombe en tenant un vieil écran à bout de bras sur tout ce qu'il y a dessous ; l'impact fige l'adversaire
 		S_air_down = {
-			label = "Écran bleu", energyCost = 25, startup = 0.16, active = 0.35, recovery = 0.35,
-			damage = 12, hitbox = box(5, 4, 0.5, -2.5), kbBase = 25, kbGrowth = 50, kbAngle = -60, selfVelocity = Vector2.new(0, -85),
+			label = "Écran bleu", startup = 0.18, active = 0.35, recovery = 0.45,
+			damage = 14, hitbox = box(8, 6, 1, -2), kbBase = 28, kbGrowth = 55, kbAngle = -60, selfVelocity = Vector2.new(0, -85),
 			status = { name = "frozen", duration = 0.5 },
 			windup = { Root = { 14, 0, 0 }, Waist = { 14, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 190, 0, 10 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 190, 0, -10 }, LE = { 30, 0, 0 }, RH = { 60, 0, 0 }, RK = { -100, 0, 0 }, LH = { 60, 0, 0 }, LK = { -100, 0, 0 } },
 			strike = { Root = { -20, 0, 0 }, Waist = { -20, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 30, 0, 5 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, 20 }, LE = { 20, 0, 0 }, RH = { 40, 0, 0 }, RK = { -80, 0, 0 }, LH = { 40, 0, 0 }, LK = { -80, 0, 0 } },
 			follow = { Root = { -24, 0, 0 }, Waist = { -22, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 25, 0, 5 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 35, 0, 20 }, LE = { 20, 0, 0 }, RH = { 38, 0, 0 }, RK = { -78, 0, 0 }, LH = { 38, 0, 0 }, LK = { -78, 0, 0 } },
 			prop = "ecran", hideProp = "manette", trail = "prop",
-			fx = { { "screen", color = BSOD, alpha = 0.25 }, { "shake", amount = 0.4 } }, text = ":(", hitText = "ÉCRAN BLEU !",
+			fx = { { "screen", color = BSOD, alpha = 0.25 }, { "ring", color = BSOD, radius = 6, at = "feet" }, { "shake", amount = 0.4 } }, text = ":(", hitText = "ÉCRAN BLEU !",
 		},
-		-- Freeze (esquive puis S) : il pointe la manette comme une télécommande et met l'adversaire en pause 1 s
+		-- Freeze (esquive puis S) : il pointe la manette comme une télécommande et met en pause tout le couloir devant lui (0,8 s)
 		S_dodge = {
-			label = "Freeze", energyCost = 30, startup = 0.1, active = 0.12, recovery = 0.3,
-			damage = 5, hitbox = box(6, 4, 3, 1), kbBase = 5, kbGrowth = 5, kbAngle = 0,
-			status = { name = "stunned", duration = 1 },
+			label = "Freeze", startup = 0.15, active = 0.14, recovery = 0.42,
+			damage = 12, hitbox = box(14, 6, 7, 1), kbBase = 8, kbGrowth = 8, kbAngle = 0,
+			status = { name = "stunned", duration = 0.8 },
 			windup = { Root = { 4, -10, 0, 0, -0.2, 0.15 }, Waist = { 4, -10, 0 }, Neck = { 0, 10, 0 }, RS = { 60, 0, 10 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -20 }, LE = { 80, 0, 0 } },
-			strike = { Root = { -12, 8, 0, 0, -0.3, -0.4 }, Waist = { -10, 8, 0 }, Neck = { -6, -6, 0 }, RS = { 96, 0, 0 }, RE = { 0, 0, 0 }, RW = { -60, 0, 0 }, LS = { 30, 0, -25 }, LE = { 85, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
-			follow = { Root = { -12, 8, 0, 0, -0.3, -0.4 }, Waist = { -10, 8, 0 }, Neck = { -6, -6, 0 }, RS = { 97, 0, 0 }, RE = { 0, 0, 0 }, RW = { -62, 0, 0 }, LS = { 30, 0, -25 }, LE = { 85, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
-			hold = 0.15, trail = "prop", fx = { { "symbols", symbols = { "⏸", "▓", "░" }, count = 6, radius = 3, color = BLEU, at = "front" } },
+			strike = { Root = { -12, 8, 0, 0, -0.3, -0.4 }, Waist = { -10, 8, 0 }, Neck = { -6, -6, 0 }, RS = { 98, 0, 0 }, RE = { 0, 0, 0 }, RW = { -60, 0, 0 }, LS = { 30, 0, -25 }, LE = { 85, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+			follow = { Root = { -12, 8, 0, 0, -0.3, -0.4 }, Waist = { -10, 8, 0 }, Neck = { -6, -6, 0 }, RS = { 100, 0, 0 }, RE = { 0, 0, 0 }, RW = { -62, 0, 0 }, LS = { 30, 0, -25 }, LE = { 85, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+			hold = 0.15, trail = "prop", fx = { { "beam", color = BLEU, length = 16, width = 2, at = "hand" }, { "symbols", symbols = { "⏸", "▓", "░" }, count = 6, radius = 4, color = BLEU, at = "front" } },
 			text = "PAUSE !", hitText = "*LAG*",
 		},
-		-- Ventilo RGB (S maintenu) : il brandit un ventilateur de PC allumé ; le souffle repousse fort
+		-- Ventilo RGB (S maintenu) : il brandit un ventilateur de PC allumé à fond ; le souffle balaie tout le couloir et repousse très loin
 		S_hold = {
-			label = "Ventilo RGB", energyCost = 35, startup = 0.2, active = 0.35, recovery = 0.4,
-			damage = 9, hitbox = box(10, 5, 4.5, 0.5), kbBase = 45, kbGrowth = 50, kbAngle = 10,
+			label = "Ventilo RGB", startup = 0.26, active = 0.3, recovery = 0.5,
+			damage = 12, hitbox = box(14, 6, 7, 1), kbBase = 52, kbGrowth = 55, kbAngle = 10,
 			windup = { Root = { 6, -10, 0, 0, -0.2, 0.2 }, Waist = { 6, -10, 0 }, Neck = { 0, 10, 0 }, RS = { 60, 0, 20 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -20 }, LE = { 80, 0, 0 } },
-			strike = { Root = { -8, 4, 0, 0, -0.3, -0.2 }, Waist = { -8, 4, 0 }, Neck = { 6, 0, 0 }, RS = { 90, 0, 0 }, RE = { 10, 0, 0 }, RW = { -80, 0, 0 }, LS = { 85, 0, 15 }, LE = { 30, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.35 } },
-			follow = { Root = { -10, 4, 0, 0, -0.3, -0.25 }, Waist = { -10, 4, 0 }, Neck = { 8, 0, 0 }, RS = { 92, 0, 0 }, RE = { 10, 0, 0 }, RW = { -82, 0, 0 }, LS = { 87, 0, 15 }, LE = { 30, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.38 } },
+			strike = { Root = { -12, 4, 0, 0, -0.35, -0.3 }, Waist = { -10, 4, 0 }, Neck = { 6, 0, 0 }, RS = { 94, 0, 0 }, RE = { 5, 0, 0 }, RW = { -80, 0, 0 }, LS = { 88, 0, 12 }, LE = { 25, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+			follow = { Root = { -14, 4, 0, 0, -0.35, -0.35 }, Waist = { -12, 4, 0 }, Neck = { 8, 0, 0 }, RS = { 96, 0, 0 }, RE = { 5, 0, 0 }, RW = { -82, 0, 0 }, LS = { 90, 0, 12 }, LE = { 25, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.48 } },
 			hold = 0.1, prop = "ventilo", hideProp = "manette",
-			fx = { { "beam", color = VIOLET, length = 9, width = 3, at = "hand" }, { "particles", tex = "smoke", color = BLEU, dir = "front", at = "hand", time = 0.4, speed = 22 } },
+			fx = { { "beam", color = VIOLET, length = 16, width = 4, at = "hand" }, { "particles", tex = "smoke", color = BLEU, dir = "front", at = "hand", time = 0.45, speed = 32, size = 1.2, rate = 90 } },
 			text = "VROOOOM !", hitText = "WHOOSH !",
 		},
-		-- Combo nunchaku-manette (→→S) : il avance en faisant tournoyer la manette, quatre coups d'affilée
+		-- Moulinet nunchaku (→→S) : il avance en faisant tournoyer la manette au bout de son câble, un grand moulinet qui balaie tout le couloir
 		S_dash = {
-			label = "Combo nunchaku-manette", energyCost = 25, startup = 0.06, active = 0.5, recovery = 0.3,
-			damage = 3, hits = 4, hitbox = box(5, 3.5, 2.5, 0.5), kbBase = 20, kbGrowth = 50, kbAngle = 35, selfVelocity = Vector2.new(32, 0),
+			label = "Moulinet nunchaku", startup = 0.15, active = 0.3, recovery = 0.42,
+			damage = 14, hitbox = box(14, 6, 7, 0.5), kbBase = 32, kbGrowth = 60, kbAngle = 35, selfVelocity = Vector2.new(36, 0),
 			windup = { Root = { -8, -20, 0, 0, -0.25, 0.1 }, Waist = { -6, -20, 0 }, RS = { 80, 0, 70 }, RE = { 20, 0, 0 }, RW = { 60, 0, 0 }, LS = { 50, 0, -40 }, LE = { 90, 0, 0 } },
-			strike = { Root = { -10, 0, 0, 0, -0.3, -0.2 }, Waist = { -8, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 90, 0, 85 }, RE = { 0, 0, 0 }, RW = { 80, 0, 0 }, LS = { 60, 0, -50 }, LE = { 90, 0, 0 } },
-			follow = { Root = { -10, 0, 0, 0, -0.3, -0.25 }, Waist = { -8, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 92, 0, 85 }, RE = { 0, 0, 0 }, RW = { 80, 0, 0 }, LS = { 62, 0, -50 }, LE = { 90, 0, 0 } },
-			spin = { axis = "y", degrees = 720 }, trail = "prop", text = "COMBO X4 !", hitText = "WATAAA !",
+			strike = { Root = { -12, 0, 0, 0, -0.3, -0.25 }, Waist = { -8, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 92, 0, 88 }, RE = { 0, 0, 0 }, RW = { 80, 0, 0 }, LS = { 60, 0, -50 }, LE = { 90, 0, 0 } },
+			follow = { Root = { -12, 0, 0, 0, -0.3, -0.3 }, Waist = { -8, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 94, 0, 88 }, RE = { 0, 0, 0 }, RW = { 80, 0, 0 }, LS = { 62, 0, -50 }, LE = { 90, 0, 0 } },
+			spin = { axis = "y", degrees = 720 }, trail = "prop", fx = { { "ring", color = ROUGE, radius = 5, at = "root" }, "dust" }, text = "MOULINET !", hitText = "WATAAA !",
 		},
-		-- Pic de lag (S en l'air) : il frappe dans un sursaut saccadé… puis se « téléporte » en arrière comme un lag
+		-- Pic de lag (S en l'air) : il frappe dans un sursaut saccadé tout autour de lui… puis se « téléporte » en arrière comme un lag
 		S_air = {
-			label = "Pic de lag", energyCost = 22, startup = 0.1, active = 0.14, recovery = 0.3,
-			damage = 9, hitbox = box(5, 4, 2.5, 0), kbBase = 26, kbGrowth = 50, kbAngle = 35, teleport = -5,
+			label = "Pic de lag", startup = 0.15, active = 0.16, recovery = 0.42,
+			damage = 13, hitbox = box(8, 6, 2, 0), kbBase = 28, kbGrowth = 52, kbAngle = 35, teleport = -5,
 			windup = { Root = { -8, 10, 6 }, Waist = { -10, 10, 0 }, Neck = { 0, -10, 10 }, RS = { 140, 0, 50 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -40 }, LE = { 90, 0, 0 }, RH = { 70, 0, 0 }, RK = { -100, 0, 0 }, LH = { 40, 0, 0 }, LK = { -90, 0, 0 } },
 			strike = { Root = { -20, -10, -6 }, Waist = { -14, -10, 0 }, Neck = { -10, 10, -10 }, RS = { 92, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -20, 0, -50 }, LE = { 40, 0, 0 }, RH = { 40, 0, 0 }, RK = { -60, 0, 0 }, LH = { 60, 0, 0 }, LK = { -100, 0, 0 } },
 			follow = { Root = { -22, -12, -8 }, Waist = { -16, -12, 0 }, Neck = { -12, 12, -12 }, RS = { 94, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -25, 0, -52 }, LE = { 40, 0, 0 }, RH = { 38, 0, 0 }, RK = { -58, 0, 0 }, LH = { 62, 0, 0 }, LK = { -102, 0, 0 } },
-			wobble = true, trail = "prop", fx = { { "symbols", symbols = { "▓", "░", "▒" }, count = 6, radius = 2, color = VERT } }, text = "LAG !", hitText = "*GLITCH*",
+			wobble = true, trail = "prop", fx = { { "symbols", symbols = { "▓", "░", "▒" }, count = 8, radius = 3, color = VERT }, { "ring", color = VERT, radius = 4, at = "root" } }, text = "LAG !", hitText = "*GLITCH*",
 		},
 
 		------------------------------------------------------------------ Finitions avec S (dans un enchaînement)
 		-- Explosion de rage : poings vers le sol, il hurle et tout vole autour de lui
 		S_finish_rage = {
-			label = "Explosion de rage", energyCost = 25, startup = 0.12, active = 0.2, recovery = 0.32,
+			label = "Explosion de rage", startup = 0.12, active = 0.2, recovery = 0.32,
 			damage = 11, hitbox = box(8, 4.5, 0, 0.5), kbBase = 32, kbGrowth = 65, kbAngle = 45,
 			windup = { Root = { -8, 0, 0, 0, -0.5, 0 }, Waist = { -24, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 30, 0, -20 }, RE = { 120, 0, 0 }, LS = { 30, 0, 20 }, LE = { 120, 0, 0 } },
 			strike = { Root = { 8, 0, 0, 0, -0.2, 0 }, Waist = { 14, 0, 0 }, Neck = { 36, 0, 0 }, RS = { 20, 0, 50 }, RE = { 20, 0, 0 }, LS = { 20, 0, -50 }, LE = { 20, 0, 0 } },
@@ -540,7 +537,7 @@ local data = {
 		},
 		-- Combo clavier : clavier levé à deux mains, abattu devant lui avec un « ENTRÉE » rageur
 		S_finish_key = {
-			label = "Touche Entrée", energyCost = 20, startup = 0.15, active = 0.12, recovery = 0.3,
+			label = "Touche Entrée", startup = 0.15, active = 0.12, recovery = 0.3,
 			damage = 10, hitbox = box(6, 4, 3.5, 0.5), kbBase = 32, kbGrowth = 65, kbAngle = 35,
 			windup = { Root = { 10, 0, 0, 0, -0.05, 0.2 }, Waist = { 14, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 190, 0, 5 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 185, 0, -5 }, LE = { 40, 0, 0 } },
 			strike = { Root = { -14, 0, 0, 0, -0.4, -0.35 }, Waist = { -24, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 85, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 80, 0, 0 }, LE = { 10, 0, 0 } },
@@ -549,25 +546,25 @@ local data = {
 		},
 
 		------------------------------------------------------------------ Supers
-		-- Rage Quit : il fracasse son clavier, une pluie de touches tombe du ciel sur l'adversaire
+		-- Rage Quit ! (Y) : il fracasse son clavier et une pluie de touches tombe du ciel pile sur l'adversaire
 		SUPER = {
-			label = "Rage Quit !", kind = "projectile", superCost = 100, startup = 0.35, active = 0, recovery = 0.5,
+			label = "Rage Quit !", kind = "projectile", startup = 0.4, active = 0, recovery = 0.7,
 			damage = 3, kbBase = 20, kbGrowth = 25, kbAngle = 50,
-			projectile = { speed = 60, gravity = 40, lifetime = 1.2, size = 1.4, color = BLANC, rain = { count = 8, spread = 8, ahead = 9, height = 22 },
+			projectile = { speed = 60, gravity = 40, lifetime = 1.2, size = 1.6, color = BLANC, rain = { count = 8, spread = 6, ahead = 9, height = 22 },
 				visual = { shape = "block", size = 1.0, color = BLANC, text = "ESC", textColor = NOIR, spin = 8 } },
 			windup = { Root = { 8, 0, 0, 0, -0.05, 0.2 }, Waist = { 14, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 190, 0, 10 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 190, 0, -10 }, LE = { 40, 0, 0 } },
 			strike = { Root = { -14, 0, 0, 0, -0.6, -0.2 }, Waist = { -30, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 40, 0, 20 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -20 }, LE = { 30, 0, 0 } },
 			follow = { Root = { -14, 0, 0, 0, -0.6, -0.2 }, Waist = { -32, 0, 0 }, Neck = { 34, 0, 0 }, RS = { 30, 0, 40 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -40 }, LE = { 30, 0, 0 } },
 			hold = 0.3, prop = "clavier", hideProp = "manette", windupFx = { "super" },
-			fx = { { "burst", color = BLEU, size = 4, at = "front" }, { "toss", shape = "block", color = BLANC, size = 0.5, count = 8, speed = 26 }, { "shake", amount = 0.5 } },
+			fx = { { "burst", color = BLEU, size = 4, at = "front" }, { "toss", shape = "block", color = BLANC, size = 0.5, count = 10, speed = 28 }, { "shake", amount = 0.5 } },
 			text = "RAGE QUIT !", hitText = "TAC-TAC-TAC !",
 		},
-		-- Super ↑ : il empoigne sa chaise gaming à deux mains et la balance droit vers le ciel ; tout ce qui passe
-		-- au-dessus part en orbite avec elle… et il reste planté à la regarder s'éloigner
+		-- Chaise en orbite (Y↑) : il empoigne sa chaise gaming à deux mains et la balance de toutes ses forces : elle fonce droit
+		-- sur l'adversaire et l'emporte en orbite… et il reste planté à la regarder s'éloigner
 		SUPER_up = {
-			label = "Chaise en orbite !", kind = "projectile", superCost = 100, startup = 0.35, active = 0, recovery = 0.6,
-			damage = 22, kbBase = 46, kbGrowth = 95, kbAngle = 86,
-			projectile = { speed = 75, angle = 86, gravity = 40, lifetime = 1.3, size = 4, color = NOIR, pierce = true, from = "above",
+			label = "Chaise en orbite !", kind = "projectile", startup = 0.35, active = 0, recovery = 0.75,
+			damage = 24, kbBase = 46, kbGrowth = 95, kbAngle = 86,
+			projectile = { speed = 78, angle = 45, gravity = 0, lifetime = 1.3, size = 4.2, color = NOIR, pierce = true, from = "above",
 				visual = { shape = "block", size = 2.2, color = SWEAT_FONCE, spin = 5, parts = {
 					{ "block", Vector3.new(2.2, 0.5, 2.2), Vector3.new(0, -0.6, 0), SWEAT_FONCE },
 					{ "block", Vector3.new(2.2, 2.6, 0.5), Vector3.new(0, 0.9, 1.0), SWEAT_FONCE },
@@ -576,23 +573,24 @@ local data = {
 					{ "ball", Vector3.new(0.5, 0.5, 0.5), Vector3.new(-0.9, -1.4, -0.9), VIOLET },
 				} } },
 			windup = { Root = { -12, 0, 0, 0, -0.75, 0.1 }, Waist = { -24, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 40, 0, 20 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -20 }, LE = { 30, 0, 0 } },
-			strike = { Root = { 10, 0, 0, 0, 0.35, 0 }, Waist = { 18, 0, 0 }, Neck = { 42, 0, 0 }, RS = { 185, 0, 14 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 185, 0, -14 }, LE = { 0, 0, 0 }, FR = { 0, 0, 0, 0, 0.3, 0 }, FL = { 0, 0, 0, 0, 0.3, 0 } },
+			strike = { Root = { -10, 0, 0, 0, 0.2, -0.2 }, Waist = { -8, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 150, 0, 14 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, -14 }, LE = { 0, 0, 0 }, FR = { 0, 0, 0, 0, 0.3, 0 }, FL = { 0, 0, 0, 0, 0.3, 0 } },
 			follow = { Root = { 12, 0, 0, 0, 0.2, 0 }, Waist = { 16, 0, 0 }, Neck = { 50, 0, 0 }, RS = { 150, 0, 60 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, -60 }, LE = { 0, 0, 0 } },
 			hold = 0.3, shake = true, prop = "chaise", hideProp = "manette",
 			windupFx = { "super", { "symbols", symbols = { "💢", "!!" }, count = 4, radius = 2.5, color = ROUGE } },
-			fx = { { "pillar", color = VIOLET, height = 22, width = 3.5, at = "root" }, { "burst", color = VERT, size = 4, at = "above" }, { "shake", amount = 0.5 }, { "text", text = "ELLE REVIENT PAS ?", color = BLANC, at = "above" } },
+			fx = { { "beam", color = VIOLET, length = 14, width = 3.5, at = "hand" }, { "burst", color = VERT, size = 4, at = "above" }, { "shake", amount = 0.5 }, { "text", text = "ELLE REVIENT PAS ?", color = BLANC, at = "above" } },
 			text = "MA CHAIIISE !", hitText = "EN ORBITE !",
 		},
-		-- Code de triche : il tape le code sur la manette, aura « GOD MODE » : invincible 2,5 s et onde de choc
+		-- Code de triche (Y↓) : il tape le code sur la manette, aura « GOD MODE » : invincible 2,5 s et une onde de choc
+		-- dorée des deux côtés sur toute la plateforme
 		SUPER_down = {
-			label = "Code de triche !", superCost = 100, startup = 0.4, active = 0.2, recovery = 0.45,
-			damage = 14, hitbox = box(10, 8, 0, 2), kbBase = 35, kbGrowth = 60, kbAngle = 60,
+			label = "Code de triche !", startup = 0.4, active = 0.2, recovery = 0.65,
+			damage = 22, hitbox = box(34, 8, 0, 2), kbBase = 36, kbGrowth = 62, kbAngle = 60,
 			invuln = 2.5, selfEffect = { armor = 3 },
 			windup = { Root = { -4, 0, 0, 0, -0.25, 0 }, Waist = { -14, 0, 0 }, Neck = { -24, 0, 0 }, RS = { 60, 0, -15 }, RE = { 110, 0, 0 }, RW = { -20, 0, 0 }, LS = { 60, 0, 15 }, LE = { 110, 0, 0 } },
 			strike = { Root = { 6, 0, 0, 0, 0.2, 0 }, Waist = { 14, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 170, 0, 40 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 170, 0, -40 }, LE = { 10, 0, 0 }, FR = { 0, 0, 0, 0, 0.2, 0 }, FL = { 0, 0, 0, 0, 0.2, 0 } },
 			follow = { Root = { 6, 0, 0, 0, 0.25, 0 }, Waist = { 16, 0, 0 }, Neck = { 34, 0, 0 }, RS = { 175, 0, 45 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 175, 0, -45 }, LE = { 10, 0, 0 }, FR = { 0, 0, 0, 0, 0.25, 0 }, FL = { 0, 0, 0, 0, 0.25, 0 } },
 			hold = 0.4, windupFx = { "super", { "text", text = "↑↑↓↓←→←→ B A", color = VERT, at = "above" } },
-			fx = { { "pillar", color = Color3.fromRGB(255, 215, 60), height = 16, width = 4, at = "root" }, { "ring", color = Color3.fromRGB(255, 215, 60), radius = 8 }, { "text", text = "GOD MODE", color = Color3.fromRGB(255, 215, 60), at = "above" } },
+			fx = { { "pillar", color = Color3.fromRGB(255, 215, 60), height = 16, width = 4, at = "root" }, { "ring", color = Color3.fromRGB(255, 215, 60), radius = 10 }, { "ring", color = Color3.fromRGB(255, 215, 60), radius = 17, time = 0.5 }, { "text", text = "GOD MODE", color = Color3.fromRGB(255, 215, 60), at = "above" } },
 			text = "GOD MODE !", hitText = "TRICHEUR !",
 		},
 

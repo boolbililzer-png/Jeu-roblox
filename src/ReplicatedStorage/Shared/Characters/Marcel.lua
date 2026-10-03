@@ -376,112 +376,122 @@ local data = {
 			shake = true, trail = "bothFeet", text = "( UMPF )", hitText = "( BADABOUM )",
 		},
 
-		------------------------------------------------------------------ Spéciaux (S)
-		-- Mur invisible : les deux paumes à plat, il « trouve » un mur devant lui et le pousse d'un coup sec dans
-		-- l'adversaire : le mur devient réel (2 au plus, le plus ancien disparaît ; bloquent projectiles et adversaires)
+		------------------------------------------------------------------ Signatures (L) : sûres de toucher (couloir / projectiles visés, voir docs/fiche-perso.md)
+		-- Mur invisible poussé : les deux paumes à plat, il « trouve » un mur devant lui et le pousse d'un grand coup de reins
+		-- sur toute la longueur du couloir ; le mur reste planté là (2 au plus, bloque projectiles et adversaires)
 		S_neutral = {
-			label = "Mur invisible", energyCost = 20, kind = "wall", startup = 0.14, active = 0.1, recovery = 0.3,
-			hitbox = box(5, 4, 2.5, 0.5), kbBase = 30, kbGrowth = 45, kbAngle = 30,
-			damage = 7,
-			wall = { size = Vector3.new(1.2, 8, 6), offset = 4, lifetime = 6, max = 2 },
-			windup = { Root = { 4, 0, 0, 0, -0.15, 0.15 }, Waist = { 4, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 50, 0, -10 }, RE = { 120, 0, 0 }, RW = { 85, 0, 0 }, LS = { 50, 0, 10 }, LE = { 120, 0, 0 }, LW = { 85, 0, 0 } },
-			strike = { Root = { -14, 0, 0, 0, -0.35, -0.45 }, Waist = { -12, 0, 0 }, Neck = { -4, 0, 0 }, RS = { 94, 0, 16 }, RE = { 0, 0, 0 }, RW = { 85, 0, 0 }, LS = { 94, 0, -16 }, LE = { 0, 0, 0 }, LW = { 85, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
-			follow = { Root = { -16, 0, 0, 0, -0.38, -0.5 }, Waist = { -14, 0, 0 }, Neck = { -2, 8, 0 }, RS = { 100, 0, 20 }, RE = { 0, 0, 0 }, RW = { 85, 0, 0 }, LS = { 100, 0, -20 }, LE = { 0, 0, 0 }, LW = { 85, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.55 } },
-			hold = 0.15, trail = "bothHands", fx = { { "ring", color = GHOST, radius = 3, at = "front" }, { "burst", color = GHOST, size = 2.5, at = "front" } }, text = "…", hitText = "( MUR )",
+			label = "Mur invisible poussé", kind = "wall", startup = 0.2, active = 0.14, recovery = 0.45,
+			damage = 13, hitbox = box(14, 6, 7, 1), kbBase = 34, kbGrowth = 60, kbAngle = 28, selfVelocity = Vector2.new(18, 0),
+			wall = { size = Vector3.new(1.2, 8, 6), offset = 5, lifetime = 6, max = 2 },
+			windup = { Root = { 6, 0, 0, 0, -0.2, 0.25 }, Waist = { 8, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 45, 0, -12 }, RE = { 125, 0, 0 }, RW = { 85, 0, 0 }, LS = { 45, 0, 12 }, LE = { 125, 0, 0 }, LW = { 85, 0, 0 } },
+			strike = { Root = { -22, 0, 0, 0, -0.45, -0.6 }, Waist = { -14, 0, 0 }, Neck = { 4, 0, 0 }, RS = { 96, 0, 14 }, RE = { 0, 0, 0 }, RW = { 85, 0, 0 }, LS = { 96, 0, -14 }, LE = { 0, 0, 0 }, LW = { 85, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.7 } },
+			follow = { Root = { -26, 0, 0, 0, -0.5, -0.7 }, Waist = { -16, 0, 0 }, Neck = { 6, 6, 0 }, RS = { 102, 0, 18 }, RE = { 0, 0, 0 }, RW = { 85, 0, 0 }, LS = { 102, 0, -18 }, LE = { 0, 0, 0 }, LW = { 85, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.75 } },
+			hold = 0.12, shake = true, trail = "bothHands",
+			fx = { { "ring", color = GHOST, radius = 4, at = "front" }, { "burst", color = GHOST, size = 3, at = "front" }, { "particles", tex = "smoke", color = GHOST, dir = "front", at = "front", time = 0.3, speed = 26, size = 0.9, rate = 60 } },
+			text = "…!", hitText = "( MUR )",
 		},
-		-- Tir à la corde : il fait tournoyer un lasso invisible au-dessus du béret et le lance ; s'il accroche,
-		-- l'adversaire est tiré brusquement vers lui (sinon Marcel se hisse vers le décor)
+		-- Lasso invisible : il fait tournoyer un lasso qu'on ne voit pas au-dessus du béret et le lance à l'horizontale sur
+		-- toute la longueur du couloir ; l'adversaire accroché est tiré d'un coup sec jusqu'à lui (sinon Marcel se hisse vers le décor)
 		S_side = {
-			label = "Tir à la corde", energyCost = 25, kind = "grapple", startup = 0.16, active = 0.1, recovery = 0.32,
-			damage = 9, kbBase = 22, kbGrowth = 30, kbAngle = 15,
-			grapple = { range = 24, angle = 0, speed = 70, pullEnemy = true },
-			windup = { Root = { 4, -10, 0, 0, -0.15, 0.1 }, Waist = { 6, -10, 0 }, Neck = { 10, 0, 0 }, RS = { 175, 0, 30 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -30 }, LE = { 70, 0, 0 } },
-			strike = { Root = { -8, 10, 0, 0, -0.25, -0.3 }, Waist = { -10, 12, 0 }, Neck = { -4, 0, 0 }, RS = { 95, 0, 0 }, RE = { 5, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -20 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
-			follow = { Root = { 12, -6, 0, 0, -0.35, 0.25 }, Waist = { 16, -8, 0 }, Neck = { 10, 0, 0 }, RS = { 60, 0, 15 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 80, 0, -10 }, LE = { 40, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
-			prop = "corde", hideProp = "canne", windupFx = { { "ring", color = ROPE, radius = 2, at = "above" } }, text = "( YIIHA )", hitText = "( TCHAC )",
+			label = "Lasso invisible", kind = "grapple", startup = 0.22, active = 0.12, recovery = 0.45,
+			damage = 13, kbBase = 24, kbGrowth = 30, kbAngle = 15,
+			grapple = { range = 32, angle = 0, speed = 80, pullEnemy = true },
+			windup = { Root = { 6, -14, 0, 0, -0.15, 0.15 }, Waist = { 8, -14, 0 }, Neck = { 12, 0, 0 }, RS = { 178, 0, 35 }, RE = { 35, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -30 }, LE = { 70, 0, 0 } },
+			strike = { Root = { -12, 12, 0, 0, -0.3, -0.4 }, Waist = { -12, 14, 0 }, Neck = { -4, 0, 0 }, RS = { 98, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, -20 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+			follow = { Root = { 16, -8, 0, 0, -0.4, 0.3 }, Waist = { 20, -10, 0 }, Neck = { 12, 0, 0 }, RS = { 55, 0, 15 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 85, 0, -10 }, LE = { 50, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+			prop = "corde", hideProp = "canne", trail = "prop",
+			windupFx = { { "ring", color = ROPE, radius = 2.5, at = "above" } }, fx = { { "beam", color = ROPE, length = 14, width = 0.5, at = "hand" } },
+			text = "( YIIHA )", hitText = "( TCHAC )",
 		},
-		-- Contre silencieux : il se fige en statue, puis sa paume part en « STOP » dans la figure d'en face ; un coup
-		-- reçu pendant la pose est annulé et il riposte
+		-- Contre silencieux : il se fige en statue ; un coup reçu pendant la pose est annulé et il riposte. Statue ou pas,
+		-- ses deux paumes font ensuite coulisser une vitre invisible sur toute la longueur du couloir
 		S_down = {
-			label = "Contre silencieux", energyCost = 20, kind = "counter", startup = 0.04, active = 0.45, recovery = 0.3,
-			hitbox = box(5, 4, 2.5, 0.5),
-			damage = 7,
-			counter = { window = 0.5, text = "…", riposte = { damage = 13, kbBase = 38, kbGrowth = 72, kbAngle = 35, hitText = "( RETOUR À L'ENVOYEUR )" } },
+			label = "Contre silencieux", kind = "counter", startup = 0.15, active = 0.4, recovery = 0.45,
+			damage = 12, hitbox = box(14, 6, 7, 1), kbBase = 32, kbGrowth = 58, kbAngle = 32,
+			counter = { window = 0.6, text = "…", riposte = { damage = 16, kbBase = 40, kbGrowth = 75, kbAngle = 35, hitText = "( RETOUR À L'ENVOYEUR )" } },
 			windup = { Root = { 0, 0, 0, 0, -0.1, 0.1 }, Waist = { 4, 0, 0 }, Neck = { 8, 0, 0 }, RS = { 60, 0, 30 }, RE = { 120, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -30 }, LE = { 120, 0, 0 }, LW = { 0, 0, 0 } },
-			strike = { Root = { -8, 0, 0, 0, -0.25, -0.3 }, Waist = { -10, 0, 0 }, Neck = { 0, 0, 0 }, RS = { 96, 0, 4 }, RE = { 0, 0, 0 }, RW = { 85, 0, 0 }, LS = { 20, 0, -30 }, LE = { 100, 0, 0 }, LW = { 0, 0, 40 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
-			follow = { Root = { -8, 0, 0, 0, -0.25, -0.3 }, Waist = { -10, 0, 0 }, Neck = { 0, 0, 0 }, RS = { 98, 0, 2 }, RE = { 0, 0, 0 }, RW = { 85, 0, 0 }, LS = { 20, 0, -30 }, LE = { 100, 0, 0 }, LW = { 0, 0, 40 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
-			hold = 0.2, trail = "rightHand", fx = { { "ring", color = GHOST, radius = 2.5, at = "root" }, { "symbols", symbols = { "✋" }, count = 1, radius = 1.5, at = "front", color = WHITE } }, text = "…", hitText = "( STOP )",
+			strike = { Root = { -14, 0, 0, 0, -0.35, -0.5 }, Waist = { -12, 0, 0 }, Neck = { 0, 0, 0 }, RS = { 98, 0, 6 }, RE = { 0, 0, 0 }, RW = { 85, 0, 0 }, LS = { 98, 0, -6 }, LE = { 0, 0, 0 }, LW = { 85, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.55 } },
+			follow = { Root = { -16, 0, 0, 0, -0.38, -0.55 }, Waist = { -14, 0, 0 }, Neck = { 0, 0, 0 }, RS = { 100, 0, 8 }, RE = { 0, 0, 0 }, RW = { 85, 0, 0 }, LS = { 100, 0, -8 }, LE = { 0, 0, 0 }, LW = { 85, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.55 } },
+			hold = 0.2, trail = "bothHands",
+			fx = { { "ring", color = GHOST, radius = 3, at = "root" }, { "symbols", symbols = { "✋", "▯" }, count = 3, radius = 2, at = "front", color = WHITE }, { "burst", color = GHOST, size = 2.5, at = "front" } },
+			text = "…", hitText = "( STOP )",
 		},
-		-- Échelle invisible : il agrippe des barreaux imaginaires et grimpe à toute vitesse (la montée frappe)
-		-- (gratuit : c'est la remontée)
+		-- Parapluie emporté (remontée) : il ouvre un parapluie qu'on devine à peine, une rafale l'emporte en diagonale vers
+		-- l'avant, pointe du parapluie en avant et jambes qui flottent derrière : tout ce qui est sur le passage prend le pied
 		S_up = {
-			label = "Échelle invisible", energyCost = 0, startup = 0.05, active = 0.32, recovery = 0.3,
-			damage = 4, hits = 2, hitbox = box(4, 7, 0.5, 3), kbBase = 28, kbGrowth = 35, kbAngle = 88, selfVelocity = Vector2.new(4, 92),
-			windup = { Root = { 0, 0, 0, 0, -0.6, 0 }, Waist = { -8, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 150, 0, 10 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 110, 0, -10 }, LE = { 60, 0, 0 }, LW = { 0, 0, 0 } },
-			strike = { Root = { 0, 0, 0, 0, 0.3, 0 }, Neck = { 25, 0, 0 }, RS = { 175, 0, 10 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 130, 0, -10 }, LE = { 70, 0, 0 }, LW = { 0, 0, 0 }, RH = { 80, 0, 0 }, RK = { -100, 0, 0 }, LH = { 10, 0, 0 }, LK = { -20, 0, 0 } },
-			follow = { Root = { 0, 0, 0, 0, 0.3, 0 }, Neck = { 25, 0, 0 }, RS = { 130, 0, 10 }, RE = { 70, 0, 0 }, RW = { 0, 0, 0 }, LS = { 175, 0, -10 }, LE = { 10, 0, 0 }, LW = { 0, 0, 0 }, RH = { 10, 0, 0 }, RK = { -20, 0, 0 }, LH = { 80, 0, 0 }, LK = { -100, 0, 0 } },
-			trail = "bothHands", text = "( GRIMPE )", hitText = "( TOC TOC )",
+			label = "Parapluie emporté", startup = 0.15, active = 0.32, recovery = 0.4,
+			damage = 14, hitbox = box(10, 11, 3, 4), kbBase = 32, kbGrowth = 55, kbAngle = 70, selfVelocity = Vector2.new(44, 84),
+			windup = { Root = { 6, 0, 0, 0, -0.65, 0.1 }, Waist = { -14, 0, 0 }, Neck = { 18, 0, 0 }, RS = { 120, 0, 10 }, RE = { 90, 0, 0 }, RW = { -40, 0, 0 }, LS = { -20, 0, -25 }, LE = { 40, 0, 0 } },
+			strike = { Root = { -42, 0, 0, 0, 0.3, 0 }, Waist = { -8, 0, 0 }, Neck = { 32, 0, 0 }, RS = { 168, 0, 12 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 120, 0, -40 }, LE = { 20, 0, 0 }, RH = { -24, 0, 6 }, RK = { -30, 0, 0 }, RA = { -30, 0, 0 }, LH = { -36, 0, -6 }, LK = { -45, 0, 0 }, LA = { -30, 0, 0 } },
+			follow = { Root = { -46, 0, 0, 0, 0.35, 0 }, Waist = { -10, 0, 0 }, Neck = { 34, 0, 0 }, RS = { 172, 0, 14 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 125, 0, -45 }, LE = { 20, 0, 0 }, RH = { -30, 0, 8 }, RK = { -40, 0, 0 }, RA = { -30, 0, 0 }, LH = { -42, 0, -8 }, LK = { -55, 0, 0 }, LA = { -30, 0, 0 } },
+			prop = "parapluie", hideProp = "canne", trail = "prop",
+			windupFx = { { "burst", color = GHOST, size = 2.5, at = "hand" } },
+			fx = { { "ring", color = WIND, radius = 4, at = "feet" }, { "particles", tex = "smoke", color = WIND, dir = "up", at = "feet", time = 0.35, speed = 18, size = 0.8, rate = 70 }, { "symbols", symbols = { "☂", "( FIOU )" }, count = 3, radius = 2, color = WHITE } },
+			text = "…", hitText = "( POC )",
 		},
-		-- Le Piano (en l'air + ↓ + S) : il pousse un piano imaginaire par-dessus bord… et tombe avec, de tout son poids
+		-- Le Piano (plongeon) : il pousse un piano imaginaire par-dessus bord… et tombe avec, de tout son poids, sur tout ce qu'il y a dessous
 		S_air_down = {
-			label = "Le Piano", energyCost = 25, startup = 0.14, active = 0.35, recovery = 0.35,
-			damage = 12, hitbox = box(5, 4, 0.5, -2), kbBase = 25, kbGrowth = 55, kbAngle = -70, selfVelocity = Vector2.new(0, -85),
+			label = "Le Piano", startup = 0.18, active = 0.35, recovery = 0.45,
+			damage = 14, hitbox = box(8, 6, 1, -2), kbBase = 28, kbGrowth = 60, kbAngle = -70, selfVelocity = Vector2.new(0, -85),
 			windup = { Root = { 6, 0, 0 }, Waist = { -10, 0, 0 }, Neck = { -15, 0, 0 }, RS = { 95, 0, 20 }, RE = { 20, 0, 0 }, RW = { 80, 0, 0 }, LS = { 95, 0, -20 }, LE = { 20, 0, 0 }, LW = { 80, 0, 0 }, RH = { 60, 0, 0 }, RK = { -90, 0, 0 }, LH = { 40, 0, 0 }, LK = { -70, 0, 0 } },
 			strike = { Root = { 0, 0, 0 }, Waist = { 10, 0, 0 }, Neck = { -30, 0, 0 }, RS = { 160, 0, 60 }, RE = { 20, 0, 0 }, LS = { 160, 0, -60 }, LE = { 20, 0, 0 }, RH = { -2, 0, 5 }, RK = { 0, 0, 0 }, RA = { -10, 0, 0 }, LH = { -2, 0, -5 }, LK = { 0, 0, 0 }, LA = { -10, 0, 0 } },
 			follow = { Root = { 0, 0, 0 }, Waist = { 12, 0, 0 }, Neck = { -32, 0, 0 }, RS = { 165, 0, 65 }, RE = { 20, 0, 0 }, LS = { 165, 0, -65 }, LE = { 20, 0, 0 }, RH = { -2, 0, 8 }, RK = { -5, 0, 0 }, RA = { -10, 0, 0 }, LH = { -2, 0, -8 }, LK = { -5, 0, 0 }, LA = { -10, 0, 0 } },
-			trail = "body", fx = { { "shake", amount = 0.6 }, { "ring", color = GHOST, radius = 5, at = "feet" } }, text = "…", hitText = "( PLONK )",
+			trail = "body", fx = { { "shake", amount = 0.6 }, { "ring", color = GHOST, radius = 6, at = "feet" }, { "burst", color = GHOST, size = 3, at = "feet" } }, text = "…", hitText = "( PLONK )",
 		},
-		-- Peau de banane invisible (esquive puis S) : il pèle une banane imaginaire, la mange et jette la peau devant lui
+		-- Peau de banane invisible (esquive puis S) : il pèle une banane imaginaire, la mange et jette la peau d'un grand
+		-- geste… elle file droit sous les pieds de l'adversaire et reste là un moment, glissante
 		S_dodge = {
-			label = "Peau de banane invisible", energyCost = 20, kind = "trap", startup = 0.14, active = 0, recovery = 0.3,
-			damage = 4, kbBase = 22, kbGrowth = 25, kbAngle = 80,
+			label = "Peau de banane invisible", kind = "projectile", startup = 0.18, active = 0, recovery = 0.4,
+			damage = 12, kbBase = 24, kbGrowth = 30, kbAngle = 80,
 			status = { name = "slippery", duration = 2 },
-			trap = { size = Vector3.new(3, 1.5, 6), offset = 3, lifetime = 10, max = 1, color = BANANA,
-				visual = { shape = "ball", size = 0.9, color = BANANA, transparency = 0.8, trail = false,
+			projectile = { speed = 60, angle = 0, gravity = 0, lifetime = 0.6, size = 2, color = BANANA, linger = 1.5, from = "feet",
+				visual = { shape = "ball", size = 0.9, color = BANANA, transparency = 0.75, spin = 6,
 					parts = { { "block", Vector3.new(0.9, 0.1, 0.3), Vector3.new(0.6, -0.3, 0), BANANA }, { "block", Vector3.new(0.9, 0.1, 0.3), Vector3.new(-0.6, -0.3, 0), BANANA } } } },
 			windup = { Root = { 0, 0, 0, 0, -0.1, 0 }, Waist = { 4, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 110, 0, -30 }, RE = { 130, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, 10 }, LE = { 100, 0, 0 } },
-			strike = { Root = { -4, 10, 0, 0, -0.15, -0.1 }, Waist = { -4, 10, 0 }, Neck = { 0, -10, 0 }, RS = { 95, 0, 30 }, RE = { 10, 0, 0 }, RW = { 30, 0, 0 }, LS = { 30, 0, -20 }, LE = { 90, 0, 0 } },
-			follow = { Root = { -4, 12, 0, 0, -0.15, -0.1 }, Waist = { -4, 12, 0 }, Neck = { 0, -12, 0 }, RS = { 80, 0, 40 }, RE = { 15, 0, 0 }, RW = { 40, 0, 0 }, LS = { 30, 0, -20 }, LE = { 90, 0, 0 } },
+			strike = { Root = { -10, 14, 0, 0, -0.3, -0.3 }, Waist = { -10, 16, 0 }, Neck = { -4, -10, 0 }, RS = { 60, 0, 30 }, RE = { 5, 0, 0 }, RW = { 40, 0, 0 }, LS = { 30, 0, -20 }, LE = { 90, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+			follow = { Root = { -12, 16, 0, 0, -0.32, -0.35 }, Waist = { -12, 18, 0 }, Neck = { -4, -12, 0 }, RS = { 40, 0, 40 }, RE = { 10, 0, 0 }, RW = { 50, 0, 0 }, LS = { 30, 0, -20 }, LE = { 90, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+			trail = "rightHand", fx = { { "symbols", symbols = { "🍌" }, count = 1, radius = 1.5, at = "front", color = BANANA } },
 			text = "( MIAM )", hitText = "( WOUPS )",
 		},
-		-- Vent violent (S maintenu) : il gonfle les joues, se plante sur ses jambes et pousse une bourrasque à deux paumes
+		-- Vent violent (S maintenu) : il gonfle les joues, se plante sur ses jambes et pousse à deux paumes une bourrasque
+		-- qui balaie tout le couloir devant lui (repousse très loin)
 		S_hold = {
-			label = "Vent violent", energyCost = 35, startup = 0.22, active = 0.25, recovery = 0.4,
-			damage = 9, hitbox = box(9, 5, 5, 0.8), kbBase = 55, kbGrowth = 70, kbAngle = 18,
+			label = "Vent violent", startup = 0.26, active = 0.28, recovery = 0.5,
+			damage = 12, hitbox = box(14, 6, 7, 1), kbBase = 58, kbGrowth = 72, kbAngle = 18,
 			windup = { Root = { 8, 0, 0, 0, -0.3, 0.3 }, Waist = { 16, 0, 0 }, Neck = { 18, 0, 0 }, RS = { 40, 0, 70 }, RE = { 120, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -70 }, LE = { 120, 0, 0 }, LW = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
-			strike = { Root = { -10, 0, 0, 0, -0.45, -0.35 }, Waist = { -14, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 92, 0, 10 }, RE = { 5, 0, 0 }, RW = { 85, 0, 0 }, LS = { 92, 0, -10 }, LE = { 5, 0, 0 }, LW = { 85, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
-			follow = { Root = { -12, 0, 0, 0, -0.48, -0.4 }, Waist = { -16, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 95, 0, 12 }, RE = { 0, 0, 0 }, RW = { 85, 0, 0 }, LS = { 95, 0, -12 }, LE = { 0, 0, 0 }, LW = { 85, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
-			shake = true, wobble = true,
-			fx = { { "particles", tex = "smoke", color = WIND, dir = "front", at = "front", time = 0.35, speed = 30, size = 1.2, rate = 90 }, { "swarm", shape = "flat", color = Color3.fromRGB(150, 190, 90), count = 6, distance = 18, size = 0.5, height = 2 } },
+			strike = { Root = { -12, 0, 0, 0, -0.45, -0.4 }, Waist = { -16, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 94, 0, 10 }, RE = { 0, 0, 0 }, RW = { 85, 0, 0 }, LS = { 94, 0, -10 }, LE = { 0, 0, 0 }, LW = { 85, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.55 } },
+			follow = { Root = { -14, 0, 0, 0, -0.48, -0.45 }, Waist = { -18, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 98, 0, 12 }, RE = { 0, 0, 0 }, RW = { 85, 0, 0 }, LS = { 98, 0, -12 }, LE = { 0, 0, 0 }, LW = { 85, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.55 } },
+			shake = true, wobble = true, trail = "bothHands",
+			fx = { { "particles", tex = "smoke", color = WIND, dir = "front", at = "front", time = 0.4, speed = 34, size = 1.3, rate = 100 }, { "beam", color = WIND, length = 16, width = 3, at = "hand" }, { "swarm", shape = "flat", color = Color3.fromRGB(150, 190, 90), count = 6, distance = 20, size = 0.5, height = 2 } },
 			text = "( FFFFFF )", hitText = "( WOUSH )",
 		},
-		-- Vélo invisible (→→S) : assis sur une selle qui n'existe pas, il pédale à toute allure, guidon en main
+		-- Vélo invisible (→→S) : assis sur une selle qui n'existe pas, il pédale à toute allure, guidon en main, et traverse tout le couloir
 		S_dash = {
-			label = "Vélo invisible", energyCost = 25, startup = 0.06, active = 0.3, recovery = 0.3,
-			damage = 10, hitbox = box(5, 4, 2.5, 0), kbBase = 30, kbGrowth = 60, kbAngle = 32, selfVelocity = Vector2.new(62, 0), invuln = 0.15,
+			label = "Vélo invisible", startup = 0.15, active = 0.32, recovery = 0.4,
+			damage = 13, hitbox = box(12, 5, 5, 0.5), kbBase = 32, kbGrowth = 62, kbAngle = 32, selfVelocity = Vector2.new(66, 0), invuln = 0.15, armor = true,
 			windup = { Root = { -10, 0, 0, 0, -0.55, 0 }, Waist = { -10, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 75, 0, 15 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 75, 0, -15 }, LE = { 40, 0, 0 }, LW = { 0, 0, 0 }, RH = { 90, 0, 0 }, RK = { -100, 0, 0 }, LH = { 40, 0, 0 }, LK = { -60, 0, 0 } },
-			strike = { Root = { -16, 0, 0, 0, -0.55, -0.2 }, Waist = { -10, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 80, 0, 15 }, RE = { 35, 0, 0 }, RW = { 0, 0, 0 }, LS = { 80, 0, -15 }, LE = { 35, 0, 0 }, LW = { 0, 0, 0 }, RH = { 40, 0, 0 }, RK = { -60, 0, 0 }, LH = { 90, 0, 0 }, LK = { -100, 0, 0 } },
-			follow = { Root = { -16, 0, 0, 0, -0.55, -0.2 }, Waist = { -10, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 80, 0, 15 }, RE = { 35, 0, 0 }, RW = { 0, 0, 0 }, LS = { 80, 0, -15 }, LE = { 35, 0, 0 }, LW = { 0, 0, 0 }, RH = { 90, 0, 0 }, RK = { -100, 0, 0 }, LH = { 40, 0, 0 }, LK = { -60, 0, 0 } },
-			wobble = true, fx = { "dust" }, text = "( DRING DRING )", hitText = "( PROUT-PROUT )",
+			strike = { Root = { -18, 0, 0, 0, -0.55, -0.25 }, Waist = { -12, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 82, 0, 15 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 82, 0, -15 }, LE = { 30, 0, 0 }, LW = { 0, 0, 0 }, RH = { 40, 0, 0 }, RK = { -60, 0, 0 }, LH = { 90, 0, 0 }, LK = { -100, 0, 0 } },
+			follow = { Root = { -18, 0, 0, 0, -0.55, -0.25 }, Waist = { -12, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 82, 0, 15 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 82, 0, -15 }, LE = { 30, 0, 0 }, LW = { 0, 0, 0 }, RH = { 90, 0, 0 }, RK = { -100, 0, 0 }, LH = { 40, 0, 0 }, LK = { -60, 0, 0 } },
+			wobble = true, fx = { "dust", { "symbols", symbols = { "( DRING )" }, count = 2, radius = 2, color = WHITE } }, text = "( DRING DRING )", hitText = "( PROUT-PROUT )",
 		},
-		-- Piano lâché (S en l'air) : il fait signe à quelqu'un là-haut… et un piano invisible tombe devant lui
+		-- Piano lâché (S en l'air) : il fait signe à quelqu'un là-haut… et un piano invisible tombe du ciel pile sur la tête de l'adversaire
 		S_air = {
-			label = "Piano lâché", energyCost = 30, kind = "projectile", startup = 0.18, active = 0, recovery = 0.35,
-			damage = 12, kbBase = 26, kbGrowth = 55, kbAngle = 70,
+			label = "Piano lâché", kind = "projectile", startup = 0.2, active = 0, recovery = 0.42,
+			damage = 14, kbBase = 28, kbGrowth = 58, kbAngle = 70,
 			status = { name = "stunned", duration = 0.6 },
-			projectile = { speed = 55, gravity = 50, lifetime = 0.9, size = 3.4, color = BLACK, rain = { count = 1, spread = 1, ahead = 7, height = 20 },
+			projectile = { speed = 60, gravity = 60, lifetime = 0.9, size = 3.6, color = BLACK, rain = { count = 1, spread = 0.5, ahead = 7, height = 20 },
 				visual = { shape = "block", size = 3, color = Color3.fromRGB(40, 40, 45), transparency = 0.72, trail = false,
 					parts = { { "block", Vector3.new(3.1, 0.3, 1.2), Vector3.new(0, 1.1, -0.6), WHITE }, { "block", Vector3.new(0.3, 1.2, 0.3), Vector3.new(-1.2, -2, 0), BLACK }, { "block", Vector3.new(0.3, 1.2, 0.3), Vector3.new(1.2, -2, 0), BLACK } } } },
 			windup = { Root = { -6, 0, 0 }, Waist = { -6, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 170, 0, 20 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -40 }, LE = { 60, 0, 0 }, RH = { 40, 0, 0 }, RK = { -60, 0, 0 }, LH = { 20, 0, 0 }, LK = { -50, 0, 0 } },
 			strike = { Root = { 4, 0, 0 }, Waist = { 4, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 120, 0, 10 }, RE = { 10, 0, 0 }, RW = { 60, 0, 0 }, LS = { 30, 0, -50 }, LE = { 60, 0, 0 }, RH = { 30, 0, 0 }, RK = { -50, 0, 0 }, LH = { 20, 0, 0 }, LK = { -50, 0, 0 } },
 			follow = { Root = { 4, 0, 0 }, Waist = { 4, 0, 0 }, Neck = { -14, 0, 0 }, RS = { 100, 0, 10 }, RE = { 10, 0, 0 }, RW = { 80, 0, 0 }, LS = { 60, 0, -30 }, LE = { 120, 0, 0 }, RH = { 30, 0, 0 }, RK = { -50, 0, 0 }, LH = { 20, 0, 0 }, LK = { -50, 0, 0 } },
-			text = "( LÂCHEZ TOUT )", hitText = "( PLONK )",
+			fx = { { "symbols", symbols = { "🎹", "▼" }, count = 2, radius = 2, at = "above", color = WHITE } }, text = "( LÂCHEZ TOUT )", hitText = "( PLONK )",
 		},
 
 		------------------------------------------------------------------ Finitions avec S (dans un enchaînement)
 		-- Poussée du mur : il plaque un mur invisible contre l'adversaire et pousse de tout son corps
 		S_finish_mur = {
-			label = "Poussée du mur", energyCost = 20, startup = 0.14, active = 0.16, recovery = 0.32,
+			label = "Poussée du mur", startup = 0.14, active = 0.16, recovery = 0.32,
 			damage = 10, hitbox = box(5, 6, 3, 1), kbBase = 34, kbGrowth = 66, kbAngle = 22, selfVelocity = Vector2.new(20, 0),
 			windup = { Root = { 4, 0, 0, 0, -0.25, 0.2 }, Waist = { 6, 0, 0 }, RS = { 70, 0, 20 }, RE = { 120, 0, 0 }, RW = { 80, 0, 0 }, LS = { 70, 0, -20 }, LE = { 120, 0, 0 }, LW = { 80, 0, 0 } },
 			strike = { Root = { -20, 0, 0, 0, -0.45, -0.5 }, Waist = { -10, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 100, 0, 15 }, RE = { 5, 0, 0 }, RW = { 85, 0, 0 }, LS = { 100, 0, -15 }, LE = { 5, 0, 0 }, LW = { 85, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
@@ -490,7 +500,7 @@ local data = {
 		},
 		-- Coup de lasso : la corde invisible claque de bas en haut comme un fouet et fait décoller l'adversaire
 		S_finish_corde = {
-			label = "Coup de lasso", energyCost = 20, startup = 0.12, active = 0.14, recovery = 0.3,
+			label = "Coup de lasso", startup = 0.12, active = 0.14, recovery = 0.3,
 			damage = 9, hitbox = box(6, 5, 3.5, 1.5), kbBase = 32, kbGrowth = 60, kbAngle = 78,
 			windup = { Root = { -6, -10, 0, 0, -0.4, 0.1 }, Waist = { -14, -10, 0 }, RS = { -20, 0, 30 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -30 }, LE = { 70, 0, 0 } },
 			strike = { Root = { 8, 10, 0, 0, 0.1, -0.15 }, Waist = { 12, 12, 0 }, Neck = { 20, 0, 0 }, RS = { 160, 0, 15 }, RE = { 5, 0, 0 }, RW = { 0, 0, 0 }, LS = { 10, 0, -40 }, LE = { 60, 0, 0 } },
@@ -498,41 +508,41 @@ local data = {
 			prop = "corde", hideProp = "canne", trail = "rightHand", hitText = "( FLAC )",
 		},
 
-		------------------------------------------------------------------ Supers
-		-- Le Silence : un doigt sur la bouche… plus un bruit ; l'adversaire touché est réduit au silence
-		-- (muet : plus de spéciaux pendant 3 s)
+		------------------------------------------------------------------ Supers (Y) : couloir 1,3 fois plus grand, plus farfelus
+		-- Le Silence (Y) : un doigt sur la bouche… et plus un bruit dans toute l'arène ; l'adversaire est réduit au silence
+		-- (muet : plus de signatures pendant 3 s) et l'écran s'éteint comme au cinéma
 		SUPER = {
-			label = "Le Silence", superCost = 100, startup = 0.4, active = 0.2, recovery = 0.6,
-			damage = 18, hitbox = box(50, 36, 0, 8), kbBase = 10, kbGrowth = 10, kbAngle = 60,
+			label = "Le Silence", startup = 0.4, active = 0.2, recovery = 0.7,
+			damage = 20, hitbox = box(50, 36, 0, 8), kbBase = 12, kbGrowth = 12, kbAngle = 60,
 			status = { name = "muted", duration = 3 },
 			windup = { Root = { 0, 0, 0, 0, -0.1, 0 }, Waist = { 6, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 130, 0, -35 }, RE = { 145, 0, 0 }, RW = { 0, 0, 0 }, LS = { 10, 0, -20 }, LE = { 20, 0, 0 } },
 			strike = { Root = { 0, 0, 0, 0, 0.05, 0 }, Waist = { 10, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 130, 0, -38 }, RE = { 150, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, -40 }, LE = { 10, 0, 0 }, LW = { 0, 0, 0 } },
 			follow = { Root = { 0, 0, 0, 0, 0.05, 0 }, Waist = { 10, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 130, 0, -38 }, RE = { 150, 0, 0 }, RW = { 0, 0, 0 }, LS = { 155, 0, -45 }, LE = { 10, 0, 0 }, LW = { 0, 0, 0 } },
 			hold = 0.5, windupFx = { "super" },
-			fx = { { "screen", color = Color3.fromRGB(10, 10, 20), alpha = 0.6, time = 0.8 }, { "symbols", symbols = { "🤫", "…", "🔇" }, count = 8, radius = 5, color = WHITE } },
+			fx = { { "screen", color = Color3.fromRGB(10, 10, 20), alpha = 0.6, time = 0.8 }, { "ring", color = WHITE, radius = 12, at = "head" }, { "symbols", symbols = { "🤫", "…", "🔇" }, count = 8, radius = 5, color = WHITE } },
 			text = "CHUUUT…", hitText = "( … )",
 		},
-		-- Super ↑ : il appuie sur le bouton d'un ascenseur invisible, la cabine fuse vers le ciel et il en soulève
-		-- le plafond à deux paumes ; tout ce qui est au-dessus monte au dernier étage avec lui
+		-- Ascenseur invisible (Y↑) : il appuie sur un bouton qui n'existe pas, soulève le plafond de la cabine à deux paumes
+		-- et tout le couloir devant lui monte au dernier étage avec lui
 		SUPER_up = {
-			label = "L'Ascenseur invisible !", superCost = 100, startup = 0.3, active = 0.3, recovery = 0.55,
-			damage = 22, hitbox = box(6.5, 12, 1.5, 5), kbBase = 46, kbGrowth = 95, kbAngle = 88, invuln = 0.3,
+			label = "L'Ascenseur invisible !", startup = 0.35, active = 0.3, recovery = 0.7,
+			damage = 24, hitbox = box(14, 8, 7, 2), kbBase = 46, kbGrowth = 95, kbAngle = 88, invuln = 0.3, selfVelocity = Vector2.new(0, 60),
 			windup = { Root = { 0, -15, 0, 0, -0.1, 0.1 }, Waist = { 2, -12, 0 }, Neck = { 22, 10, 0 }, RS = { 110, 0, 5 }, RE = { 30, 0, 0 }, RW = { -40, 0, 0 }, LS = { 10, 0, -20 }, LE = { 60, 0, 0 } },
 			strike = { Root = { 0, 0, 0, 0, 0.4, 0 }, Waist = { 0, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 178, 0, 12 }, RE = { 0, 0, 0 }, RW = { 85, 0, 0 }, LS = { 178, 0, -12 }, LE = { 0, 0, 0 }, LW = { 85, 0, 0 }, FR = { 0, 0, 0, 0, 0.35, 0 }, FL = { 0, 0, 0, 0, 0.35, 0 } },
 			follow = { Root = { 0, 0, 0, 0, 0.5, 0 }, Waist = { 0, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 182, 0, 14 }, RE = { 0, 0, 0 }, RW = { 85, 0, 0 }, LS = { 182, 0, -14 }, LE = { 0, 0, 0 }, LW = { 85, 0, 0 }, FR = { 0, 0, 0, 0, 0.45, 0 }, FL = { 0, 0, 0, 0, 0.45, 0 } },
-			hold = 0.3, selfVelocity = Vector2.new(0, 60), trail = "bothHands",
+			hold = 0.3, trail = "bothHands",
 			windupFx = { "super", { "text", text = "[ 12e ÉTAGE ]", color = WHITE, at = "above" } },
-			fx = { { "pillar", color = GHOST, height = 26, width = 4, at = "root" }, { "ring", color = GHOST, radius = 5, at = "feet" }, { "symbols", symbols = { "▲", "( DING )" }, count = 5, radius = 3, color = WHITE } },
+			fx = { { "pillar", color = GHOST, height = 26, width = 6, at = "front" }, { "ring", color = GHOST, radius = 7, at = "feet" }, { "symbols", symbols = { "▲", "( DING )" }, count = 5, radius = 3, color = WHITE } },
 			text = "…", hitText = "[ DERNIER ÉTAGE ]",
 		},
-		-- La Boîte ultime : il mime une cage tout autour de l'adversaire, puis la secoue et cogne dedans
+		-- La Boîte ultime (Y↓) : il mime une boîte géante qui prend tout le couloir, l'aspire dedans, puis la secoue et cogne contre les parois
 		SUPER_down = {
-			label = "La Boîte ultime", superCost = 100, startup = 0.3, active = 0.8, recovery = 0.5,
-			damage = 4, hits = 6, pull = true, hitbox = box(5, 5, 2.4, 1), kbBase = 14, kbGrowth = 20, kbAngle = 60,
-			windup = { Root = { 0, 0, 0, 0, -0.1, 0 }, Waist = { 0, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 95, 0, 40 }, RE = { 30, 0, 0 }, RW = { 85, 0, 0 }, LS = { 95, 0, -40 }, LE = { 30, 0, 0 }, LW = { 85, 0, 0 } },
+			label = "La Boîte ultime", startup = 0.35, active = 0.8, recovery = 0.6,
+			damage = 4, hits = 6, pull = true, hitbox = box(14, 6, 7, 1), kbBase = 14, kbGrowth = 20, kbAngle = 60,
+			windup = { Root = { 0, 0, 0, 0, -0.1, 0 }, Waist = { 0, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 95, 0, 60 }, RE = { 30, 0, 0 }, RW = { 85, 0, 0 }, LS = { 95, 0, -60 }, LE = { 30, 0, 0 }, LW = { 85, 0, 0 } },
 			strike = { Root = { -6, 10, 0, 0, -0.2, -0.2 }, Waist = { -8, 12, 0 }, Neck = { -4, 0, 0 }, RS = { 95, 0, 0 }, RE = { 10, 0, 0 }, RW = { 85, 0, 0 }, LS = { 120, 0, -10 }, LE = { 60, 0, 0 }, LW = { 85, 0, 0 } },
 			follow = { Root = { -6, -10, 0, 0, -0.2, -0.2 }, Waist = { -8, -12, 0 }, Neck = { -4, 0, 0 }, RS = { 120, 0, 10 }, RE = { 60, 0, 0 }, RW = { 85, 0, 0 }, LS = { 95, 0, 0 }, LE = { 10, 0, 0 }, LW = { 85, 0, 0 } },
-			wobble = true, windupFx = { "super" }, fx = { { "ring", color = GHOST, radius = 4, at = "front" }, { "symbols", symbols = { "▢", "( TOC )" }, count = 6, radius = 3, at = "front", color = GHOST } },
+			wobble = true, windupFx = { "super" }, fx = { { "ring", color = GHOST, radius = 6, at = "front" }, { "symbols", symbols = { "▢", "( TOC )" }, count = 8, radius = 4, at = "front", color = GHOST }, { "shake", amount = 0.3 } },
 			text = "( LA BOÎTE )", hitText = "( BOÎTE )",
 		},
 

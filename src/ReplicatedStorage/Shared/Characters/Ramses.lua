@@ -24,6 +24,18 @@ local SLIPPER = Color3.fromRGB(120, 70, 140)
 local TISSUE = Color3.fromRGB(250, 250, 255)
 local EYE = Color3.fromRGB(255, 235, 160)
 
+-- Monstre-microbe géant (projectile du Grand Rhume) : grosse boule verte, deux yeux globuleux, dents, antennes
+local GERM_MONSTER = { shape = "ball", size = 6, color = GERM, transparency = 0.35, spin = 2, parts = {
+	{ "ball", Vector3.new(1.4, 1.4, 1.4), Vector3.new(1.4, 1.2, -2.4), Color3.fromRGB(255, 255, 255) },
+	{ "ball", Vector3.new(1.4, 1.4, 1.4), Vector3.new(-1.4, 1.2, -2.4), Color3.fromRGB(255, 255, 255) },
+	{ "ball", Vector3.new(0.6, 0.6, 0.6), Vector3.new(1.4, 1.2, -3.0), Color3.fromRGB(30, 30, 40) },
+	{ "ball", Vector3.new(0.6, 0.6, 0.6), Vector3.new(-1.4, 1.2, -3.0), Color3.fromRGB(30, 30, 40) },
+	{ "block", Vector3.new(2.2, 0.6, 0.3), Vector3.new(0, -0.8, -2.8), Color3.fromRGB(255, 255, 255) },
+	{ "ball", Vector3.new(2.2, 2.2, 2.2), Vector3.new(2.8, 1.8, 0), GERM },
+	{ "ball", Vector3.new(2, 2, 2), Vector3.new(-2.6, -1.8, 0), GERM },
+	{ "ball", Vector3.new(1.8, 1.8, 1.8), Vector3.new(0.4, 3, 0), GERM },
+} }
+
 local data = {
 	id = "Ramses",
 	name = "Ramsès le Patraque",
@@ -416,162 +428,167 @@ local data = {
 		},
 
 		------------------------------------------------------------------ Spéciaux (S)
-		-- Éternuement : grande inspiration en se cambrant, puis un nuage microbien reste devant lui (contagion garantie)
+		-- Éternuement : grande inspiration en se cambrant, puis l'éternuement part en boule de microbes droit dans la figure de l'adversaire (contagion garantie)
 		S_neutral = {
-			label = "Éternuement", energyCost = 25, kind = "projectile", startup = 0.22, active = 0, recovery = 0.32,
-			damage = 6, kbBase = 14, kbGrowth = 14, kbAngle = 30,
-			projectile = { speed = 28, angle = 0, gravity = 0, lifetime = 0.35, linger = 1.4, size = 3.5, color = GERM, pierce = true,
+			label = "Éternuement", kind = "projectile", startup = 0.24, active = 0, recovery = 0.45,
+			damage = 12, kbBase = 16, kbGrowth = 20, kbAngle = 30,
+			projectile = { speed = 46, angle = 0, gravity = 0, lifetime = 0.6, size = 3.5, color = GERM,
 				visual = { shape = "ball", size = 3.2, color = GERM, transparency = 0.5, spin = 3, parts = {
 					{ "ball", Vector3.new(1.6, 1.6, 1.6), Vector3.new(1.2, 0.8, 0), GERM },
 					{ "ball", Vector3.new(1.4, 1.4, 1.4), Vector3.new(-1.1, -0.6, 0), GERM },
 				} } },
 			status = { name = "sneezy", duration = 3 },
 			windup = { Root = { 12, 0, 0, 0, -0.05, 0.25 }, Waist = { 20, 0, 0 }, Neck = { 32, 0, 0 }, RS = { 30, 0, 40 }, RE = { 50, 0, 0 }, LS = { 70, 0, -10 }, LE = { 110, 0, 0 } },
-			strike = { Root = { -16, 0, 0, 0, -0.3, -0.25 }, Waist = { -22, 0, 0 }, Neck = { -15, 0, 0 }, RS = { 10, 0, 45 }, RE = { 40, 0, 0 }, LS = { 20, 0, -40 }, LE = { 40, 0, 0 } },
-			follow = { Root = { -18, 0, 0, 0, -0.32, -0.28 }, Waist = { -24, 0, 0 }, Neck = { -18, 0, 0 }, RS = { 8, 0, 46 }, RE = { 40, 0, 0 }, LS = { 18, 0, -42 }, LE = { 40, 0, 0 } },
-			hold = 0.1, shake = true, fx = { { "particles", tex = "smoke", color = GERM, at = "head", dir = "front", time = 0.3, rate = 100, speed = 14, size = 1 } },
+			strike = { Root = { -18, 0, 0, 0, -0.3, -0.3 }, Waist = { -24, 0, 0 }, Neck = { -16, 0, 0 }, RS = { 10, 0, 45 }, RE = { 40, 0, 0 }, LS = { 20, 0, -40 }, LE = { 40, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+			follow = { Root = { -20, 0, 0, 0, -0.32, -0.35 }, Waist = { -26, 0, 0 }, Neck = { -18, 0, 0 }, RS = { 8, 0, 46 }, RE = { 40, 0, 0 }, LS = { 18, 0, -42 }, LE = { 40, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+			hold = 0.1, shake = true, fx = { { "particles", tex = "smoke", color = GERM, at = "head", dir = "front", time = 0.3, rate = 100, speed = 14, size = 1 }, { "burst", color = GERM, size = 2.5, at = "head" } },
 			text = "AAAH… AAAAH… ATCHOUM !", hitText = "CONTAGIÉ !",
 		},
-		-- Grappin bandelette : il lance son bras gauche au loin, la bandelette s'accroche et ramène l'adversaire
+		-- Grappin bandelette : il lance son bras gauche à travers tout le couloir, la bandelette s'accroche et ramène l'adversaire contre lui
 		S_side = {
-			label = "Grappin bandelette", energyCost = 25, kind = "grapple", startup = 0.16, active = 0.12, recovery = 0.32,
-			damage = 7, kbBase = 22, kbGrowth = 20, kbAngle = 15,
-			grapple = { range = 26, angle = 0, speed = 85, pullEnemy = true },
+			label = "Grappin bandelette", kind = "grapple", startup = 0.18, active = 0.12, recovery = 0.42,
+			damage = 12, kbBase = 22, kbGrowth = 20, kbAngle = 15,
+			grapple = { range = 30, angle = 0, speed = 85, pullEnemy = true },
 			windup = { Root = { 0, 25, 0, 0, -0.2, 0.2 }, Waist = { -4, 22, 0 }, Neck = { 0, -15, 0 }, LS = { 90, 0, -80 }, LE = { 100, 0, 0 }, RS = { 30, 0, 30 }, RE = { 70, 0, 0 } },
-			strike = { Root = { -10, -14, 0, 0, -0.25, -0.3 }, Waist = { -10, -18, 0 }, Neck = { 0, 10, 0 }, LS = { 92, 0, 5 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 }, RS = { 20, 0, 35 }, RE = { 70, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+			strike = { Root = { -12, -14, 0, 0, -0.25, -0.35 }, Waist = { -12, -18, 0 }, Neck = { 0, 10, 0 }, LS = { 94, 0, 4 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 }, RS = { 20, 0, 35 }, RE = { 70, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
 			follow = { Root = { 6, 6, 0, 0, -0.2, 0.2 }, Waist = { 8, 6, 0 }, Neck = { 6, 0, 0 }, LS = { 70, 0, -20 }, LE = { 90, 0, 0 }, LW = { 0, 0, 0 }, RS = { 20, 0, 35 }, RE = { 70, 0, 0 } },
-			prop = "bandelette", text = "VIENS PAR ICI !", hitText = "ENROULÉ !",
+			prop = "bandelette", trail = "leftHand", fx = { { "beam", color = BANDAGE, length = 16, width = 0.4, at = "lhand" } }, text = "VIENS PAR ICI !", hitText = "ENROULÉ !",
 		},
-		-- Mouchoirs usagés : il se penche et laisse tomber un mouchoir sale par terre (piège contagieux, 3 au plus)
+		-- Traînée de mouchoirs : il secoue sa manche et une traînée de mouchoirs sales tapisse tout le couloir ; qui reste dessus attrape le rhume
 		S_down = {
-			label = "Mouchoirs usagés", energyCost = 20, kind = "trap", startup = 0.18, active = 0.1, recovery = 0.28,
-			damage = 4, kbBase = 12, kbGrowth = 10, kbAngle = 40,
+			label = "Traînée de mouchoirs", kind = "trap", startup = 0.2, active = 0.12, recovery = 0.45,
+			damage = 12, kbBase = 16, kbGrowth = 14, kbAngle = 40,
 			status = { name = "sneezy", duration = 3 },
-			trap = { size = Vector3.new(3, 1.5, 6), offset = 3, lifetime = 10, max = 3, color = TISSUE,
-				visual = { shape = "ball", size = 1.2, color = TISSUE, trail = false, parts = {
-					{ "ball", Vector3.new(0.8, 0.7, 0.8), Vector3.new(0.5, 0.2, 0), TISSUE },
-					{ "ball", Vector3.new(0.4, 0.4, 0.2), Vector3.new(-0.2, 0.3, -0.5), GERM, "Neon" },
+			trap = { size = Vector3.new(16, 2, 6), offset = 8, lifetime = 8, max = 1, color = TISSUE,
+				visual = { shape = "ball", size = 1.0, color = TISSUE, trail = false, parts = {
+					{ "ball", Vector3.new(0.9, 0.7, 0.9), Vector3.new(-6, 0.1, 0), TISSUE },
+					{ "ball", Vector3.new(0.8, 0.7, 0.8), Vector3.new(-3, 0.1, 0.3), TISSUE },
+					{ "ball", Vector3.new(0.9, 0.7, 0.9), Vector3.new(3, 0.1, -0.3), TISSUE },
+					{ "ball", Vector3.new(0.8, 0.7, 0.8), Vector3.new(6, 0.1, 0), TISSUE },
+					{ "ball", Vector3.new(0.4, 0.4, 0.2), Vector3.new(-4.5, 0.4, -0.4), GERM, "Neon" },
+					{ "ball", Vector3.new(0.4, 0.4, 0.2), Vector3.new(1.5, 0.4, -0.4), GERM, "Neon" },
+					{ "ball", Vector3.new(0.4, 0.4, 0.2), Vector3.new(5, 0.4, -0.4), GERM, "Neon" },
 				} } },
 			windup = { Root = { -6, 0, 0, 0, -0.2, 0.1 }, Waist = { -10, 0, 0 }, Neck = { 0, 0, 0 }, LS = { 120, 0, -10 }, LE = { 120, 0, 0 }, RS = { 30, 0, 30 }, RE = { 70, 0, 0 } },
-			strike = { Root = { -20, 0, 0, 0, -0.6, -0.1 }, Waist = { -30, 0, 0 }, Neck = { -10, 0, 0 }, LS = { 50, 0, 0 }, LE = { 10, 0, 0 }, LW = { -20, 0, 0 }, RS = { 25, 0, 35 }, RE = { 70, 0, 0 } },
-			follow = { Root = { -20, 0, 0, 0, -0.62, -0.1 }, Waist = { -30, 0, 0 }, Neck = { -12, 0, 0 }, LS = { 40, 0, 0 }, LE = { 15, 0, 0 }, LW = { -25, 0, 0 }, RS = { 25, 0, 35 }, RE = { 70, 0, 0 } },
-			prop = "mouchoir", fx = { { "particles", tex = "smoke", color = GERM, at = "front", dir = "up", time = 0.3, rate = 30, speed = 3, size = 0.6 } }, text = "OUPS, MON MOUCHOIR…",
+			strike = { Root = { -16, 0, 0, 0, -0.5, -0.2 }, Waist = { -26, 0, 0 }, Neck = { -10, 0, 0 }, LS = { 70, 0, 10 }, LE = { 0, 0, 0 }, LW = { -30, 0, 0 }, RS = { 25, 0, 35 }, RE = { 70, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.35 } },
+			follow = { Root = { -14, 0, 0, 0, -0.5, -0.2 }, Waist = { -24, 0, 0 }, Neck = { -12, 0, 0 }, LS = { 40, 0, 40 }, LE = { 10, 0, 0 }, LW = { -40, 0, 0 }, RS = { 25, 0, 35 }, RE = { 70, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.35 } },
+			prop = "mouchoir", trail = "leftHand", shake = true,
+			fx = { { "toss", shape = "ball", color = TISSUE, size = 0.7, count = 6, speed = 22, lift = 8 }, { "particles", tex = "smoke", color = GERM, at = "front", dir = "up", time = 0.3, rate = 30, speed = 3, size = 0.6 } },
+			text = "OUPS, MES MOUCHOIRS…", hitText = "ATCHOUM !",
 		},
-		-- Sortie de sarcophage (remontée, gratuite) : bras croisés en pharaon, il file en diagonale vers le ciel
+		-- Sortie de sarcophage (remontée) : le couvercle doré jaillit sous ses pantoufles et il file en diagonale, thermomètre pointé vers le ciel, bandelettes au vent
 		S_up = {
-			label = "Sortie de sarcophage", energyCost = 0, startup = 0.06, active = 0.3, recovery = 0.3,
-			damage = 7, hitbox = box(5, 6, 1.5, 2), kbBase = 30, kbGrowth = 40, kbAngle = 70, selfVelocity = Vector2.new(34, 84),
-			windup = { Root = { 0, 0, 0, 0, -0.5, 0 }, Waist = { 0, 0, 0 }, Neck = { 0, 0, 0 }, RS = { 70, 0, -45 }, RE = { 120, 0, 0 }, LS = { 70, 0, 45 }, LE = { 120, 0, 0 } },
-			strike = { Root = { -20, 0, 0, 0, 0.3, 0 }, Waist = { 0, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 75, 0, -45 }, RE = { 125, 0, 0 }, LS = { 75, 0, 45 }, LE = { 125, 0, 0 }, RH = { 0, 0, 2 }, RK = { 0, 0, 0 }, RA = { -20, 0, 0 }, LH = { 0, 0, -2 }, LK = { 0, 0, 0 }, LA = { -20, 0, 0 } },
-			follow = { Root = { -22, 0, 0, 0, 0.3, 0 }, Waist = { 0, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 75, 0, -45 }, RE = { 125, 0, 0 }, LS = { 75, 0, 45 }, LE = { 125, 0, 0 }, RH = { 0, 0, 2 }, RK = { 0, 0, 0 }, RA = { -20, 0, 0 }, LH = { 0, 0, -2 }, LK = { 0, 0, 0 }, LA = { -20, 0, 0 } },
-			prop = "sarcophage", trail = "body", fx = { { "burst", color = GOLD, size = 3, at = "feet" }, { "particles", tex = "smoke", color = Color3.fromRGB(210, 190, 150), at = "feet", dir = "down", time = 0.3, rate = 50, speed = 6, size = 1 } },
+			label = "Sortie de sarcophage", startup = 0.15, active = 0.3, recovery = 0.42,
+			damage = 14, hitbox = box(10, 11, 3, 4), kbBase = 30, kbGrowth = 44, kbAngle = 76, selfVelocity = Vector2.new(44, 84),
+			windup = { Root = { 0, 0, 0, 0, -0.6, 0 }, Waist = { -8, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 70, 0, -45 }, RE = { 120, 0, 0 }, LS = { 70, 0, 45 }, LE = { 120, 0, 0 } },
+			strike = { Root = { -42, 0, 0, 0, 0.3, -0.1 }, Waist = { -4, 0, 0 }, Neck = { 28, 0, 0 }, RS = { 166, 0, 8 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -40, 0, -22 }, LE = { 20, 0, 0 }, RH = { -24, 0, 4 }, RK = { -30, 0, 0 }, RA = { -30, 0, 0 }, LH = { -30, 0, -4 }, LK = { -40, 0, 0 }, LA = { -30, 0, 0 } },
+			follow = { Root = { -46, 0, 0, 0, 0.35, -0.15 }, Waist = { -6, 0, 0 }, Neck = { 32, 0, 0 }, RS = { 172, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -44, 0, -26 }, LE = { 20, 0, 0 }, RH = { -28, 0, 4 }, RK = { -36, 0, 0 }, RA = { -30, 0, 0 }, LH = { -34, 0, -4 }, LK = { -46, 0, 0 }, LA = { -30, 0, 0 } },
+			prop = "sarcophage", trail = "body",
+			fx = { { "pillar", color = GOLD, height = 8, width = 3, at = "root", time = 0.4 }, { "burst", color = GOLD, size = 3.5, at = "feet" }, { "ring", color = GOLD, radius = 5, at = "feet" },
+				{ "particles", tex = "smoke", color = Color3.fromRGB(210, 190, 150), at = "feet", dir = "down", time = 0.35, rate = 60, speed = 10, size = 1 }, { "symbols", symbols = { "𓂀", "✨" }, color = GOLD, count = 4, radius = 3, at = "above" } },
 			text = "JE SORS !", hitText = "BONG !",
 		},
-		-- Arrêt maladie (esquive puis S) : « je me sens mal… », il titube et s'effondre de tout son long sur l'adversaire, puis reste au sol, invulnérable une seconde
+		-- Arrêt maladie (esquive puis L) : « je me sens mal… », il titube et s'effondre de tout son long sur tout le couloir, puis reste au sol, invulnérable un instant
 		S_dodge = {
-			label = "Arrêt maladie", energyCost = 20, startup = 0.05, active = 0.85, recovery = 0.25, invuln = 1.0,
-			damage = 9, hitbox = box(6, 3.5, 3, -1), kbBase = 30, kbGrowth = 55, kbAngle = 35,
+			label = "Arrêt maladie", startup = 0.15, active = 0.6, recovery = 0.42, invuln = 0.8,
+			damage = 13, hitbox = box(14, 5, 7, 0.5), kbBase = 30, kbGrowth = 55, kbAngle = 35,
 			selfEffect = { heal = 2 },
 			windup = { Root = { -16, 0, 0, 0, -0.3, 0.1 }, Waist = { -10, 0, 0 }, Neck = { 20, 0, 12 }, RS = { 60, 0, 40 }, RE = { 30, 0, 0 }, LS = { 60, 0, -40 }, LE = { 30, 0, 0 } },
-			strike = { Root = { -82, 0, 0, 0, -1.7, -0.7 }, Waist = { 0, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 150, 0, 30 }, RE = { 10, 0, 0 }, LS = { 150, 0, -30 }, LE = { 10, 0, 0 }, RH = { 0, 0, 4 }, RK = { -10, 0, 0 }, RA = { 20, 0, 0 }, LH = { 0, 0, -4 }, LK = { -10, 0, 0 }, LA = { 20, 0, 0 } },
-			follow = { Root = { -84, 0, 0, 0, -1.75, -0.75 }, Waist = { 0, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 60, 0, -40 }, RE = { 120, 0, 0 }, LS = { 60, 0, 40 }, LE = { 120, 0, 0 }, RH = { 0, 0, 4 }, RK = { -10, 0, 0 }, RA = { 20, 0, 0 }, LH = { 0, 0, -4 }, LK = { -10, 0, 0 }, LA = { 20, 0, 0 } },
-			hold = 0.5, trail = "body", fx = { "dust", { "text", text = "ARRÊT MALADIE", color = Color3.fromRGB(255, 255, 255), at = "above" }, { "symbols", symbols = { "📄", "🤒" }, color = TISSUE, count = 3, radius = 2 } },
+			strike = { Root = { -84, 0, 0, 0, -1.7, -0.8 }, Waist = { 0, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 165, 0, 20 }, RE = { 0, 0, 0 }, LS = { 165, 0, -20 }, LE = { 0, 0, 0 }, RH = { 0, 0, 4 }, RK = { -10, 0, 0 }, RA = { 20, 0, 0 }, LH = { 0, 0, -4 }, LK = { -10, 0, 0 }, LA = { 20, 0, 0 } },
+			follow = { Root = { -86, 0, 0, 0, -1.75, -0.85 }, Waist = { 0, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 60, 0, -40 }, RE = { 120, 0, 0 }, LS = { 60, 0, 40 }, LE = { 120, 0, 0 }, RH = { 0, 0, 4 }, RK = { -10, 0, 0 }, RA = { 20, 0, 0 }, LH = { 0, 0, -4 }, LK = { -10, 0, 0 }, LA = { 20, 0, 0 } },
+			hold = 0.4, trail = "body", fx = { "dust", { "shake", amount = 0.3 }, { "text", text = "ARRÊT MALADIE", color = Color3.fromRGB(255, 255, 255), at = "above" }, { "symbols", symbols = { "📄", "🤒" }, color = TISSUE, count = 3, radius = 2 } },
 			text = "JE SUIS EN ARRÊT !", hitText = "ÉCRASÉ !",
 		},
-		-- Fièvre (S maintenu) : il tremble de tout son corps et dégage une aura brûlante autour de lui
+		-- Fièvre (L maintenu) : il tremble de tout son corps, la fièvre monte… et une bouffée de chaleur brûlante balaie tout le couloir
 		S_hold = {
-			label = "Fièvre", energyCost = 35, startup = 0.28, active = 0.45, recovery = 0.4, hits = 3,
-			damage = 3, hitbox = box(8, 6, 0, 0.5), kbBase = 26, kbGrowth = 50, kbAngle = 50, burn = true, burnTime = 2,
+			label = "Fièvre", startup = 0.3, active = 0.2, recovery = 0.5,
+			damage = 13, hitbox = box(14, 6, 7, 1), kbBase = 26, kbGrowth = 50, kbAngle = 40, burn = true, burnTime = 2,
 			windup = { Root = { -10, 0, 0, 0, -0.45, 0 }, Waist = { -16, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 40, 0, -20 }, RE = { 120, 0, 0 }, LS = { 40, 0, 20 }, LE = { 120, 0, 0 } },
-			strike = { Root = { 4, 0, 0, 0, -0.1, 0 }, Waist = { 10, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 70, 0, 70 }, RE = { 20, 0, 0 }, LS = { 70, 0, -70 }, LE = { 20, 0, 0 } },
-			follow = { Root = { 4, 0, 0, 0, -0.1, 0 }, Waist = { 12, 0, 0 }, Neck = { 24, 0, 0 }, RS = { 75, 0, 75 }, RE = { 20, 0, 0 }, LS = { 75, 0, -75 }, LE = { 20, 0, 0 } },
-			shake = true, wobble = true, windupFx = { { "text", text = "40° DE FIÈVRE !", color = FEVER } },
-			fx = { { "ring", color = FEVER, radius = 5, at = "root" }, { "particles", tex = "fire", color = FEVER, at = "root", dir = "all", time = 0.45, rate = 80, speed = 8, size = 0.8 } },
+			strike = { Root = { -8, 0, 0, 0, -0.15, -0.3 }, Waist = { -6, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 92, 0, 30 }, RE = { 0, 0, 0 }, LS = { 92, 0, -30 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+			follow = { Root = { -10, 0, 0, 0, -0.15, -0.35 }, Waist = { -8, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 96, 0, 34 }, RE = { 0, 0, 0 }, LS = { 96, 0, -34 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+			hold = 0.1, shake = true, wobble = true, windupFx = { { "text", text = "40° DE FIÈVRE !", color = FEVER }, { "particles", tex = "fire", color = FEVER, at = "root", dir = "up", time = 0.3, rate = 50, speed = 6, size = 0.7 } },
+			fx = { { "ring", color = FEVER, radius = 6, at = "front" }, { "beam", color = FEVER, length = 14, width = 3, at = "root" }, { "particles", tex = "fire", color = FEVER, at = "front", dir = "front", time = 0.3, rate = 100, speed = 16, size = 0.9 } },
 			text = "J'AI CHAUD !", hitText = "BRÛLANT !",
 		},
-		-- Course en brancard (→→S) : allongé raide, bras croisés, il file les pieds devant comme sur un brancard
+		-- Course en brancard (→→L) : allongé raide, bras croisés, il traverse tout le couloir les pieds devant comme sur un brancard lancé à toute allure
 		S_dash = {
-			label = "Course en brancard", energyCost = 25, startup = 0.08, active = 0.32, recovery = 0.32,
-			damage = 10, hitbox = box(6, 2.5, 2.5, -1.2), kbBase = 30, kbGrowth = 60, kbAngle = 38, selfVelocity = Vector2.new(60, 0), invuln = 0.15,
+			label = "Course en brancard", startup = 0.15, active = 0.32, recovery = 0.45,
+			damage = 14, hitbox = box(14, 5, 7, 0.5), kbBase = 30, kbGrowth = 60, kbAngle = 38, selfVelocity = Vector2.new(62, 0), invuln = 0.15,
 			windup = { Root = { 20, 0, 0, 0, -0.6, 0 }, Waist = { 0, 0, 0 }, RS = { 60, 0, -40 }, RE = { 110, 0, 0 }, LS = { 60, 0, 40 }, LE = { 110, 0, 0 } },
 			strike = { Root = { 75, 0, 0, 0, -1.6, 0 }, Waist = { 0, 0, 0 }, Neck = { -15, 0, 0 }, RS = { 60, 0, -45 }, RE = { 120, 0, 0 }, LS = { 60, 0, 45 }, LE = { 120, 0, 0 }, RH = { 10, 0, 2 }, RK = { 0, 0, 0 }, RA = { 20, 0, 0 }, LH = { 10, 0, -2 }, LK = { 0, 0, 0 }, LA = { 20, 0, 0 } },
 			follow = { Root = { 76, 0, 0, 0, -1.6, 0 }, Waist = { 0, 0, 0 }, Neck = { -16, 0, 0 }, RS = { 60, 0, -45 }, RE = { 120, 0, 0 }, LS = { 60, 0, 45 }, LE = { 120, 0, 0 }, RH = { 10, 0, 2 }, RK = { 0, 0, 0 }, RA = { 20, 0, 0 }, LH = { 10, 0, -2 }, LK = { 0, 0, 0 }, LA = { 20, 0, 0 } },
 			trail = "body", fx = { "dust", { "symbols", symbols = { "🚑", "+" }, color = Color3.fromRGB(230, 50, 50), count = 3, radius = 2 } }, text = "PLACE, URGENCE !", hitText = "PIN-PON !",
 		},
-		-- Pilule effervescente (S en l'air) : il lance un gros comprimé qui rebondit et pétille (enrhume)
+		-- Pilule effervescente (L en l'air) : il lance un comprimé géant qui file droit dans la bouche de l'adversaire et pétille (enrhume)
 		S_air = {
-			label = "Pilule effervescente", energyCost = 20, kind = "projectile", startup = 0.14, active = 0, recovery = 0.3,
-			damage = 7, kbBase = 20, kbGrowth = 30, kbAngle = 35,
-			projectile = { speed = 55, angle = -25, gravity = 60, lifetime = 1.0, size = 1.4, color = TISSUE, bounce = 1,
-				visual = { shape = "block", size = 1.1, color = TISSUE, spin = 10, parts = { { "block", Vector3.new(0.6, 0.6, 0.7), Vector3.new(0.3, 0, 0), SYRUP } } } },
+			label = "Pilule effervescente", kind = "projectile", startup = 0.18, active = 0, recovery = 0.42,
+			damage = 13, kbBase = 22, kbGrowth = 36, kbAngle = 35,
+			projectile = { speed = 60, angle = -20, gravity = 30, lifetime = 0.8, size = 1.8, color = TISSUE,
+				visual = { shape = "block", size = 1.4, color = TISSUE, spin = 10, parts = { { "block", Vector3.new(0.75, 0.75, 0.9), Vector3.new(0.4, 0, 0), SYRUP } } } },
 			status = { name = "sneezy", duration = 2 },
-			windup = { Root = { 8, 15, 0 }, Waist = { 10, 15, 0 }, RS = { 40, 0, 40 }, RE = { 60, 0, 0 }, LS = { 150, 0, -30 }, LE = { 70, 0, 0 }, RH = { 60, 0, 0 }, RK = { -90, 0, 0 }, LH = { 40, 0, 0 }, LK = { -80, 0, 0 } },
-			strike = { Root = { -12, -8, 0 }, Waist = { -14, -10, 0 }, RS = { 40, 0, 45 }, RE = { 50, 0, 0 }, LS = { 60, 0, 10 }, LE = { 10, 0, 0 }, LW = { -30, 0, 0 }, RH = { 30, 0, 0 }, RK = { -60, 0, 0 }, LH = { 50, 0, 0 }, LK = { -90, 0, 0 } },
-			follow = { Root = { -14, -10, 0 }, Waist = { -16, -12, 0 }, RS = { 38, 0, 46 }, RE = { 50, 0, 0 }, LS = { 50, 0, 14 }, LE = { 10, 0, 0 }, LW = { -35, 0, 0 }, RH = { 28, 0, 0 }, RK = { -56, 0, 0 }, LH = { 52, 0, 0 }, LK = { -92, 0, 0 } },
+			windup = { Root = { 8, 15, 0 }, Waist = { 10, 15, 0 }, RS = { 40, 0, 40 }, RE = { 60, 0, 0 }, LS = { 160, 0, -30 }, LE = { 70, 0, 0 }, RH = { 60, 0, 0 }, RK = { -90, 0, 0 }, LH = { 40, 0, 0 }, LK = { -80, 0, 0 } },
+			strike = { Root = { -14, -8, 0 }, Waist = { -16, -10, 0 }, RS = { 40, 0, 45 }, RE = { 50, 0, 0 }, LS = { 70, 0, 10 }, LE = { 5, 0, 0 }, LW = { -30, 0, 0 }, RH = { 30, 0, 0 }, RK = { -60, 0, 0 }, LH = { 50, 0, 0 }, LK = { -90, 0, 0 } },
+			follow = { Root = { -16, -10, 0 }, Waist = { -18, -12, 0 }, RS = { 38, 0, 46 }, RE = { 50, 0, 0 }, LS = { 60, 0, 14 }, LE = { 10, 0, 0 }, LW = { -35, 0, 0 }, RH = { 28, 0, 0 }, RK = { -56, 0, 0 }, LH = { 52, 0, 0 }, LK = { -92, 0, 0 } },
+			trail = "leftHand", fx = { { "symbols", symbols = { "💊", "✨" }, color = TISSUE, count = 3, radius = 2, at = "lhand" } },
 			text = "PRENEZ VOTRE CACHET !", hitText = "PSCHIIT !",
 		},
-		-- Sirop gluant (↓S en l'air) : il tombe lourdement en brisant une fiole de sirop qui englue la zone
+		-- Sirop gluant (↓L en l'air) : il tombe lourdement en brisant une fiole de sirop qui englue tout ce qui est en dessous
 		S_air_down = {
-			label = "Sirop gluant", energyCost = 25, startup = 0.14, active = 0.35, recovery = 0.34,
-			damage = 11, hitbox = box(6.5, 4, 0, -1.5), kbBase = 26, kbGrowth = 52, kbAngle = -55, selfVelocity = Vector2.new(0, -85),
+			label = "Sirop gluant", startup = 0.16, active = 0.35, recovery = 0.45,
+			damage = 14, hitbox = box(8, 5, 0, -2), kbBase = 26, kbGrowth = 52, kbAngle = -55, selfVelocity = Vector2.new(0, -85),
 			status = { name = "slowed", duration = 2.5 },
 			windup = { Root = { 10, 0, 0 }, Waist = { 12, 0, 0 }, Neck = { 10, 0, 0 }, LS = { 185, 0, -10 }, LE = { 30, 0, 0 }, RS = { 60, 0, 40 }, RE = { 50, 0, 0 }, RH = { 70, 0, 0 }, RK = { -100, 0, 0 }, LH = { 70, 0, 0 }, LK = { -100, 0, 0 } },
 			strike = { Root = { -6, 0, 0 }, Waist = { -10, 0, 0 }, Neck = { -15, 0, 0 }, LS = { 20, 0, -10 }, LE = { 10, 0, 0 }, RS = { 120, 0, 50 }, RE = { 20, 0, 0 }, RH = { 0, 0, 6 }, RK = { 0, 0, 0 }, RA = { -10, 0, 0 }, LH = { 0, 0, -6 }, LK = { 0, 0, 0 }, LA = { -10, 0, 0 } },
 			follow = { Root = { -6, 0, 0 }, Waist = { -12, 0, 0 }, Neck = { -18, 0, 0 }, LS = { 15, 0, -12 }, LE = { 10, 0, 0 }, RS = { 125, 0, 55 }, RE = { 20, 0, 0 }, RH = { 0, 0, 8 }, RK = { -4, 0, 0 }, RA = { -10, 0, 0 }, LH = { 0, 0, -8 }, LK = { -4, 0, 0 }, LA = { -10, 0, 0 } },
-			prop = "fiole", trail = "body", fx = { { "puddle", color = SYRUP, width = 9, time = 2 }, { "burst", color = SYRUP, size = 3, at = "feet" }, { "shake", amount = 0.4 } },
+			prop = "fiole", trail = "body", fx = { { "puddle", color = SYRUP, width = 10, time = 2 }, { "burst", color = SYRUP, size = 3, at = "feet" }, { "shake", amount = 0.4 } },
 			text = "SIROP !", hitText = "GLUANT !",
 		},
 
 		------------------------------------------------------------------ Finition avec S (dans un enchaînement)
-		-- Quinte de toux : plié en deux, il tousse trois fois en direction de l'adversaire (enrhume)
+		-- Quinte de toux : plié en deux, il tousse un grand coup en direction de l'adversaire (enrhume)
 		S_finish_cough = {
-			label = "Quinte de toux", energyCost = 20, startup = 0.12, active = 0.3, recovery = 0.3, hits = 3,
-			damage = 3, hitbox = box(6, 3, 3, 0.8), kbBase = 28, kbGrowth = 50, kbAngle = 30,
+			label = "Quinte de toux", startup = 0.15, active = 0.2, recovery = 0.4,
+			damage = 12, hitbox = box(14, 5, 7, 1), kbBase = 28, kbGrowth = 50, kbAngle = 30,
 			status = { name = "sneezy", duration = 2.5 },
 			windup = { Root = { 6, 0, 0, 0, -0.15, 0.15 }, Waist = { 10, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 25, 0, 30 }, RE = { 70, 0, 0 }, LS = { 90, 0, 20 }, LE = { 120, 0, 0 } },
 			strike = { Root = { -16, 0, 0, 0, -0.35, -0.2 }, Waist = { -26, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 20, 0, 35 }, RE = { 70, 0, 0 }, LS = { 40, 0, 10 }, LE = { 110, 0, 0 } },
 			follow = { Root = { -18, 0, 0, 0, -0.38, -0.22 }, Waist = { -28, 0, 0 }, Neck = { -12, 0, 0 }, RS = { 18, 0, 36 }, RE = { 70, 0, 0 }, LS = { 38, 0, 10 }, LE = { 112, 0, 0 } },
-			shake = true, fx = { { "particles", tex = "smoke", color = GERM, at = "head", dir = "front", time = 0.3, rate = 60, speed = 10, size = 0.7 } },
+			shake = true, fx = { { "particles", tex = "smoke", color = GERM, at = "head", dir = "front", time = 0.3, rate = 60, speed = 14, size = 0.7 } },
 			text = "KOF KOF KOF !", hitText = "BEURK !",
 		},
 
 		------------------------------------------------------------------ Supers
-		-- Le Grand Rhume : il gonfle, gonfle… et lâche un éternuement géant qui laisse un énorme nuage de microbes
+		-- Le Grand Rhume : il gonfle, gonfle… et lâche un éternuement si énorme qu'un monstre-microbe en sort et fonce dévorer l'adversaire
 		SUPER = {
-			label = "Le Grand Rhume !", kind = "projectile", superCost = 100, startup = 0.4, active = 0, recovery = 0.5,
-			damage = 7, kbBase = 26, kbGrowth = 40, kbAngle = 35,
-			projectile = { speed = 25, angle = 0, gravity = 0, lifetime = 0.6, linger = 2.6, size = 8, color = GERM, pierce = true, hits = 3,
-				visual = { shape = "ball", size = 7, color = GERM, transparency = 0.5, spin = 2, parts = {
-					{ "ball", Vector3.new(4, 4, 4), Vector3.new(3, 2, 0), GERM },
-					{ "ball", Vector3.new(3.5, 3.5, 3.5), Vector3.new(-3, -1.5, 0), GERM },
-					{ "ball", Vector3.new(3, 3, 3), Vector3.new(0.5, 3.2, 0), GERM },
-				} } },
+			label = "Le Grand Rhume !", kind = "projectile", startup = 0.4, active = 0, recovery = 0.7,
+			damage = 22, kbBase = 30, kbGrowth = 55, kbAngle = 35,
+			projectile = { speed = 34, angle = 0, gravity = 0, lifetime = 0.8, size = 7, color = GERM, visual = GERM_MONSTER },
 			status = { name = "sneezy", duration = 3 },
 			windup = { Root = { 14, 0, 0, 0, 0, 0.3 }, Waist = { 24, 0, 0 }, Neck = { 36, 0, 0 }, RS = { 60, 0, 60 }, RE = { 40, 0, 0 }, LS = { 60, 0, -60 }, LE = { 40, 0, 0 } },
 			strike = { Root = { -24, 0, 0, 0, -0.4, -0.3 }, Waist = { -30, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 0, 0, 50 }, RE = { 30, 0, 0 }, LS = { 0, 0, -50 }, LE = { 30, 0, 0 } },
 			follow = { Root = { -26, 0, 0, 0, -0.42, -0.35 }, Waist = { -32, 0, 0 }, Neck = { -22, 0, 0 }, RS = { -5, 0, 52 }, RE = { 30, 0, 0 }, LS = { -5, 0, -52 }, LE = { 30, 0, 0 } },
 			hold = 0.2, shake = true, windupFx = { "super" },
 			fx = { { "screen", color = GERM, alpha = 0.3, time = 0.5 }, { "shake", amount = 0.6 }, { "particles", tex = "smoke", color = GERM, at = "head", dir = "front", time = 0.5, rate = 150, speed = 20, size = 1.5 } },
-			text = "AAAAAH… AAAAAAH… ATCHOUUUM !", hitText = "CONTAGIÉ !",
+			text = "AAAAAH… AAAAAAH… ATCHOUUUM !", hitText = "DÉVORÉ !",
 		},
-		-- Super ↑ : Tornade de bandelettes, il attrape le bout qui pend, tire… et se déroule en toupie, bras écartés, en montant vers le ciel
+		-- Super ↑ : Tornade de bandelettes, il attrape le bout qui pend, tire… et se déroule en toupie, bras écartés, en montant vers le ciel ; les bandelettes fauchent tout le couloir
 		SUPER_up = {
-			label = "Tornade de bandelettes !", superCost = 100, startup = 0.4, active = 0.3, recovery = 0.6,
-			damage = 22, hitbox = box(8, 14, 2, 6), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
+			label = "Tornade de bandelettes !", startup = 0.4, active = 0.3, recovery = 0.7,
+			damage = 24, hitbox = box(14, 14, 7, 6), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
 			windup = { Root = { -10, 0, 0, 0, -0.5, 0 }, Waist = { -24, 0, 0 }, Neck = { 14, 0, 0 }, LS = { 50, 0, -10 }, LE = { 110, 0, 0 }, LW = { 0, 0, 0 }, RS = { 50, 0, 10 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 } },
 			strike = { Root = { 4, 0, 0, 0, 0.5, 0 }, Waist = { 6, 0, 0 }, Neck = { 30, 0, 0 }, LS = { 100, 0, -90 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 }, RS = { 100, 0, 90 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, FR = { 0, 0, 0, 0, 0.4, 0 }, FL = { 0, 0, 0, 0, 0.4, 0 } },
 			follow = { Root = { 6, 0, 0, 0, 0.55, 0 }, Waist = { 8, 0, 0 }, Neck = { 36, 0, 0 }, LS = { 110, 0, -92 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 }, RS = { 110, 0, 92 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, FR = { 0, 0, 0, 0, 0.45, 0 }, FL = { 0, 0, 0, 0, 0.45, 0 } },
 			hold = 0.3, shake = true, spin = { axis = "y", degrees = 1080 }, selfVelocity = Vector2.new(0, 45), prop = "bandelette", trail = "leftHand",
 			windupFx = { "super" }, status = { name = "sneezy", duration = 3 },
-			fx = { { "pillar", color = BANDAGE, height = 22, width = 5, at = "front" }, { "swarm", shape = "ball", color = BANDAGE, count = 6, distance = 14, size = 0.8 }, { "symbols", symbols = { "🤧", "🦠", "🌀" }, count = 6, radius = 5, at = "above" } },
+			fx = { { "pillar", color = BANDAGE, height = 22, width = 5, at = "front" }, { "swarm", shape = "ball", color = BANDAGE, count = 6, distance = 16, size = 0.8 }, { "symbols", symbols = { "🤧", "🦠", "🌀" }, count = 6, radius = 5, at = "above" }, { "shake", amount = 0.4 } },
 			text = "DÉROULEZ-MOI !", hitText = "EMMAILLOTÉ !",
 		},
-		-- Malédiction du pharaon : bras levés vers le ciel, une nuée de scarabées cartoon s'abat devant lui
+		-- Malédiction du pharaon : bras levés vers le ciel, une nuée de scarabées cartoon s'abat sur l'adversaire, où qu'il soit
 		SUPER_down = {
-			label = "Malédiction du pharaon !", kind = "projectile", superCost = 100, startup = 0.45, active = 0, recovery = 0.55,
-			damage = 4, kbBase = 22, kbGrowth = 35, kbAngle = 50,
-			projectile = { speed = 60, gravity = 0, lifetime = 0.8, size = 1.6, color = Color3.fromRGB(40, 120, 110),
-				rain = { count = 7, spread = 9, ahead = 9, height = 20 },
+			label = "Malédiction du pharaon !", kind = "projectile", startup = 0.45, active = 0, recovery = 0.7,
+			damage = 5, kbBase = 22, kbGrowth = 35, kbAngle = 50,
+			projectile = { speed = 60, gravity = 0, lifetime = 0.8, size = 2, color = Color3.fromRGB(40, 120, 110),
+				rain = { count = 8, spread = 6, ahead = 9, height = 20 },
 				visual = { shape = "ball", size = 1.2, color = Color3.fromRGB(40, 120, 110), spin = 15, parts = {
 					{ "block", Vector3.new(1.4, 0.2, 0.6), Vector3.new(0, 0.3, 0), GOLD },
 					{ "ball", Vector3.new(0.5, 0.5, 0.5), Vector3.new(0, 0.7, 0), Color3.fromRGB(30, 80, 70) },
