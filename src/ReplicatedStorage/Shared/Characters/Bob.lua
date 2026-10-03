@@ -105,7 +105,7 @@ local data = {
 		-- J J : Claque retour, revers de la paluche gauche, les poils volent
 		P_combo2 = {
 			label = "Claque retour", startup = 0.08, active = 0.08, recovery = 0.18,
-			damage = 6, hitbox = box(4.5, 3, 2.5, 0.8), kbBase = 20, kbGrowth = 25, kbAngle = 30,
+			damage = 6, hitbox = box(5, 3.5, 2.8, 0.8), kbBase = 20, kbGrowth = 25, kbAngle = 30,
 			windup = { Root = { -4, -20, 0, 0, -0.3, -0.2 }, Waist = { -6, -26, 0 }, RS = { 30, 0, 40 }, RE = { 60, 0, 0 }, LS = { 70, 0, 50 }, LE = { 100, 0, 0 }, LW = { 0, 0, 0 } },
 			strike = { Root = { -8, 18, 0, 0, -0.32, -0.3 }, Waist = { -10, 24, 0 }, RS = { 25, 0, 45 }, RE = { 60, 0, 0 }, LS = { 92, 0, -40 }, LE = { 5, 0, 0 }, LW = { 0, 0, 0 } },
 			follow = { Root = { -8, 24, 0, 0, -0.32, -0.32 }, Waist = { -10, 30, 0 }, RS = { 25, 0, 48 }, RE = { 60, 0, 0 }, LS = { 85, 0, -65 }, LE = { 10, 0, 0 }, LW = { -10, 0, 0 } },
@@ -113,7 +113,7 @@ local data = {
 		},
 		-- J J J : Glacière sur la tête, il soulève la glacière à deux mains et l'abat comme un marteau
 		P_combo3 = {
-			label = "Glacière sur la tête", startup = 0.16, active = 0.1, recovery = 0.32,
+			label = "Glacière sur la tête", startup = 0.1, active = 0.1, recovery = 0.32,
 			damage = 9, hitbox = box(5, 4, 2.6, 0.8), kbBase = 30, kbGrowth = 60, kbAngle = 50,
 			windup = { Root = { 10, 0, 0, 0, 0, 0.25 }, Waist = { 16, 0, 0 }, Neck = { 15, 0, 0 }, RS = { 190, 0, -8 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 190, 0, 8 }, LE = { 40, 0, 0 } },
 			strike = { Root = { -16, 0, 0, 0, -0.55, -0.4 }, Waist = { -30, 0, 0 }, Neck = { -5, 0, 0 }, RS = { 75, 0, -8 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 75, 0, 8 }, LE = { 0, 0, 0 } },
@@ -132,7 +132,7 @@ local data = {
 		-- → J J : Revers de glacière, elle revient dans l'autre sens en tournant sur l'anse
 		P_side2 = {
 			label = "Revers de glacière", startup = 0.1, active = 0.08, recovery = 0.22,
-			damage = 7, hitbox = box(5, 3, 3, 0.5), kbBase = 22, kbGrowth = 35, kbAngle = 28, selfVelocity = Vector2.new(10, 0),
+			damage = 7, hitbox = box(5, 3.5, 3, 0.5), kbBase = 22, kbGrowth = 35, kbAngle = 28, selfVelocity = Vector2.new(10, 0),
 			windup = { Root = { -10, 40, 0, 0, -0.4, -0.4 }, Waist = { -14, 50, 0 }, RS = { 95, 0, -40 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { -30, 0, -40 }, LE = { 40, 0, 0 } },
 			strike = { Root = { -6, -20, 0, 0, -0.35, -0.45 }, Waist = { -10, -34, 0 }, RS = { 95, 0, 55 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -30 }, LE = { 70, 0, 0 } },
 			follow = { Root = { -6, -28, 0, 0, -0.35, -0.5 }, Waist = { -10, -44, 0 }, RS = { 85, 0, 75 }, RE = { 20, 0, 0 }, RW = { -15, 0, 0 }, LS = { 45, 0, -30 }, LE = { 70, 0, 0 } },
@@ -149,8 +149,8 @@ local data = {
 		},
 		-- ↓ J J : Bourrade remontante, depuis l'accroupi, gros uppercut de la paluche gauche
 		P_down2 = {
-			label = "Bourrade remontante", startup = 0.11, active = 0.1, recovery = 0.26,
-			damage = 8, hitbox = box(4, 5, 2, 2), kbBase = 30, kbGrowth = 45, kbAngle = 80,
+			label = "Bourrade remontante", startup = 0.08, active = 0.1, recovery = 0.26,
+			damage = 8, hitbox = box(4.5, 5, 2.5, 2), kbBase = 30, kbGrowth = 45, kbAngle = 80,
 			windup = { Root = { -10, 10, 0, 0, -0.9, 0.1 }, Waist = { -24, 10, 0 }, RS = { 30, 0, 40 }, RE = { 60, 0, 0 }, LS = { -20, 0, -20 }, LE = { 40, 0, 0 }, LW = { 0, 0, 0 } },
 			strike = { Root = { 6, -12, 0, 0, 0.15, -0.2 }, Waist = { 14, -16, 0 }, Neck = { 20, 0, 0 }, RS = { 40, 0, 50 }, RE = { 50, 0, 0 }, LS = { 165, 0, -5 }, LE = { 15, 0, 0 }, LW = { 0, 0, 0 } },
 			follow = { Root = { 8, -14, 0, 0, 0.2, -0.25 }, Waist = { 16, -18, 0 }, Neck = { 24, 0, 0 }, RS = { 42, 0, 52 }, RE = { 50, 0, 0 }, LS = { 175, 0, 0 }, LE = { 8, 0, 0 }, LW = { -10, 0, 0 } },
@@ -196,8 +196,8 @@ local data = {
 		},
 		-- K K : Tong retournée, il pivote lourdement et fouette du talon gauche
 		K_combo2 = {
-			label = "Tong retournée", startup = 0.15, active = 0.1, recovery = 0.27,
-			damage = 9, hitbox = box(5, 3, 3, 0.5), kbBase = 28, kbGrowth = 50, kbAngle = 30,
+			label = "Tong retournée", startup = 0.1, active = 0.1, recovery = 0.27,
+			damage = 9, hitbox = box(5, 3.5, 3, 0.5), kbBase = 28, kbGrowth = 50, kbAngle = 30,
 			windup = { Root = { 4, 40, 0, 0, -0.2, 0.1 }, Waist = { 4, 30, 0 }, RS = { 60, 0, 50 }, RE = { 50, 0, 0 }, LS = { 40, 0, -55 }, LE = { 40, 0, 0 }, LH = { 50, 0, -35 }, LK = { -100, 0, 0 } },
 			strike = { Root = { 12, -50, 0, 0, -0.15, 0 }, Waist = { 10, -30, 0 }, RS = { 70, 0, 65 }, RE = { 40, 0, 0 }, LS = { 30, 0, -70 }, LE = { 30, 0, 0 }, LH = { 82, 0, -50 }, LK = { -5, 0, 0 }, LA = { 20, 0, 0 } },
 			follow = { Root = { 14, -68, 0, 0, -0.15, 0 }, Waist = { 12, -36, 0 }, RS = { 72, 0, 66 }, RE = { 40, 0, 0 }, LS = { 25, 0, -74 }, LE = { 30, 0, 0 }, LH = { 78, 0, -38 }, LK = { -8, 0, 0 }, LA = { 20, 0, 0 } },
@@ -205,7 +205,7 @@ local data = {
 		},
 		-- K K K : Saut de yéti, il bondit lourdement et écrase un coup de pied tendu en retombant
 		K_combo3 = {
-			label = "Saut de yéti", startup = 0.18, active = 0.12, recovery = 0.34,
+			label = "Saut de yéti", startup = 0.1, active = 0.12, recovery = 0.34,
 			damage = 12, hitbox = box(5, 4, 3, 0.8), kbBase = 32, kbGrowth = 80, kbAngle = 38, selfVelocity = Vector2.new(14, 38),
 			windup = { Root = { -10, 0, 0, 0, -0.75, 0.1 }, Waist = { -16, 0, 0 }, RS = { -40, 0, 40 }, RE = { 30, 0, 0 }, LS = { -40, 0, -40 }, LE = { 30, 0, 0 } },
 			strike = { Root = { 14, 0, 0 }, Waist = { 12, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 70, 0, 70 }, RE = { 20, 0, 0 }, LS = { 80, 0, -70 }, LE = { 20, 0, 0 }, RH = { 92, 0, 0 }, RK = { 0, 0, 0 }, RA = { 20, 0, 0 }, LH = { 30, 0, 0 }, LK = { -110, 0, 0 } },
@@ -223,8 +223,8 @@ local data = {
 		},
 		-- → K K : Écrase-orteils, il ramène la jambe et écrase le pied de l'adversaire (le fait rebondir)
 		K_side2 = {
-			label = "Écrase-orteils", startup = 0.15, active = 0.1, recovery = 0.3,
-			damage = 10, hitbox = box(4.5, 2.5, 2.5, -1.5), kbBase = 30, kbGrowth = 55, kbAngle = 72,
+			label = "Écrase-orteils", startup = 0.09, active = 0.1, recovery = 0.3,
+			damage = 10, hitbox = box(5, 3.5, 2.8, -0.5), kbBase = 30, kbGrowth = 55, kbAngle = 72,
 			windup = { Root = { 10, 0, 0, 0, 0.1, 0.1 }, Waist = { 10, 0, 0 }, RS = { 60, 0, 50 }, RE = { 30, 0, 0 }, LS = { 60, 0, -50 }, LE = { 30, 0, 0 }, RH = { 100, 0, 0 }, RK = { -110, 0, 0 } },
 			strike = { Root = { -10, 0, 0, 0, -0.4, -0.3 }, Waist = { -16, 0, 0 }, Neck = { -15, 0, 0 }, RS = { 20, 0, 50 }, RE = { 40, 0, 0 }, LS = { 20, 0, -50 }, LE = { 40, 0, 0 }, RH = { 30, 0, 0 }, RK = { -10, 0, 0 }, RA = { 0, 0, 0 } },
 			follow = { Root = { -12, 0, 0, 0, -0.45, -0.32 }, Waist = { -18, 0, 0 }, Neck = { -16, 0, 0 }, RS = { 15, 0, 52 }, RE = { 40, 0, 0 }, LS = { 15, 0, -52 }, LE = { 40, 0, 0 }, RH = { 28, 0, 0 }, RK = { -12, 0, 0 }, RA = { 0, 0, 0 } },
@@ -243,8 +243,8 @@ local data = {
 		},
 		-- ↓ K K : Glissade de banquise, il se jette sur le ventre et glisse sur la glace, bras devant
 		K_downK = {
-			label = "Glissade de banquise", startup = 0.12, active = 0.24, recovery = 0.3,
-			damage = 9, hitbox = box(6, 2.5, 2.5, -1.6), kbBase = 30, kbGrowth = 50, kbAngle = 70, selfVelocity = Vector2.new(40, 0),
+			label = "Glissade de banquise", startup = 0.08, active = 0.24, recovery = 0.3,
+			damage = 9, hitbox = box(6, 3.5, 2.8, -0.8), kbBase = 30, kbGrowth = 50, kbAngle = 70, selfVelocity = Vector2.new(40, 0),
 			windup = { Root = { -16, 0, 0, 0, -0.7, 0.15 }, Waist = { -16, 0, 0 }, RS = { 140, 0, 20 }, RE = { 20, 0, 0 }, LS = { 140, 0, -20 }, LE = { 20, 0, 0 } },
 			strike = { Root = { -78, 0, 0, 0, -1.45, -0.4 }, Waist = { 8, 0, 0 }, Neck = { 40, 0, 0 }, RS = { 175, 0, 15 }, RE = { 0, 0, 0 }, LS = { 175, 0, -15 }, LE = { 0, 0, 0 }, RH = { -8, 0, 6 }, RK = { -20, 0, 0 }, RA = { 20, 0, 0 }, LH = { -8, 0, -6 }, LK = { -30, 0, 0 }, LA = { 20, 0, 0 } },
 			follow = { Root = { -80, 0, 0, 0, -1.5, -0.5 }, Waist = { 10, 0, 0 }, Neck = { 42, 0, 0 }, RS = { 178, 0, 12 }, RE = { 0, 0, 0 }, LS = { 178, 0, -12 }, LE = { 0, 0, 0 }, RH = { -10, 0, 6 }, RK = { -35, 0, 0 }, RA = { 20, 0, 0 }, LH = { -10, 0, -6 }, LK = { -15, 0, 0 }, LA = { 20, 0, 0 } },
@@ -261,30 +261,30 @@ local data = {
 		},
 		-- ↑ K K : Ruade de transat, toujours allongé, il replie les genoux et détend les deux tongs plus haut encore
 		K_upK = {
-			label = "Ruade de transat", startup = 0.14, active = 0.12, recovery = 0.34,
-			damage = 10, hitbox = box(4, 5.5, 1, 3.5), kbBase = 30, kbGrowth = 55, kbAngle = 86,
+			label = "Ruade de transat", startup = 0.09, active = 0.12, recovery = 0.34,
+			damage = 10, hitbox = box(4.5, 5.5, 1.5, 3.5), kbBase = 30, kbGrowth = 55, kbAngle = 86,
 			windup = { Root = { 50, 0, 0, 0, -1.3, 0.5 }, Waist = { 10, 0, 0 }, Neck = { -15, 0, 0 }, RS = { 140, 0, 30 }, RE = { 100, 0, 0 }, LS = { 140, 0, -30 }, LE = { 100, 0, 0 }, RH = { 130, 0, 6 }, RK = { -120, 0, 0 }, LH = { 130, 0, -6 }, LK = { -120, 0, 0 } },
 			strike = { Root = { 40, 0, 0, 0, -1.0, 0.4 }, Waist = { 6, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 120, 0, 50 }, RE = { 30, 0, 0 }, LS = { 120, 0, -50 }, LE = { 30, 0, 0 }, RH = { 150, 0, 4 }, RK = { 0, 0, 0 }, RA = { 20, 0, 0 }, LH = { 150, 0, -4 }, LK = { 0, 0, 0 }, LA = { 20, 0, 0 } },
 			follow = { Root = { 38, 0, 0, 0, -0.95, 0.4 }, Waist = { 6, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 115, 0, 55 }, RE = { 30, 0, 0 }, LS = { 115, 0, -55 }, LE = { 30, 0, 0 }, RH = { 158, 0, 4 }, RK = { 0, 0, 0 }, RA = { 20, 0, 0 }, LH = { 158, 0, -4 }, LK = { 0, 0, 0 }, LA = { 20, 0, 0 } },
 			trail = "bothFeet", hitText = "PATATRAS !",
 		},
-		-- Double tong (K en l'air) : genoux repliés sous la bedaine, puis les deux tongs claquent devant
+		-- Boulet de canon poilu (K en l'air) : il se roule en boule, genoux serrés contre la bedaine, et percute de tout son poids en tournant
 		K_air = {
-			label = "Double tong", startup = 0.18, active = 0.14, recovery = 0.26,
-			damage = 12, hitbox = box(5, 4, 2.5, -0.3), kbBase = 30, kbGrowth = 70, kbAngle = 40,
-			windup = { Root = { -10, 0, 0 }, Waist = { -20, 0, 0 }, RS = { 60, 0, 45 }, RE = { 60, 0, 0 }, LS = { 60, 0, -45 }, LE = { 60, 0, 0 }, RH = { 95, 0, 0 }, RK = { -130, 0, 0 }, LH = { 90, 0, 0 }, LK = { -130, 0, 0 } },
-			strike = { Root = { 22, 0, 0 }, Waist = { 20, 0, 0 }, RS = { -30, 0, 55 }, RE = { 20, 0, 0 }, LS = { -30, 0, -55 }, LE = { 20, 0, 0 }, RH = { 88, 0, 5 }, RK = { 0, 0, 0 }, RA = { 25, 0, 0 }, LH = { 80, 0, -5 }, LK = { -5, 0, 0 }, LA = { 25, 0, 0 } },
-			follow = { Root = { 26, 0, 0 }, Waist = { 22, 0, 0 }, RS = { -40, 0, 60 }, RE = { 20, 0, 0 }, LS = { -40, 0, -60 }, LE = { 20, 0, 0 }, RH = { 94, 0, 5 }, RK = { 0, 0, 0 }, RA = { 25, 0, 0 }, LH = { 86, 0, -5 }, LK = { -4, 0, 0 }, LA = { 25, 0, 0 } },
-			trail = "bothFeet", hitText = "FLIP-FLAP !",
+			label = "Boulet de canon poilu", startup = 0.14, active = 0.16, recovery = 0.26,
+			damage = 12, hitbox = box(5.5, 5, 1.5, 0), kbBase = 30, kbGrowth = 70, kbAngle = 40,
+			windup = { Root = { 10, 0, 0 }, Waist = { 10, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 150, 0, 40 }, RE = { 20, 0, 0 }, LS = { 150, 0, -40 }, LE = { 20, 0, 0 }, RH = { 40, 0, 0 }, RK = { -60, 0, 0 }, LH = { 40, 0, 0 }, LK = { -60, 0, 0 } },
+			strike = { Root = { -30, 0, 0 }, Waist = { -30, 0, 0 }, Neck = { -35, 0, 0 }, RS = { 90, 0, 20 }, RE = { 130, 0, 0 }, LS = { 90, 0, -20 }, LE = { 130, 0, 0 }, RH = { 120, 0, 10 }, RK = { -135, 0, 0 }, LH = { 120, 0, -10 }, LK = { -135, 0, 0 } },
+			follow = { Root = { -34, 0, 0 }, Waist = { -32, 0, 0 }, Neck = { -36, 0, 0 }, RS = { 92, 0, 20 }, RE = { 132, 0, 0 }, LS = { 92, 0, -20 }, LE = { 132, 0, 0 }, RH = { 122, 0, 10 }, RK = { -136, 0, 0 }, LH = { 122, 0, -10 }, LK = { -136, 0, 0 } },
+			spin = { axis = "x", degrees = 360 }, trail = "body", fx = { { "particles", tex = "smoke", color = SNOW, at = "root", dir = "all", time = 0.25, speed = 8 } }, text = "BOULET !", hitText = "BADABOUM POILU !",
 		},
-		-- Plaquage de yéti (dash puis K) : épaule en avant, il percute de tout son poids (encaisse sans broncher)
+		-- Roulé-boulé de yéti (dash puis K) : il se roule en boule de neige géante et dévale sur l'adversaire (encaisse tout)
 		K_dash = {
-			label = "Plaquage de yéti", startup = 0.12, active = 0.2, recovery = 0.32,
-			damage = 11, hitbox = box(4.5, 4, 2, 0.3), kbBase = 32, kbGrowth = 65, kbAngle = 30, selfVelocity = Vector2.new(50, 0), armor = true,
-			windup = { Root = { -10, -20, 0, 0, -0.35, 0.15 }, Waist = { -8, -14, 0 }, RS = { -10, 0, 30 }, RE = { 50, 0, 0 }, LS = { 40, 0, -15 }, LE = { 100, 0, 0 } },
-			strike = { Root = { -24, -45, 0, 0, -0.45, -0.3 }, Waist = { -10, -15, 0 }, Neck = { -10, 20, 0 }, RS = { -30, 0, 35 }, RE = { 40, 0, 0 }, LS = { 30, 0, -10 }, LE = { 115, 0, 0 } },
-			follow = { Root = { -26, -50, 0, 0, -0.47, -0.35 }, Waist = { -12, -18, 0 }, Neck = { -12, 22, 0 }, RS = { -40, 0, 40 }, RE = { 35, 0, 0 }, LS = { 25, 0, -10 }, LE = { 118, 0, 0 } },
-			fx = { "dust", { "shake", amount = 0.3 } }, text = "GRRROAR !", hitText = "BADABOUM !",
+			label = "Roulé-boulé de yéti", startup = 0.12, active = 0.22, recovery = 0.32,
+			damage = 11, hitbox = box(5, 4.5, 2.2, 0.3), kbBase = 32, kbGrowth = 65, kbAngle = 32, selfVelocity = Vector2.new(50, 8), armor = true,
+			windup = { Root = { -14, 0, 0, 0, -0.7, 0.1 }, Waist = { -24, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 60, 0, 30 }, RE = { 110, 0, 0 }, LS = { 60, 0, -30 }, LE = { 110, 0, 0 } },
+			strike = { Root = { -40, 0, 0, 0, -0.5, -0.3 }, Waist = { -30, 0, 0 }, Neck = { -30, 0, 0 }, RS = { 80, 0, 20 }, RE = { 130, 0, 0 }, LS = { 80, 0, -20 }, LE = { 130, 0, 0 }, RH = { 110, 0, 8 }, RK = { -130, 0, 0 }, LH = { 110, 0, -8 }, LK = { -130, 0, 0 } },
+			follow = { Root = { -44, 0, 0, 0, -0.5, -0.35 }, Waist = { -32, 0, 0 }, Neck = { -32, 0, 0 }, RS = { 82, 0, 20 }, RE = { 132, 0, 0 }, LS = { 82, 0, -20 }, LE = { 132, 0, 0 }, RH = { 112, 0, 8 }, RK = { -132, 0, 0 }, LH = { 112, 0, -8 }, LK = { -132, 0, 0 } },
+			spin = { axis = "x", degrees = 360 }, trail = "body", fx = { { "particles", tex = "smoke", color = SNOW, at = "feet", dir = "all", time = 0.3, speed = 10, rate = 80 }, { "shake", amount = 0.25 } }, text = "ROULÉ-BOULÉ !", hitText = "BADABOUM !",
 		},
 
 		------------------------------------------------------------------ En l'air avec une flèche (J / K)
@@ -365,10 +365,10 @@ local data = {
 			follow = { Root = { 12, 0, 0, 0, -1.2, 0 }, Waist = { 8, 0, 0 }, Neck = { -12, 0, 0 }, RS = { 20, 0, 22 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 130, 0, -55 }, LE = { 20, 0, 0 }, RH = { 88, 0, 8 }, RK = { -10, 0, 0 }, RA = { 20, 0, 0 }, LH = { 88, 0, -8 }, LK = { -10, 0, 0 }, LA = { 20, 0, 0 } },
 			trail = "body", fx = { { "particles", tex = "smoke", color = SNOW, at = "feet", dir = "up", time = 0.4, speed = 10, rate = 80 } }, text = "LUGE !", hitText = "SCHLAAAF !",
 		},
-		-- Mur de glace / Granita (↓S) : il frappe le sol, une barricade de glace jaillit devant lui ; ça le rafraîchit
+		-- Mur de glace (↓S) : glacière levée à deux mains, il l'abat sur le sol : le choc glace qui est devant et une barricade jaillit
 		S_down = {
 			label = "Mur de glace", kind = "wall", energyCost = 25, startup = 0.2, active = 0.1, recovery = 0.35,
-			hitbox = box(5, 4, 2.5, 0.5), kbBase = 30, kbGrowth = 45, kbAngle = 30,
+			hitbox = box(6, 4.5, 3, 0.5), kbBase = 30, kbGrowth = 45, kbAngle = 40,
 			damage = 7, selfEffect = { meter = 35 },
 			wall = { size = Vector3.new(1.8, 7, 6), offset = 3.5, lifetime = 6, max = 1, color = ICE,
 				visual = { shape = "block", size = 0.2, color = ICE, material = "Ice", transparency = 0.15, trail = false, parts = {
@@ -376,9 +376,9 @@ local data = {
 					{ "wedge", Vector3.new(1.8, 1.2, 3), Vector3.new(0, 4.1, 0), SNOW, "Ice" },
 				} } },
 			windup = { Root = { 10, 0, 0, 0, 0.05, 0.1 }, Waist = { 16, 0, 0 }, Neck = { 15, 0, 0 }, RS = { 170, 0, 20 }, RE = { 30, 0, 0 }, LS = { 170, 0, -20 }, LE = { 30, 0, 0 } },
-			strike = { Root = { -16, 0, 0, 0, -0.7, -0.2 }, Waist = { -30, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 40, 0, 20 }, RE = { 10, 0, 0 }, LS = { 40, 0, -20 }, LE = { 10, 0, 0 } },
+			strike = { Root = { -16, 0, 0, 0, -0.7, -0.35 }, Waist = { -30, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 40, 0, 20 }, RE = { 10, 0, 0 }, LS = { 40, 0, -20 }, LE = { 10, 0, 0 } },
 			follow = { Root = { -18, 0, 0, 0, -0.75, -0.22 }, Waist = { -32, 0, 0 }, Neck = { -12, 0, 0 }, RS = { 30, 0, 22 }, RE = { 10, 0, 0 }, LS = { 30, 0, -22 }, LE = { 10, 0, 0 } },
-			fx = { { "pillar", color = ICE, height = 7, width = 2, at = "front" }, { "shake", amount = 0.3 } }, text = "MUR DE GLACE !",
+			fx = { { "pillar", color = ICE, height = 7, width = 2, at = "front" }, { "shake", amount = 0.3 } }, trail = "prop", text = "MUR DE GLACE !", hitText = "CRIIIC ! GELÉ !",
 		},
 		-- Avalanche ascendante (remontée, gratuite) : une petite éruption de neige jaillit sous lui et le propulse vers le haut
 		S_up = {
@@ -409,16 +409,18 @@ local data = {
 			follow = { Root = { -82, 0, 0, 0, -1.5, -0.45 }, Waist = { 10, 0, 0 }, Neck = { 42, 0, 0 }, RS = { -14, 0, 18 }, RE = { 0, 0, 0 }, LS = { -14, 0, -18 }, LE = { 0, 0, 0 }, RH = { -8, 0, 4 }, RK = { -10, 0, 0 }, RA = { 20, 0, 0 }, LH = { -8, 0, -4 }, LK = { -10, 0, 0 }, LA = { 20, 0, 0 } },
 			trail = "body", fx = { { "puddle", color = ICE, width = 10, time = 1 } }, text = "PINGOUIIIN !", hitText = "SCHLOUF !",
 		},
-		-- Granita (ESQUIVE puis S) : il ouvre la glacière, aspire un granita à la paille et frissonne de bonheur
-		-- (soigne un peu et remonte beaucoup la Fraîcheur)
+		-- Granita (ESQUIVE puis S) : il aspire un granita à la paille (soigne, remonte la Fraîcheur)… gel du cerveau !
+		-- Il se plie en deux et crache un nuage glacé en pleine figure de l'adversaire
 		S_dodge = {
-			label = "Granita", energyCost = 25, startup = 0.15, active = 0, recovery = 0.55,
-			hitbox = box(6, 4, 2.5, 0.5), kbBase = 30, kbGrowth = 55, kbAngle = 35,
-			damage = 9, selfEffect = { heal = 6, meter = 50 },
-			windup = { Neck = { 10, 0, 0 }, RS = { 70, 0, -10 }, RE = { 90, 0, 0 }, RW = { -60, 0, 0 }, LS = { 60, 0, 10 }, LE = { 100, 0, 0 } },
-			strike = { Root = { 0, 0, 0, 0, -0.2, 0 }, Waist = { -10, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 80, 0, -15 }, RE = { 110, 0, 0 }, RW = { -80, 0, 0 }, LS = { 60, 0, 15 }, LE = { 110, 0, 0 } },
-			follow = { Root = { 0, 0, 0, 0, -0.2, 0 }, Waist = { -8, 0, 0 }, Neck = { -18, 0, 0 }, RS = { 82, 0, -15 }, RE = { 112, 0, 0 }, RW = { -82, 0, 0 }, LS = { 62, 0, 15 }, LE = { 112, 0, 0 } },
-			hold = 0.3, shake = true, fx = { { "symbols", symbols = { "❄️", "💙" }, color = ICE, count = 5, radius = 3 }, { "text", text = "SLUUURP !", color = ICE } }, text = "GLAGLA… QUEL BONHEUR !",
+			label = "Granita", energyCost = 25, startup = 0.2, active = 0.14, recovery = 0.45,
+			damage = 9, hitbox = box(6, 4, 3.5, 0.8), kbBase = 30, kbGrowth = 55, kbAngle = 35,
+			selfEffect = { heal = 6, meter = 50 }, status = { name = "slowed", duration = 1.5 },
+			windup = { Root = { 2, 0, 0, 0, -0.2, 0.1 }, Waist = { -6, 0, 0 }, Neck = { -18, 0, 0 }, RS = { 80, 0, -15 }, RE = { 110, 0, 0 }, RW = { -80, 0, 0 }, LS = { 60, 0, 15 }, LE = { 110, 0, 0 } },
+			strike = { Root = { -16, 0, 0, 0, -0.45, -0.35 }, Waist = { -30, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 60, 0, 60 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -60 }, LE = { 30, 0, 0 } },
+			follow = { Root = { -18, 0, 0, 0, -0.48, -0.4 }, Waist = { -34, 0, 0 }, Neck = { -24, 0, 0 }, RS = { 55, 0, 65 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 55, 0, -65 }, LE = { 30, 0, 0 } },
+			shake = true, windupFx = { { "text", text = "SLUUURP !", color = ICE }, { "symbols", symbols = { "❄️", "💙" }, color = ICE, count = 4, radius = 2.5 } },
+			fx = { { "particles", tex = "smoke", color = ICE, at = "head", dir = "front", time = 0.3, speed = 16, rate = 90 }, { "burst", color = SNOW, size = 3, at = "front" } },
+			text = "GEL DU CERVEAU !", hitText = "BRRRRAAAH !",
 		},
 		-- Grêlons (S en l'air) : il secoue la glacière ouverte au-dessus de la zone, une pluie de glaçons tombe devant lui
 		S_air = {
@@ -443,8 +445,8 @@ local data = {
 		------------------------------------------------------------------ Suites d'enchaînement
 		-- J puis K : Coup de genou poilu, il remonte le genou droit dans le ventre de l'adversaire
 		PK_combo = {
-			label = "Genou poilu", startup = 0.11, active = 0.08, recovery = 0.22,
-			damage = 7, hitbox = box(4, 3, 2.3, -0.2), kbBase = 24, kbGrowth = 35, kbAngle = 50,
+			label = "Genou poilu", startup = 0.08, active = 0.08, recovery = 0.22,
+			damage = 7, hitbox = box(4.5, 3.5, 2.5, 0.5), kbBase = 24, kbGrowth = 35, kbAngle = 50,
 			windup = { Root = { 4, -10, 0, 0, -0.2, 0.15 }, Waist = { 6, -10, 0 }, RS = { 40, 0, 40 }, RE = { 60, 0, 0 }, LS = { 50, 0, -40 }, LE = { 70, 0, 0 }, RH = { -20, 0, 0 }, RK = { -60, 0, 0 } },
 			strike = { Root = { -12, 8, 0, 0, 0.05, -0.35 }, Waist = { -10, 6, 0 }, RS = { 60, 0, 20 }, RE = { 90, 0, 0 }, LS = { 60, 0, -20 }, LE = { 90, 0, 0 }, RH = { 110, 0, 0 }, RK = { -120, 0, 0 }, RA = { 20, 0, 0 } },
 			follow = { Root = { -14, 10, 0, 0, 0.08, -0.4 }, Waist = { -12, 8, 0 }, RS = { 55, 0, 18 }, RE = { 100, 0, 0 }, LS = { 55, 0, -18 }, LE = { 100, 0, 0 }, RH = { 116, 0, 0 }, RK = { -124, 0, 0 }, RA = { 20, 0, 0 } },
@@ -452,19 +454,59 @@ local data = {
 		},
 		-- K puis J : Claque de glacière au sol, il pivote et rabat la glacière de haut en bas
 		KP_combo = {
-			label = "Rabat de glacière", startup = 0.12, active = 0.08, recovery = 0.24,
-			damage = 8, hitbox = box(4.5, 3.5, 2.5, 0.3), kbBase = 26, kbGrowth = 42, kbAngle = 55,
+			label = "Rabat de glacière", startup = 0.09, active = 0.08, recovery = 0.24,
+			damage = 8, hitbox = box(5, 3.5, 2.8, 0.5), kbBase = 26, kbGrowth = 42, kbAngle = 55,
 			windup = { Root = { 8, -8, 0, 0, -0.05, 0.2 }, Waist = { 12, -8, 0 }, RS = { 185, 0, 10 }, RE = { 50, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -30 }, LE = { 40, 0, 0 } },
 			strike = { Root = { -12, 8, 0, 0, -0.4, -0.3 }, Waist = { -26, 10, 0 }, RS = { 70, 0, 5 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -10, 0, -30 }, LE = { 50, 0, 0 } },
 			follow = { Root = { -14, 10, 0, 0, -0.45, -0.35 }, Waist = { -30, 12, 0 }, RS = { 50, 0, 5 }, RE = { 5, 0, 0 }, RW = { -15, 0, 0 }, LS = { -15, 0, -32 }, LE = { 50, 0, 0 } },
 			trail = "prop", hitText = "BLONG !",
 		},
 
+		-- Rebond de bedaine (J puis →J) : il bombe son énorme ventre d'un coup de reins, l'adversaire rebondit dessus comme sur un ballon
+		P_belly = {
+			label = "Rebond de bedaine", startup = 0.07, active = 0.1, recovery = 0.2,
+			damage = 7, hitbox = box(5, 4, 2.6, 0.5), kbBase = 24, kbGrowth = 35, kbAngle = 45, selfVelocity = Vector2.new(14, 0),
+			windup = { Root = { -10, 0, 0, 0, -0.3, 0.2 }, Waist = { -16, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 20, 0, 50 }, RE = { 80, 0, 0 }, LS = { 20, 0, -50 }, LE = { 80, 0, 0 } },
+			strike = { Root = { 20, 0, 0, 0, -0.15, -0.5 }, Waist = { 28, 0, 0 }, Neck = { -20, 0, 0 }, RS = { -40, 0, 60 }, RE = { 20, 0, 0 }, LS = { -40, 0, -60 }, LE = { 20, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+			follow = { Root = { 24, 0, 0, 0, -0.15, -0.55 }, Waist = { 32, 0, 0 }, Neck = { -24, 0, 0 }, RS = { -46, 0, 64 }, RE = { 20, 0, 0 }, LS = { -46, 0, -64 }, LE = { 20, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+			wobble = true, trail = "body", fx = { { "burst", color = SHIRT, size = 2.5, at = "front" } }, text = "BEDAINE !", hitText = "BOING !",
+		},
+		-- Crème dans l'œil (bedaine puis J) : il presse le tube de crème solaire, un gros jet blanc gicle dans l'œil adverse (aveugle)
+		P_creme = {
+			label = "Crème dans l'œil", startup = 0.07, active = 0.1, recovery = 0.22,
+			damage = 6, hitbox = box(5.5, 3.5, 3, 1), kbBase = 22, kbGrowth = 30, kbAngle = 40,
+			status = { name = "blinded", duration = 1.2 },
+			windup = { Root = { 4, -15, 0, 0, -0.2, 0.15 }, Waist = { 6, -18, 0 }, Neck = { 4, 10, 0 }, RS = { 40, 0, 40 }, RE = { 60, 0, 0 }, LS = { 60, 0, -20 }, LE = { 120, 0, 0 }, LW = { -40, 0, 0 } },
+			strike = { Root = { -8, 14, 0, 0, -0.3, -0.3 }, Waist = { -12, 18, 0 }, Neck = { 0, -10, 0 }, RS = { 30, 0, 45 }, RE = { 60, 0, 0 }, LS = { 92, 0, 0 }, LE = { 10, 0, 0 }, LW = { -30, 0, 0 } },
+			follow = { Root = { -10, 18, 0, 0, -0.32, -0.35 }, Waist = { -14, 22, 0 }, Neck = { 0, -12, 0 }, RS = { 28, 0, 48 }, RE = { 60, 0, 0 }, LS = { 96, 0, -5 }, LE = { 8, 0, 0 }, LW = { -40, 0, 0 } },
+			shake = true, trail = "leftHand", fx = { { "toss", shape = "ball", color = WHITE, count = 5, size = 0.3, speed = 16 }, { "symbols", symbols = { "🧴" }, color = WHITE, count = 2, radius = 2, at = "front" } },
+			text = "INDICE 50 !", hitText = "SPLOTCH ! DANS L'ŒIL !",
+		},
+		-- Secouage de yéti (K K puis ↓K) : il s'ébroue comme un chien mouillé, poils et neige fusent de partout (2 touches)
+		K_shake = {
+			label = "Secouage de yéti", startup = 0.08, active = 0.18, recovery = 0.22,
+			damage = 4, hits = 2, hitbox = box(6, 4.5, 2.5, 0.8), kbBase = 20, kbGrowth = 30, kbAngle = 50,
+			windup = { Root = { -8, 0, 0, 0, -0.35, 0.1 }, Waist = { -16, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 30, 0, 50 }, RE = { 40, 0, 0 }, LS = { 30, 0, -50 }, LE = { 40, 0, 0 } },
+			strike = { Root = { -12, 20, 0, 0, -0.3, -0.3 }, Waist = { -20, 30, 0 }, Neck = { -10, 40, 0 }, RS = { 40, 0, 80 }, RE = { 20, 0, 0 }, LS = { 40, 0, -80 }, LE = { 20, 0, 0 } },
+			follow = { Root = { -12, -20, 0, 0, -0.3, -0.3 }, Waist = { -20, -30, 0 }, Neck = { -10, -40, 0 }, RS = { 40, 0, 80 }, RE = { 20, 0, 0 }, LS = { 40, 0, -80 }, LE = { 20, 0, 0 } },
+			shake = true, wobble = true, trail = "body", fx = { { "toss", shape = "ball", color = FUR, count = 8, size = 0.3, speed = 14 }, { "particles", tex = "smoke", color = SNOW, at = "root", dir = "all", time = 0.3, speed = 10, rate = 70 } },
+			text = "BRRRRR !", hitText = "PLEIN DE POILS !",
+		},
+		-- Tong claquée (finition) : il retire sa tong et la claque en pleine figure d'un grand revers, les poils volent
+		K_tong = {
+			label = "Tong claquée", startup = 0.1, active = 0.1, recovery = 0.34,
+			damage = 12, hitbox = box(5.5, 4, 3, 0.8), kbBase = 38, kbGrowth = 90, kbAngle = 35,
+			windup = { Root = { -6, 35, 0, 0, -0.6, 0.1 }, Waist = { -14, 40, 0 }, Neck = { -10, -20, 0 }, RS = { 20, 0, 40 }, RE = { 60, 0, 0 }, LS = { 10, 0, -60 }, LE = { 100, 0, 0 }, LW = { 0, 0, 0 } },
+			strike = { Root = { -8, -30, 0, 0, -0.3, -0.4 }, Waist = { -10, -40, 0 }, Neck = { 0, 20, 0 }, RS = { 20, 0, 40 }, RE = { 60, 0, 0 }, LS = { 95, 0, 30 }, LE = { 5, 0, 0 }, LW = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+			follow = { Root = { -10, -40, 0, 0, -0.32, -0.45 }, Waist = { -12, -50, 0 }, Neck = { 0, 26, 0 }, RS = { 18, 0, 42 }, RE = { 60, 0, 0 }, LS = { 90, 0, 55 }, LE = { 10, 0, 0 }, LW = { -20, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+			trail = "leftHand", fx = { { "toss", shape = "flat", color = TONG, count = 1, size = 0.9, speed = 22 }, { "shake", amount = 0.3 } }, text = "LA TONG !", hitText = "SCHLAAAK !",
+		},
+
 		------------------------------------------------------------------ Finitions avec S (dans un enchaînement)
 		-- Boule à bout portant : il écrase une boule de neige sur le visage de l'adversaire (ralentit)
 		S_finish_snow = {
-			label = "Boule à bout portant", energyCost = 20, startup = 0.14, active = 0.1, recovery = 0.3,
-			damage = 9, hitbox = box(4.5, 3.5, 2.5, 0.8), kbBase = 28, kbGrowth = 50, kbAngle = 35,
+			label = "Boule à bout portant", energyCost = 20, startup = 0.12, active = 0.1, recovery = 0.3,
+			damage = 9, hitbox = box(5, 3.5, 2.8, 0.8), kbBase = 36, kbGrowth = 82, kbAngle = 35,
 			status = { name = "slowed", duration = 2 },
 			windup = { Root = { 2, 20, 0, 0, -0.25, 0.2 }, Waist = { 4, 24, 0 }, RS = { 40, 0, 40 }, RE = { 50, 0, 0 }, LS = { 70, 0, 40 }, LE = { 120, 0, 0 }, LW = { 0, 0, 0 } },
 			strike = { Root = { -8, -16, 0, 0, -0.3, -0.35 }, Waist = { -8, -20, 0 }, RS = { 35, 0, 45 }, RE = { 50, 0, 0 }, LS = { 95, 0, 0 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 } },
@@ -473,8 +515,8 @@ local data = {
 		},
 		-- Pic de glace : il frappe le sol de la glacière, un pic de glace jaillit sous l'adversaire et le fait décoller
 		S_finish_ice = {
-			label = "Pic de glace", energyCost = 25, startup = 0.16, active = 0.14, recovery = 0.34,
-			damage = 11, hitbox = box(4, 7, 3.5, 2), kbBase = 32, kbGrowth = 66, kbAngle = 86,
+			label = "Pic de glace", energyCost = 25, startup = 0.12, active = 0.14, recovery = 0.34,
+			damage = 11, hitbox = box(4, 7, 3.5, 2), kbBase = 38, kbGrowth = 88, kbAngle = 86,
 			windup = { Root = { 8, 0, 0, 0, 0, 0.15 }, Waist = { 14, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 180, 0, 10 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, -40 }, LE = { 30, 0, 0 } },
 			strike = { Root = { -16, 0, 0, 0, -0.6, -0.3 }, Waist = { -30, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 50, 0, 5 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -50 }, LE = { 30, 0, 0 } },
 			follow = { Root = { -18, 0, 0, 0, -0.65, -0.32 }, Waist = { -32, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 40, 0, 5 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 25, 0, -52 }, LE = { 30, 0, 0 } },
@@ -498,15 +540,17 @@ local data = {
 			hold = 0.2, shake = true, windupFx = { "super" }, fx = { { "shake", amount = 0.6 }, { "particles", tex = "smoke", color = SNOW, at = "feet", dir = "all", time = 0.6, speed = 14, rate = 100 } },
 			text = "AVALAAANCHE !", hitText = "BRRRRR !",
 		},
-		-- Super ↑ : il soulève la glacière d'un grand coup : un bloc de glace jaillit vers le ciel
+		-- Super ↑ : il abat la glacière sur le sol : un iceberg jaillit sous l'adversaire et l'emporte au ciel, Bob assis au sommet, bras en l'air
 		SUPER_up = {
-			label = "Avalanche inversée !", superCost = 100, startup = 0.3, active = 0.25, recovery = 0.55,
-			damage = 22, hitbox = box(7, 10, 2, 4), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
-			windup = { Root = { 12, 0, 0, 0, -0.4, 0.2 }, Waist = { 16.8, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 168, 0, 24 }, RE = { 144, 0, 0 }, LS = { 168, 0, -24 }, LE = { 144, 0, 0 } },
-			strike = { Root = { 66, 0, 0, 0, -1.3, 0.5 }, Waist = { 12, 0, 0 }, Neck = { -24, 0, 0 }, RS = { 192, 0, 36 }, RE = { 144, 0, 0 }, LS = { 192, 0, -36 }, LE = { 144, 0, 0 }, RH = { 144, 0, 7.2 }, RK = { 0, 0, 0 }, RA = { 24, 0, 0 }, LH = { 138, 0, -7.2 }, LK = { -12, 0, 0 }, LA = { 24, 0, 0 } },
-			follow = { Root = { 69.6, 0, 0, 0, -1.35, 0.55 }, Waist = { 14.4, 0, 0 }, Neck = { -26.4, 0, 0 }, RS = { 198, 0, 38.4 }, RE = { 150, 0, 0 }, LS = { 198, 0, -38.4 }, LE = { 150, 0, 0 }, RH = { 153.6, 0, 7.2 }, RK = { 0, 0, 0 }, RA = { 24, 0, 0 }, LH = { 146.4, 0, -7.2 }, LK = { -6, 0, 0 }, LA = { 24, 0, 0 } },
-			hold = 0.25, selfVelocity = Vector2.new(0, 45),
-			windupFx = { "super" }, trail = "prop", status = { name = "frozen", duration = 1.2 }, fx = { { "pillar", color = Color3.fromRGB(165, 225, 255), height = 18, width = 4, at = "front" }, { "rain", shape = "ball", color = Color3.fromRGB(248, 252, 255), count = 14, radius = 6 } }, text = "RAFRAÎCHISSANT !", hitText = "GLAGLA !",
+			label = "Iceberg !", superCost = 100, startup = 0.3, active = 0.25, recovery = 0.55,
+			damage = 22, hitbox = box(7, 12, 3, 5), kbBase = 45, kbGrowth = 95, kbAngle = 88, invuln = 0.3,
+			windup = { Root = { 10, 0, 0, 0, -0.1, 0.25 }, Waist = { 18, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 195, 0, 20 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 195, 0, -20 }, LE = { 30, 0, 0 } },
+			strike = { Root = { -18, 0, 0, 0, -0.8, -0.4 }, Waist = { -34, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 45, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 45, 0, -10 }, LE = { 0, 0, 0 } },
+			follow = { Root = { 12, 0, 0, 0, 0.5, 0 }, Waist = { 10, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 170, 0, 40 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 170, 0, -40 }, LE = { 10, 0, 0 }, RH = { 85, 0, 10 }, RK = { -20, 0, 0 }, RA = { 20, 0, 0 }, LH = { 85, 0, -10 }, LK = { -20, 0, 0 }, LA = { 20, 0, 0 } },
+			hold = 0.2, selfVelocity = Vector2.new(0, 55), status = { name = "frozen", duration = 1.2 },
+			windupFx = { "super" }, trail = "prop",
+			fx = { { "pillar", color = ICE, height = 24, width = 5, at = "front" }, { "rain", shape = "ball", color = SNOW, count = 14, radius = 7, size = 0.5 }, { "particles", tex = "smoke", color = SNOW, at = "feet", dir = "all", time = 0.5, speed = 14, rate = 100 }, { "shake", amount = 0.6 } },
+			text = "ICEBERG DROIT DEVANT !", hitText = "GLAGLABOUM !",
 		},
 		-- Bonhomme de neige : il attrape l'adversaire dans un câlin, le transforme en bonhomme de neige gelé… puis grosse claque
 		SUPER_down = {
@@ -759,30 +803,33 @@ local function airAfterK()
 end
 
 local LINKS = {
-	-- au sol : J…
-	P_neutral = { P = "P_combo2", K = "PK_combo", fwd_P = "P_side", down_P = "P_down", S = "S_finish_snow" },
-	P_combo2 = { P = "P_combo3", K = "K_combo2", up_K = "K_upK", S = "S_finish_ice" }, -- J J
-	P_combo3 = { K = "K_combo3", S = "S_finish_ice" }, -- J J J
-	PK_combo = { P = "KP_combo", K = "K_side", S = "S_finish_ice" }, -- J K
-	-- au sol : K…
-	K_neutral = { K = "K_combo2", P = "KP_combo", up_K = "K_upK", S = "S_finish_snow" },
-	K_combo2 = { K = "K_combo3", P = "P_combo3", S = "S_finish_ice" }, -- K K
+	-- au sol : J… (J J J K : tong claquée, finition ; J →J J : bedaine, crème dans l'œil)
+	P_neutral = { P = "P_combo2", K = "PK_combo", fwd_P = "P_belly", down_P = "P_down", S = "S_finish_snow" },
+	P_combo2 = { P = "P_combo3", K = "K_combo2", fwd_P = "P_creme", up_K = "K_upK", S = "S_finish_ice" }, -- J J
+	P_combo3 = { K = "K_tong", S = "S_finish_ice" }, -- J J J
+	P_belly = { P = "P_creme", K = "K_shake", S = "S_finish_snow" }, -- J →J (bedaine)
+	P_creme = { P = "P_combo3", K = "K_tong", S = "S_finish_ice" }, -- J →J J (crème dans l'œil)
+	PK_combo = { P = "KP_combo", K = "K_shake", S = "S_finish_ice" }, -- J K
+	-- au sol : K… (K K ↓K K : secouage puis tong ; K J →J J)
+	K_neutral = { K = "K_combo2", P = "KP_combo", fwd_P = "P_belly", up_K = "K_upK", S = "S_finish_snow" },
+	K_combo2 = { K = "K_combo3", P = "P_combo3", down_K = "K_shake", fwd_K = "K_tong", S = "S_finish_ice" }, -- K K
 	K_combo3 = { K = "K_air_side", S = "S_air" }, -- K K K (il décolle)
-	KP_combo = { P = "P_combo3", K = "K_side2", S = "S_finish_snow" }, -- K J
+	K_shake = { K = "K_tong", P = "P_creme", S = "S_finish_snow" }, -- K K ↓K (secouage)
+	KP_combo = { P = "P_belly", K = "K_side2", S = "S_finish_snow" }, -- K J
 	-- avec une flèche
 	P_side = { P = "P_side2", K = "K_side2", S = "S_finish_snow" }, -- → J
-	P_side2 = { K = "PK_combo", S = "S_finish_ice" }, -- → J J
+	P_side2 = { P = "P_belly", K = "PK_combo", S = "S_finish_ice" }, -- → J J
 	P_down = { P = "P_down2", K = "K_downK", S = "S_finish_ice" }, -- ↓ J
 	P_down2 = { P = "P_air_up", K = "K_air_up", S = "S_finish_ice" }, -- ↓ J J (fait décoller)
 	P_up = { K = "K_upK", P = "P_down2", S = "S_finish_snow" }, -- ↑ J
 	K_side = { K = "K_side2", P = "KP_combo", S = "S_finish_snow" }, -- → K
-	K_side2 = { P = "P_down2", S = "S_finish_ice" }, -- → K K
+	K_side2 = { P = "P_down2", K = "K_tong", S = "S_finish_ice" }, -- → K K
 	K_down = { K = "K_downK", S = "S_finish_snow" }, -- ↓ K (boule roulée)
-	K_downK = { K = "K_air_up", S = "S_finish_ice" }, -- ↓ K K
+	K_downK = { K = "K_air_up", P = "P_belly", S = "S_finish_ice" }, -- ↓ K K
 	K_up = { K = "K_upK", S = "S_finish_ice" }, -- ↑ K
 	K_upK = { S = "S_finish_snow" }, -- ↑ K K
-	P_dash = { P = "P_combo2", K = "PK_combo", S = "S_finish_snow" }, -- dash J
-	K_dash = { K = "K_side2", P = "KP_combo", S = "S_finish_ice" }, -- dash K
+	P_dash = { P = "P_belly", K = "PK_combo", S = "S_finish_snow" }, -- dash J
+	K_dash = { K = "K_shake", P = "KP_combo", S = "S_finish_ice" }, -- dash K
 	-- en l'air ; ↓ J et ↓ K (smash vers le sol) sont des finitions sans suite
 	P_air = airAfterP(),
 	P_air_side = airAfterP(),

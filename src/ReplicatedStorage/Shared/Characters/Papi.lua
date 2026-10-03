@@ -136,7 +136,7 @@ local data = {
 		-- P P : Coup de charentaise, il retire sa pantoufle et la claque en revers
 		P_combo2 = {
 			label = "Coup de charentaise", startup = 0.07, active = 0.08, recovery = 0.16,
-			damage = 5, hitbox = box(4, 3, 2.5, 0.8), kbBase = 18, kbGrowth = 22, kbAngle = 30,
+			damage = 5, hitbox = box(4.5, 3.5, 2.5, 0.8), kbBase = 18, kbGrowth = 22, kbAngle = 30,
 			windup = { Root = { 0, -25, 0, 0, -0.2, 0.1 }, Waist = { -6, -30, 0 }, Neck = { 0, 20, 0 }, RS = { 150, 0, 40 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { -40, 0, -20 }, LE = { 100, 0, 0 } },
 			strike = { Root = { -6, 20, 0, 0, -0.28, -0.3 }, Waist = { -12, 25, 0 }, Neck = { 0, -10, 0 }, RS = { 80, 0, -10 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { -40, 0, -20 }, LE = { 100, 0, 0 } },
 			follow = { Root = { -8, 24, 0, 0, -0.28, -0.32 }, Waist = { -13, 28, 0 }, Neck = { 0, -12, 0 }, RS = { 60, 0, -25 }, RE = { 30, 0, 0 }, RW = { -15, 0, 0 }, LS = { -42, 0, -20 }, LE = { 100, 0, 0 } },
@@ -144,7 +144,7 @@ local data = {
 		},
 		-- P P P : Coup de 33 tours, vinyle levé à deux mains au-dessus de la tête puis abattu
 		P_combo3 = {
-			label = "Coup de 33 tours", startup = 0.14, active = 0.1, recovery = 0.3,
+			label = "Coup de 33 tours", startup = 0.09, active = 0.1, recovery = 0.3,
 			damage = 9, hitbox = box(5, 4, 2.5, 1), kbBase = 30, kbGrowth = 60, kbAngle = 50,
 			windup = { Root = { 6, -8, 0, 0, -0.1, 0.2 }, Waist = { 10, -10, 0 }, Neck = { 15, 0, 0 }, RS = { 190, 0, 15 }, RE = { 50, 0, 0 }, RW = { 0, 0, 0 }, LS = { 170, 0, -15 }, LE = { 60, 0, 0 } },
 			strike = { Root = { -12, 8, 0, 0, -0.45, -0.35 }, Waist = { -28, 10, 0 }, Neck = { -10, 0, 0 }, RS = { 75, 0, 5 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, -5 }, LE = { 10, 0, 0 } },
@@ -207,8 +207,8 @@ local data = {
 		},
 		-- K K : Charentaise gauche, même coup de pied tout raide, de l'autre pied
 		K_combo2 = {
-			label = "Charentaise gauche", startup = 0.14, active = 0.1, recovery = 0.25,
-			damage = 9, hitbox = box(5, 3, 3, 0), kbBase = 28, kbGrowth = 50, kbAngle = 30,
+			label = "Charentaise gauche", startup = 0.09, active = 0.1, recovery = 0.25,
+			damage = 9, hitbox = box(5, 3.5, 3, 0.5), kbBase = 28, kbGrowth = 50, kbAngle = 30,
 			windup = { Root = { 6, 12, 0, 0, -0.2, 0.1 }, Waist = { 0, 8, 0 }, Neck = { 10, 0, 0 }, RS = { 40, 0, 30 }, RE = { 70, 0, 0 }, LS = { 40, 0, -40 }, LE = { 60, 0, 0 }, LH = { 75, 0, 0 }, LK = { -100, 0, 0 }, LA = { -10, 0, 0 } },
 			strike = { Root = { 16, 6, 0, 0, -0.12, -0.05 }, Waist = { 12, 0, 0 }, Neck = { -5, 0, 0 }, RS = { 60, 0, 40 }, RE = { 40, 0, 0 }, LS = { 50, 0, -60 }, LE = { 20, 0, 0 }, LH = { 95, 0, 0 }, LK = { -5, 0, 0 }, LA = { 15, 0, 0 } },
 			follow = { Root = { 18, 8, 0, 0, -0.12, -0.08 }, Waist = { 14, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 62, 0, 42 }, RE = { 40, 0, 0 }, LS = { 52, 0, -64 }, LE = { 20, 0, 0 }, LH = { 100, 0, 0 }, LK = { 0, 0, 0 }, LA = { 15, 0, 0 } },
@@ -216,8 +216,8 @@ local data = {
 		},
 		-- K K K : Grand écart rouillé, bras en « ta-da » puis il tombe en grand écart… et se bloque le dos
 		K_combo3 = {
-			label = "Grand écart rouillé", startup = 0.16, active = 0.12, recovery = 0.38,
-			damage = 12, hitbox = box(7, 2.5, 1, -1), kbBase = 32, kbGrowth = 80, kbAngle = 45,
+			label = "Grand écart rouillé", startup = 0.1, active = 0.12, recovery = 0.38,
+			damage = 12, hitbox = box(7, 3.5, 2.5, -0.5), kbBase = 32, kbGrowth = 80, kbAngle = 45,
 			windup = { Root = { 0, 0, 0, 0, 0.2, 0 }, Waist = { 10, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 150, 0, 40 }, RE = { 0, 0, 0 }, LS = { 150, 0, -40 }, LE = { 0, 0, 0 }, FR = { 0, 0, 0, 0, 0.2, 0 }, FL = { 0, 0, 0, 0, 0.2, 0 } },
 			strike = { Root = { 0, 0, 0, 0, -1.0, 0 }, Waist = { -5, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 90, 0, 80 }, RE = { 0, 0, 0 }, LS = { 90, 0, -80 }, LE = { 0, 0, 0 }, RH = { 90, 0, 0 }, RK = { 0, 0, 0 }, RA = { 15, 0, 0 }, LH = { -70, 0, 0 }, LK = { 0, 0, 0 }, LA = { 15, 0, 0 } },
 			follow = { Root = { 0, 0, 0, 0, -1.05, 0 }, Waist = { -12, 0, 0 }, Neck = { -15, 0, 0 }, RS = { 60, 0, 60 }, RE = { 10, 0, 0 }, LS = { -40, 0, -25 }, LE = { 100, 0, 0 }, RH = { 92, 0, 0 }, RK = { 0, 0, 0 }, RA = { 15, 0, 0 }, LH = { -72, 0, 0 }, LK = { 0, 0, 0 }, LA = { 15, 0, 0 } },
@@ -260,14 +260,14 @@ local data = {
 			trail = "prop", fx = { { "particles", tex = "spark", color = GOLD, dir = "up", at = "feet", time = 0.3, speed = 6, size = 0.4, rate = 70 } },
 			text = "AÏE MES GENOUX !", hitText = "YEEEAH !",
 		},
-		-- Double charentaise (saut K) : genoux à la poitrine puis les deux charentaises partent devant
+		-- Coup de talon rouillé (K en l'air) : une main dans le dos, il détend une seule jambe toute raide, la charentaise s'envole… aïe la hanche
 		K_air = {
-			label = "Double charentaise", startup = 0.18, active = 0.14, recovery = 0.25,
-			damage = 12, hitbox = box(5, 4, 2.5, 0), kbBase = 30, kbGrowth = 70, kbAngle = 40,
-			windup = { Root = { -10, 0, 0 }, Waist = { -22, 0, 0 }, RS = { 60, 0, 40 }, RE = { 60, 0, 0 }, LS = { -40, 0, -20 }, LE = { 100, 0, 0 }, RH = { 95, 0, 0 }, RK = { -130, 0, 0 }, LH = { 90, 0, 0 }, LK = { -130, 0, 0 } },
-			strike = { Root = { 20, 0, 0 }, Waist = { 20, 0, 0 }, RS = { -35, 0, 50 }, RE = { 20, 0, 0 }, LS = { -40, 0, -40 }, LE = { 100, 0, 0 }, RH = { 90, 0, 0 }, RK = { 0, 0, 0 }, RA = { 15, 0, 0 }, LH = { 78, 0, 0 }, LK = { -6, 0, 0 }, LA = { 15, 0, 0 } },
-			follow = { Root = { 24, 0, 0 }, Waist = { 22, 0, 0 }, RS = { -40, 0, 54 }, RE = { 20, 0, 0 }, LS = { -40, 0, -42 }, LE = { 100, 0, 0 }, RH = { 95, 0, 0 }, RK = { 0, 0, 0 }, RA = { 15, 0, 0 }, LH = { 82, 0, 0 }, LK = { -4, 0, 0 }, LA = { 15, 0, 0 } },
-			trail = "bothFeet", hitText = "FLAP FLAP !",
+			label = "Coup de talon rouillé", startup = 0.16, active = 0.14, recovery = 0.25,
+			damage = 12, hitbox = box(5.5, 4, 2.8, 0), kbBase = 30, kbGrowth = 70, kbAngle = 40,
+			windup = { Root = { -8, 0, 0 }, Waist = { -24, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 50, 0, 40 }, RE = { 70, 0, 0 }, LS = { -40, 0, -20 }, LE = { 100, 0, 0 }, RH = { 60, 0, 0 }, RK = { -100, 0, 0 }, LH = { 30, 0, 0 }, LK = { -90, 0, 0 } },
+			strike = { Root = { 18, 0, 0 }, Waist = { 14, 0, 0 }, Neck = { -12, 0, 0 }, RS = { -40, 0, 55 }, RE = { 20, 0, 0 }, LS = { -40, 0, -25 }, LE = { 100, 0, 0 }, RH = { 92, 0, 0 }, RK = { -2, 0, 0 }, RA = { 15, 0, 0 }, LH = { 10, 0, 0 }, LK = { -70, 0, 0 } },
+			follow = { Root = { 22, 0, 0 }, Waist = { 16, 0, 0 }, Neck = { -14, 0, 0 }, RS = { -45, 0, 58 }, RE = { 20, 0, 0 }, LS = { -40, 0, -25 }, LE = { 100, 0, 0 }, RH = { 96, 0, 0 }, RK = { 0, 0, 0 }, RA = { 15, 0, 0 }, LH = { 5, 0, 0 }, LK = { -65, 0, 0 } },
+			trail = "rightFoot", fx = { { "toss", shape = "flat", color = TARTAN, size = 0.8, count = 1, speed = 20 }, { "text", text = "CRAC", color = WHITE, at = "root" } }, hitText = "FLAP ! AÏE MA HANCHE !",
 		},
 
 		------------------------------------------------------------------ En l'air avec une flèche
@@ -353,17 +353,17 @@ local data = {
 			fx = { { "ring", color = PINK, radius = 6, at = "front" }, { "symbols", symbols = { "♪", "♫", "🔊" }, color = PINK, count = 4, radius = 3 }, { "shake", amount = 0.3 } },
 			text = "DROP !", hitText = "BWOOOM !",
 		},
-		-- Mur d'enceintes : il tape du pied et lève les bras, deux baffles jaillissent du sol et bloquent les tirs
+		-- Mur d'enceintes : il tape du pied et lève les bras, deux baffles jaillissent du sol en pleine face de l'adversaire et bloquent les tirs
 		S_down = {
-			label = "Mur d'enceintes", kind = "wall", energyCost = 25, startup = 0.2, active = 0, recovery = 0.35,
-			hitbox = box(5, 4, 2.5, 0.5), kbBase = 30, kbGrowth = 45, kbAngle = 30,
+			label = "Mur d'enceintes", kind = "wall", energyCost = 25, startup = 0.2, active = 0.1, recovery = 0.35,
+			hitbox = box(5.5, 6, 3.5, 2), kbBase = 30, kbGrowth = 45, kbAngle = 70,
 			damage = 7,
 			wall = { size = Vector3.new(2.6, 6, 6), offset = 3.5, lifetime = 5, max = 2, visual = SPEAKERS, color = BLACK },
 			windup = { Root = { -6, 0, 0, 0, -0.45, 0 }, Waist = { -20, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 30, 0, 20 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -20 }, LE = { 60, 0, 0 } },
-			strike = { Root = { 4, 0, 0, 0, -0.05, 0 }, Waist = { 10, 0, 0 }, Neck = { 15, 0, 0 }, RS = { 160, 0, 30 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 160, 0, -30 }, LE = { 10, 0, 0 } },
+			strike = { Root = { 4, 0, 0, 0, -0.05, -0.1 }, Waist = { 10, 0, 0 }, Neck = { 15, 0, 0 }, RS = { 160, 0, 30 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 160, 0, -30 }, LE = { 10, 0, 0 }, FR = { 0, 0, 0, 0, 0, -0.5 } },
 			follow = { Root = { 5, 0, 0, 0, -0.05, 0 }, Waist = { 12, 0, 0 }, Neck = { 18, 0, 0 }, RS = { 165, 0, 32 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 165, 0, -32 }, LE = { 10, 0, 0 } },
 			fx = { { "burst", color = PINK, size = 3, at = "front" }, { "shake", amount = 0.2 } },
-			text = "MUR DE SON !",
+			text = "MUR DE SON !", hitText = "BAFFLE DANS LE NEZ !",
 		},
 		-- Slam (remontée gratuite) : il se jette en arrière dans une foule imaginaire, bras écartés
 		S_up = {
@@ -384,17 +384,17 @@ local data = {
 			trail = "body", fx = { { "burst", color = BLUE, size = 3, at = "feet" }, { "symbols", symbols = { "⏪" }, color = BLUE, count = 2, radius = 2 } },
 			text = "REWIND DROP !", hitText = "BADABOUM !",
 		},
-		-- Rewind (ESQUIVE puis S) : il tourne les bras comme une bande qu'on rembobine et recule d'un bond
+		-- Rewind (ESQUIVE puis S) : il fouette l'adversaire avec le câble jack, puis tourne les bras comme une bande qu'on
+		-- rembobine et revient 12 studs en arrière (invulnérable)
 		S_dodge = {
-			label = "Rewind", energyCost = 20, startup = 0.1, active = 0, recovery = 0.25,
-			hitbox = box(6, 4, 2.5, 0.5), kbBase = 30, kbGrowth = 55, kbAngle = 35,
-			damage = 9, teleport = -12, invuln = 0.3,
-			windup = { Root = { 0, 0, 0, 0, -0.2, 0 }, Waist = { 5, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 90, 0, 30 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, -30 }, LE = { 90, 0, 0 } },
-			strike = { Root = { 10, 0, 0, 0, -0.1, 0.3 }, Waist = { 10, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 60, 0, 60 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -60 }, LE = { 40, 0, 0 } },
-			follow = { Root = { 6, 0, 0, 0, -0.15, 0.2 }, Waist = { 6, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 120, 0, 30 }, RE = { 80, 0, 0 }, RW = { 0, 0, 0 }, LS = { 120, 0, -30 }, LE = { 80, 0, 0 } },
-			spin = { axis = "y", degrees = -360 },
+			label = "Rewind", energyCost = 20, startup = 0.1, active = 0.1, recovery = 0.25,
+			damage = 9, hitbox = box(6.5, 3.5, 3.5, 0.6), kbBase = 30, kbGrowth = 55, kbAngle = 35, teleport = -12, invuln = 0.3,
+			windup = { Root = { 4, -30, 0, 0, -0.25, 0.15 }, Waist = { 0, -35, 0 }, Neck = { 6, 25, 0 }, RS = { 130, 0, 45 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { -40, 0, -20 }, LE = { 100, 0, 0 } },
+			strike = { Root = { -10, 25, 0, 0, -0.35, -0.35 }, Waist = { -12, 30, 0 }, Neck = { 0, -15, 0 }, RS = { 92, 0, -10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -40, 0, -20 }, LE = { 100, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+			follow = { Root = { 10, 0, 0, 0, -0.15, 0.3 }, Waist = { 8, 0, 0 }, Neck = { 15, 0, 0 }, RS = { 120, 0, 30 }, RE = { 80, 0, 0 }, RW = { 0, 0, 0 }, LS = { 120, 0, -30 }, LE = { 80, 0, 0 } },
+			spin = { axis = "y", degrees = -360 }, prop = "jack", hideProp = "vinyles", trail = "prop",
 			windupFx = { { "symbols", symbols = { "⏪", "⏪" }, color = BLUE, count = 3, radius = 2 } },
-			fx = { { "ring", color = BLUE, radius = 3, at = "root" } }, text = "REWIND !",
+			fx = { { "ring", color = BLUE, radius = 3, at = "root" } }, text = "REWIND !", hitText = "CLAC ! REMBOBINÉ !",
 		},
 		-- Changer de piste (S maintenu) : platine dans la main gauche, il scratche fort ; l'onde repousse autour de
 		-- lui et la Playlist passe au morceau suivant
@@ -433,28 +433,59 @@ local data = {
 		},
 
 		------------------------------------------------------------------ Suites d'enchaînement (voir LINKS en bas)
-		-- P puis K : Coup de talon pantouflard, petit coup de charentaise sec dans le tibia
+		-- P puis K : Genou arthritique, il remonte le genou dans le ventre adverse en se tenant le dos… CRAC, ça craque de partout
 		PK_combo = {
-			label = "Coup de talon pantouflard", startup = 0.1, active = 0.08, recovery = 0.2,
-			damage = 7, hitbox = box(5, 2, 3, -1.5), kbBase = 22, kbGrowth = 30, kbAngle = 30,
-			windup = { Root = { 4, -10, 0, 0, -0.25, 0.15 }, Waist = { -6, -12, 0 }, RS = { 40, 0, 30 }, RE = { 60, 0, 0 }, LS = { -40, 0, -20 }, LE = { 100, 0, 0 }, RH = { -20, 0, 8 }, RK = { -70, 0, 0 }, RA = { 0, 0, 0 } },
-			strike = { Root = { -6, 10, 0, 0, -0.3, -0.2 }, Waist = { -10, 8, 0 }, RS = { 20, 0, 45 }, RE = { 40, 0, 0 }, LS = { -40, 0, -20 }, LE = { 100, 0, 0 }, RH = { 62, 0, 6 }, RK = { -5, 0, 0 }, RA = { -25, 0, 0 } },
-			follow = { Root = { -8, 14, 0, 0, -0.32, -0.25 }, Waist = { -12, 10, 0 }, RS = { 15, 0, 48 }, RE = { 40, 0, 0 }, LS = { -42, 0, -20 }, LE = { 100, 0, 0 }, RH = { 66, 0, 0 }, RK = { -8, 0, 0 }, RA = { -25, 0, 0 } },
-			trail = "rightFoot", hitText = "TOC !",
+			label = "Genou arthritique", startup = 0.08, active = 0.08, recovery = 0.2,
+			damage = 7, hitbox = box(4.5, 3.5, 2.5, 0.5), kbBase = 22, kbGrowth = 30, kbAngle = 45,
+			windup = { Root = { 6, 0, 0, 0, -0.25, 0.15 }, Waist = { -12, 0, 0 }, Neck = { 10, 0, 0 }, RS = { -30, 0, 30 }, RE = { 60, 0, 0 }, LS = { -40, 0, -20 }, LE = { 100, 0, 0 }, RH = { -15, 0, 0 }, RK = { -40, 0, 0 } },
+			strike = { Root = { -10, 0, 0, 0, 0.05, -0.3 }, Waist = { -20, 0, 0 }, Neck = { -15, 0, 0 }, RS = { -45, 0, 25 }, RE = { 60, 0, 0 }, LS = { -45, 0, -25 }, LE = { 100, 0, 0 }, RH = { 115, 0, 0 }, RK = { -125, 0, 0 }, RA = { 15, 0, 0 } },
+			follow = { Root = { -12, 0, 0, 0, 0.08, -0.35 }, Waist = { -22, 0, 0 }, Neck = { -18, 0, 0 }, RS = { -48, 0, 25 }, RE = { 60, 0, 0 }, LS = { -48, 0, -25 }, LE = { 100, 0, 0 }, RH = { 120, 0, 0 }, RK = { -128, 0, 0 }, RA = { 15, 0, 0 } },
+			trail = "rightLeg", fx = { { "text", text = "CRAC", color = WHITE, at = "root" } }, hitText = "GNOC ! AÏE MON GENOU !",
 		},
-		-- K puis P : Revers de 45 tours, le buste pivote et le vinyle revient en revers
+		-- K puis P : Scratch en pleine face, le vinyle frotte d'avant en arrière sur le nez de l'adversaire (2 touches), wiki-wiki
 		KP_combo = {
-			label = "Revers de 45 tours", startup = 0.09, active = 0.08, recovery = 0.2,
-			damage = 7, hitbox = box(5, 3, 2.8, 0.6), kbBase = 22, kbGrowth = 35, kbAngle = 30,
-			windup = { Root = { -4, 30, 0, 0, -0.22, 0 }, Waist = { -10, 30, 0 }, Neck = { 0, -25, 0 }, RS = { 85, 0, -50 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { -40, 0, -20 }, LE = { 100, 0, 0 } },
-			strike = { Root = { -8, -20, 0, 0, -0.25, -0.25 }, Waist = { -12, -30, 0 }, Neck = { 0, 10, 0 }, RS = { 90, 0, 40 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -40, 0, -20 }, LE = { 100, 0, 0 } },
-			follow = { Root = { -8, -24, 0, 0, -0.25, -0.28 }, Waist = { -12, -34, 0 }, Neck = { 0, 12, 0 }, RS = { 86, 0, 55 }, RE = { 5, 0, 0 }, RW = { -10, 0, 0 }, LS = { -42, 0, -20 }, LE = { 100, 0, 0 } },
-			trail = "prop", hitText = "SCRIIITCH !",
+			label = "Scratch en pleine face", startup = 0.07, active = 0.16, recovery = 0.2,
+			damage = 4, hits = 2, hitbox = box(5, 3.5, 2.8, 0.8), kbBase = 20, kbGrowth = 32, kbAngle = 35,
+			windup = { Root = { 0, 10, 0, 0, -0.25, 0.1 }, Waist = { -8, 12, 0 }, Neck = { 8, -8, 0 }, RS = { 70, 0, 20 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { -40, 0, -20 }, LE = { 100, 0, 0 } },
+			strike = { Root = { -8, -12, 0, 0, -0.3, -0.3 }, Waist = { -12, -14, 0 }, Neck = { 8, 10, 0 }, RS = { 95, 0, 25 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { -40, 0, -20 }, LE = { 100, 0, 0 } },
+			follow = { Root = { -8, 12, 0, 0, -0.3, -0.3 }, Waist = { -12, 14, 0 }, Neck = { 8, -10, 0 }, RS = { 95, 0, -15 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { -40, 0, -20 }, LE = { 100, 0, 0 } },
+			wobble = true, trail = "prop", fx = { { "symbols", symbols = { "♪", "♫" }, color = PINK, count = 3, radius = 2 } }, hitText = "WIKI-WIKI !",
+		},
+		-- Dentier claqué (P P puis →P) : il sort son dentier et le fait claquer au bout du bras sur le nez de l'adversaire
+		P_dentier = {
+			label = "Dentier claqué", startup = 0.07, active = 0.1, recovery = 0.2,
+			damage = 6, hitbox = box(5, 3.5, 2.8, 0.8), kbBase = 22, kbGrowth = 32, kbAngle = 35,
+			windup = { Root = { 2, -10, 0, 0, -0.2, 0.1 }, Waist = { -6, -12, 0 }, Neck = { -10, 0, 0 }, RS = { 40, 0, 30 }, RE = { 80, 0, 0 }, LS = { 70, 0, -10 }, LE = { 130, 0, 0 }, LW = { -30, 0, 0 } },
+			strike = { Root = { -10, 12, 0, 0, -0.3, -0.3 }, Waist = { -14, 16, 0 }, Neck = { 6, -8, 0 }, RS = { 30, 0, 35 }, RE = { 80, 0, 0 }, LS = { 95, 0, 5 }, LE = { 5, 0, 0 }, LW = { 20, 0, 0 } },
+			follow = { Root = { -12, 14, 0, 0, -0.32, -0.35 }, Waist = { -16, 18, 0 }, Neck = { 6, -10, 0 }, RS = { 28, 0, 36 }, RE = { 80, 0, 0 }, LS = { 98, 0, 0 }, LE = { 5, 0, 0 }, LW = { -20, 0, 0 } },
+			shake = true, trail = "leftHand", fx = { { "toss", shape = "flat", color = WHITE, count = 1, size = 0.6, speed = 10 }, { "text", text = "CLAC CLAC", color = WHITE, at = "front" } },
+			text = "MON DENTIER !", hitText = "GNAC !",
+		},
+		-- Coup de hanche disco (K K puis ↓K) : un grand déhanché à la Travolta, la hanche part en avant… et le dos craque
+		K_hanche = {
+			label = "Coup de hanche disco", startup = 0.07, active = 0.1, recovery = 0.2,
+			damage = 7, hitbox = box(5, 3.5, 2.5, 0.5), kbBase = 24, kbGrowth = 35, kbAngle = 40, selfVelocity = Vector2.new(12, 0),
+			windup = { Root = { 0, -35, -10, 0, -0.3, 0.1 }, Waist = { 0, -20, 10 }, Neck = { 6, 20, -6 }, RS = { 170, 0, 20 }, RE = { 0, 0, 0 }, LS = { -40, 0, -20 }, LE = { 100, 0, 0 } },
+			strike = { Root = { 0, 45, 14, 0, -0.3, -0.35 }, Waist = { 0, 25, -14 }, Neck = { 6, -25, 8 }, RS = { 150, 0, 40 }, RE = { 0, 0, 0 }, LS = { -40, 0, -25 }, LE = { 100, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+			follow = { Root = { 0, 50, 16, 0, -0.3, -0.4 }, Waist = { 0, 28, -16 }, Neck = { 6, -28, 10 }, RS = { 145, 0, 45 }, RE = { 0, 0, 0 }, LS = { -40, 0, -25 }, LE = { 100, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+			wobble = true, trail = "body", fx = { { "symbols", symbols = { "🕺", "♪" }, color = GOLD, count = 3, radius = 2 }, { "text", text = "CRAC", color = WHITE, at = "root" } },
+			text = "DISCO !", hitText = "BOUM DE HANCHE !",
+		},
+		-- Mégaphone (finition) : il sort le mégaphone, le colle à l'oreille adverse et hurle « ÇA VA LES JEUNES ?! » : l'onde l'éjecte
+		K_mega = {
+			label = "Mégaphone", startup = 0.1, active = 0.12, recovery = 0.36,
+			damage = 12, hitbox = box(6, 4, 3.2, 0.8), kbBase = 38, kbGrowth = 90, kbAngle = 32,
+			windup = { Root = { 0, -20, 0, 0, -0.25, 0.15 }, Waist = { -8, -20, 0 }, Neck = { -10, 10, 0 }, RS = { 60, 0, 20 }, RE = { 120, 0, 0 }, RW = { 0, 0, 0 }, LS = { -40, 0, -20 }, LE = { 100, 0, 0 } },
+			strike = { Root = { -10, 15, 0, 0, -0.3, -0.35 }, Waist = { -12, 18, 0 }, Neck = { 10, -10, 0 }, RS = { 100, 0, 0 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { -40, 0, -20 }, LE = { 100, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+			follow = { Root = { -12, 18, 0, 0, -0.32, -0.4 }, Waist = { -14, 20, 0 }, Neck = { 14, -12, 0 }, RS = { 104, 0, 0 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { -40, 0, -20 }, LE = { 100, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+			shake = true, prop = "megaphone", hideProp = "vinyles",
+			fx = { { "ring", color = GOLD, radius = 4, at = "front" }, { "beam", color = GOLD, length = 8, width = 2, at = "hand" }, { "shake", amount = 0.4 } },
+			text = "ÇA VA LES JEUNES ?!", hitText = "BWAAAAH !",
 		},
 		-- Scratch infernal (finition S) : platine en main, il scratche comme un forcené, l'onde éjecte l'adversaire
 		S_finish_scratch = {
-			label = "Scratch infernal", energyCost = 20, startup = 0.14, active = 0.16, recovery = 0.34,
-			damage = 10, hitbox = box(6, 4, 3.5, 0.5), kbBase = 34, kbGrowth = 75, kbAngle = 35,
+			label = "Scratch infernal", energyCost = 20, startup = 0.12, active = 0.16, recovery = 0.34,
+			damage = 10, hitbox = box(6, 4, 3.5, 0.5), kbBase = 38, kbGrowth = 88, kbAngle = 35,
 			windup = { Root = { 0, -10, 0, 0, -0.25, 0.1 }, Waist = { -10, -10, 0 }, Neck = { -15, 0, 0 }, RS = { 70, 0, -10 }, RE = { 85, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, 10 }, LE = { 40, 0, 0 }, LW = { 0, 0, 0 } },
 			strike = { Root = { -6, 10, -6, 0, -0.3, -0.25 }, Waist = { -12, 10, 6 }, Neck = { -20, 0, 10 }, RS = { 78, 0, -35 }, RE = { 55, 0, 0 }, RW = { 0, 0, 0 }, LS = { 75, 0, 10 }, LE = { 30, 0, 0 }, LW = { 0, 0, 0 } },
 			follow = { Root = { -6, 12, 6, 0, -0.3, -0.28 }, Waist = { -12, 12, -6 }, Neck = { -20, 0, -10 }, RS = { 75, 0, 0 }, RE = { 85, 0, 0 }, RW = { 0, 0, 0 }, LS = { 76, 0, 10 }, LE = { 30, 0, 0 }, LW = { 0, 0, 0 } },
@@ -464,8 +495,8 @@ local data = {
 		},
 		-- Tube de l'été (finition S) : il lance trois vinyles en éventail d'un grand geste de bras
 		S_finish_tube = {
-			label = "Tube de l'été", kind = "projectile", energyCost = 25, startup = 0.16, active = 0, recovery = 0.35,
-			damage = 6, kbBase = 26, kbGrowth = 55, kbAngle = 30,
+			label = "Tube de l'été", kind = "projectile", energyCost = 25, startup = 0.12, active = 0, recovery = 0.35,
+			damage = 6, kbBase = 32, kbGrowth = 80, kbAngle = 30,
 			projectile = { speed = 70, gravity = 0, lifetime = 0.5, size = 1.8, color = BLACK, visual = VINYL, fan = { count = 3, from = -5, to = 25 } },
 			windup = { Root = { 0, 30, 0, 0, -0.25, 0.1 }, Waist = { -6, 35, 0 }, Neck = { 0, -25, 0 }, RS = { 85, 0, -60 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { -40, 0, -20 }, LE = { 100, 0, 0 } },
 			strike = { Root = { -6, -20, 0, 0, -0.3, -0.25 }, Waist = { -10, -30, 0 }, Neck = { 10, 10, 0 }, RS = { 110, 0, 50 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -40, 0, -20 }, LE = { 100, 0, 0 } },
@@ -486,15 +517,26 @@ local data = {
 			fx = { { "ring", color = PINK, radius = 12, at = "root" }, { "pillar", color = BLUE, height = 14, width = 4, at = "front" }, { "symbols", symbols = { "♪", "♫", "🔊" }, color = GOLD, count = 8, radius = 6 }, { "shake", amount = 0.8 } },
 			text = "LE DROP ULTIME !", hitText = "BOUM BOUM BOUM !",
 		},
-		-- Super ↑ : il lance son vinyle vers le haut d'un grand scratch et fait trembler la piste
+		-- Super ↑ : il sort une boule à facettes géante, la soulève à bout de bras (aïe le dos) et la lance au plafond : elle monte en
+		-- tournoyant, emporte ce qui est au-dessus et force tout le monde à danser
 		SUPER_up = {
-			label = "Scratch du ciel !", superCost = 100, startup = 0.3, active = 0.25, recovery = 0.55,
-			damage = 22, hitbox = box(7, 10, 2, 4), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
-			windup = { Root = { -7.2, 0, 0, 0, -0.3, 0.2 }, Waist = { -12, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 36, 0, 36 }, RE = { 72, 0, 0 }, LS = { -48, 0, -24 }, LE = { 120, 0, 0 }, FR = { 0, 0, 0, 0, 0, 0.3 }, FL = { 0, 0, 0, 0, 0.15, 0 } },
-			strike = { Root = { 24, 0, 0, 0, -0.1, 0.3 }, Waist = { 18, 0, 0 }, Neck = { -12, 0, 0 }, RS = { -36, 0, 72 }, RE = { 24, 0, 0 }, LS = { -48, 0, -30 }, LE = { 120, 0, 0 }, RH = { 180, 0, 0 }, RK = { -6, 0, 0 }, RA = { 24, 0, 0 } },
-			follow = { Root = { 26.4, 0, 0, 0, -0.1, 0.35 }, Waist = { 19.2, 0, 0 }, Neck = { -14.4, 0, 0 }, RS = { -38.4, 0, 74.4 }, RE = { 24, 0, 0 }, LS = { -48, 0, -30 }, LE = { 120, 0, 0 }, RH = { 186, 0, 0 }, RK = { -6, 0, 0 }, RA = { 24, 0, 0 } },
-			hold = 0.25, selfVelocity = Vector2.new(0, 45),
-			windupFx = { "super" }, trail = "prop", status = { name = "dancing", duration = 2 }, fx = { { "symbols", symbols = { "♪", "♫", "🎶" }, count = 8, color = Color3.fromRGB(255, 200, 60) }, { "shake", amount = 0.4 } }, text = "ON MONTE LE SON !", hitText = "WIKI-WIKI !",
+			label = "Boule à facettes !", kind = "projectile", superCost = 100, startup = 0.35, active = 0, recovery = 0.6,
+			damage = 22, kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
+			projectile = { speed = 55, angle = 88, gravity = 30, lifetime = 1.4, size = 4.5, color = SILVER, from = "above", pierce = true,
+				visual = { shape = "ball", size = 4, color = SILVER, material = "Foil", spin = 10, parts = {
+					{ "block", Vector3.new(1, 1, 1), Vector3.new(1.6, 1.2, 0), WHITE },
+					{ "block", Vector3.new(0.9, 0.9, 0.9), Vector3.new(-1.5, -1.1, 0.6), PINK },
+					{ "block", Vector3.new(0.8, 0.8, 0.8), Vector3.new(0.4, -1.7, -1.0), BLUE },
+					{ "block", Vector3.new(0.3, 2.5, 0.3), Vector3.new(0, 2.8, 0), SILVER },
+				} } },
+			status = { name = "dancing", duration = 2 },
+			windup = { Root = { -6, 0, 0, 0, -0.75, 0.1 }, Waist = { -26, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 50, 0, 25 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -25 }, LE = { 30, 0, 0 } },
+			strike = { Root = { 8, 0, 0, 0, 0.45, 0 }, Waist = { 16, 0, 0 }, Neck = { 40, 0, 0 }, RS = { 182, 0, 12 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 182, 0, -12 }, LE = { 0, 0, 0 }, FR = { 0, 0, 0, 0, 0.35, 0 }, FL = { 0, 0, 0, 0, 0.35, 0 } },
+			follow = { Root = { 14, 0, 0, 0, -0.1, 0.15 }, Waist = { 20, 0, 0 }, Neck = { 35, 0, 0 }, RS = { -40, 0, 30 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { -40, 0, -30 }, LE = { 90, 0, 0 } },
+			hold = 0.15, shake = true, hideProp = "vinyles",
+			windupFx = { "super", { "text", text = "HNNNG… MON DOS…", color = PINK } },
+			fx = { { "screen", color = PINK, alpha = 0.2 }, { "symbols", symbols = { "✨", "🪩", "♪" }, color = GOLD, count = 10, radius = 6, at = "above" }, { "beam", color = WHITE, length = 14, width = 1.2, at = "above" }, { "shake", amount = 0.4 } },
+			text = "QUE LA LUMIÈRE SOIT !", hitText = "DISCO !",
 		},
 		-- Le Slow : il ouvre les bras et se balance ; l'adversaire est forcé de danser un slow pendant que Papi se soigne
 		SUPER_down = {
@@ -751,25 +793,27 @@ local function airAfterK()
 end
 
 local LINKS = {
-	-- P… : vinyle, charentaise, 33 tours
+	-- P… : vinyle, charentaise, dentier, 33 tours (P P P K : mégaphone, finition)
 	P_neutral = { P = "P_combo2", K = "PK_combo", fwd_P = "P_side", S = "S_finish_scratch" },
-	P_combo2 = { P = "P_combo3", K = "K_combo2", S = "S_finish_scratch" }, -- P P
-	P_combo3 = { K = "K_combo3", S = "S_finish_tube" }, -- P P P
-	PK_combo = { P = "KP_combo", K = "K_combo2", S = "S_finish_scratch" }, -- P K
-	KP_combo = { P = "P_combo3", K = "K_combo3", S = "S_finish_tube" }, -- K P / P K P
-	-- K… : charentaises
+	P_combo2 = { P = "P_combo3", K = "K_combo2", fwd_P = "P_dentier", S = "S_finish_scratch" }, -- P P
+	P_combo3 = { K = "K_mega", P = "P_dentier", S = "S_finish_tube" }, -- P P P
+	P_dentier = { P = "P_combo3", K = "K_hanche", S = "S_finish_scratch" }, -- P P →P (dentier)
+	PK_combo = { P = "KP_combo", K = "K_hanche", S = "S_finish_scratch" }, -- P K
+	KP_combo = { P = "P_dentier", K = "K_mega", S = "S_finish_tube" }, -- K P / P K P
+	-- K… : charentaises, hanches, mégaphone (K K K K et K K ↓K K : mégaphone)
 	K_neutral = { K = "K_combo2", P = "KP_combo", S = "S_finish_scratch" },
-	K_combo2 = { K = "K_combo3", P = "P_combo3", S = "S_finish_scratch" }, -- K K
-	K_combo3 = { S = "S_finish_tube" }, -- K K K
+	K_combo2 = { K = "K_combo3", P = "P_dentier", down_K = "K_hanche", S = "S_finish_scratch" }, -- K K
+	K_combo3 = { K = "K_mega", S = "S_finish_tube" }, -- K K K (grand écart)
+	K_hanche = { K = "K_mega", P = "P_combo3", S = "S_finish_scratch" }, -- K K ↓K (hanche)
 	-- avec une flèche
-	P_side = { P = "P_combo2", K = "K_side", S = "S_finish_tube" }, -- → P
+	P_side = { P = "P_combo2", K = "K_side", fwd_P = "P_dentier", S = "S_finish_tube" }, -- → P
 	P_down = { P = "P_up", K = "K_down", S = "S_finish_scratch" }, -- ↓ P
-	P_up = { K = "K_up", S = "S_finish_tube" }, -- ↑ P
-	K_side = { P = "KP_combo", S = "S_finish_scratch" }, -- → K
+	P_up = { K = "K_up", P = "P_dentier", S = "S_finish_tube" }, -- ↑ P
+	K_side = { P = "KP_combo", K = "K_hanche", S = "S_finish_scratch" }, -- → K
 	K_down = { P = "P_up", S = "S_finish_scratch" }, -- ↓ K
-	K_up = { P = "P_combo3", S = "S_finish_tube" }, -- ↑ K
+	K_up = { P = "P_combo3", K = "K_mega", S = "S_finish_tube" }, -- ↑ K
 	P_dash = { P = "P_combo2", K = "K_side", S = "S_finish_scratch" }, -- dash P
-	K_dash = { P = "P_up", S = "S_finish_tube" }, -- dash K
+	K_dash = { P = "P_up", K = "K_hanche", S = "S_finish_tube" }, -- dash K
 	-- en l'air ; ↓ P et ↓ K (smash vers le sol) sont des finitions sans suite
 	P_air = airAfterP(),
 	P_air_side = airAfterP(),

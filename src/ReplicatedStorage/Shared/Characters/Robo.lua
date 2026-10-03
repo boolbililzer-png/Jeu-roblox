@@ -100,7 +100,7 @@ local data = {
 		-- Coup de pare-chocs : le bassin pivote d'un cran et le disque d'aspirateur cogne de côté
 		P_combo2 = {
 			label = "Coup de pare-chocs", startup = 0.07, active = 0.08, recovery = 0.16,
-			damage = 6, hitbox = box(4, 3, 2.2, -0.5), kbBase = 18, kbGrowth = 22, kbAngle = 30,
+			damage = 6, hitbox = box(4.5, 3.5, 2.5, 0.5), kbBase = 18, kbGrowth = 22, kbAngle = 30,
 			windup = { Root = { 0, -45, 0, 0, -0.25, 0.15 }, Waist = { 0, 20, 0 }, Neck = { 0, 25, 0 }, RS = { 40, 0, 30 }, RE = { 90, 0, 0 }, LS = { 40, 0, -30 }, LE = { 90, 0, 0 } },
 			strike = { Root = { 0, 35, 0, 0, -0.3, -0.45 }, Waist = { 0, -20, 0 }, Neck = { 0, -15, 0 }, RS = { 20, 0, 40 }, RE = { 90, 0, 0 }, LS = { 60, 0, -40 }, LE = { 90, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
 			follow = { Root = { 0, 40, 0, 0, -0.3, -0.5 }, Waist = { 0, -24, 0 }, Neck = { 0, -18, 0 }, RS = { 18, 0, 42 }, RE = { 90, 0, 0 }, LS = { 62, 0, -42 }, LE = { 90, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
@@ -108,8 +108,8 @@ local data = {
 		},
 		-- Brosse tourbillon : bras à l'horizontale, il tourne sur son axe comme une hélice
 		P_combo3 = {
-			label = "Brosse tourbillon", startup = 0.13, active = 0.12, recovery = 0.3,
-			damage = 9, hitbox = box(6.5, 3.5, 1.5, 0.5), kbBase = 30, kbGrowth = 60, kbAngle = 45,
+			label = "Brosse tourbillon", startup = 0.09, active = 0.12, recovery = 0.3,
+			damage = 9, hitbox = box(6.5, 3.5, 2.5, 0.5), kbBase = 30, kbGrowth = 60, kbAngle = 45,
 			windup = { Root = { 0, -30, 0, 0, -0.25, 0.1 }, Waist = { 0, -25, 0 }, RS = { 90, 0, 60 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, -60 }, LE = { 0, 0, 0 } },
 			strike = { Root = { 0, 0, 0, 0, -0.2, -0.2 }, Waist = { 0, 0, 0 }, RS = { 90, 0, 90 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, -90 }, LE = { 0, 0, 0 } },
 			follow = { Root = { 0, 10, 0, 0, -0.2, -0.25 }, Waist = { 0, 5, 0 }, RS = { 88, 0, 92 }, RE = { 0, 0, 0 }, RW = { -5, 0, 0 }, LS = { 88, 0, -92 }, LE = { 0, 0, 0 } },
@@ -186,8 +186,8 @@ local data = {
 		},
 		-- K K : Double roulette, même mouvement mécanique avec la jambe gauche
 		K_combo2 = {
-			label = "Double roulette", startup = 0.14, active = 0.1, recovery = 0.25,
-			damage = 9, hitbox = box(5, 3, 3, 0), kbBase = 28, kbGrowth = 50, kbAngle = 30,
+			label = "Double roulette", startup = 0.09, active = 0.1, recovery = 0.25,
+			damage = 9, hitbox = box(5, 3.5, 3, 0.5), kbBase = 28, kbGrowth = 50, kbAngle = 30,
 			windup = { Root = { 6, 15, 0, 0, -0.2, 0.1 }, Waist = { 4, 0, 0 }, RS = { 50, 0, 30 }, RE = { 90, 0, 0 }, LS = { 30, 0, -30 }, LE = { 90, 0, 0 }, LH = { 70, 0, 0 }, LK = { -90, 0, 0 }, LA = { 0, 0, 0 } },
 			strike = { Root = { 14, 10, 0, 0, -0.12, -0.1 }, Waist = { 8, 0, 0 }, RS = { 60, 0, 35 }, RE = { 90, 0, 0 }, LS = { -20, 0, -35 }, LE = { 90, 0, 0 }, LH = { 95, 0, 0 }, LK = { 0, 0, 0 }, LA = { 20, 0, 0 } },
 			follow = { Root = { 16, 12, 0, 0, -0.12, -0.12 }, Waist = { 10, 0, 0 }, RS = { 62, 0, 38 }, RE = { 90, 0, 0 }, LS = { -25, 0, -38 }, LE = { 90, 0, 0 }, LH = { 98, 0, 0 }, LK = { 0, 0, 0 }, LA = { 20, 0, 0 } },
@@ -195,8 +195,8 @@ local data = {
 		},
 		-- K K K : Rotation 360°, le bassin tourne comme une tourelle, jambe droite tendue
 		K_combo3 = {
-			label = "Rotation 360°", startup = 0.16, active = 0.14, recovery = 0.32,
-			damage = 12, hitbox = box(6, 3, 2, 0.3), kbBase = 32, kbGrowth = 80, kbAngle = 40,
+			label = "Rotation 360°", startup = 0.1, active = 0.14, recovery = 0.32,
+			damage = 12, hitbox = box(6, 3.5, 2.5, 0.5), kbBase = 32, kbGrowth = 80, kbAngle = 40,
 			windup = { Root = { 4, -60, 0, 0, -0.25, 0.1 }, Waist = { 0, -30, 0 }, Neck = { 0, 40, 0 }, RS = { 60, 0, 40 }, RE = { 90, 0, 0 }, LS = { 60, 0, -40 }, LE = { 90, 0, 0 }, RH = { 40, 0, 0 }, RK = { -90, 0, 0 } },
 			strike = { Root = { 20, 0, 0, 0, -0.1, 0 }, Waist = { 0, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 30, 0, 80 }, RE = { 0, 0, 0 }, LS = { 40, 0, -80 }, LE = { 0, 0, 0 }, RH = { 85, 0, 25 }, RK = { 0, 0, 0 }, RA = { 15, 0, 0 } },
 			follow = { Root = { 22, 0, 0, 0, -0.1, 0 }, Waist = { 0, 0, 0 }, Neck = { -12, 0, 0 }, RS = { 28, 0, 82 }, RE = { 0, 0, 0 }, LS = { 38, 0, -82 }, LE = { 0, 0, 0 }, RH = { 88, 0, 20 }, RK = { 0, 0, 0 }, RA = { 15, 0, 0 } },
@@ -410,28 +410,56 @@ local data = {
 		},
 
 		------------------------------------------------------------------ Suites d'enchaînement (voir LINKS en bas)
-		-- P puis K : Petit coup de roulette, coup de pied sec et raide dans le tibia
+		-- P puis K : Roulette à piston, la jambe droite se déplie d'un cran, raide, la roulette du talon plantée dans le tibia
 		PK_combo = {
-			label = "Petit coup de roulette", startup = 0.1, active = 0.08, recovery = 0.2,
-			damage = 7, hitbox = box(5, 2, 3, -1.5), kbBase = 22, kbGrowth = 30, kbAngle = 30,
-			windup = { Root = { 4, -10, 0, 0, -0.2, 0.15 }, Waist = { 0, -10, 0 }, RS = { 40, 0, 30 }, RE = { 90, 0, 0 }, LS = { 50, 0, -30 }, LE = { 90, 0, 0 }, RH = { -20, 0, 0 }, RK = { -70, 0, 0 }, RA = { 0, 0, 0 } },
-			strike = { Root = { -4, 10, 0, 0, -0.3, -0.2 }, Waist = { 0, 10, 0 }, RS = { 20, 0, 40 }, RE = { 90, 0, 0 }, LS = { 70, 0, -35 }, LE = { 90, 0, 0 }, RH = { 60, 0, 0 }, RK = { 0, 0, 0 }, RA = { -20, 0, 0 } },
-			follow = { Root = { -5, 12, 0, 0, -0.32, -0.22 }, Waist = { 0, 12, 0 }, RS = { 18, 0, 42 }, RE = { 90, 0, 0 }, LS = { 72, 0, -36 }, LE = { 90, 0, 0 }, RH = { 62, 0, 0 }, RK = { 0, 0, 0 }, RA = { -20, 0, 0 } },
-			trail = "rightFoot", hitText = "TIC !",
+			label = "Roulette à piston", startup = 0.07, active = 0.08, recovery = 0.18,
+			damage = 7, hitbox = box(5, 3.5, 2.8, 0.5), kbBase = 22, kbGrowth = 30, kbAngle = 35,
+			windup = { Root = { 8, 0, 0, 0, -0.25, 0.2 }, Waist = { 4, 0, 0 }, Neck = { 0, 0, 0 }, RS = { 0, 0, 20 }, RE = { 90, 0, 0 }, LS = { 0, 0, -20 }, LE = { 90, 0, 0 }, RH = { 90, 0, 0 }, RK = { -90, 0, 0 }, RA = { 0, 0, 0 } },
+			strike = { Root = { 12, 0, 0, 0, -0.2, -0.15 }, Waist = { 6, 0, 0 }, Neck = { -6, 0, 0 }, RS = { -30, 0, 25 }, RE = { 90, 0, 0 }, LS = { 30, 0, -25 }, LE = { 90, 0, 0 }, RH = { 90, 0, 0 }, RK = { 0, 0, 0 }, RA = { 30, 0, 0 } },
+			follow = { Root = { 14, 0, 0, 0, -0.2, -0.18 }, Waist = { 8, 0, 0 }, Neck = { -8, 0, 0 }, RS = { -34, 0, 26 }, RE = { 90, 0, 0 }, LS = { 34, 0, -26 }, LE = { 90, 0, 0 }, RH = { 92, 0, 0 }, RK = { 0, 0, 0 }, RA = { 30, 0, 0 } },
+			trail = "rightFoot", fx = { { "particles", tex = "spark", color = YELLOW, dir = "front", at = "feet", time = 0.12, speed = 8, size = 0.4, rate = 60 } }, hitText = "TCHAK-BIP !",
 		},
-		-- K puis P : Revers de brosse, le buste tourne d'un cran et la brosse revient de gauche à droite
+		-- K puis P : Moulinet de brosse, le bras fait un tour complet par le haut et la brosse s'abat de face en crachant des étincelles
 		KP_combo = {
-			label = "Revers de brosse", startup = 0.09, active = 0.08, recovery = 0.2,
-			damage = 7, hitbox = box(5, 3, 2.8, 0.6), kbBase = 22, kbGrowth = 35, kbAngle = 30,
-			windup = { Root = { 0, 30, 0, 0, -0.2, 0 }, Waist = { 0, 30, 0 }, Neck = { 0, -30, 0 }, RS = { 90, 0, -50 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -20 }, LE = { 90, 0, 0 } },
-			strike = { Root = { -4, -20, 0, 0, -0.22, -0.25 }, Waist = { 0, -30, 0 }, Neck = { 0, 10, 0 }, RS = { 90, 0, 40 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -25 }, LE = { 90, 0, 0 } },
-			follow = { Root = { -4, -24, 0, 0, -0.22, -0.28 }, Waist = { 0, -34, 0 }, Neck = { 0, 12, 0 }, RS = { 88, 0, 55 }, RE = { 0, 0, 0 }, RW = { -5, 0, 0 }, LS = { 32, 0, -25 }, LE = { 90, 0, 0 } },
-			trail = "prop", hitText = "SHLAK !",
+			label = "Moulinet de brosse", startup = 0.08, active = 0.08, recovery = 0.2,
+			damage = 7, hitbox = box(5, 4, 2.8, 0.8), kbBase = 22, kbGrowth = 35, kbAngle = 40,
+			windup = { Root = { 6, 0, 0, 0, -0.2, 0.15 }, Waist = { 6, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 200, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -20 }, LE = { 90, 0, 0 } },
+			strike = { Root = { -8, 0, 0, 0, -0.3, -0.3 }, Waist = { -10, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 100, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -25 }, LE = { 90, 0, 0 } },
+			follow = { Root = { -10, 0, 0, 0, -0.32, -0.35 }, Waist = { -12, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 60, 0, 0 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 32, 0, -25 }, LE = { 90, 0, 0 } },
+			trail = "prop", fx = { { "particles", tex = "spark", color = YELLOW, dir = "front", at = "hand", time = 0.15, speed = 12, size = 0.4, rate = 80 } }, hitText = "VRRRT-PLONK !",
+		},
+		-- Coup de tête 404 (P P puis →P) : bug ! sa tête fait un tour complet sur elle-même puis cogne l'adversaire, voyant rouge
+		P_bug = {
+			label = "Coup de tête 404", startup = 0.07, active = 0.1, recovery = 0.2,
+			damage = 7, hitbox = box(5, 4, 2.6, 1), kbBase = 24, kbGrowth = 35, kbAngle = 40,
+			windup = { Root = { 6, 0, 0, 0, -0.25, 0.15 }, Waist = { 6, 0, 0 }, Neck = { -10, 180, 0 }, RS = { 40, 0, 30 }, RE = { 90, 0, 0 }, LS = { 40, 0, -30 }, LE = { 90, 0, 0 } },
+			strike = { Root = { -14, 0, 0, 0, -0.35, -0.35 }, Waist = { -18, 0, 0 }, Neck = { -30, 360, 0 }, RS = { -20, 0, 35 }, RE = { 90, 0, 0 }, LS = { -20, 0, -35 }, LE = { 90, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+			follow = { Root = { -16, 0, 0, 0, -0.37, -0.4 }, Waist = { -20, 0, 0 }, Neck = { -34, 360, 0 }, RS = { -24, 0, 36 }, RE = { 90, 0, 0 }, LS = { -24, 0, -36 }, LE = { 90, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.32 } },
+			shake = true, trail = "head", fx = { { "particles", tex = "spark", color = RED, dir = "all", at = "head", time = 0.25, speed = 8, size = 0.4, rate = 70 }, { "text", text = "ERREUR 404", color = RED, at = "head" } },
+			text = "BZZT ?", hitText = "BONK.EXE !",
+		},
+		-- Rebond de pare-chocs (K K puis →K) : comme un robot aspirateur contre un mur, il cogne, recule d'un cran et recogne (2 touches)
+		K_bumper = {
+			label = "Rebond de pare-chocs", startup = 0.08, active = 0.2, recovery = 0.22,
+			damage = 4, hits = 2, hitbox = box(5, 4, 2.6, 0.3), kbBase = 20, kbGrowth = 30, kbAngle = 40, selfVelocity = Vector2.new(18, 0),
+			windup = { Root = { 0, 0, 0, 0, -0.3, 0.3 }, Waist = { 0, 0, 0 }, Neck = { 0, 0, 0 }, RS = { -30, 0, 20 }, RE = { 90, 0, 0 }, LS = { -30, 0, -20 }, LE = { 90, 0, 0 } },
+			strike = { Root = { -12, 0, 0, 0, -0.4, -0.5 }, Waist = { -6, 0, 0 }, Neck = { 10, 0, 0 }, RS = { -40, 0, 25 }, RE = { 90, 0, 0 }, LS = { -40, 0, -25 }, LE = { 90, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+			follow = { Root = { 6, 0, 0, 0, -0.35, 0.2 }, Waist = { 4, 0, 0 }, Neck = { -6, 0, 0 }, RS = { -30, 0, 20 }, RE = { 90, 0, 0 }, LS = { -30, 0, -20 }, LE = { 90, 0, 0 } },
+			wobble = true, trail = "body", fx = { { "text", text = "BIP", color = CYAN, at = "head" }, { "ring", color = CYAN, radius = 2.5, at = "front" } }, hitText = "BONG-BIP-BONG !",
+		},
+		-- Compactage (finition) : bras en croix, puis les deux bras se referment d'un coup sec comme une presse et éjectent l'adversaire plié en quatre
+		K_press = {
+			label = "Compactage", startup = 0.1, active = 0.1, recovery = 0.34,
+			damage = 12, hitbox = box(5.5, 4.5, 2.8, 0.8), kbBase = 38, kbGrowth = 90, kbAngle = 38,
+			windup = { Root = { 4, 0, 0, 0, -0.25, 0.2 }, Waist = { 4, 0, 0 }, Neck = { 0, 0, 0 }, RS = { 90, 0, 90 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, -90 }, LE = { 0, 0, 0 } },
+			strike = { Root = { -10, 0, 0, 0, -0.35, -0.35 }, Waist = { -10, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 92, 0, -10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 92, 0, 10 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.35 } },
+			follow = { Root = { -12, 0, 0, 0, -0.37, -0.4 }, Waist = { -12, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 94, 0, -15 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 94, 0, 15 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.38 } },
+			trail = "bothHands", fx = { { "burst", color = STEEL, size = 3, at = "front" }, { "text", text = "COMPACTAGE : 100 %", color = CYAN, at = "head" }, { "shake", amount = 0.3 } }, text = "COMPACTAGE.", hitText = "CRRRUNCH !",
 		},
 		-- Souffle turbo (finition S) : le tuyau passe en soufflerie et éjecte l'adversaire au loin
 		S_finish_souffle = {
-			label = "Souffle turbo", energyCost = 20, startup = 0.14, active = 0.14, recovery = 0.32,
-			damage = 10, hitbox = box(7, 4, 4, 0.5), kbBase = 34, kbGrowth = 75, kbAngle = 30,
+			label = "Souffle turbo", energyCost = 20, startup = 0.12, active = 0.14, recovery = 0.32,
+			damage = 10, hitbox = box(7, 4, 4, 0.5), kbBase = 38, kbGrowth = 88, kbAngle = 30,
 			windup = { Root = { -6, 0, 0, 0, -0.3, -0.1 }, Waist = { -8, 0, 0 }, RS = { 70, 0, 15 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, 25 }, LE = { 80, 0, 0 } },
 			strike = { Root = { 10, 0, 0, 0, -0.35, 0.3 }, Waist = { 8, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 92, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 86, 0, 25 }, LE = { 45, 0, 0 }, FR = { 0, 0, 0, 0, 0, 0.2 } },
 			follow = { Root = { 12, 0, 0, 0, -0.35, 0.35 }, Waist = { 10, 0, 0 }, Neck = { 8, 0, 0 }, RS = { 94, 0, 0 }, RE = { 0, 0, 0 }, RW = { 4, 0, 0 }, LS = { 88, 0, 25 }, LE = { 44, 0, 0 }, FR = { 0, 0, 0, 0, 0, 0.25 } },
@@ -441,8 +469,8 @@ local data = {
 		},
 		-- Vidange du réservoir (finition S) : trois projectiles avalés recrachés en éventail (coûte 2 du Réservoir)
 		S_finish_vidange = {
-			label = "Vidange du réservoir", kind = "projectile", energyCost = 20, meterCost = 2, startup = 0.16, active = 0, recovery = 0.35,
-			damage = 7, kbBase = 28, kbGrowth = 60, kbAngle = 30,
+			label = "Vidange du réservoir", kind = "projectile", energyCost = 20, meterCost = 2, startup = 0.12, active = 0, recovery = 0.35,
+			damage = 7, kbBase = 34, kbGrowth = 80, kbAngle = 30,
 			projectile = { speed = 85, gravity = 0, lifetime = 0.5, size = 1.6, color = DUST, fan = { count = 3, from = -12, to = 22 },
 				visual = { shape = "ball", size = 1.3, color = DUST, material = "Sand", spin = 14, parts = { { "ball", Vector3.new(0.6, 0.6, 0.6), Vector3.new(0.5, 0.3, 0), DUST_DARK } } } },
 			windup = { Root = { -8, 0, 0, 0, -0.3, -0.1 }, Waist = { -12, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 60, 0, 10 }, RE = { 50, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, 25 }, LE = { 80, 0, 0 } },
@@ -465,15 +493,18 @@ local data = {
 			fx = { { "pillar", color = DUST, height = 14, width = 8, at = "root" }, { "particles", tex = "smoke", color = DUST, dir = "up", at = "root", time = 1.5, speed = 10, size = 1.5, rate = 120 }, { "shake", amount = 0.5 } },
 			text = "GRAND MÉNAGE !", hitText = "VROOOOOM !",
 		},
-		-- Super ↑ : il tourne sur lui-même à pleine puissance et aspire tout vers le plafond
+		-- Super ↑ : il se comprime comme un ressort, le propulseur à poussière s'allume et il décolle à la verticale, raide comme
+		-- une fusée, bras joints au-dessus de la tête, en vrille : tout ce qui est au-dessus part en orbite
 		SUPER_up = {
-			label = "Turbo-aspiration verticale !", superCost = 100, startup = 0.25, active = 0.45, recovery = 0.55,
-			damage = 22, hitbox = box(9, 10, 0, 3), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
-			windup = { Root = { -7.2, 0, 0, 0, -0.6, 0 }, Waist = { -18, 0, 0 }, Neck = { -12, 0, 0 }, RS = { -24, 0, 30 }, RE = { 108, 0, 0 }, LS = { -24, 0, -30 }, LE = { 108, 0, 0 } },
-			strike = { Root = { 24, 0, 0, 0, 0.2, 0.3 }, Waist = { 12, 0, 0 }, Neck = { 24, 0, 0 }, RS = { -72, 0, 48 }, RE = { 0, 0, 0 }, LS = { -72, 0, -48 }, LE = { 0, 0, 0 }, RH = { 180, 0, 0 }, RK = { 0, 0, 0 }, RA = { 24, 0, 0 }, LH = { 36, 0, 0 }, LK = { -72, 0, 0 } },
-			follow = { Root = { 26.4, 0, 0, 0, 0.25, 0.35 }, Waist = { 14.4, 0, 0 }, Neck = { 26.4, 0, 0 }, RS = { -74.4, 0, 50.4 }, RE = { 0, 0, 0 }, LS = { -74.4, 0, -50.4 }, LE = { 0, 0, 0 }, RH = { 144, 0, 0 }, RK = { -36, 0, 0 }, LH = { 180, 0, 0 }, LK = { 0, 0, 0 }, LA = { 24, 0, 0 } },
-			spin = { axis = "y", degrees = 720 }, selfVelocity = Vector2.new(0, 70),
-			windupFx = { "super" }, trail = "prop", pull = true, fx = { { "ring", color = Color3.fromRGB(80, 220, 255), radius = 7, at = "root" }, { "particles", tex = "smoke", color = Color3.fromRGB(200, 200, 210), dir = "all", at = "root", time = 0.8 } }, text = "MODE TURBO.EXE", hitText = "ASPIRÉ !",
+			label = "Décollage fusée !", superCost = 100, startup = 0.3, active = 0.4, recovery = 0.55,
+			damage = 22, hitbox = box(6.5, 13, 0.8, 5), kbBase = 45, kbGrowth = 95, kbAngle = 88, invuln = 0.3,
+			windup = { Root = { 0, 0, 0, 0, -1.0, 0 }, Waist = { -10, 0, 0 }, Neck = { -35, 0, 0 }, RS = { 0, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 0, 0, -10 }, LE = { 0, 0, 0 } },
+			strike = { Root = { 0, 0, 0, 0, 0.5, 0 }, Waist = { 0, 0, 0 }, Neck = { 25, 0, 0 }, RS = { 180, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 180, 0, 0 }, LE = { 0, 0, 0 }, RH = { 0, 0, 2 }, RK = { 0, 0, 0 }, RA = { -40, 0, 0 }, LH = { 0, 0, -2 }, LK = { 0, 0, 0 }, LA = { -40, 0, 0 } },
+			follow = { Root = { 0, 0, 0, 0, 0.6, 0 }, Waist = { 0, 0, 0 }, Neck = { 28, 0, 0 }, RS = { 182, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 182, 0, 0 }, LE = { 0, 0, 0 }, RH = { 0, 0, 2 }, RK = { 0, 0, 0 }, RA = { -40, 0, 0 }, LH = { 0, 0, -2 }, LK = { 0, 0, 0 }, LA = { -40, 0, 0 } },
+			spin = { axis = "y", degrees = 1080 }, selfVelocity = Vector2.new(0, 95),
+			windupFx = { "super", { "text", text = "DÉCOLLAGE DANS 3… 2… 1…", color = CYAN } }, trail = "prop",
+			fx = { { "pillar", color = DUST, height = 18, width = 3, at = "root" }, { "particles", tex = "fire", color = YELLOW, dir = "down", at = "feet", time = 0.6, speed = 18, size = 1, rate = 120 }, { "burst", color = DUST, size = 4, at = "feet" }, { "shake", amount = 0.5 } },
+			text = "FUSÉE.EXE", hitText = "EN ORBITE !",
 		},
 		-- Mise à jour : tête basse, il redémarre… puis se redresse bras au ciel : onde, vitesse et armure 3 s
 		SUPER_down = {
@@ -723,26 +754,28 @@ local function airAfterK()
 end
 
 local LINKS = {
-	-- P… : brosse, pare-chocs, tourbillon
+	-- P… : brosse, pare-chocs, tourbillon, bug 404 (P P P K : compactage, finition)
 	P_neutral = { P = "P_combo2", K = "PK_combo", fwd_P = "P_side", S = "S_finish_souffle" },
-	P_combo2 = { P = "P_combo3", K = "K_combo2", S = "S_finish_souffle" }, -- P P
-	P_combo3 = { K = "K_combo3", S = "S_finish_vidange" }, -- P P P
-	PK_combo = { P = "KP_combo", K = "K_combo2", S = "S_finish_souffle" }, -- P K
-	KP_combo = { P = "P_combo3", K = "K_combo3", S = "S_finish_vidange" }, -- K P / P K P
-	-- K… : roulettes
+	P_combo2 = { P = "P_combo3", K = "K_combo2", fwd_P = "P_bug", S = "S_finish_souffle" }, -- P P
+	P_combo3 = { K = "K_press", P = "P_bug", S = "S_finish_vidange" }, -- P P P
+	P_bug = { P = "P_combo3", K = "K_bumper", S = "S_finish_souffle" }, -- P P →P (coup de tête 404)
+	PK_combo = { P = "KP_combo", K = "K_bumper", S = "S_finish_souffle" }, -- P K
+	KP_combo = { P = "P_combo3", K = "K_press", S = "S_finish_vidange" }, -- K P / P K P
+	-- K… : roulettes, pare-chocs, presse (K K K K et K K →K K : compactage)
 	K_neutral = { K = "K_combo2", P = "KP_combo", S = "S_finish_souffle" },
-	K_combo2 = { K = "K_combo3", P = "P_combo3", S = "S_finish_souffle" }, -- K K
-	K_combo3 = { S = "S_finish_vidange" }, -- K K K
+	K_combo2 = { K = "K_combo3", P = "P_bug", fwd_K = "K_bumper", S = "S_finish_souffle" }, -- K K
+	K_combo3 = { K = "K_press", S = "S_finish_vidange" }, -- K K K
+	K_bumper = { K = "K_press", P = "P_combo3", S = "S_finish_vidange" }, -- K K →K (rebond)
 	-- avec une flèche
 	P_side = { P = "P_side2", K = "K_side", S = "S_finish_vidange" }, -- → P
-	P_side2 = { S = "S_finish_souffle" }, -- → P P
+	P_side2 = { P = "P_bug", K = "K_bumper", S = "S_finish_souffle" }, -- → P P
 	P_down = { P = "P_up", K = "K_down", S = "S_finish_souffle" }, -- ↓ P
-	P_up = { K = "K_up", S = "S_finish_vidange" }, -- ↑ P
-	K_side = { P = "KP_combo", S = "S_finish_souffle" }, -- → K
-	K_down = { P = "P_up", S = "S_finish_souffle" }, -- ↓ K
+	P_up = { K = "K_up", P = "P_bug", S = "S_finish_vidange" }, -- ↑ P
+	K_side = { P = "KP_combo", K = "K_bumper", S = "S_finish_souffle" }, -- → K
+	K_down = { P = "P_up", K = "K_combo3", S = "S_finish_souffle" }, -- ↓ K
 	K_up = airAfterK(), -- ↑ K (il décolle en reculant)
 	P_dash = { P = "P_combo2", K = "K_side", S = "S_finish_souffle" }, -- dash P
-	K_dash = { P = "P_up", S = "S_finish_vidange" }, -- dash K
+	K_dash = { P = "P_up", K = "K_bumper", S = "S_finish_vidange" }, -- dash K
 	-- en l'air ; ↓ P et ↓ K (smash vers le sol) sont des finitions sans suite
 	P_air = airAfterP(),
 	P_air_side = airAfterP(),

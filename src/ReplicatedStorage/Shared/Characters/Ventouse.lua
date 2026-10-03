@@ -115,7 +115,7 @@ local data = {
 		-- Coup de botte (P P) : genou monté, la grosse botte jaune part droit dans le ventre
 		P_combo2 = {
 			label = "Coup de botte", startup = 0.08, active = 0.08, recovery = 0.16,
-			damage = 6, hitbox = box(4.5, 2.5, 3, -0.6), kbBase = 20, kbGrowth = 28, kbAngle = 30,
+			damage = 6, hitbox = box(4.5, 3.5, 3, 0), kbBase = 20, kbGrowth = 28, kbAngle = 30,
 			windup = { Root = { 6, -5, 0, 0, -0.15, 0.15 }, Waist = { 6, 0, 0 }, Neck = { 4, 0, 0 }, RS = { 40, 0, 30 }, RE = { 60, 0, 0 }, LS = { 40, 0, -30 }, LE = { 70, 0, 0 }, RH = { 85, 0, 0 }, RK = { -110, 0, 0 }, RA = { 10, 0, 0 } },
 			strike = { Root = { 14, 0, 0, 0, -0.1, -0.1 }, Waist = { 10, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 10, 0, 40 }, RE = { 50, 0, 0 }, LS = { 50, 0, -40 }, LE = { 70, 0, 0 }, RH = { 80, 0, 0 }, RK = { -4, 0, 0 }, RA = { 15, 0, 0 } },
 			follow = { Root = { 16, 0, 0, 0, -0.1, -0.12 }, Waist = { 12, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 5, 0, 42 }, RE = { 50, 0, 0 }, LS = { 52, 0, -42 }, LE = { 70, 0, 0 }, RH = { 84, 0, 0 }, RK = { -2, 0, 0 }, RA = { 15, 0, 0 } },
@@ -123,7 +123,7 @@ local data = {
 		},
 		-- Bonk de ventouse (P P P) : ventouse levée à deux mains au-dessus de la casquette puis plaquée devant
 		P_combo3 = {
-			label = "Bonk de ventouse", startup = 0.12, active = 0.1, recovery = 0.28,
+			label = "Bonk de ventouse", startup = 0.09, active = 0.1, recovery = 0.28,
 			damage = 8, hitbox = box(5, 4, 3, 0.8), kbBase = 30, kbGrowth = 60, kbAngle = 40,
 			windup = { Root = { 8, -10, 0, 0, -0.05, 0.2 }, Waist = { 14, -10, 0 }, Neck = { 8, 0, 0 }, RS = { 185, 0, 10 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 175, 0, 25 }, LE = { 50, 0, 0 } },
 			strike = { Root = { -14, 8, 0, 0, -0.45, -0.4 }, Waist = { -26, 10, 0 }, Neck = { -4, 0, 0 }, RS = { 90, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 80, 0, 25 }, LE = { 20, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
@@ -142,7 +142,7 @@ local data = {
 		-- Retour de tuyau (→P P) : le tuyau revient dans l'autre sens, coup droit
 		P_side2 = {
 			label = "Retour de tuyau", startup = 0.08, active = 0.08, recovery = 0.2,
-			damage = 6, hitbox = box(5.5, 3, 3, 0.5), kbBase = 22, kbGrowth = 35, kbAngle = 25, selfVelocity = Vector2.new(12, 0),
+			damage = 6, hitbox = box(5.5, 3.5, 3, 0.5), kbBase = 22, kbGrowth = 35, kbAngle = 25, selfVelocity = Vector2.new(12, 0),
 			windup = { Root = { -6, -30, 0, 0, -0.4, -0.3 }, Waist = { -8, -40, 0 }, Neck = { 0, 30, 0 }, RS = { 20, 0, 35 }, RE = { 60, 0, 0 }, LS = { 90, 0, -70 }, LE = { 40, 0, 0 }, LW = { 0, 0, 0 } },
 			strike = { Root = { -6, 20, 0, 0, -0.35, -0.4 }, Waist = { -8, 28, 0 }, Neck = { 0, -20, 0 }, RS = { 25, 0, 25 }, RE = { 65, 0, 0 }, LS = { 95, 0, 30 }, LE = { 10, 0, 0 }, LW = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
 			follow = { Root = { -6, 28, 0, 0, -0.35, -0.42 }, Waist = { -8, 38, 0 }, Neck = { 0, -26, 0 }, RS = { 25, 0, 25 }, RE = { 65, 0, 0 }, LS = { 90, 0, 50 }, LE = { 15, 0, 0 }, LW = { -10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
@@ -170,7 +170,7 @@ local data = {
 		-- Double débouchage (↑P P) : elle repompe un grand coup vers le haut en sautillant
 		P_up2 = {
 			label = "Double débouchage", startup = 0.1, active = 0.1, recovery = 0.24,
-			damage = 7, hitbox = box(4, 5, 1.2, 3.8), kbBase = 28, kbGrowth = 45, kbAngle = 88, selfVelocity = Vector2.new(0, 30),
+			damage = 7, hitbox = box(4.5, 5, 2, 3.8), kbBase = 28, kbGrowth = 45, kbAngle = 88, selfVelocity = Vector2.new(0, 30),
 			windup = { Root = { -4, 0, 0, 0, -0.35, 0 }, Waist = { -6, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 130, 0, 5 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 120, 0, 10 }, LE = { 70, 0, 0 } },
 			strike = { Root = { 6, 0, 0, 0, 0.35, 0 }, Waist = { 12, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 180, 0, 3 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 172, 0, 8 }, LE = { 10, 0, 0 }, FR = { 0, 0, 0, 0, 0.35, 0 }, FL = { 0, 0, 0, 0, 0.35, 0 } },
 			follow = { Root = { 8, 0, 0, 0, 0.4, 0 }, Waist = { 14, 0, 0 }, Neck = { 32, 0, 0 }, RS = { 185, 0, 3 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 176, 0, 8 }, LE = { 10, 0, 0 }, FR = { 0, 0, 0, 0, 0.4, 0 }, FL = { 0, 0, 0, 0, 0.4, 0 } },
@@ -236,8 +236,8 @@ local data = {
 		},
 		-- Genou de chantier (K K) : elle attrape l'adversaire aux épaules et remonte le genou
 		K_combo2 = {
-			label = "Genou de chantier", startup = 0.14, active = 0.1, recovery = 0.26,
-			damage = 9, hitbox = box(4, 3, 2.5, 0.5), kbBase = 28, kbGrowth = 50, kbAngle = 40,
+			label = "Genou de chantier", startup = 0.09, active = 0.1, recovery = 0.26,
+			damage = 9, hitbox = box(4.5, 3.5, 2.5, 0.5), kbBase = 28, kbGrowth = 50, kbAngle = 40,
 			windup = { Root = { 6, -8, 0, 0, -0.2, 0.15 }, Waist = { 8, -6, 0 }, RS = { 110, 0, 25 }, RE = { 40, 0, 0 }, LS = { 110, 0, -25 }, LE = { 40, 0, 0 }, RH = { -20, 0, 0 }, RK = { -60, 0, 0 } },
 			strike = { Root = { -10, 6, 0, 0, 0.05, -0.3 }, Waist = { -14, 6, 0 }, Neck = { -10, 0, 0 }, RS = { 60, 0, 15 }, RE = { 90, 0, 0 }, LS = { 60, 0, -15 }, LE = { 90, 0, 0 }, RH = { 112, 0, 0 }, RK = { -125, 0, 0 }, RA = { 10, 0, 0 } },
 			follow = { Root = { -12, 8, 0, 0, 0.08, -0.35 }, Waist = { -16, 8, 0 }, Neck = { -12, 0, 0 }, RS = { 52, 0, 12 }, RE = { 100, 0, 0 }, LS = { 52, 0, -12 }, LE = { 100, 0, 0 }, RH = { 118, 0, 0 }, RK = { -128, 0, 0 }, RA = { 10, 0, 0 } },
@@ -245,8 +245,8 @@ local data = {
 		},
 		-- Uppercut à la clé (K K K) : de l'accroupi, la clé à molette remonte sous le menton, elle décolle
 		K_combo3 = {
-			label = "Uppercut à la clé", startup = 0.15, active = 0.1, recovery = 0.3,
-			damage = 12, hitbox = box(4, 5, 2, 2.5), kbBase = 32, kbGrowth = 80, kbAngle = 82, selfVelocity = Vector2.new(5, 35),
+			label = "Uppercut à la clé", startup = 0.1, active = 0.1, recovery = 0.3,
+			damage = 12, hitbox = box(4.5, 5, 2.5, 2.5), kbBase = 32, kbGrowth = 80, kbAngle = 82, selfVelocity = Vector2.new(5, 35),
 			windup = { Root = { -8, 15, 0, 0, -0.75, 0.1 }, Waist = { -22, 15, 0 }, Neck = { -10, 0, 0 }, RS = { 40, 0, 30 }, RE = { 60, 0, 0 }, LS = { -25, 0, -25 }, LE = { 70, 0, 0 } },
 			strike = { Root = { 8, -12, 0, 0, 0.3, -0.2 }, Waist = { 16, -18, 0 }, Neck = { 26, 0, 0 }, RS = { 20, 0, 40 }, RE = { 60, 0, 0 }, LS = { 172, 0, 0 }, LE = { 20, 0, 0 }, FR = { 0, 0, 0, 0, 0.3, 0 }, FL = { 0, 0, 0, 0, 0.3, 0 } },
 			follow = { Root = { 10, -14, 0, 0, 0.35, -0.25 }, Waist = { 18, -20, 0 }, Neck = { 30, 0, 0 }, RS = { 15, 0, 42 }, RE = { 60, 0, 0 }, LS = { 180, 0, -5 }, LE = { 12, 0, 0 }, FR = { 0, 0, 0, 0, 0.35, 0 }, FL = { 0, 0, 0, 0, 0.35, 0 } },
@@ -280,14 +280,14 @@ local data = {
 			follow = { Root = { 32, 0, 0, 0, -0.6, 0.35 }, Waist = { -10, 0, 0 }, Neck = { -12, 0, 0 }, RS = { -35, 0, 52 }, RE = { 20, 0, 0 }, LS = { -35, 0, -52 }, LE = { 20, 0, 0 }, RH = { 155, 0, 0 }, RK = { -5, 0, 0 }, RA = { 20, 0, 0 }, LH = { 65, 0, 0 }, LK = { -105, 0, 0 } },
 			spin = { axis = "x", degrees = -360 }, trail = "rightFoot", text = "ROULADE !", hitText = "PAF DE BOTTE !",
 		},
-		-- Double botte (K en l'air) : genoux repliés puis les deux bottes jaunes partent devant
+		-- Assise sur le siphon (K en l'air) : elle se laisse tomber assise, bottes devant et ventouse brandie, comme sur un tabouret de chantier
 		K_air = {
-			label = "Double botte", startup = 0.17, active = 0.14, recovery = 0.25,
-			damage = 12, hitbox = box(5, 4, 2.5, 0), kbBase = 30, kbGrowth = 70, kbAngle = 35,
-			windup = { Root = { -10, 0, 0 }, Waist = { -20, 0, 0 }, Neck = { 4, 0, 0 }, RS = { 70, 0, 40 }, RE = { 70, 0, 0 }, LS = { 70, 0, -40 }, LE = { 70, 0, 0 }, RH = { 100, 0, 0 }, RK = { -135, 0, 0 }, LH = { 95, 0, 0 }, LK = { -135, 0, 0 } },
-			strike = { Root = { 22, 0, 0 }, Waist = { 18, 0, 0 }, Neck = { -12, 0, 0 }, RS = { -40, 0, 45 }, RE = { 30, 0, 0 }, LS = { -40, 0, -45 }, LE = { 30, 0, 0 }, RH = { 88, 0, 5 }, RK = { 0, 0, 0 }, RA = { 20, 0, 0 }, LH = { 84, 0, -5 }, LK = { -4, 0, 0 }, LA = { 20, 0, 0 } },
-			follow = { Root = { 26, 0, 0 }, Waist = { 20, 0, 0 }, Neck = { -14, 0, 0 }, RS = { -48, 0, 50 }, RE = { 30, 0, 0 }, LS = { -48, 0, -50 }, LE = { 30, 0, 0 }, RH = { 94, 0, 5 }, RK = { 0, 0, 0 }, RA = { 20, 0, 0 }, LH = { 90, 0, -5 }, LK = { -2, 0, 0 }, LA = { 20, 0, 0 } },
-			trail = "bothFeet", hitText = "BOING BOING !",
+			label = "Assise sur le siphon", startup = 0.15, active = 0.14, recovery = 0.25,
+			damage = 12, hitbox = box(5.5, 4, 2.2, -0.5), kbBase = 30, kbGrowth = 70, kbAngle = 38,
+			windup = { Root = { -12, 0, 0 }, Waist = { -16, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 170, 0, 20 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, -40 }, LE = { 70, 0, 0 }, RH = { 60, 0, 0 }, RK = { -100, 0, 0 }, LH = { 60, 0, 0 }, LK = { -100, 0, 0 } },
+			strike = { Root = { 24, 0, 0 }, Waist = { 10, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 150, 0, 30 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -50 }, LE = { 30, 0, 0 }, RH = { 95, 0, 15 }, RK = { -30, 0, 0 }, RA = { 20, 0, 0 }, LH = { 95, 0, -15 }, LK = { -30, 0, 0 }, LA = { 20, 0, 0 } },
+			follow = { Root = { 28, 0, 0 }, Waist = { 12, 0, 0 }, Neck = { -12, 0, 0 }, RS = { 155, 0, 32 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 18, 0, -52 }, LE = { 30, 0, 0 }, RH = { 100, 0, 15 }, RK = { -28, 0, 0 }, RA = { 20, 0, 0 }, LH = { 100, 0, -15 }, LK = { -28, 0, 0 }, LA = { 20, 0, 0 } },
+			trail = "bothFeet", fx = { { "symbols", symbols = { "🪑", "💧" }, color = WATER, count = 2, radius = 2, at = "feet" } }, text = "PAUSE !", hitText = "ASSISE DESSUS !",
 		},
 		-- Botte volante (→K en l'air) : de profil, jambe droite détendue à l'horizontale, ventouse en balancier
 		K_air_side = {
@@ -325,19 +325,19 @@ local data = {
 			follow = { Root = { 24, 0, 0 }, Waist = { 12, 0, 0 }, Neck = { -12, 0, 0 }, RS = { -58, 0, 54 }, RE = { 10, 0, 0 }, LS = { 64, 0, -54 }, LE = { 30, 0, 0 }, RH = { 86, 0, 5 }, RK = { 0, 0, 0 }, RA = { 20, 0, 0 }, LH = { 82, 0, -5 }, LK = { -4, 0, 0 }, LA = { 20, 0, 0 } },
 			trail = "bothFeet", text = "INTERVENTION !", hitText = "SBAM !",
 		},
-		-- Botte au tibia (P puis K) : petit coup de pointe de botte, bien sec, sous la garde
+		-- P puis K : Serre-nez à molette, elle pince le nez adverse dans la clé et donne un quart de tour… CRIIIC
 		PK_combo = {
-			label = "Botte au tibia", startup = 0.1, active = 0.08, recovery = 0.2,
-			damage = 7, hitbox = box(5, 2, 3, -1.5), kbBase = 22, kbGrowth = 30, kbAngle = 30,
-			windup = { Root = { 4, -10, 0, 0, -0.2, 0.15 }, Waist = { 6, -12, 0 }, RS = { 40, 0, 30 }, RE = { 60, 0, 0 }, LS = { 50, 0, -30 }, LE = { 70, 0, 0 }, RH = { -20, 0, 8 }, RK = { -70, 0, 0 }, RA = { 0, 0, 0 } },
-			strike = { Root = { -6, 10, 0, 0, -0.3, -0.2 }, Waist = { -8, 8, 0 }, Neck = { -6, 0, 0 }, RS = { 20, 0, 45 }, RE = { 40, 0, 0 }, LS = { 70, 0, -35 }, LE = { 60, 0, 0 }, RH = { 60, 0, 6 }, RK = { -5, 0, 0 }, RA = { 10, 0, 0 } },
-			follow = { Root = { -8, 14, 0, 0, -0.32, -0.25 }, Waist = { -10, 10, 0 }, Neck = { -8, 0, 0 }, RS = { 15, 0, 48 }, RE = { 40, 0, 0 }, LS = { 72, 0, -35 }, LE = { 60, 0, 0 }, RH = { 64, 0, 0 }, RK = { -8, 0, 0 }, RA = { 10, 0, 0 } },
-			trail = "rightFoot", hitText = "TOC !",
+			label = "Serre-nez à molette", startup = 0.07, active = 0.1, recovery = 0.2,
+			damage = 7, hitbox = box(4.5, 3.5, 2.8, 1), kbBase = 22, kbGrowth = 30, kbAngle = 40,
+			windup = { Root = { 4, 10, 0, 0, -0.2, 0.15 }, Waist = { 4, 12, 0 }, Neck = { 0, -8, 0 }, RS = { 30, 0, 30 }, RE = { 70, 0, 0 }, LS = { 70, 0, -20 }, LE = { 110, 0, 0 }, LW = { 0, 0, 0 } },
+			strike = { Root = { -8, -10, 0, 0, -0.3, -0.3 }, Waist = { -10, -14, 0 }, Neck = { 0, 10, 0 }, RS = { 20, 0, 35 }, RE = { 70, 0, 0 }, LS = { 98, 0, 5 }, LE = { 5, 0, 0 }, LW = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.35 } },
+			follow = { Root = { -8, -25, 0, 0, -0.3, -0.32 }, Waist = { -10, -30, 0 }, Neck = { 0, 20, 0 }, RS = { 20, 0, 35 }, RE = { 70, 0, 0 }, LS = { 96, 0, 8 }, LE = { 5, 0, 0 }, LW = { 0, 0, -90 }, FL = { 0, 0, 0, 0, 0, -0.38 } },
+			prop = "cle", trail = "leftHand", fx = { { "text", text = "CRIIIC", color = STEEL, at = "front" } }, hitText = "QUART DE TOUR !",
 		},
 		-- Clé dans les côtes (K puis P) : elle pivote et pique la clé à molette dans les côtes
 		KP_combo = {
-			label = "Clé dans les côtes", startup = 0.09, active = 0.08, recovery = 0.2,
-			damage = 7, hitbox = box(4, 3, 2.2, 0.5), kbBase = 22, kbGrowth = 35, kbAngle = 30,
+			label = "Clé dans les côtes", startup = 0.08, active = 0.08, recovery = 0.2,
+			damage = 7, hitbox = box(4.5, 3.5, 2.6, 0.5), kbBase = 22, kbGrowth = 35, kbAngle = 30,
 			windup = { Root = { 2, 25, 0, 0, -0.25, 0.15 }, Waist = { 4, 30, 0 }, Neck = { 0, -20, 0 }, RS = { 40, 0, 25 }, RE = { 70, 0, 0 }, LS = { 20, 0, -40 }, LE = { 110, 0, 0 } },
 			strike = { Root = { -8, -20, 0, 0, -0.35, -0.35 }, Waist = { -10, -28, 0 }, Neck = { 0, 15, 0 }, RS = { 30, 0, 30 }, RE = { 70, 0, 0 }, LS = { 90, 0, 15 }, LE = { 15, 0, 0 }, LW = { 0, 0, 0 } },
 			follow = { Root = { -9, -24, 0, 0, -0.36, -0.38 }, Waist = { -11, -32, 0 }, Neck = { 0, 18, 0 }, RS = { 30, 0, 30 }, RE = { 70, 0, 0 }, LS = { 92, 0, 20 }, LE = { 12, 0, 0 }, LW = { -10, 0, 0 } },
@@ -385,16 +385,16 @@ local data = {
 			prop = "valve", fx = { { "puddle", color = WATER, width = 7 }, { "particles", tex = "smoke", color = WATER, dir = "up", at = "front", time = 0.3, speed = 8 } },
 			text = "INONDATION !", hitText = "GLISSADE !",
 		},
-		-- Ventouse au plafond (remontée, gratuite) : elle tire le grappin tout droit vers le haut et se hisse
+		-- Ventouse au plafond (remontée, gratuite) : elle tire le grappin tout droit vers le haut et se hisse, la ventouse cogne ce qui vole au-dessus
 		S_up = {
 			label = "Ventouse au plafond", kind = "grapple", energyCost = 0, startup = 0.06, active = 0.25, recovery = 0.3,
-			hitbox = box(5, 7, 0.5, 2.5),
+			hitbox = box(5, 7, 1, 3),
 			damage = 8, kbBase = 0, kbGrowth = 0, kbAngle = 90, selfVelocity = Vector2.new(6, 70),
 			grapple = { range = 34, angle = 90, speed = 95, pullEnemy = false },
 			windup = { Root = { 0, 0, 0, 0, -0.5, 0 }, Waist = { -8, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 60, 0, 20 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -30 }, LE = { 60, 0, 0 } },
 			strike = { Root = { 0, 0, 0, 0, 0.3, 0 }, Waist = { 8, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 180, 0, 5 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 170, 0, -10 }, LE = { 30, 0, 0 }, RH = { 20, 0, 0 }, RK = { -40, 0, 0 }, RA = { -20, 0, 0 }, LH = { -5, 0, 0 }, LK = { -20, 0, 0 }, LA = { -20, 0, 0 } },
 			follow = { Root = { 2, 0, 0, 0, 0.35, 0 }, Waist = { 10, 0, 0 }, Neck = { 32, 0, 0 }, RS = { 178, 0, 5 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 168, 0, -10 }, LE = { 45, 0, 0 }, RH = { 50, 0, 0 }, RK = { -90, 0, 0 }, LH = { 30, 0, 0 }, LK = { -70, 0, 0 } },
-			trail = "prop", text = "AU PLAFOND !",
+			trail = "prop", text = "AU PLAFOND !", hitText = "SPLOTCH AU PASSAGE !",
 		},
 		-- Chute ventouse (↓S en l'air) : ventouse pointée vers le sol à deux mains, elle s'y colle (POP !) et fait une onde
 		S_air_down = {
@@ -406,16 +406,16 @@ local data = {
 			trail = "prop", fx = { { "ring", color = RUBBER, radius = 5, at = "feet" }, { "particles", tex = "smoke", color = WATER, dir = "all", at = "feet", time = 0.3, speed = 10 } },
 			text = "POP !", hitText = "SPLOUTCH !",
 		},
-		-- Grappin mural (ESQUIVE puis S) : elle lance la ventouse derrière elle, sur le mur, et s'y propulse
+		-- Grappin mural (ESQUIVE puis S) : elle lance la ventouse derrière elle sur le mur et, dans le même élan, repousse
+		-- l'adversaire d'un grand coup de botte avant de se faire tirer en arrière
 		S_dodge = {
 			label = "Grappin mural", kind = "grapple", energyCost = 20, startup = 0.08, active = 0.2, recovery = 0.25,
-			hitbox = box(5, 4, 2.5, 0.5),
-			damage = 7, kbBase = 0, kbGrowth = 0, kbAngle = 0, selfVelocity = Vector2.new(-30, 18),
+			damage = 7, hitbox = box(5.5, 3.5, 2.8, 0.3), kbBase = 26, kbGrowth = 40, kbAngle = 30, selfVelocity = Vector2.new(-30, 18),
 			grapple = { range = 30, angle = 175, speed = 85, pullEnemy = false },
-			windup = { Root = { 0, -20, 0, 0, -0.3, 0 }, Waist = { 0, -25, 0 }, Neck = { 0, -40, 0 }, RS = { 80, 0, 40 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -30 }, LE = { 60, 0, 0 } },
-			strike = { Root = { 10, -35, 0, 0, -0.2, 0.3 }, Waist = { 8, -35, 0 }, Neck = { 6, -60, 0 }, RS = { -70, 0, 30 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, -40 }, LE = { 30, 0, 0 } },
-			follow = { Root = { 14, -30, 0, 0, -0.2, 0.4 }, Waist = { 10, -30, 0 }, Neck = { 8, -55, 0 }, RS = { -60, 0, 25 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 100, 0, -45 }, LE = { 30, 0, 0 } },
-			trail = "prop", text = "HOP, AU MUR !",
+			windup = { Root = { 6, -20, 0, 0, -0.3, 0.15 }, Waist = { 4, -25, 0 }, Neck = { 0, -30, 0 }, RS = { 90, 0, 40 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -30 }, LE = { 60, 0, 0 }, RH = { 80, 0, 0 }, RK = { -120, 0, 0 } },
+			strike = { Root = { 22, -35, 0, 0, -0.2, 0.3 }, Waist = { 10, -35, 0 }, Neck = { 6, -60, 0 }, RS = { -75, 0, 30 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, -40 }, LE = { 30, 0, 0 }, RH = { 95, 0, 0 }, RK = { -2, 0, 0 }, RA = { 20, 0, 0 } },
+			follow = { Root = { 26, -30, 0, 0, -0.2, 0.4 }, Waist = { 12, -30, 0 }, Neck = { 8, -55, 0 }, RS = { -65, 0, 25 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 100, 0, -45 }, LE = { 30, 0, 0 }, RH = { 100, 0, 0 }, RK = { 0, 0, 0 }, RA = { 20, 0, 0 } },
+			trail = "rightFoot", fx = { "dust" }, text = "HOP, AU MUR !", hitText = "ET HOP, DÉGAGE !",
 		},
 		-- Pression (S maintenu) : genou à terre, elle ouvre la valve à fond ; un geyser jaillit devant elle
 		S_hold = {
@@ -450,21 +450,48 @@ local data = {
 			trail = "prop", text = "VIENS PAR ICI !", hitText = "SHLOOP !",
 		},
 
+		-- Pompage (P P puis →P) : ventouse collée en pleine figure, elle pompe trois fois comme sur un évier bouché (3 touches)
+		P_pompe = {
+			label = "Pompage", startup = 0.06, active = 0.2, recovery = 0.2,
+			damage = 3, hits = 3, hitbox = box(5, 3.5, 2.8, 0.8), kbBase = 16, kbGrowth = 22, kbAngle = 30,
+			windup = { Root = { 4, -10, 0, 0, -0.2, 0.2 }, Waist = { 6, -12, 0 }, Neck = { 4, 6, 0 }, RS = { 80, 0, 15 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 75, 0, 25 }, LE = { 100, 0, 0 } },
+			strike = { Root = { -12, 6, 0, 0, -0.35, -0.4 }, Waist = { -12, 8, 0 }, Neck = { -6, 0, 0 }, RS = { 94, 0, 5 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 88, 0, 22 }, LE = { 15, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+			follow = { Root = { -4, 6, 0, 0, -0.25, -0.25 }, Waist = { -4, 8, 0 }, Neck = { -2, 0, 0 }, RS = { 80, 0, 10 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 75, 0, 25 }, LE = { 70, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+			wobble = true, trail = "prop", fx = { { "symbols", symbols = { "💧", "🫧" }, color = WATER, count = 3, radius = 2, at = "front" } }, text = "ÇA VIENT, ÇA VIENT…", hitText = "SPLOTCH SPLOTCH SPLOTCH !",
+		},
+		-- Lasso de tuyau (K K puis →K) : elle fait tournoyer le tuyau au-dessus de la casquette et le claque d'un tour complet
+		K_lasso = {
+			label = "Lasso de tuyau", startup = 0.08, active = 0.14, recovery = 0.22,
+			damage = 7, hitbox = box(6.5, 4, 2.5, 0.8), kbBase = 24, kbGrowth = 35, kbAngle = 40,
+			windup = { Root = { 4, -20, 0, 0, -0.25, 0.15 }, Waist = { 4, -20, 0 }, Neck = { 8, 15, 0 }, RS = { 30, 0, 30 }, RE = { 70, 0, 0 }, LS = { 175, 0, -20 }, LE = { 20, 0, 0 }, LW = { 0, 0, 0 } },
+			strike = { Root = { -8, 25, 0, 0, -0.35, -0.35 }, Waist = { -8, 28, 0 }, Neck = { 0, -20, 0 }, RS = { 20, 0, 35 }, RE = { 70, 0, 0 }, LS = { 100, 0, -70 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.35 } },
+			follow = { Root = { -8, 35, 0, 0, -0.35, -0.38 }, Waist = { -8, 36, 0 }, Neck = { 0, -26, 0 }, RS = { 18, 0, 36 }, RE = { 70, 0, 0 }, LS = { 95, 0, -40 }, LE = { 5, 0, 0 }, LW = { -10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.38 } },
+			spin = { axis = "y", degrees = 360 }, prop = "tuyau", trail = "leftHand", text = "YIIIHAA !", hitText = "PATAPLONG !",
+		},
+		-- Home run de plombière (finition) : la clé à molette tenue à deux mains comme une batte, grand swing… et l'adversaire part dans les tuyaux
+		K_homerun = {
+			label = "Home run de plombière", startup = 0.1, active = 0.1, recovery = 0.36,
+			damage = 12, hitbox = box(6, 4, 3, 0.8), kbBase = 40, kbGrowth = 92, kbAngle = 34,
+			windup = { Root = { 4, 45, 0, 0, -0.3, 0.2 }, Waist = { 6, 40, 0 }, Neck = { 0, -35, 0 }, RS = { 60, 0, -30 }, RE = { 60, 0, 0 }, LS = { 80, 0, -60 }, LE = { 70, 0, 0 }, LW = { 0, 0, 0 } },
+			strike = { Root = { -10, -35, 0, 0, -0.4, -0.4 }, Waist = { -12, -40, 0 }, Neck = { 0, 30, 0 }, RS = { 90, 0, 10 }, RE = { 10, 0, 0 }, LS = { 95, 0, 0 }, LE = { 5, 0, 0 }, LW = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+			follow = { Root = { -12, -50, 0, 0, -0.42, -0.45 }, Waist = { -14, -55, 0 }, Neck = { 0, 40, 0 }, RS = { 85, 0, 35 }, RE = { 15, 0, 0 }, LS = { 90, 0, 30 }, LE = { 10, 0, 0 }, LW = { -10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.55 } },
+			prop = "cle", trail = "leftHand", fx = { { "burst", color = STEEL, size = 3, at = "front" }, { "shake", amount = 0.4 } }, text = "HOME RUN !", hitText = "CLONG ! DANS LES TUYAUX !",
+		},
+
 		------------------------------------------------------------------ Finitions avec S (dans un enchaînement)
-		-- POP de ventouse : elle colle la ventouse sur l'adversaire, pousse, tire… POP ! Il reste collé sur place
+		-- POP de ventouse (finition) : elle colle la ventouse sur l'adversaire, pousse, tire… POP ! Il part comme un bouchon de champagne
 		S_finish_pop = {
 			label = "POP de ventouse", energyCost = 20, startup = 0.12, active = 0.12, recovery = 0.3,
-			damage = 10, hitbox = box(4.5, 3.5, 3, 0.6), kbBase = 15, kbGrowth = 20, kbAngle = 20,
-			status = { name = "rooted", duration = 1 },
+			damage = 10, hitbox = box(5, 3.5, 3, 0.6), kbBase = 36, kbGrowth = 85, kbAngle = 25,
 			windup = { Root = { 6, -10, 0, 0, -0.2, 0.25 }, Waist = { 8, -12, 0 }, Neck = { 0, 6, 0 }, RS = { 80, 0, 20 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 75, 0, 25 }, LE = { 95, 0, 0 } },
 			strike = { Root = { -12, 6, 0, 0, -0.35, -0.4 }, Waist = { -12, 8, 0 }, Neck = { -6, 0, 0 }, RS = { 92, 0, 5 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 85, 0, 22 }, LE = { 20, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
 			follow = { Root = { 10, 0, 0, 0, -0.25, 0.2 }, Waist = { 10, 0, 0 }, Neck = { 8, 0, 0 }, RS = { 80, 0, 10 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 78, 0, 25 }, LE = { 65, 0, 0 } },
-			hold = 0.1, trail = "prop", fx = { { "burst", color = RUBBER, size = 2.5, at = "front" } }, text = "ET… POP !", hitText = "COLLÉ !",
+			hold = 0.1, trail = "prop", fx = { { "burst", color = RUBBER, size = 3, at = "front" }, { "shake", amount = 0.3 } }, text = "ET… POP !", hitText = "BOUCHON DE CHAMPAGNE !",
 		},
 		-- Coup de pression : la valve pointée devant, un jet droit et puissant
 		S_finish_jet = {
-			label = "Coup de pression", kind = "projectile", energyCost = 20, startup = 0.13, active = 0, recovery = 0.28,
-			damage = 9, kbBase = 32, kbGrowth = 60, kbAngle = 30,
+			label = "Coup de pression", kind = "projectile", energyCost = 20, startup = 0.12, active = 0, recovery = 0.28,
+			damage = 9, kbBase = 36, kbGrowth = 82, kbAngle = 30,
 			projectile = { speed = 80, angle = 0, gravity = 0, lifetime = 0.35, size = 2, color = WATER, visual = "water" },
 			windup = { Root = { 2, -12, 0, 0, -0.2, 0.15 }, Waist = { 2, -15, 0 }, Neck = { 0, 10, 0 }, RS = { 60, 0, -20 }, RE = { 80, 0, 0 }, LS = { 70, 0, 10 }, LE = { 60, 0, 0 } },
 			strike = { Root = { 10, 10, 0, 0, -0.25, 0.2 }, Waist = { 10, 12, 0 }, Neck = { 6, -8, 0 }, RS = { 75, 0, -30 }, RE = { 85, 0, 0 }, LS = { 92, 0, 5 }, LE = { 0, 0, 0 } },
@@ -486,15 +513,18 @@ local data = {
 				{ "rain", shape = "ball", color = WATER, count = 16, radius = 14, size = 0.6 }, { "screen", color = WATER, alpha = 0.3 }, { "shake", amount = 0.7 } },
 			text = "RUPTURE DE CANALISATION !", hitText = "GEYSER !",
 		},
-		-- Super ↑ : elle plante la ventouse et la tire vers le ciel d'un coup sec : POP géant
+		-- Super ↑ : elle plaque la ventouse géante au sol devant elle, s'arc-boute de tout son poids… et la décolle d'un coup : un POP
+		-- monstrueux qui envoie tout ce qui est au-dessus au plafond, elle avec, cramponnée au manche
 		SUPER_up = {
-			label = "Débouchage céleste !", superCost = 100, startup = 0.3, active = 0.25, recovery = 0.55,
-			damage = 22, hitbox = box(7, 10, 2, 4), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
-			windup = { Root = { 24, 0, 0, 0, -0.9, 0.2 }, Waist = { -36, 0, 0 }, Neck = { -30, 0, 0 }, RS = { 84, 0, 24 }, RE = { 120, 0, 0 }, LS = { 84, 0, -24 }, LE = { 120, 0, 0 }, RH = { 144, 0, 0 }, RK = { -168, 0, 0 }, LH = { 144, 0, 0 }, LK = { -168, 0, 0 } },
-			strike = { Root = { 36, 0, 0, 0, -0.6, 0.3 }, Waist = { -12, 0, 0 }, Neck = { -12, 0, 0 }, RS = { -36, 0, 60 }, RE = { 24, 0, 0 }, LS = { -36, 0, -60 }, LE = { 24, 0, 0 }, RH = { 180, 0, 0 }, RK = { -6, 0, 0 }, RA = { 24, 0, 0 }, LH = { 72, 0, 0 }, LK = { -120, 0, 0 } },
-			follow = { Root = { 38.4, 0, 0, 0, -0.6, 0.35 }, Waist = { -12, 0, 0 }, Neck = { -14.4, 0, 0 }, RS = { -42, 0, 62.4 }, RE = { 24, 0, 0 }, LS = { -42, 0, -62.4 }, LE = { 24, 0, 0 }, RH = { 186, 0, 0 }, RK = { -6, 0, 0 }, RA = { 24, 0, 0 }, LH = { 78, 0, 0 }, LK = { -126, 0, 0 } },
-			hold = 0.25, selfVelocity = Vector2.new(0, 45),
-			windupFx = { "super" }, trail = "prop", fx = { { "pillar", color = Color3.fromRGB(120, 200, 255), height = 22, width = 3, at = "front" }, { "burst", color = Color3.fromRGB(230, 60, 60), size = 5, at = "above" } }, text = "ÇA VA DÉBOUCHER !", hitText = "POP !",
+			label = "Le Grand POP !", superCost = 100, startup = 0.35, active = 0.25, recovery = 0.55,
+			damage = 22, hitbox = box(7, 12, 2.5, 5), kbBase = 45, kbGrowth = 95, kbAngle = 88, invuln = 0.3,
+			windup = { Root = { -22, 0, 0, 0, -0.75, -0.2 }, Waist = { -36, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 55, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 55, 0, 15 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 }, FR = { 0, 0, 0, 0, 0, 0.3 } },
+			strike = { Root = { 30, 0, 0, 0, -0.3, 0.5 }, Waist = { 20, 0, 0 }, Neck = { 25, 0, 0 }, RS = { 120, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 120, 0, 15 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 }, FR = { 0, 0, 0, 0, 0, 0.3 } },
+			follow = { Root = { 18, 0, 0, 0, 0.6, 0.2 }, Waist = { 12, 0, 0 }, Neck = { 36, 0, 0 }, RS = { 185, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 180, 0, 12 }, LE = { 10, 0, 0 }, RH = { 40, 0, 10 }, RK = { -80, 0, 0 }, LH = { 10, 0, -10 }, LK = { -40, 0, 0 } },
+			hold = 0.2, selfVelocity = Vector2.new(0, 60), prop = "geante", hideProp = "ventouse",
+			windupFx = { "super", { "text", text = "HNNNNGH…", color = RUBBER, at = "head" } }, trail = "prop",
+			fx = { { "burst", color = RUBBER, size = 6, at = "front" }, { "ring", color = RUBBER, radius = 8, at = "front" }, { "pillar", color = Color3.fromRGB(120, 200, 255), height = 22, width = 4, at = "front" }, { "particles", tex = "smoke", color = WATER, dir = "up", at = "front", time = 0.5, speed = 20, rate = 100 }, { "shake", amount = 0.7 } },
+			text = "ÇA VA DÉBOUCHER !", hitText = "POP GÉANT !",
 		},
 		-- Le Grand Débouchage : une ventouse gigantesque qui aspire tout devant elle (projectiles compris) puis recrache
 		SUPER_down = {
@@ -744,26 +774,28 @@ local function airAfterK()
 end
 
 local LINKS = {
-	-- au sol, sans direction
+	-- au sol, sans direction (P P P K : home run, finition ; P P →P : pompage)
 	P_neutral = { P = "P_combo2", K = "PK_combo", fwd_P = "P_side2", S = "S_finish_pop" },
-	P_combo2 = { P = "P_combo3", K = "K_combo2", S = "S_finish_jet" }, -- P P
-	P_combo3 = { K = "K_combo3", S = "S_finish_pop" }, -- P P P
-	PK_combo = { P = "KP_combo", K = "K_combo2", S = "S_finish_jet" }, -- P K
+	P_combo2 = { P = "P_combo3", K = "K_combo2", fwd_P = "P_pompe", S = "S_finish_jet" }, -- P P
+	P_combo3 = { K = "K_homerun", P = "P_pompe", S = "S_finish_pop" }, -- P P P
+	P_pompe = { P = "P_combo3", K = "K_lasso", S = "S_finish_pop" }, -- P P →P (pompage)
+	PK_combo = { P = "KP_combo", K = "K_lasso", S = "S_finish_jet" }, -- P K
 	K_neutral = { K = "K_combo2", P = "KP_combo", S = "S_finish_pop" },
-	K_combo2 = { K = "K_combo3", P = "P_combo3", S = "S_finish_jet" }, -- K K
+	K_combo2 = { K = "K_combo3", P = "P_pompe", fwd_K = "K_lasso", S = "S_finish_jet" }, -- K K
 	K_combo3 = { K = "K_air_side", P = "P_air", S = "S_air" }, -- K K K : elle décolle
-	KP_combo = { K = "K_combo3", P = "P_side2", S = "S_finish_pop" }, -- K P
+	K_lasso = { K = "K_homerun", P = "P_combo3", S = "S_finish_pop" }, -- K K →K (lasso)
+	KP_combo = { K = "K_lasso", P = "P_pompe", S = "S_finish_pop" }, -- K P
 	-- avec une flèche
 	P_side = { P = "P_side2", K = "K_side", S = "S_finish_pop" },
-	P_side2 = { K = "PK_combo", P = "P_combo3", S = "S_finish_jet" },
+	P_side2 = { K = "PK_combo", P = "P_pompe", S = "S_finish_jet" },
 	P_down = { P = "P_up2", K = "K_down", S = "S_finish_pop" },
 	P_up = { P = "P_up2", K = "K_up", S = "S_finish_jet" },
 	P_up2 = { P = "P_air_up", K = "K_air_up", S = "S_air" },
-	K_side = { P = "KP_combo", S = "S_finish_jet" },
-	K_down = { P = "P_up2", S = "S_finish_pop" },
+	K_side = { P = "KP_combo", K = "K_lasso", S = "S_finish_jet" },
+	K_down = { P = "P_up2", K = "K_lasso", S = "S_finish_pop" },
 	K_up = { P = "P_up2", S = "S_finish_jet" },
 	P_dash = { P = "P_side2", K = "K_combo2", S = "S_finish_pop" },
-	K_dash = { P = "KP_combo", S = "S_finish_jet" },
+	K_dash = { P = "KP_combo", K = "K_lasso", S = "S_finish_jet" },
 	-- en l'air ; ↓P et ↓K (smash vers le sol) sont des finitions sans suite
 	P_air = airAfterP(),
 	P_air_side = airAfterP(),
