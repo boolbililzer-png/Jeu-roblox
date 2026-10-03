@@ -1,324 +1,615 @@
--- Déroulement des parties : salon (choix du perso) -> compte à rebours -> combat aux vies
--- (éjection hors des Blast Zones = vie perdue) -> écran de victoire -> retour au salon.
+-- Déroulement du match, règles façon Smash Bros :
+--   mode "time" (aux points) : temps limité, vies illimitées. Éjecter quelqu'un rapporte +1 à celui qui l'a
+--     frappé en dernier, chaque chute coûte -1. Égalité à la fin : mort subite, tout le monde à 300 %.
+--   mode "stock" (aux vies) : 3 vies, le dernier debout gagne.
+--   Équipes (Config.TEAMS) : les points de l'équipe s'additionnent, pas de coups entre coéquipiers.
+-- Après une chute : le perso revient sur sa plateforme (propre à chaque perso) avec son animation d'entrée,
+-- invincible tant qu'il y reste et encore un court instant après. Coups fatals et victoire.
 local Players = game:GetService("Players")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
+local StarterPlayer = game:GetService("StarterPlayer")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared")
-local Config = require(Shared.Config)
-local GameData = require(Shared.GameData)
-local Fighters = require(Shared.Fighters)
-
-local Fighter = require(script.Parent.Fighter)
-local Combat = require(script.Parent.Combat)
-local Passives = require(script.Parent.Passives)
-local ArenaBuilder = require(script.Parent.ArenaBuilder)
-local ArenaTraps = require(script.Parent.ArenaTraps)
-local Crates = require(script.Parent.Crates)
-local Bot = require(script.Parent.Bot)
+local Config = require(Shared:WaitForChild("Config"))
+local CharacterList = require(Shared:WaitForChild("CharacterList"))
+local Fighters = require(script.Parent:WaitForChild("Fighters"))
+local Fatals = require(script.Parent:WaitForChild("Fatals"))
+local Costumes = require(script.Parent:WaitForChild("Costumes"))
+local Combat = require(script.Parent:WaitForChild("Combat"))
+local Pickups = require(script.Parent:WaitForChild("Pickups"))
 
 local Match = {}
-local state: Configuration
-local selections: { [Player]: { key: string?, ready: boolean } } = {}
-local byPlayer: { [Player]: any } = {}
-local bots: { any } = {}
-local phase = "Lobby"
-local endsAt = 0
 
-local function now(): number
-	return workspace:GetServerTimeNow()
+local roundOver = false
+local suddenDeath = false
+local fxRemote = nil
+local platforms = {} -- perso -> { model, x, top, expires }
+local respawning = {} -- perso -> true pendant son retour
+
+function Match.setFxRemote(remote)
+	fxRemote = remote
 end
+local messageToken = 0
 
-local function setPhase(p: string)
-	phase = p
-	state:SetAttribute("Phase", p)
-end
-
-function Match.phase(): string
-	return phase
-end
-
-function Match.fighterOf(player: Player)
-	return byPlayer[player]
-end
-
-local function publishLobby()
-	local parts = {}
-	for plr, s in selections do
-		plr:SetAttribute("Ready", s.ready)
-		plr:SetAttribute("Pick", s.key)
-		table.insert(parts, ("%s:%s:%s"):format(plr.DisplayName, s.key or "-", if s.ready then "1" else "0"))
-	end
-	state:SetAttribute("Lobby", table.concat(parts, ";"))
-end
-
-function Match.onLobbyAction(player: Player, action: string, data)
-	if action == "select" and type(data) == "string" and Fighters.get(data) then
-		selections[player] = selections[player] or { ready = false }
-		selections[player].key = data
-	elseif action == "ready" then
-		selections[player] = selections[player] or { ready = false }
-		local wantReady = data == true
-		if type(data) == "table" then
-			wantReady = data.ready == true
-			if type(data.key) == "string" and Fighters.get(data.key) then
-				selections[player].key = data.key
-			end
+function Match.setMessage(text, duration)
+	messageToken += 1
+	local token = messageToken
+	workspace:SetAttribute("Message", text)
+	task.delay(duration, function()
+		if messageToken == token then
+			workspace:SetAttribute("Message", "")
 		end
-		if selections[player].key then
-			selections[player].ready = wantReady
-		end
-	elseif action == "settings" and type(data) == "table" and phase == "Lobby" then
-		if type(data.bots) == "number" then
-			Config.BotsToFill = math.clamp(math.floor(data.bots), 0, 3)
-			state:SetAttribute("BotsToFill", Config.BotsToFill)
-		end
-		if type(data.traps) == "boolean" then
-			Config.TrapsEnabled = data.traps
-			state:SetAttribute("Traps", Config.TrapsEnabled)
-		end
-	end
-	publishLobby()
+	end)
 end
 
-local function spawnFighter(f, index: number)
-	local L = GameData.Layout
-	local sp = L.spawns[((index - 1) % #L.spawns) + 1]
-	local h = Fighters.get(f.key).look.scale[1]
-	local cf = CFrame.new(sp[1], L.stage.top + 0.2, 0)
-	f:spawn(cf)
-	f.model:PivotTo(CFrame.new(sp[1], L.stage.top + 2.8 * h + 0.3, 0))
-	Passives.init(f)
-	f.invulnUntil = now() + 1
+local function spawnCFrame(index)
+	local point = Config.SPAWN_POINTS[(index - 1) % #Config.SPAWN_POINTS + 1]
+	local facing = point.X > 0 and -1 or 1
+	return CFrame.lookAt(point, point + Vector3.new(facing, 0, 0))
 end
 
-local function startMatch()
-	setPhase("Countdown")
-	Combat.enabled = false
-	Fighter.clearAll()
-	Combat.clear()
-	table.clear(byPlayer)
-	table.clear(bots)
-
-	local chosen = {}
-	local humans = {}
-	for plr, s in selections do
-		if plr.Parent and s.ready and s.key then
-			table.insert(humans, plr)
-			chosen[s.key] = true
-		end
-	end
-	-- arène : celle du perso d'un joueur tiré au sort (son « chez-lui »)
-	local arenaOwner = selections[humans[math.random(1, #humans)]].key
-	local arenaKey = Fighters.get(arenaOwner).arena
-	ArenaBuilder.build(arenaKey)
-	state:SetAttribute("Arena", arenaKey)
-
-	local index = 1
-	for _, plr in humans do
-		local f = Fighter.new(selections[plr].key, plr)
-		byPlayer[plr] = f
-		spawnFighter(f, index)
-		index += 1
-	end
-	local nBots = math.min(Config.MaxFighters - #humans, math.max(Config.BotsToFill, if #humans < 2 then 1 else 0))
-	for _ = 1, nBots do
-		local pool = {}
-		for _, fd in GameData.Fighters do
-			if not chosen[fd.key] then
-				table.insert(pool, fd.key)
-			end
-		end
-		local key = pool[math.random(1, #pool)]
-		chosen[key] = true
-		local f = Fighter.new(key, nil, "Bot " .. Fighters.get(key).name)
-		spawnFighter(f, index)
-		index += 1
-		f.mc.onDodge = function()
-			Combat.onAction(f, "dodge", {})
-		end
-		table.insert(bots, Bot.new(f, 0.55 + math.random() * 0.3))
-	end
-
-	for i = Config.CountdownTime, 1, -1 do
-		state:SetAttribute("Countdown", i)
-		task.wait(1)
-	end
-	state:SetAttribute("Countdown", 0)
-	Crates.reset()
-	ArenaTraps.start(arenaKey)
-	Combat.enabled = true
-	endsAt = now() + Config.MatchTime
-	setPhase("Fight")
+function Match.setupHumanoid(humanoid)
+	humanoid.MaxHealth = 1e9
+	humanoid.Health = 1e9
+	humanoid.BreakJointsOnDeath = false
+	humanoid.WalkSpeed = Config.WALK_SPEED
+	humanoid.UseJumpPower = true
+	humanoid.JumpPower = Config.JUMP_POWER
 end
 
-local function finish(reason: string)
-	if phase ~= "Fight" then
+local function displayName(model)
+	return model:GetAttribute("DisplayName") or model.Name
+end
+
+------------------------------------------------------------------------ Équipes et points
+local function teamOf(model)
+	local team = model:GetAttribute("Team")
+	return (team and team ~= "") and team or nil
+end
+
+local function assignTeam(model)
+	if not Config.TEAMS then
+		model:SetAttribute("Team", "")
 		return
 	end
-	setPhase("End")
-	Combat.enabled = false
-	ArenaTraps.stop()
-	-- classement : vies restantes puis % le plus bas
-	local ranking = table.clone(Fighter.list)
-	table.sort(ranking, function(a, b)
-		if a.stocks ~= b.stocks then
-			return a.stocks > b.stocks
+	local counts = { Rouge = 0, Bleu = 0 }
+	for _, other in ipairs(Fighters.all()) do
+		local team = other ~= model and teamOf(other)
+		if team and counts[team] then
+			counts[team] += 1
 		end
-		return a.damage < b.damage
-	end)
-	local winner = ranking[1]
-	state:SetAttribute("Winner", if winner then winner.name else "")
-	state:SetAttribute("WinnerKey", if winner then winner.key else "")
-	state:SetAttribute("EndReason", reason)
-	local lines = {}
-	for i, f in ranking do
-		table.insert(lines, ("%d. %s — %d KO · %d chutes · %d %% infligés"):format(i, f.name, f.stats.kos, f.stats.falls, math.floor(f.stats.dealt)))
 	end
-	state:SetAttribute("Results", table.concat(lines, "\n"))
-	if winner and winner:alive() then
-		Combat.broadcast("Victory", winner.model)
+	model:SetAttribute("Team", counts.Rouge <= counts.Bleu and "Rouge" or "Bleu")
+end
+
+-- Inscrit un combattant (joueur ou mannequin) dans le match
+function Match.registerFighter(model, characterId, name)
+	Fighters.register(model, characterId, name)
+	assignTeam(model)
+end
+
+local function addAttribute(model, name, amount)
+	model:SetAttribute(name, (model:GetAttribute(name) or 0) + amount)
+end
+
+-- Groupes qui s'affrontent : une équipe, ou un joueur seul
+local function groupOf(model)
+	return teamOf(model) or model
+end
+
+local function groupName(group)
+	if typeof(group) == "string" then
+		return "L'ÉQUIPE " .. string.upper(group)
 	end
-	task.delay(Config.EndScreenTime, function()
-		Fighter.clearAll()
-		Combat.clear()
-		table.clear(byPlayer)
-		table.clear(bots)
-		for _, s in selections do
-			s.ready = false
+	return displayName(group)
+end
+
+------------------------------------------------------------------------ Fin de manche
+local startRound -- défini plus bas
+
+local function declareWinner(group)
+	roundOver = true
+	Pickups.reset(false)
+	workspace:SetAttribute("MatchEndsAt", 0)
+	Match.setMessage(group and (groupName(group) .. " GAGNE !") or "ÉGALITÉ !", 6)
+	task.delay(6, startRound)
+end
+
+local function eliminate(model)
+	model:SetAttribute("Stocks", 0)
+	model:SetAttribute("Eliminated", true)
+	model:SetAttribute("Finishable", false)
+	local root = Fighters.root(model)
+	if root then
+		root.AssemblyLinearVelocity = Vector3.zero
+		root.Anchored = true
+		root.CFrame = CFrame.new(Config.SPECTATOR_POINT)
+	end
+end
+
+-- Mode aux vies (ou mort subite) : il ne reste qu'un groupe en vie ?
+function Match.checkWinner()
+	if roundOver or (Config.MATCH_MODE ~= "stock" and not suddenDeath) then
+		return
+	end
+	local all = Fighters.all()
+	if #all < 2 then
+		return
+	end
+	local alive, count = {}, 0
+	for _, model in ipairs(all) do
+		if not model:GetAttribute("Eliminated") then
+			local group = groupOf(model)
+			if not alive[group] then
+				alive[group] = true
+				count += 1
+			end
 		end
-		for _, plr in Players:GetPlayers() do
-			plr.Character = nil
+	end
+	if count <= 1 then
+		declareWinner(next(alive))
+	end
+end
+
+local respawn -- défini plus bas
+
+-- Fin du temps : le groupe qui a le plus de points gagne, sinon mort subite entre les ex aequo
+local function endOfTime()
+	local scores = {}
+	for _, model in ipairs(Fighters.all()) do
+		local group = groupOf(model)
+		scores[group] = (scores[group] or 0) + (model:GetAttribute("Score") or 0)
+	end
+	local best, leaders = -math.huge, {}
+	for group, score in pairs(scores) do
+		if score > best then
+			best, leaders = score, { group }
+		elseif score == best then
+			table.insert(leaders, group)
 		end
-		publishLobby()
-		setPhase("Lobby")
+	end
+	if #leaders <= 1 then
+		declareWinner(leaders[1])
+		return
+	end
+	-- Mort subite : les ex aequo repartent à 300 % avec une seule vie, les autres regardent
+	suddenDeath = true
+	workspace:SetAttribute("MatchEndsAt", 0)
+	workspace:SetAttribute("SuddenDeath", true)
+	local inSuddenDeath = {}
+	for _, group in ipairs(leaders) do
+		inSuddenDeath[group] = true
+	end
+	for index, model in ipairs(Fighters.all()) do
+		if inSuddenDeath[groupOf(model)] then
+			model:SetAttribute("Stocks", 1)
+			model:SetAttribute("Damage", Config.SUDDEN_DEATH_DAMAGE)
+			Fighters.updateFinishable(model)
+			if not respawning[model] then
+				local root = Fighters.root(model)
+				if root then
+					root.Anchored = false
+					root.AssemblyLinearVelocity = Vector3.zero
+				end
+				model:PivotTo(spawnCFrame(index))
+			end
+		else
+			eliminate(model)
+		end
+	end
+	Match.setMessage("MORT SUBITE !", 2.5)
+end
+
+------------------------------------------------------------------------ Plateforme de retour
+-- Une par perso (champ respawn.platform de sa fiche). Chaque pièce est placée par rapport au dessus de
+-- la plateforme ; la pièce « base » est celle sur laquelle le perso se tient.
+local function anchoredPart(parent, name, size, color, material)
+	local p = Instance.new("Part")
+	p.Name = name
+	p.Size = size
+	p.Color = color
+	p.Material = material or Enum.Material.SmoothPlastic
+	p.Anchored = true
+	p.CanCollide = false
+	p.CanQuery = false
+	p.CanTouch = false
+	p.TopSurface = Enum.SurfaceType.Smooth
+	p.BottomSurface = Enum.SurfaceType.Smooth
+	p.Parent = parent
+	return p
+end
+
+local function ball(parent, name, size, color)
+	local p = anchoredPart(parent, name, size, color, Enum.Material.Fabric)
+	local mesh = Instance.new("SpecialMesh")
+	mesh.MeshType = Enum.MeshType.Sphere
+	mesh.Parent = p
+	return p
+end
+
+local PLATFORMS = {}
+
+-- Gégé : une caisse de soda qui descend du ciel sous un parachute rouge et blanc
+PLATFORMS.sodaCrate = function(model)
+	local base = anchoredPart(model, "Caisse", Vector3.new(6, 1.6, 4), Color3.fromRGB(235, 120, 30), Enum.Material.Plastic)
+	base.CanCollide = true
+	local parts = { { base, CFrame.new(0, -0.8, 0) } }
+	for i = 0, 5 do
+		local x = -2 + (i % 3) * 2
+		local z = i < 3 and -0.9 or 0.9
+		local cap = anchoredPart(model, "Capsule", Vector3.new(0.1, 0.7, 0.7), Color3.fromRGB(30, 135, 60), Enum.Material.Glass)
+		cap.Shape = Enum.PartType.Cylinder
+		table.insert(parts, { cap, CFrame.new(x, 0.02, z) * CFrame.Angles(0, 0, math.rad(90)) })
+	end
+	table.insert(parts, { ball(model, "Parachute", Vector3.new(9, 3, 6), Color3.fromRGB(220, 40, 40)), CFrame.new(0, 9.5, 0) })
+	table.insert(parts, { ball(model, "Bande", Vector3.new(3, 3.1, 6.1), Color3.new(1, 1, 1)), CFrame.new(0, 9.55, 0) })
+	for _, corner in ipairs({ { -2.8, -1.8 }, { 2.8, -1.8 }, { -2.8, 1.8 }, { 2.8, 1.8 } }) do
+		local from = Vector3.new(corner[1], 0, corner[2])
+		local to = Vector3.new(corner[1] * 1.3, 8.5, corner[2] * 0.9)
+		local rope = anchoredPart(model, "Corde", Vector3.new(0.08, 0.08, (to - from).Magnitude), Color3.fromRGB(240, 230, 210))
+		table.insert(parts, { rope, CFrame.lookAt((from + to) / 2, to) })
+	end
+	return parts
+end
+
+-- Par défaut : un disque lumineux
+PLATFORMS.default = function(model)
+	local base = anchoredPart(model, "Disque", Vector3.new(0.6, 6, 6), Color3.fromRGB(120, 220, 255), Enum.Material.Neon)
+	base.Shape = Enum.PartType.Cylinder
+	base.Transparency = 0.2
+	base.CanCollide = true
+	return { { base, CFrame.new(0, -0.3, 0) * CFrame.Angles(0, 0, math.rad(90)) } }
+end
+
+local function buildPlatform(kind)
+	local model = Instance.new("Model")
+	model.Name = "PlateformeDeRetour"
+	local parts = (PLATFORMS[kind] or PLATFORMS.default)(model)
+	model.Parent = workspace
+	return model, function(top)
+		for _, entry in ipairs(parts) do
+			entry[1].CFrame = CFrame.new(top) * entry[2]
+		end
+	end
+end
+
+local function leavePlatform(model)
+	local entry = platforms[model]
+	if not entry then
+		return
+	end
+	platforms[model] = nil
+	local s = Fighters.get(model)
+	if s then
+		s.invulnUntil = os.clock() + Config.RESPAWN_INVULN
+	end
+	model:SetAttribute("Protected", false)
+	model:SetAttribute("ProtectedUntil", workspace:GetServerTimeNow() + Config.RESPAWN_INVULN)
+	-- la plateforme s'efface
+	local platform = entry.model
+	task.spawn(function()
+		for i = 1, 10 do
+			for _, p in ipairs(platform:GetDescendants()) do
+				if p:IsA("BasePart") then
+					p.Transparency = math.max(p.Transparency, i / 10)
+					p.CanCollide = false
+				end
+			end
+			task.wait(0.03)
+		end
+		platform:Destroy()
 	end)
 end
 
-local function ko(f)
-	local L = GameData.Layout
-	f.dead = true
-	f.stocks -= 1
-	f.stats.falls += 1
-	local killer = f.lastHitBy
-	if killer and killer ~= f and now() - (f.lastHitT or 0) < 8 then
-		killer.stats.kos += 1
-	end
-	local pos = f:position()
-	Combat.broadcast("Fx", "ko", Vector3.new(math.clamp(pos.X, L.blast.left + 10, L.blast.right - 10), math.clamp(pos.Y, L.blast.bottom + 10, L.blast.top - 10), 0), f.data.look.body.torso, f.name)
-	f:interrupt()
-	f:clearStatuses()
-	f.hrp.Anchored = true
-	f.model:PivotTo(CFrame.new(0, 400, -300))
-	f:sync()
-	task.delay(Config.RespawnDelay, function()
-		if phase ~= "Fight" or not f.model then
-			return
-		end
-		if f.stocks <= 0 then
-			f.eliminated = true
-			f.model:SetAttribute("Eliminated", true)
-			return
-		end
-		-- Retour 🪂 : descend en parachute, protégé quelques instants
-		f.damage = 0
-		f.armed = false
-		f.dead = false
-		f.recoveryUsed = false
-		f.invulnUntil = now() + Config.RespawnInvuln
-		f.model:SetAttribute("Parachute", now() + 2.2)
-		f.model:SetAttribute("Invuln", f.invulnUntil)
-		local r = L.respawn
-		f.hrp.Anchored = false
-		f:teleport(CFrame.new(r[1], r[2], 0))
-		if f.player then
-			pcall(function()
-				f.hrp:SetNetworkOwner(f.player)
-			end)
-		end
-		Passives.init(f)
-		f:sync()
-		Combat.broadcast("Fx", "respawn", f.model)
-	end)
+-- Toute action (coup, esquive…) fait quitter la plateforme, comme dans Smash
+function Match.onFighterAction(model)
+	leavePlatform(model)
 end
 
-local function step(dt: number)
-	if phase == "Lobby" then
-		local ready, total = 0, 0
-		for plr, s in selections do
-			if plr.Parent then
-				total += 1
-				if s.ready then
-					ready += 1
+local function resetFighterState(model)
+	-- on lâche tout : adversaire saisi (ou saisie subie), objet en main, croustillant
+	Combat.releaseGrabs(model)
+	Pickups.clear(model)
+	Pickups.disarm(model) -- éjecté : on perd son arme, retour aux mains nues
+	model:SetAttribute("ObeseUntil", 0)
+	model:SetAttribute("FragileUntil", 0)
+	model:SetAttribute("Damage", 0)
+	model:SetAttribute("Bulles", 0)
+	model:SetAttribute("Finishable", false)
+	model:SetAttribute("Energy", Config.ENERGY_START)
+	Fighters.setCharging(model, false)
+	Fighters.clearSmash(model)
+	Fighters.clearStatus(model)
+	local s = Fighters.get(model)
+	if s then
+		s.busyUntil = 0
+		s.stunnedUntil = 0
+		s.lastHitBy = nil
+	end
+end
+
+-- Plateforme de retour la plus éloignée des adversaires (et libre)
+local function respawnPoint(model)
+	local best, bestScore = Config.RESPAWN_POINTS[1], -math.huge
+	for _, point in ipairs(Config.RESPAWN_POINTS) do
+		local nearest = math.huge
+		for _, other in ipairs(Fighters.all()) do
+			local root = Fighters.root(other)
+			if other ~= model and root and not other:GetAttribute("Eliminated") and not other:GetAttribute("Away") then
+				nearest = math.min(nearest, (root.Position - point).Magnitude)
+			end
+		end
+		for _, entry in pairs(platforms) do
+			if math.abs(entry.x - point.X) < 6 then
+				nearest = -1 -- déjà occupée
+			end
+		end
+		local score = nearest + math.random() -- à égalité, au hasard
+		if score > bestScore then
+			best, bestScore = point, score
+		end
+	end
+	return best
+end
+
+-- Retour après une chute : disparition, puis descente sur la plateforme avec l'animation d'entrée du perso
+respawn = function(model)
+	local s = Fighters.get(model)
+	local root = Fighters.root(model)
+	local humanoid = model:FindFirstChildOfClass("Humanoid")
+	if not s or not root or not humanoid then
+		return
+	end
+	respawning[model] = true
+	s.invulnUntil = math.huge
+	model:SetAttribute("Protected", true)
+	model:SetAttribute("Away", true)
+	root.AssemblyLinearVelocity = Vector3.zero
+	root.Anchored = true
+	root.CFrame = CFrame.new(Config.SPECTATOR_POINT)
+	task.wait(Config.RESPAWN_DELAY)
+	if not model.Parent or Fighters.get(model) == nil or model:GetAttribute("Eliminated") then
+		respawning[model] = nil
+		model:SetAttribute("Away", false)
+		return
+	end
+	if model:GetScale() ~= 1 then
+		model:ScaleTo(1) -- après un coup fatal qui rapetisse
+	end
+	resetFighterState(model)
+	model:SetAttribute("Away", false)
+
+	local data = CharacterList[model:GetAttribute("Character") or Config.DEFAULT_CHARACTER]
+	local spec = data and data.respawn or {}
+	local platform, place = buildPlatform(spec.platform)
+	local final = respawnPoint(model)
+	local rootAbove = humanoid.HipHeight + root.Size.Y / 2
+	local function put(top)
+		place(top)
+		root.CFrame = CFrame.lookAt(top + Vector3.new(0, rootAbove, 0), top + Vector3.new(1, rootAbove, Config.TURN_TO_CAMERA))
+	end
+	-- tous les clients jouent l'animation d'entrée du perso à partir de cet instant
+	model:SetAttribute("RespawnStart", workspace:GetServerTimeNow())
+	local start = os.clock()
+	while os.clock() - start < Config.RESPAWN_DESCENT do
+		local t = (os.clock() - start) / Config.RESPAWN_DESCENT
+		put(final + Vector3.new(0, Config.RESPAWN_DROP * (1 - t) ^ 3, 0))
+		RunService.Heartbeat:Wait()
+	end
+	put(final)
+	task.wait(math.max(0, (spec.duration or 1.2) - Config.RESPAWN_DESCENT))
+	respawning[model] = nil
+	if not model.Parent or model:GetAttribute("Eliminated") then
+		platform:Destroy()
+		return
+	end
+	root.Anchored = false
+	platforms[model] = { model = platform, x = final.X, top = final.Y + rootAbove, expires = os.clock() + Config.RESPAWN_PLATFORM_TIME }
+end
+
+------------------------------------------------------------------------ Éjections
+-- Un perso sort de l'arène (ou subit un coup fatal) : points, vie perdue, puis retour
+local function knockOut(model, creditTo)
+	local s = Fighters.get(model)
+	local root = Fighters.root(model)
+	if not s or not root then
+		return
+	end
+	local position = root.Position
+	if creditTo == nil and s.lastHitBy and os.clock() - (s.lastHitAt or 0) <= Config.KO_CREDIT_TIME then
+		creditTo = s.lastHitBy
+	end
+	if creditTo == model or (creditTo and not Fighters.get(creditTo)) then
+		creditTo = nil
+	end
+	addAttribute(model, "Falls", 1)
+	addAttribute(model, "Score", -1)
+	if creditTo then
+		addAttribute(creditTo, "KOs", 1)
+		addAttribute(creditTo, "Score", 1)
+	end
+	if fxRemote then
+		fxRemote:FireAllClients("KO", { target = model, attacker = creditTo, position = position })
+	end
+	resetFighterState(model)
+
+	if Config.MATCH_MODE == "stock" or suddenDeath then
+		local stocks = (model:GetAttribute("Stocks") or 1) - 1
+		model:SetAttribute("Stocks", stocks)
+		if stocks <= 0 then
+			eliminate(model)
+			Match.checkWinner()
+			return
+		end
+	end
+	task.spawn(respawn, model)
+end
+
+local function isOutOfBounds(position)
+	local b = Config.BLAST
+	return position.X < b.left or position.X > b.right or position.Y > b.top or position.Y < b.bottom
+end
+
+-- Coup fatal : l'adversaire le plus proche doit être achevable (dans le rouge ; sur sa dernière vie en mode vies)
+function Match.tryFatal(attacker, fatalId)
+	if roundOver then
+		return
+	end
+	local character = CharacterList[attacker:GetAttribute("Character")]
+	local fatal = nil
+	for _, f in ipairs(character and character.fatals or {}) do
+		if f.id == fatalId then
+			fatal = f
+		end
+	end
+	local attackerRoot = Fighters.root(attacker)
+	if not fatal or not attackerRoot then
+		return
+	end
+
+	local target, bestDistance = nil, Config.FATAL_RANGE
+	for _, model in ipairs(Fighters.all()) do
+		local root = Fighters.root(model)
+		if model ~= attacker and root and model:GetAttribute("Finishable") and not model:GetAttribute("Eliminated") then
+			local distance = (root.Position - attackerRoot.Position).Magnitude
+			if distance <= bestDistance then
+				target, bestDistance = model, distance
+			end
+		end
+	end
+	if not target then
+		return
+	end
+
+	target:SetAttribute("Finishable", false)
+	Combat.releaseGrabs(target)
+	Combat.releaseGrabs(attacker)
+	Fighters.stun(target, 10)
+	Fighters.get(target).invulnUntil = os.clock() + 10
+	Fighters.get(attacker).busyUntil = os.clock() + 3
+	local targetRoot = Fighters.root(target)
+	targetRoot.AssemblyLinearVelocity = Vector3.zero
+	targetRoot.Anchored = true
+	Match.setMessage(string.upper(fatal.label) .. " !", 3)
+	if fxRemote then
+		fxRemote:FireAllClients("Fatal", { attacker = attacker, target = target, id = fatal.id })
+	end
+
+	Fatals.play(fatal.id, attacker, target)
+	if target.Parent and Fighters.get(target) then
+		Fighters.get(target).invulnUntil = 0
+		knockOut(target, attacker)
+	end
+end
+
+------------------------------------------------------------------------ Manches
+startRound = function()
+	for model in pairs(platforms) do
+		leavePlatform(model)
+	end
+	Pickups.reset(true)
+	for index, model in ipairs(Fighters.all()) do
+		Combat.releaseGrabs(model)
+		Pickups.clear(model)
+		Pickups.disarm(model)
+		Fighters.resetAttributes(model)
+		local s = Fighters.get(model)
+		s.busyUntil = 0
+		s.stunnedUntil = 0
+		s.invulnUntil = os.clock() + 1
+		s.immunity = {}
+		s.lastHitBy = nil
+		if model:GetScale() ~= 1 then
+			model:ScaleTo(1)
+		end
+		local root = Fighters.root(model)
+		if root and not respawning[model] then
+			root.Anchored = false
+			root.AssemblyLinearVelocity = Vector3.zero
+			model:PivotTo(spawnCFrame(index))
+		end
+	end
+	roundOver = false
+	suddenDeath = false
+	workspace:SetAttribute("SuddenDeath", false)
+	workspace:SetAttribute("MatchMode", Config.MATCH_MODE)
+	workspace:SetAttribute("MatchEndsAt", Config.MATCH_MODE == "time" and workspace:GetServerTimeNow() + Config.MATCH_TIME or 0)
+	Match.setMessage("COMBAT !", 1.5)
+end
+
+local reloaded = {}
+
+local function onCharacterAdded(player, character)
+	-- Perso apparu avec l'avatar Roblox du joueur (avant que le jeu ne mette son corps standard) : on le refait
+	local starter = StarterPlayer:FindFirstChild("StarterCharacter")
+	if starter and starter:GetAttribute("BagarreBody") and not character:GetAttribute("BagarreBody") and not reloaded[player] then
+		reloaded[player] = true
+		task.defer(player.LoadCharacter, player)
+		return
+	end
+	local humanoid = character:WaitForChild("Humanoid")
+	character:WaitForChild("HumanoidRootPart")
+	Match.setupHumanoid(humanoid)
+	local characterData = CharacterList[Config.DEFAULT_CHARACTER]
+	Costumes.apply(character, characterData.costume)
+	Match.registerFighter(character, Config.DEFAULT_CHARACTER, player.DisplayName)
+	task.wait()
+	character:PivotTo(spawnCFrame(#Fighters.all()))
+	if roundOver or suddenDeath then
+		eliminate(character)
+	end
+end
+
+function Match.start()
+	local function onPlayer(player)
+		player.CharacterAdded:Connect(function(character)
+			onCharacterAdded(player, character)
+		end)
+		if player.Character then
+			task.spawn(onCharacterAdded, player, player.Character)
+		end
+	end
+	Players.PlayerAdded:Connect(onPlayer)
+	for _, player in ipairs(Players:GetPlayers()) do
+		onPlayer(player)
+	end
+	Players.PlayerRemoving:Connect(function(player)
+		reloaded[player] = nil
+		task.defer(Match.checkWinner)
+	end)
+
+	workspace:SetAttribute("SuddenDeath", false)
+	workspace:SetAttribute("MatchMode", Config.MATCH_MODE)
+	workspace:SetAttribute("MatchEndsAt", Config.MATCH_MODE == "time" and workspace:GetServerTimeNow() + Config.MATCH_TIME or 0)
+	-- objets à ramasser ; la bombe éjecte d'office (comme une chute, avec le point pour celui qui l'a lancée)
+	Pickups.start(fxRemote, function(model, creditTo)
+		if not roundOver and not respawning[model] then
+			knockOut(model, creditTo)
+		end
+	end)
+
+	RunService.Heartbeat:Connect(function()
+		local now = os.clock()
+		for _, model in ipairs(Fighters.all()) do
+			local root = Fighters.root(model)
+			if root and not root.Anchored and not respawning[model] and not model:GetAttribute("Eliminated") and isOutOfBounds(root.Position) then
+				knockOut(model)
+			end
+			-- on quitte la plateforme de retour en s'en éloignant, en sautant, ou au bout du temps
+			local entry = platforms[model]
+			if entry and root then
+				local p = root.Position
+				if now > entry.expires or math.abs(p.X - entry.x) > 3.5 or p.Y > entry.top + 2.5 or p.Y < entry.top - 1.5 then
+					leavePlatform(model)
 				end
 			end
 		end
-		if total > 0 and ready == total then
-			task.spawn(startMatch)
+		local endsAt = workspace:GetAttribute("MatchEndsAt") or 0
+		if not roundOver and not suddenDeath and endsAt > 0 and workspace:GetServerTimeNow() >= endsAt then
+			endOfTime()
 		end
-		return
-	end
-	for _, b in bots do
-		b:step(dt)
-	end
-	if phase ~= "Fight" then
-		return
-	end
-	Combat.tick(dt)
-	Crates.tick(GameData.Layout)
-	ArenaTraps.tick()
-	local B = GameData.Layout.blast
-	local alive, humansAlive = 0, 0
-	for _, f in table.clone(Fighter.list) do
-		if f.model and not f.dead and not f.eliminated then
-			local p = f:position()
-			if p.X < B.left or p.X > B.right or p.Y < B.bottom or p.Y > B.top then
-				ko(f)
-			end
-		end
-		if not f.eliminated then
-			alive += 1
-			if f.player then
-				humansAlive += 1
-			end
-		end
-	end
-	state:SetAttribute("TimeLeft", math.max(0, math.ceil(endsAt - now())))
-	if alive <= 1 then
-		finish("ko")
-	elseif humansAlive == 0 and next(byPlayer) ~= nil then
-		finish("ko")
-	elseif now() >= endsAt then
-		finish("time")
-	end
-end
-
-function Match.init()
-	state = Instance.new("Configuration")
-	state.Name = "GameState"
-	state.Parent = ReplicatedStorage
-	state:SetAttribute("Phase", "Lobby")
-	state:SetAttribute("BotsToFill", Config.BotsToFill)
-	state:SetAttribute("Traps", Config.TrapsEnabled)
-	ArenaBuilder.build("bar")
-	Players.PlayerAdded:Connect(function(plr)
-		selections[plr] = { ready = false }
-		publishLobby()
 	end)
-	for _, plr in Players:GetPlayers() do
-		selections[plr] = { ready = false }
-	end
-	Players.PlayerRemoving:Connect(function(plr)
-		selections[plr] = nil
-		local f = byPlayer[plr]
-		if f then
-			byPlayer[plr] = nil
-			f.eliminated = true
-			f:destroy()
-		end
-		publishLobby()
-	end)
-	RunService.Heartbeat:Connect(step)
 end
 
 return Match

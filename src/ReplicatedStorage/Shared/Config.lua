@@ -1,74 +1,136 @@
--- Réglages globaux de Bagarre Bizarre (façon Brawlhalla / Smash Bros).
--- Toutes les vitesses sont en studs/s, les durées en secondes.
+-- Réglages globaux du prototype. Tout l'équilibrage de base se règle ici.
+local Config = {}
 
-local Config = {
-	-- Partie
-	Stocks = 3, -- vies par joueur
-	MatchTime = 300, -- 5 min max, puis départage (vies puis % le plus bas)
-	BotsToFill = 1, -- bots ajoutés si pas assez de joueurs (modifiable dans le menu)
-	MaxFighters = 4,
-	TrapsEnabled = true, -- « Pièges ON/OFF » (OFF en classé)
-	CountdownTime = 3,
-	RespawnDelay = 1.6,
-	RespawnInvuln = 2.5, -- protection du « Retour 🪂 »
-	EndScreenTime = 8,
+-- Règles de match, comme dans Smash Bros
+Config.MATCH_MODE = "time" -- "time" : aux points (temps limité, vies illimitées) ; "stock" : aux vies, le dernier debout gagne
+Config.MATCH_TIME = 180 -- durée d'un match aux points (secondes)
+Config.TEAMS = false -- true : équipes Rouge et Bleu, les points de l'équipe s'additionnent
+Config.TEAM_ATTACK = false -- coups entre coéquipiers
+Config.KO_CREDIT_TIME = 8 -- éjecté moins de 8 s après un coup : +1 pour celui qui a frappé (sinon chute seule)
+Config.SUDDEN_DEATH_DAMAGE = 300 -- égalité à la fin du temps : mort subite, tout le monde à 300 %
+Config.STOCKS = 3 -- vies par joueur (mode "stock" et mort subite : 1)
+Config.RED_DAMAGE = 150 -- % à partir duquel la jauge passe au rouge (coup fatal possible sur la dernière vie)
+Config.MAX_SUPER = 100
+Config.DEFAULT_CHARACTER = "Gege"
 
-	-- Monde
-	Gravity = 110,
-	WalkSpeed = 24,
-	AirSpeed = 22,
-	JumpVelocity = 58,
-	AirJumpVelocity = 52,
-	AirJumps = 2, -- sauts aériens (Brawlhalla : 2 + la remontée)
-	FastFallSpeed = 75,
-	MaxFallSpeed = 62,
-	WallSlideSpeed = 8,
-	WallJumpPush = 34,
-	GlideFallSpeed = 9,
+-- Déplacements
+Config.WALK_SPEED = 24
+Config.JUMP_POWER = 62
+Config.AIR_JUMPS = 1 -- double saut
+Config.AIR_JUMP_VELOCITY = 62
+Config.DASH_SPEED = 62 -- double tap gauche ou droite : ruée rapide…
+Config.DASH_TIME = 0.22 -- …pendant ce temps…
+Config.RUN_SPEED = 34 -- …puis on court tant que la direction reste tenue
+Config.DROP_HOLD = 0.2 -- ↓ tenu ce temps sur une plateforme fine : on passe au travers
 
-	-- Esquive (invulnérabilité courte + temps de recharge)
-	DodgeInvuln = 0.32,
-	DodgeSpeed = 46,
-	DodgeDuration = 0.22,
-	DodgeCooldownGround = 1.0,
-	DodgeCooldownAir = 1.4,
+-- Esquive
+Config.DODGE_SPEED = 70
+Config.DODGE_DURATION = 0.3
+Config.DODGE_INVULN = 0.35
+Config.DODGE_COOLDOWN = 0.9
 
-	-- Éjection : Force = Base + % * Scaling (puis / poids)  -> vitesse en studs/s
-	KnockbackToVelocity = 1.0,
-	HitstunPerForce = 0.0085, -- hitstun = Force * 0.0085 s
-	HitstunMinLight = 0.42, -- assez long pour enchaîner 2 à 4 coups légers
-	HitstunMin = 0.18,
-	HitstunMax = 1.4,
-	KnockbackDrag = 1.1, -- ralentissement horizontal pendant l'éjection
-	ChargeMaxTime = 1.0, -- maintenir S : multiplicateur 1.0 -> 1.5
-	ChargeMaxMult = 1.5,
-	CriticalPercent = 150, -- la jauge passe au rouge
-	MaxPercent = 999,
+-- Fenêtres d'entrée (secondes)
+Config.DOUBLE_TAP_WINDOW = 0.3
+Config.DASH_S_WINDOW = 0.4 -- dash puis S = spécial de dash
+Config.DODGE_S_WINDOW = 0.4 -- esquive puis S = spécial d'esquive
+Config.HOLD_TIME = 0.35 -- S maintenu au-delà = spécial chargé
+Config.FATAL_INPUT_GAP = 1 -- délai max entre deux flèches du coup fatal
+Config.FATAL_RANGE = 20
+Config.GRAB_RANGE = 5
+Config.GRAB_HOLD = 1.2 -- temps max pour choisir la direction de la projection (sinon projection vers l'avant)
 
-	-- Statuts loufoques : 3 s max, pas de cumul, 5 s d'immunité au même statut
-	StatusMax = 3,
-	StatusImmunity = 5,
+-- Enchaînements (voir links dans Characters/Gege.lua)
+Config.COMBO_GRACE = 0.3 -- on peut encore enchaîner ce temps après le retour en garde du coup
+Config.COMBO_BUFFER = 0.3 -- un appui un peu trop tôt est gardé en mémoire et part dès que la fenêtre s'ouvre
 
-	-- Caisse Bizarre (arme)
-	CrateFirstDelay = 5,
-	CrateInterval = { 7, 12 },
-	CrateMax = 2,
-	CrateLife = 20,
-	PickupRange = 6,
-	WeaponThrow = { dmg = 8, bkb = 22, kbs = 0.3, speed = 85 },
+-- Frappes chargées (maintenir J ou K au sol), comme les smashs : plus on charge, plus ça tape fort
+Config.SMASH_HOLD = 0.18 -- maintenu au-delà = la charge commence (en dessous : coup normal au relâchement)
+Config.SMASH_MAX_TIME = 1 -- charge maximale (le coup part tout seul)
+Config.SMASH_DAMAGE_BONUS = 0.4 -- +40 % de dégâts à pleine charge
+Config.SMASH_KB_BONUS = 0.5 -- +50 % d'éjection à pleine charge
+Config.SMASH_MOVES = { P_neutral = true, P_side = true, P_down = true, P_up = true, K_neutral = true, K_side = true, K_down = true, K_up = true }
 
-	-- Saisie ✋ (mains nues, sans caisse à portée)
-	Grab = { range = 4.5, hold = 0.45, dmg = 7, bkb = 30, kbs = 0.35, angle = 45 },
+-- Énergie des spéciaux (L / S) : rechargée en maintenant O (bouton ⚡ sur téléphone)
+Config.ENERGY_MAX = 100
+Config.ENERGY_START = 100 -- au début du match et à chaque nouvelle vie
+Config.ENERGY_S_COST = 25 -- coût par défaut d'un spécial (chaque coup peut préciser energyCost)
+Config.ENERGY_CHARGE_RATE = 45 -- énergie gagnée par seconde de recharge
 
-	-- Pièges d'arène
-	TrapInterval = { 18, 26 },
-	TrapWarning = 2,
+-- Éjection façon Smash : plus la jauge de % est haute, plus on vole loin
+-- vitesse = (kbBase * KB_BASE_SCALE + kbGrowth * KB_GROWTH_SCALE * % / 100 * (1 + % / KB_RAMP)) * KB_SCALE
+Config.KB_SCALE = 1 -- réglage global de la distance d'éjection
+Config.KB_BASE_SCALE = 0.5 -- part fixe (à 0 %, on recule à peine)
+Config.KB_GROWTH_SCALE = 1 -- part qui grandit avec les %
+Config.KB_RAMP = 250 -- au-delà de 100 %, l'éjection s'emballe
+Config.COMBO_KB_SCALE = 0.5 -- les coups qui ont une suite (combo) repoussent deux fois moins
+Config.COMBO_HITSTUN = 0.4 -- et sonnent assez longtemps pour que la suite touche
+Config.KB_DRAG = 1.8 -- freinage de l'éjection pendant qu'on est sonné (par seconde)
+Config.HITSTUN_PER_KB = 0.004
+Config.HITSTUN_MIN = 0.12
+Config.HITSTUN_MAX = 1.2
 
-	-- Débogage : affiche les hitbox en rouge
-	DebugHitboxes = false,
+-- Objets à ramasser (voir shared/Items.lua), comme les armes de Brawlhalla
+Config.ITEMS = true
+Config.ITEM_FIRST_DELAY = 5 -- premier objet après le début du match
+Config.ITEM_INTERVAL_MIN = 6 -- puis un objet toutes les 6 à 11 s…
+Config.ITEM_INTERVAL_MAX = 11
+Config.ITEMS_MAX = 3 -- …avec au plus 3 objets au sol en même temps
+Config.ITEM_LIFETIME = 25 -- un objet que personne ne ramasse disparaît
+Config.PICKUP_RANGE = 5
+Config.BOMB_FUSE = 20 -- la bombe ramassée explose en main au bout de 20 s
+Config.BOMB_RADIUS = 9 -- explosion d'une bombe qui rate sa cible
+Config.CROUSTY_TIME = 3 -- gavé de croustillant : immobile, aucune éjection, mais les dégâts s'accumulent
+Config.CROUSTY_FRAGILE_TIME = 2 -- ensuite, le premier coup reçu dans ce délai éjecte beaucoup plus loin
+Config.CROUSTY_FRAGILE_KB = 1.7
+Config.BANANA_TIME = 12 -- une peau de banane reste au sol ce temps
 
-	-- Mobile
-	InputBuffer = 0.15, -- tampon d'entrée de 150 ms
+-- Statuts loufoques : 3 s max, non cumulables, puis immunité
+Config.STATUS_MAX_DURATION = 3
+Config.STATUS_IMMUNITY = 5
+
+-- Arène et zones d'éjection
+Config.BLAST = { left = -130, right = 130, top = 110, bottom = -50 }
+Config.ARENA_HAZARDS = true -- geysers de soda sur les rebords (à couper en classé)
+Config.MOVING_PLATFORM = { y = 41, amplitude = 30, speed = 0.45, width = 14 } -- plateau qui va et vient tout en haut
+-- Points d'apparition au début du match (sur le sol principal)
+Config.SPAWN_POINTS = {
+	Vector3.new(-30, 6, 0),
+	Vector3.new(30, 6, 0),
+	Vector3.new(-10, 6, 0),
+	Vector3.new(10, 6, 0),
 }
+-- Où les objets tombent (au-dessus des sols et plateformes de server/Arena.lua)
+Config.ITEM_POINTS = {
+	Vector3.new(-36, 3, 0), Vector3.new(-14, 3, 0), Vector3.new(14, 3, 0), Vector3.new(36, 3, 0),
+	Vector3.new(-28, 16.5, 0), Vector3.new(28, 16.5, 0), Vector3.new(0, 30.5, 0),
+	Vector3.new(-56, 27.5, 0), Vector3.new(56, 27.5, 0), Vector3.new(-63, -5.5, 0), Vector3.new(63, -5.5, 0),
+}
+-- Réapparition : le perso arrive sur sa plateforme (au-dessus de l'arène) avec son animation d'entrée,
+-- invincible tant qu'il y reste, puis encore RESPAWN_INVULN secondes après l'avoir quittée
+-- dessus des plateformes de retour : on revient sur celle qui est la plus loin des adversaires
+Config.RESPAWN_POINTS = {
+	Vector3.new(-32, 54, 0),
+	Vector3.new(0, 56, 0),
+	Vector3.new(32, 54, 0),
+}
+Config.RESPAWN_DELAY = 1 -- temps avant de revenir
+Config.RESPAWN_DROP = 18 -- la plateforme descend de cette hauteur
+Config.RESPAWN_DESCENT = 0.6
+Config.RESPAWN_PLATFORM_TIME = 4 -- au-delà, la plateforme disparaît d'elle-même
+Config.RESPAWN_INVULN = 1.5
+Config.SPECTATOR_POINT = Vector3.new(0, 90, -20) -- où attendent les joueurs éliminés
+
+-- Tests
+Config.DEBUG_HITBOXES = false -- true = affiche les zones de frappe en rouge
+Config.SHOW_MOVE_NAMES = false -- true = affiche le nom du coup au-dessus de la tête
+Config.ANIM_DEBUG = true -- affiche quelques secondes l'état des articulations trouvées (à couper une fois que tout bouge)
+Config.SPAWN_DUMMY = true -- mannequin d'entraînement
+Config.FORCE_TOUCH_UI = false -- affiche les boutons tactiles même sur PC
+
+-- Visuel
+Config.SOUNDS = true
+Config.TURN_TO_CAMERA = 0.36 -- les persos se tournent un peu vers la caméra (0 = profil strict) pour qu'on voie bras et bouteille
+Config.CAMERA_SHAKE = true
+Config.HITSTOP = true -- micro-arrêt sur image à l'impact
 
 return Config

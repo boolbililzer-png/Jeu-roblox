@@ -1,0 +1,2 @@
+-- Remplace le script « Animate » de Roblox (même nom) : il ne fait rien,
+-- car toutes les animations sont calculées par code dans Client/Animator.

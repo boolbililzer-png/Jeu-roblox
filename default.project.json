@@ -2,18 +2,8 @@
   "name": "BagarreBizarre",
   "tree": {
     "$className": "DataModel",
-    "ReplicatedStorage": {
-      "Shared": { "$path": "src/ReplicatedStorage/Shared" }
-    },
-    "ServerScriptService": {
-      "$path": "src/ServerScriptService"
-    },
-    "StarterPlayer": {
-      "$properties": { "LoadCharacterAppearance": false },
-      "StarterPlayerScripts": { "$path": "src/StarterPlayer/StarterPlayerScripts" }
-    },
-    "Workspace": {
-      "$properties": { "Gravity": 110 }
-    }
+    "ReplicatedStorage": { "$path": "src/ReplicatedStorage" },
+    "ServerScriptService": { "$path": "src/ServerScriptService" },
+    "StarterPlayer": { "$path": "src/StarterPlayer" }
   }
 }

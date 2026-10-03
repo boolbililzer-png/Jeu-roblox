@@ -1,907 +1,624 @@
--- Moteur de combat (serveur autoritaire).
---   * Résolution des coups (grille P / S + direction + air), charge des Signatures (x1.0 -> x1.5)
---   * Hitbox par requêtes spatiales (GetPartBoundsInBox / InRadius), jamais .Touched
---   * Éjection : Force = Base + % * Scaling, appliquée en vitesse, hitstun dynamique
---   * Effets : projectiles, pièges, murs, auras, dashs, remontées, plongeons, contres, aspiration
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
+-- Résolution des coups côté serveur : validation, zones de frappe, projectiles.
+-- Le client lance l'action et son élan tout de suite ; le serveur décide seul de ce qui touche.
 local RunService = game:GetService("RunService")
+local CollectionService = game:GetService("CollectionService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared")
-local Config = require(Shared.Config)
-local Fighters = require(Shared.Fighters)
-local Knockback = require(Shared.Knockback)
-local Net = require(Shared.Net)
-
-local Fighter = require(script.Parent.Fighter)
-local Passives = require(script.Parent.Passives)
-local Crates = require(script.Parent.Crates)
-
-local ToClient = Net.get("ToClient")
+local Config = require(Shared:WaitForChild("Config"))
+local CharacterList = require(Shared:WaitForChild("CharacterList"))
+local MoveSets = require(Shared:WaitForChild("MoveSets"))
+local Fighters = require(script.Parent:WaitForChild("Fighters"))
+local Pickups = require(script.Parent:WaitForChild("Pickups"))
 
 local Combat = {}
-Combat.projectiles = {} :: { any }
-Combat.traps = {} :: { any }
-Combat.enabled = false
 
-local function now(): number
-	return workspace:GetServerTimeNow()
+local fatalHandler = nil
+local actionHook = nil
+local fxRemote = nil
+local nextProjectileId = 0
+
+function Combat.setFatalHandler(handler)
+	fatalHandler = handler
 end
 
-local function sign(x: number): number
-	return if x < 0 then -1 else 1
+-- Appelée à chaque action d'un joueur (sert à quitter la plateforme de retour)
+function Combat.setActionHook(hook)
+	actionHook = hook
 end
 
-local function fxFolder(): Folder
-	local f = workspace:FindFirstChild("Fx")
-	if not f then
-		f = Instance.new("Folder")
-		f.Name = "Fx"
-		f.Parent = workspace
+function Combat.setFxRemote(remote)
+	fxRemote = remote
+end
+
+local function fighterFromPart(part)
+	local model = part:FindFirstAncestorOfClass("Model")
+	while model and not CollectionService:HasTag(model, Fighters.TAG) do
+		model = model:FindFirstAncestorOfClass("Model")
 	end
-	return f :: Folder
+	return model
 end
 
-function Combat.broadcast(...)
-	ToClient:FireAllClients(...)
-end
-
-local function scale(f): (number, number)
-	local m = f.model
-	return (m and m:GetAttribute("ScaleW") or 1), (m and m:GetAttribute("ScaleH") or 1)
-end
-
----------------------------------------------------------------------------
--- Requêtes spatiales
----------------------------------------------------------------------------
-local overlap = OverlapParams.new()
-overlap.FilterType = Enum.RaycastFilterType.Include
-
-local function refreshOverlap()
-	overlap.FilterDescendantsInstances = { workspace:WaitForChild("Fighters") }
-end
-
-local function collect(parts: { BasePart }, exclude): { any }
-	local out, seen = {}, {}
-	for _, p in parts do
-		local f = Fighter.fromPart(p)
-		if f and f ~= exclude and not seen[f] and f:alive() then
-			seen[f] = true
-			table.insert(out, f)
+local function queryHits(attacker, cframe, size, alreadyHit)
+	local params = OverlapParams.new()
+	params.FilterType = Enum.RaycastFilterType.Exclude
+	params.FilterDescendantsInstances = { attacker }
+	local hits = {}
+	for _, part in ipairs(workspace:GetPartBoundsInBox(cframe, size, params)) do
+		local model = fighterFromPart(part)
+		if model and not alreadyHit[model] then
+			alreadyHit[model] = true
+			table.insert(hits, model)
 		end
 	end
-	return out
+	return hits
 end
 
-function Combat.inBox(cf: CFrame, size: Vector3, exclude): { any }
-	refreshOverlap()
-	return collect(workspace:GetPartBoundsInBox(cf, size, overlap), exclude)
-end
-
-function Combat.inRadius(pos: Vector3, r: number, exclude): { any }
-	refreshOverlap()
-	return collect(workspace:GetPartBoundsInRadius(pos, r, overlap), exclude)
-end
-
-local function hitboxFor(f, move, facing: number): (CFrame, Vector3)
-	local w, h = scale(f)
-	local dog = if f:hasStatus("dog") then 0.7 else 1
-	local size = Vector3.new(move.hb[1] * w * dog, move.hb[2] * h, 10)
-	local center = f:position() + Vector3.new(facing * move.off[1] * w * dog, move.off[2] * h, 0)
-	if Config.DebugHitboxes then
-		local p = Instance.new("Part")
-		p.Anchored, p.CanCollide, p.CanQuery, p.CanTouch = true, false, false, false
-		p.Transparency, p.Color, p.Size, p.CFrame = 0.7, Color3.new(1, 0, 0), size, CFrame.new(center)
-		p.Parent = fxFolder()
-		game:GetService("Debris"):AddItem(p, 0.15)
-	end
-	return CFrame.new(center), size
-end
-
----------------------------------------------------------------------------
--- Application d'un coup
----------------------------------------------------------------------------
--- ctx : { charge, mult, dirX, attackerPos }
-function Combat.applyHit(att, victim, move, ctx): boolean
-	if not victim or not victim:alive() or victim == att then
-		return false
-	end
-	local t = now()
-	if victim:invulnerable() or (victim.mc and victim.mc:isInvulnerable()) then
-		return false
-	end
-	-- Contre silencieux / parades
-	local c = victim.counter
-	if c and t < c.untilT and att then
-		victim.counter = nil
-		Combat.broadcast("Fx", "counter", victim:position())
-		local dir = sign(att:position().X - victim:position().X)
-		victim.busyUntil = t + 0.35
-		Combat.broadcast("Move", victim.model, { slot = "Sd", anim = "counter", s = 0.01, a = 0.1, r = 0.3, hits = 1 })
-		Combat.applyHit(victim, att, c.move, { charge = c.charge, mult = c.mult, dirX = dir })
-		return false
-	end
-
-	local charge = ctx.charge or 1
-	local mult = (ctx.mult or 1) * charge
-	local dmg = (move.dmg or 0) * mult
-	victim.damage = math.min(Config.MaxPercent, victim.damage + dmg)
-	victim.lastHitBy = att
-	victim.lastHitT = t
-	if att then
-		att.stats.dealt += dmg
-		Passives.onHitDealt(att, victim, move, dmg)
-	end
-	local armorPassive = Passives.onHitTaken(victim, att, move, dmg)
-
-	if move.status then
-		local ok = victim:addStatus(move.status, move.statusDur or 2)
-		if ok and move.status == "sneeze" then
-			local dur = math.min(move.statusDur or 3, Config.StatusMax)
-			task.delay(0.3 + math.random() * (dur - 0.4), function()
-				if victim:alive() and victim:hasStatus("sneeze") then
-					victim:interrupt()
-					victim:sendHit(Vector3.zero, 0.4)
-					Combat.broadcast("Fx", "sneeze", victim:position())
-				end
-			end)
-		end
-	end
-
-	local dirX = ctx.dirX or (att and att:facing()) or 1
-	local force = Knockback.force(move.bkb or 0, move.kbs or 0, victim.damage, charge, victim.data.weight)
-	local vel: Vector3
-	local hitstun: number
-	if move.pull and att then
-		local d = att:position() - victim:position()
-		local speed = math.clamp(math.abs(d.X) * 5, 18, 55)
-		vel = Vector3.new(sign(d.X) * speed, 10, 0)
-		hitstun = 0.4
-	else
-		vel = Knockback.velocity(force, move.angle or 30, dirX)
-		hitstun = Knockback.hitstun(force, not move.heavy)
-		if vel.Y < 0 and victim:isGrounded() then
-			vel = Vector3.new(vel.X, -vel.Y * 0.6, 0) -- rebond au sol
-		end
-	end
-
-	local armored = armorPassive or victim.armorUntil > t or (victim.dashArmorUntil or 0) > t
-	if armored then
-		victim:sendHit(Vector3.zero, 0)
-	else
-		victim:interrupt()
-		victim:sendHit(vel, hitstun)
-	end
-	victim:sync()
-	Combat.broadcast("Fx", "hit", victim:position(), force, move.heavy == true, if att then att.data.look.body.torso else "#ffffff")
-	return true
-end
-
----------------------------------------------------------------------------
--- Projectiles
----------------------------------------------------------------------------
-local function makeFxPart(shape: string?, size: Vector3, color: string, mat: string?, tr: number?): BasePart
-	local p = Instance.new("Part")
-	p.Anchored, p.CanCollide, p.CanQuery, p.CanTouch = true, false, false, false
-	p.CastShadow = false
-	p.Size = size
-	if shape == "Ball" then
-		p.Shape = Enum.PartType.Ball
-	elseif shape == "Cyl" then
-		p.Shape = Enum.PartType.Cylinder
-	end
-	p.Color = Color3.fromHex(color)
-	local ok, m = pcall(function()
-		return (Enum.Material :: any)[mat or "Neon"]
-	end)
-	p.Material = if ok and m then m else Enum.Material.Neon
-	p.Transparency = tr or 0
-	p.Parent = fxFolder()
-	return p
-end
-
-function Combat.spawnProjectile(owner, move, ctx, override)
-	local def = override or move.proj
-	if not def or not owner:alive() then
+local function showHitbox(cframe, size)
+	if not Config.DEBUG_HITBOXES then
 		return
 	end
-	local w, h = scale(owner)
-	local facing = ctx.dirX
-	local speed = def.speed
-	if owner.data.passive == "likes" and (owner.passive.viralUntil or 0) > now() then
-		speed *= 1.25
-	end
-	local size = def.size or 1.2
-	local partSize = if def.shape == "Cyl" then Vector3.new(0.4, size, size) else Vector3.new(size, size, size)
-	local part = makeFxPart(def.shape, partSize, def.color or "#ffffff", def.mat, def.tr)
-	local pos = owner:position() + Vector3.new(facing * 2 * w, 0.6 * h, 0)
-	local vel = Vector3.new(facing * speed, (def.up or 0) * speed, 0)
-	part.CFrame = CFrame.new(pos)
-	table.insert(Combat.projectiles, {
-		owner = owner, move = move, ctx = ctx, def = def, part = part, pos = pos, vel = vel,
-		born = now(), life = def.life or 1.2, hit = {}, speed = speed, t = 0,
-	})
+	local p = Instance.new("Part")
+	p.Anchored = true
+	p.CanCollide = false
+	p.CanQuery = false
+	p.CanTouch = false
+	p.Transparency = 0.6
+	p.Color = Color3.fromRGB(255, 40, 40)
+	p.Material = Enum.Material.Neon
+	p.Size = size
+	p.CFrame = cframe
+	p.Parent = workspace
+	task.delay(0.1, function()
+		p:Destroy()
+	end)
 end
 
-local solidParams = RaycastParams.new()
-solidParams.FilterType = Enum.RaycastFilterType.Include
-
-local function explode(owner, pos: Vector3, radius: number, move, ctx)
-	Combat.broadcast("Fx", "aura", pos, radius, move.vfx or "#ffd166")
-	for _, v in Combat.inRadius(pos, radius, owner) do
-		Combat.applyHit(owner, v, move, { charge = ctx.charge, mult = ctx.mult, dirX = sign(v:position().X - pos.X) })
+-- Bulle au-dessus de la tête avec le nom du coup (remplace les animations dans le prototype)
+local function showMoveName(model, text)
+	local head = model:FindFirstChild("Head")
+	if not head or not Config.SHOW_MOVE_NAMES then
+		return
 	end
+	local gui = Instance.new("BillboardGui")
+	gui.Size = UDim2.fromOffset(220, 40)
+	gui.StudsOffset = Vector3.new(0, 3, 0)
+	gui.AlwaysOnTop = true
+	local label = Instance.new("TextLabel")
+	label.Size = UDim2.fromScale(1, 1)
+	label.BackgroundTransparency = 1
+	label.Text = text
+	label.TextScaled = true
+	label.Font = Enum.Font.FredokaOne
+	label.TextColor3 = Color3.new(1, 1, 1)
+	label.TextStrokeTransparency = 0
+	label.Parent = gui
+	gui.Parent = head
+	task.delay(0.7, function()
+		gui:Destroy()
+	end)
 end
 
-local function nearestEnemy(f, pos: Vector3)
-	local best, bd = nil, math.huge
-	for _, o in Fighter.list do
-		if o ~= f and o:alive() then
-			local d = (o:position() - pos).Magnitude
-			if d < bd then
-				best, bd = o, d
+local function damageMultiplier(model)
+	return 1 + 0.1 * (model:GetAttribute("Bulles") or 0)
+end
+
+local function doMelee(attacker, move)
+	local root = Fighters.root(attacker)
+	if not root then
+		return
+	end
+	local alreadyHit = {}
+	local multiplier = damageMultiplier(attacker)
+	local endTime = os.clock() + math.max(move.active, 0.03)
+	local touched = false
+	repeat
+		if not root.Parent or Fighters.get(attacker) == nil then
+			return
+		end
+		local facing = Fighters.facing(attacker)
+		local offset = move.hitbox.offset
+		local cframe = CFrame.new(root.Position + Vector3.new(offset.X * facing, offset.Y, 0))
+		showHitbox(cframe, move.hitbox.size)
+		for _, target in ipairs(queryHits(attacker, cframe, move.hitbox.size, alreadyHit)) do
+			if Fighters.hit(attacker, target, move, multiplier, facing) then
+				touched = true
 			end
 		end
-	end
-	return best
+		task.wait()
+	until os.clock() >= endTime
+	return touched
 end
 
-local function wallsBlock(pos: Vector3, owner): BasePart?
-	local fx = workspace:FindFirstChild("Fx")
-	if not fx then
-		return nil
+------------------------------------------------------------------------ Saisies et projections
+-- ✋ au contact : le perso attrape l'adversaire (coup GRAB, kind = "grab") et le tient à bout de bras.
+-- Il choisit ensuite la direction de la projection (flèche, ou ✋ / J / K = vers l'avant) ; au bout de
+-- GRAB_HOLD secondes, il projette tout seul vers l'avant. Chaque perso a ses propres projections
+-- (THROW_fwd / back / up / down, avec carry = trajet de la victime pendant l'élan).
+local holds = {} -- celui qui tient -> { target, since, throwing = { move, start, facing } }
+
+local function setHeldState(target, held)
+	local root = Fighters.root(target)
+	if root then
+		root.Anchored = held
 	end
-	for _, f in Fighter.list do
-		if f ~= owner then
-			for _, wpart in f.walls do
-				if wpart.Parent then
-					local rel = wpart.CFrame:PointToObjectSpace(pos)
-					local s = wpart.Size / 2
-					if math.abs(rel.X) <= s.X + 0.5 and math.abs(rel.Y) <= s.Y and math.abs(rel.Z) <= s.Z then
-						return wpart
-					end
+	target:SetAttribute("Grabbed", held)
+end
+
+-- Lâche la saisie sans projeter (coup reçu, éjection…)
+local function releaseHold(grabber)
+	local h = holds[grabber]
+	if not h then
+		return
+	end
+	holds[grabber] = nil
+	local gs, ts = Fighters.get(grabber), Fighters.get(h.target)
+	if gs then
+		gs.holding = nil
+		gs.busyUntil = math.min(gs.busyUntil, os.clock())
+	end
+	grabber:SetAttribute("Holding", false)
+	if ts then
+		ts.heldBy = nil
+		ts.stunnedUntil = os.clock() + 0.2
+	end
+	if h.target.Parent then
+		setHeldState(h.target, false)
+	end
+end
+
+-- Fin de saisie pour ce perso, qu'il tienne ou qu'il soit tenu
+function Combat.releaseGrabs(model)
+	if holds[model] then
+		releaseHold(model)
+	end
+	local s = Fighters.get(model)
+	if s and s.heldBy then
+		releaseHold(s.heldBy)
+	elseif model:GetAttribute("Grabbed") then
+		setHeldState(model, false)
+	end
+end
+
+-- Un coup reçu fait lâcher (celui qui tient) ou libère (celui qui est tenu)
+Fighters.onHit = function(target)
+	Combat.releaseGrabs(target)
+end
+
+local function canBeGrabbed(attacker, target)
+	local ts = Fighters.get(target)
+	return ts ~= nil
+		and not ts.heldBy
+		and not target:GetAttribute("Eliminated")
+		and not target:GetAttribute("Away")
+		and not target:GetAttribute("Protected")
+		and not Fighters.isInvulnerable(target)
+		and not (Config.TEAMS and not Config.TEAM_ATTACK and target:GetAttribute("Team") ~= "" and target:GetAttribute("Team") == attacker:GetAttribute("Team"))
+end
+
+local function startHold(attacker, target)
+	local as, ts = Fighters.get(attacker), Fighters.get(target)
+	Combat.releaseGrabs(target)
+	Fighters.setCharging(target, false)
+	Fighters.clearSmash(target)
+	ts.heldBy = attacker
+	ts.stunnedUntil = math.huge
+	ts.lastHitBy, ts.lastHitAt = attacker, os.clock()
+	as.holding = target
+	as.busyUntil = os.clock() + Config.GRAB_HOLD + 0.2
+	holds[attacker] = { target = target, since = os.clock() }
+	setHeldState(target, true)
+	attacker:SetAttribute("Holding", true)
+	if fxRemote then
+		local root = Fighters.root(target)
+		fxRemote:FireAllClients("Grab", { attacker = attacker, target = target, position = root and root.Position })
+	end
+end
+
+local function doGrab(attacker, move)
+	local root = Fighters.root(attacker)
+	if not root then
+		return
+	end
+	local alreadyHit = {}
+	local endTime = os.clock() + math.max(move.active, 0.05)
+	repeat
+		if not root.Parent or Fighters.get(attacker) == nil then
+			return
+		end
+		local facing = Fighters.facing(attacker)
+		local offset = move.hitbox.offset
+		local cframe = CFrame.new(root.Position + Vector3.new(offset.X * facing, offset.Y, 0))
+		showHitbox(cframe, move.hitbox.size)
+		for _, target in ipairs(queryHits(attacker, cframe, move.hitbox.size, alreadyHit)) do
+			if Fighters.isObese(target) then
+				-- gavé de croustillant : trop lourd à soulever !
+				if fxRemote then
+					fxRemote:FireAllClients("TooHeavy", { target = target })
 				end
+			elseif canBeGrabbed(attacker, target) then
+				startHold(attacker, target)
+				return
 			end
 		end
-	end
-	return nil
+		task.wait()
+	until os.clock() >= endTime
 end
 
-local function updateProjectiles(dt: number)
-	local arena = workspace:FindFirstChild("Arena")
-	solidParams.FilterDescendantsInstances = if arena then { arena:FindFirstChild("Solid") } else {}
-	for i = #Combat.projectiles, 1, -1 do
-		local pr = Combat.projectiles[i]
-		local def, owner = pr.def, pr.owner
-		local dead = false
-		pr.t += dt
-		if pr.t > pr.life or not owner.model then
-			dead = true
+-- Position de la victime pendant l'élan de la projection (carry = { {temps, avant, haut}, ... })
+local function carryAt(carry, t)
+	if not carry or #carry == 0 then
+		return 2.4, 0.6
+	end
+	if t <= carry[1][1] then
+		return carry[1][2], carry[1][3]
+	end
+	for i = 2, #carry do
+		local a, b = carry[i - 1], carry[i]
+		if t <= b[1] then
+			local k = (t - a[1]) / math.max(b[1] - a[1], 1e-3)
+			return a[2] + (b[2] - a[2]) * k, a[3] + (b[3] - a[3]) * k
+		end
+	end
+	local last = carry[#carry]
+	return last[2], last[3]
+end
+
+-- Lance la projection dans une direction ("fwd", "back", "up", "down")
+function Combat.throwHeld(attacker, direction, forced)
+	local h = holds[attacker]
+	if not h or h.throwing then
+		return
+	end
+	local character = CharacterList[attacker:GetAttribute("Character") or Config.DEFAULT_CHARACTER]
+	local key = "THROW_" .. (direction or "fwd")
+	local move = character and (character.moves[key] or character.moves.THROW_fwd)
+	if not move then
+		releaseHold(attacker)
+		return
+	end
+	if not character.moves[key] then
+		key = "THROW_fwd"
+	end
+	h.throwing = { move = move, start = os.clock(), facing = Fighters.facing(attacker) }
+	local s = Fighters.get(attacker)
+	s.busyUntil = os.clock() + move.startup + move.active + move.recovery
+	s.lastMoveKey, s.lastMoveAt = key, os.clock()
+	Combat.perform(attacker, key, move, forced)
+end
+
+-- Fin de l'élan : la victime est lâchée et part dans la direction choisie
+local function finishThrow(attacker, h)
+	local move = h.throwing.move
+	local target = h.target
+	holds[attacker] = nil
+	local gs, ts = Fighters.get(attacker), Fighters.get(target)
+	if gs then
+		gs.holding = nil
+	end
+	attacker:SetAttribute("Holding", false)
+	if ts then
+		ts.heldBy = nil
+		ts.stunnedUntil = os.clock()
+	end
+	setHeldState(target, false)
+	local direction = h.throwing.facing * (move.back and -1 or 1)
+	Fighters.hit(attacker, target, move, damageMultiplier(attacker), direction)
+end
+
+RunService.Heartbeat:Connect(function()
+	local now = os.clock()
+	for grabber, h in pairs(holds) do
+		local groot, troot = Fighters.root(grabber), Fighters.root(h.target)
+		if not groot or not troot or not groot.Parent or not troot.Parent or Fighters.get(grabber) == nil or Fighters.get(h.target) == nil
+			or grabber:GetAttribute("Eliminated") or h.target:GetAttribute("Eliminated") then
+			releaseHold(grabber)
+		elseif h.throwing then
+			local t = now - h.throwing.start
+			if t >= h.throwing.move.startup then
+				finishThrow(grabber, h)
+			else
+				local forward, up = carryAt(h.throwing.move.carry, t)
+				local facing = h.throwing.facing
+				local position = Vector3.new(groot.Position.X + forward * facing, groot.Position.Y + up, 0)
+				troot.CFrame = CFrame.lookAt(position, Vector3.new(groot.Position.X, position.Y, 0))
+			end
 		else
-			if def.homing then
-				local target = nearestEnemy(owner, pr.pos)
-				if target then
-					local want = (target:position() - pr.pos).Unit * pr.speed
-					pr.vel = pr.vel:Lerp(Vector3.new(want.X, want.Y, 0), math.min(1, dt * 2.5))
-				end
-			end
-			if def.boomerang and pr.t > pr.life * 0.45 then
-				local back = owner:position() - pr.pos
-				if back.Magnitude < 3 then
-					dead = true
-				else
-					pr.vel = back.Unit * pr.speed
-				end
-			end
-			if def.grav and def.grav > 0 then
-				pr.vel -= Vector3.new(0, def.grav * dt, 0)
-			end
-			local step = pr.vel * dt
-			if def.wobble then
-				step += Vector3.new(0, math.sin(pr.t * 9) * 12 * dt, 0)
-			end
-			local hit = workspace:Raycast(pr.pos, step, solidParams)
-			if hit then
-				dead = true
-				if pr.move.extra == "grapple" then
-					local d = hit.Position - owner:position()
-					owner:sendMotion({ mode = "dive", vel = d.Unit * 80, dur = math.min(0.5, d.Magnitude / 80) })
-				end
+			if now - h.since >= Config.GRAB_HOLD then
+				Combat.throwHeld(grabber, "fwd", true)
 			else
-				pr.pos += step
-			end
-			local wall = wallsBlock(pr.pos, owner)
-			if wall then
-				dead = true
-				if wall:GetAttribute("BlockOnce") then
-					wall:Destroy()
-				end
-			end
-		end
-		if not dead then
-			pr.part.CFrame = CFrame.new(pr.pos) * CFrame.Angles(0, 0, pr.t * 8)
-			local victims = Combat.inRadius(pr.pos, (def.size or 1.2) * 0.6 + 1.2, owner)
-			for _, v in victims do
-				if not pr.hit[v] then
-					pr.hit[v] = true
-					local landed = Combat.applyHit(owner, v, pr.move, {
-						charge = pr.ctx.charge, mult = pr.ctx.mult, dirX = sign(pr.vel.X),
-					})
-					if landed and pr.move.extra == "grappleSelf" then
-						local d = v:position() - owner:position()
-						owner:sendMotion({ mode = "dive", vel = d.Unit * 75, dur = math.min(0.45, d.Magnitude / 75) })
-					end
-					if not def.pierce then
-						dead = true
-						break
-					end
-				end
-			end
-		end
-		if dead then
-			if def.explode then
-				explode(owner, pr.pos, def.explode, pr.move, pr.ctx)
-			end
-			pr.part:Destroy()
-			table.remove(Combat.projectiles, i)
-		end
-	end
-end
-
----------------------------------------------------------------------------
--- Pièges et murs
----------------------------------------------------------------------------
-local function groundY(x: number, fromY: number): number?
-	local arena = workspace:FindFirstChild("Arena")
-	if not arena then
-		return nil
-	end
-	local p = RaycastParams.new()
-	p.FilterType = Enum.RaycastFilterType.Include
-	p.FilterDescendantsInstances = { arena:FindFirstChild("Solid"), arena:FindFirstChild("Soft") }
-	local r = workspace:Raycast(Vector3.new(x, fromY + 1, 0), Vector3.new(0, -40, 0), p)
-	return r and r.Position.Y
-end
-
-function Combat.spawnTrap(owner, move, ctx)
-	local w = scale(owner)
-	local count = move.count or 1
-	for i = 1, count do
-		local x = owner:position().X + ctx.dirX * (2.5 + (i - 1) * 3.2) * w
-		local y = groundY(x, owner:position().Y)
-		if y then
-			local size = move.trapSize or { 3, 1.5 }
-			local part = makeFxPart("Block", Vector3.new(size[1], 0.35, 6), move.vfx or "#ffffff", "Neon", 0.35)
-			part.CFrame = CFrame.new(x, y + 0.18, 0)
-			local trap = {
-				owner = owner, move = move, ctx = ctx, part = part, born = now(),
-				life = move.life or 6, delay = move.delay, tick = 0,
-			}
-			table.insert(Combat.traps, trap)
-			table.insert(owner.traps, part)
-			local maxN = move.maxTraps or 6
-			while #owner.traps > maxN do
-				local old = table.remove(owner.traps, 1)
-				if old and old.Parent then
-					old:Destroy()
-				end
+				local facing = Fighters.facing(grabber)
+				local bob = math.sin(now * 9) * 0.15
+				local position = Vector3.new(groot.Position.X + 2.4 * facing, groot.Position.Y + 0.6 + bob, 0)
+				troot.CFrame = CFrame.lookAt(position, Vector3.new(groot.Position.X, position.Y, 0))
 			end
 		end
 	end
-end
+end)
 
-local function updateTraps(dt: number)
-	local t = now()
-	for i = #Combat.traps, 1, -1 do
-		local tr = Combat.traps[i]
-		local dead = not tr.part.Parent or not tr.owner.model
-		if not dead then
-			local age = t - tr.born
-			if tr.delay then
-				if age >= tr.delay then
-					explode(tr.owner, tr.part.Position, tr.move.radius or 6, tr.move, tr.ctx)
-					dead = true
-				end
-			else
-				local size = tr.part.Size + Vector3.new(0, 6, 4)
-				local cf = tr.part.CFrame + Vector3.new(0, 2.5, 0)
-				for _, v in Combat.inBox(cf, size, tr.owner) do
-					if tr.move.persistent then
-						tr.tick -= dt
-						if tr.tick <= 0 then
-							tr.tick = 0.5
-							if tr.move.status then
-								v:addStatus(tr.move.status, tr.move.statusDur or 1.5)
-							end
-						end
-					else
-						Combat.applyHit(tr.owner, v, tr.move, {
-							charge = tr.ctx.charge, mult = tr.ctx.mult, dirX = sign(v:position().X - tr.part.Position.X),
-						})
-						dead = true
-						break
-					end
-				end
-			end
-			if age > tr.life then
-				dead = true
-			end
-		end
-		if dead then
-			if tr.part.Parent then
-				tr.part:Destroy()
-			end
-			local j = table.find(tr.owner.traps, tr.part)
-			if j then
-				table.remove(tr.owner.traps, j)
-			end
-			table.remove(Combat.traps, i)
-		end
+-- Le serveur calcule le trajet et les touches ; chaque client dessine le projectile (plus fluide)
+local function launchProjectile(attacker, move, angleDegrees, multiplier)
+	local root = Fighters.root(attacker)
+	if not root then
+		return
 	end
-end
+	local spec = move.projectile
+	local facing = Fighters.facing(attacker)
+	local angle = math.rad(angleDegrees)
+	local velocity = Vector3.new(math.cos(angle) * spec.speed * facing, math.sin(angle) * spec.speed, 0)
+	local position = root.Position + Vector3.new(2.5 * facing, 1, 0)
+	local size = Vector3.new(spec.size, spec.size, 6)
 
-function Combat.spawnWall(owner, move, ctx)
-	local w, h = scale(owner)
-	local size = move.wallSize or { 1.2, 6 }
-	local x = owner:position().X + ctx.dirX * 3 * w
-	local y = groundY(x, owner:position().Y) or (owner:position().Y - 3)
-	local tr = if owner.key == "marcel" then 0.82 else 0.35
-	local part = makeFxPart("Block", Vector3.new(size[1], size[2] * h, 8), move.vfx or "#ffffff", "Glass", tr)
-	part.CFrame = CFrame.new(x, y + size[2] * h / 2, 0)
-	if move.solid then
-		part.CanCollide = true
-		part.CollisionGroup = "Wall"
-	else
-		part:SetAttribute("BlockOnce", true)
-	end
-	table.insert(owner.walls, part)
-	local maxN = move.maxWalls or 1
-	while #owner.walls > maxN do
-		local old = table.remove(owner.walls, 1)
-		if old and old.Parent then
-			old:Destroy()
-		end
-	end
-	task.delay(move.life or 5, function()
-		if part.Parent then
-			part:Destroy()
-		end
-		local j = table.find(owner.walls, part)
-		if j then
-			table.remove(owner.walls, j)
-		end
-	end)
-end
-
----------------------------------------------------------------------------
--- Exécution d'un coup
----------------------------------------------------------------------------
-local function canAct(f): boolean
-	local t = now()
-	return f:alive() and t >= f.busyUntil and t >= f.hitstunUntil and not f:hasStatus("stun") and not f.grabbedBy
-end
-
--- boucle par frame pendant `dur` secondes ; fn(elapsed) renvoie true pour arrêter
-local function during(f, token: number, dur: number, fn: (number) -> boolean?)
-	task.spawn(function()
-		local t0 = os.clock()
-		while true do
-			RunService.Heartbeat:Wait()
-			local el = os.clock() - t0
-			if f.token ~= token or not f:alive() or el > dur then
-				return
-			end
-			if fn(el) then
-				return
-			end
-		end
-	end)
-end
-
-local function hitEachOnce(f, move, ctx, cf: CFrame, size: Vector3, already)
-	for _, v in Combat.inBox(cf, size, f) do
-		if not already[v] then
-			already[v] = true
-			Combat.applyHit(f, v, move, ctx)
-		end
-	end
-end
-
-function Combat.perform(f, slot: string, move, ctx)
-	local kind = move.kind
-	local token = ctx.token
-	local w, h = scale(f)
-	local facing = ctx.dirX
-
-	if kind == "melee" then
-		local n = math.max(1, move.hits or 1)
-		for i = 1, n do
-			task.delay((i - 1) * move.active / n, function()
-				if f.token ~= token or not f:alive() then
-					return
-				end
-				local cf, size = hitboxFor(f, move, facing)
-				for _, v in Combat.inBox(cf, size, f) do
-					Combat.applyHit(f, v, move, ctx)
-				end
-			end)
-		end
-	elseif kind == "projectile" then
-		Combat.spawnProjectile(f, move, ctx)
-	elseif kind == "dash" then
-		if move.extra == "spit" and f.stored then
-			local stored = f.stored
-			f.stored = nil
-			local def = table.clone(stored.def)
-			def.speed = (def.speed or 60) * 1.5
-			local m = table.clone(move)
-			m.dmg, m.bkb, m.kbs = 15, 30, 0.62
-			Combat.spawnProjectile(f, m, ctx, def)
-			return
-		end
-		local dur = move.dur or 0.4
-		f:sendMotion({ mode = "dash", vel = Vector3.new(facing * (move.speed or 50), 0, 0), dur = dur })
-		if move.armor then
-			f.dashArmorUntil = now() + dur
-		end
-		local n = math.max(1, move.hits or 1)
-		local already = {}
-		local lastWave = 0
-		during(f, token, dur + 0.05, function(el)
-			local wave = math.floor(el / (dur / n))
-			if wave ~= lastWave then
-				lastWave = wave
-				already = {}
-			end
-			local cf, size = hitboxFor(f, move, facing)
-			hitEachOnce(f, move, ctx, cf, size, already)
-			return false
-		end)
-	elseif kind == "trap" then
-		Combat.spawnTrap(f, move, ctx)
-	elseif kind == "wall" then
-		Combat.spawnWall(f, move, ctx)
-	elseif kind == "counter" then
-		f.counter = { untilT = now() + (move.window or 0.5), move = move, charge = ctx.charge, mult = ctx.mult }
-		Combat.broadcast("Fx", "counterReady", f:position())
-	elseif kind == "aura" then
-		local r = (move.radius or 6) * (w + h) / 2 * (ctx.charge or 1) ^ 0.5
-		local n = math.max(1, move.hits or 1)
-		for i = 1, n do
-			task.delay((i - 1) * move.active / n, function()
-				if f.token ~= token or not f:alive() then
-					return
-				end
-				local pos = f:position()
-				Combat.broadcast("Fx", "aura", pos, r, move.vfx or "#ffffff")
-				for _, v in Combat.inRadius(pos, r, f) do
-					local d = v:position().X - pos.X
-					local dir = if math.abs(d) < 0.3 then facing else sign(d)
-					Combat.applyHit(f, v, move, { charge = ctx.charge, mult = ctx.mult, dirX = dir })
-				end
-			end)
-		end
-	elseif kind == "vacuum" then
-		local r = (move.radius or 9) * w
-		local damaged = {}
-		local acc = 0
-		Combat.broadcast("Fx", "vacuum", f.model, move.dur or 0.7)
-		during(f, token, move.dur or 0.7, function(el)
-			acc += 1 / 60
-			local pos = f:position()
-			-- avale les projectiles adverses
-			for i = #Combat.projectiles, 1, -1 do
-				local pr = Combat.projectiles[i]
-				if pr.owner ~= f and (pr.pos - pos).Magnitude < r and (pr.pos.X - pos.X) * facing > -2 then
-					f.stored = { def = pr.def }
-					pr.part:Destroy()
-					table.remove(Combat.projectiles, i)
-					Combat.broadcast("Fx", "absorb", pos)
-				end
-			end
-			if acc >= 0.1 then
-				acc = 0
-				for _, v in Combat.inRadius(pos, r, f) do
-					local dx = v:position().X - pos.X
-					if dx * facing > -1 then
-						if not damaged[v] then
-							damaged[v] = true
-							Combat.applyHit(f, v, move, ctx)
-						else
-							v:sendHit(Vector3.new(-sign(dx) * 26, 6, 0), 0.15)
-						end
-					end
-				end
-			end
-			return false
-		end)
-	elseif kind == "recovery" then
-		f:sendMotion({
-			mode = "impulse",
-			vel = Vector3.new(facing * (move.vx or 0), move.vy or 75, 0),
-			dur = move.active + 0.15,
-			glide = move.glide,
+	nextProjectileId += 1
+	local id = nextProjectileId
+	if fxRemote then
+		fxRemote:FireAllClients("Projectile", {
+			id = id,
+			origin = position,
+			velocity = velocity,
+			gravity = spec.gravity or 0,
+			lifetime = spec.lifetime,
+			visual = spec.visual or "ball",
+			color = spec.color,
 		})
-		if not move.nohit then
-			local already = {}
-			during(f, token, move.active + 0.15, function()
-				local cf, size = hitboxFor(f, move, facing)
-				hitEachOnce(f, move, ctx, cf, size, already)
-				return false
-			end)
-		end
-	elseif kind == "groundpound" then
-		local startPos = f:position()
-		local function land()
-			local pos = f:position()
-			local r = (move.radius or 6.5) * (w + h) / 2
-			Combat.broadcast("Fx", "aura", pos - Vector3.new(0, 2 * h, 0), r, move.vfx or "#ffffff")
-			local any = false
-			for _, v in Combat.inRadius(pos, r, f) do
-				local d = v:position().X - pos.X
-				any = Combat.applyHit(f, v, move, { charge = ctx.charge, mult = ctx.mult, dirX = if math.abs(d) < 0.3 then facing else sign(d) }) or any
+	end
+
+	local alreadyHit = { [attacker] = true }
+	local elapsed = 0
+	local connection
+	connection = RunService.Heartbeat:Connect(function(dt)
+		elapsed += dt
+		velocity += Vector3.new(0, -(spec.gravity or 0) * dt, 0)
+		position += velocity * dt
+		local cframe = CFrame.new(position)
+		showHitbox(cframe, size)
+		local direction = velocity.X >= 0 and 1 or -1
+		local touched = false
+		for _, target in ipairs(queryHits(attacker, cframe, size, alreadyHit)) do
+			if Fighters.hit(attacker, target, move, multiplier, direction) then
+				touched = true
 			end
-			if move.extra == "candies" then
-				for _, dx in { -1, 1 } do
-					local m = table.clone(move)
-					m.dmg, m.bkb, m.kbs = 4, 10, 0.1
-					Combat.spawnProjectile(f, m, { charge = 1, mult = ctx.mult, dirX = dx }, {
-						speed = 45, grav = 60, up = 0.6, size = 0.8, life = 0.9, color = "#a3e4d7", mat = "Neon",
-					})
-				end
-			end
-			return any
 		end
-		if f:isGrounded() then
-			land()
+		if touched or elapsed >= spec.lifetime then
+			connection:Disconnect()
+			if fxRemote then
+				fxRemote:FireAllClients("ProjectileEnd", { id = id, position = position, touched = touched })
+			end
+		end
+	end)
+end
+
+local function doProjectile(attacker, move)
+	local spec = move.projectile
+	local multiplier = damageMultiplier(attacker)
+	if spec.fan then
+		local count = spec.fan.count
+		for i = 0, count - 1 do
+			local t = count > 1 and i / (count - 1) or 0
+			launchProjectile(attacker, move, spec.fan.from + (spec.fan.to - spec.fan.from) * t, multiplier)
+		end
+	else
+		launchProjectile(attacker, move, spec.angle or 0, multiplier)
+	end
+end
+
+local function doSelf(attacker, move)
+	if move.effect == "sip" then
+		local bulles = math.min(3, (attacker:GetAttribute("Bulles") or 0) + 1)
+		attacker:SetAttribute("Bulles", bulles)
+	end
+end
+
+-- forced = coup décidé par le serveur (projection automatique) : le joueur local doit aussi le jouer
+function Combat.perform(attacker, key, move, forced)
+	showMoveName(attacker, move.label)
+	-- tous les clients lancent l'animation du coup à partir de ces valeurs
+	attacker:SetAttribute("MoveForced", forced == true)
+	attacker:SetAttribute("MoveKey", key)
+	attacker:SetAttribute("MoveStart", workspace:GetServerTimeNow())
+	task.delay(move.startup, function()
+		if Fighters.get(attacker) == nil or attacker:GetAttribute("Eliminated") then
 			return
 		end
-		f:sendMotion({ mode = "dive", vel = Vector3.new(facing * (move.vx or 0), move.vy or -95, 0), dur = 1.6, untilGround = true })
-		local already = {}
-		local anyHit = false
-		during(f, token, 1.6, function(el)
-			local cf, size = hitboxFor(f, move, facing)
-			for _, v in Combat.inBox(cf, size, f) do
-				if not already[v] then
-					already[v] = true
-					anyHit = Combat.applyHit(f, v, move, ctx) or anyHit
-				end
-			end
-			if el > 0.07 and f:isGrounded() then
-				anyHit = land() or anyHit
-				if move.extra == "rewind" and not anyHit then
-					f:sendMotion({ mode = "teleport", offset = startPos - f:position() })
-				end
+		local kind = move.kind or "melee"
+		if kind == "melee" then
+			doMelee(attacker, move)
+		elseif kind == "grab" then
+			doGrab(attacker, move)
+		elseif kind == "projectile" then
+			doProjectile(attacker, move)
+		elseif kind == "self" then
+			doSelf(attacker, move)
+		end
+	end)
+end
+
+-- Vrai si key fait partie des suites possibles du coup previous (voir links dans les persos)
+function Combat.isLink(previous, key)
+	if previous.links then
+		for _, linked in pairs(previous.links) do
+			if linked == key then
 				return true
 			end
-			return false
-		end)
+		end
 	end
+	return false
 end
 
-function Combat.startMove(f, slot: string, charge: number, dirX: number)
-	local move = Fighters.move(f.key, f.armed, slot)
-	if not move then
-		return
-	end
-	move = Passives.onMoveStart(f, slot, move)
-	f.token += 1
-	local token = f.token
-	local t0 = now()
-	local facing = if dirX ~= 0 then sign(dirX) else f:facing()
-	if f.mc then
-		f.mc:setFacing(facing)
-	end
-	local mult = Passives.damageMult(f, t0)
-	local total = move.startup + move.active + move.recovery
-	f.busyUntil = t0 + total
-	if slot == "Sup" then
-		f.recoveryUsed = true
-		f.recoveryT = t0
-	end
-	if move.invuln then
-		f.invulnUntil = t0 + move.invuln
-	end
-	if f.mc then
-		f.mc:setLock(total)
-	end
-	Combat.broadcast("Move", f.model, {
-		slot = slot, anim = move.anim, s = move.startup, a = move.active, r = move.recovery,
-		hits = move.hits or 1, charge = charge, onBeat = f.onBeat, armed = f.armed,
-	})
-	local ctx = { charge = charge, mult = mult, dirX = facing, token = token }
-	task.delay(move.startup, function()
-		if f.token == token and f:alive() then
-			Combat.perform(f, slot, move, ctx)
-		end
-	end)
-end
-
-local INSTANT = { recovery = true, groundpound = true, counter = true, wall = true }
-
--- Entrées venant du client (ou du bot)
-function Combat.onAction(f, action: string, data)
-	if not Combat.enabled or not f or not f:alive() then
-		return
-	end
-	local t = now()
-	data = if type(data) == "table" then data else {}
-	local dirX = math.clamp(tonumber(data.dirX) or 0, -1, 1)
-	local dirY = math.clamp(tonumber(data.dirY) or 0, -1, 1)
-	local air = data.air == true
-
-	if action == "attack" then
-		local btn = data.btn
-		if btn == "P" and data.phase == "down" then
-			if canAct(f) then
-				Combat.startMove(f, Fighters.resolveSlot("P", dirX, dirY, air), 1, dirX)
-			end
-		elseif btn == "S" then
-			if data.phase == "down" then
-				if not canAct(f) or f:hasStatus("laugh") or f.charging then
-					return
-				end
-				local slot = Fighters.resolveSlot("S", dirX, dirY, air)
-				if slot == "Sup" and f.recoveryUsed and not f:isGrounded() then
-					return -- remontée déjà utilisée dans ce saut
-				end
-				local move = Fighters.move(f.key, f.armed, slot)
-				if INSTANT[move.kind] or slot == "Sup" or slot == "SairD" then
-					Combat.startMove(f, slot, 1, dirX)
-					return
-				end
-				f.token += 1
-				local token = f.token
-				f.charging = { slot = slot, t0 = t, dirX = dirX, token = token }
-				f.busyUntil = t + Config.ChargeMaxTime + 1
-				if f.mc then
-					f.mc:setLock(Config.ChargeMaxTime + 0.3)
-				end
-				f.model:SetAttribute("Charging", slot)
-				Combat.broadcast("Charge", f.model, slot, f.armed)
-				task.delay(Config.ChargeMaxTime + 0.15, function()
-					if f.charging and f.charging.token == token then
-						Combat.onAction(f, "attack", { btn = "S", phase = "up" })
-					end
-				end)
-			elseif data.phase == "up" and f.charging then
-				local c = f.charging
-				f.charging = nil
-				f.model:SetAttribute("Charging", nil)
-				f.busyUntil = 0
-				local charge = Knockback.chargeMultiplier(t - c.t0)
-				Combat.startMove(f, c.slot, charge, if c.dirX ~= 0 then c.dirX else dirX)
-			end
-		end
-	elseif action == "dodge" then
-		if t >= (f.nextDodge or 0) and t >= f.hitstunUntil and not f.model:GetAttribute("NoDodge") then
-			f.nextDodge = t + Config.DodgeInvuln + 0.8
-			f.invulnUntil = math.max(f.invulnUntil, t + Config.DodgeInvuln)
-			f.model:SetAttribute("DodgeUntil", t + Config.DodgeInvuln)
-			f:interrupt()
-		end
-	elseif action == "grab" then
-		Combat.grab(f, dirX, dirY)
-	end
-end
-
--- ✋ : lancer l'arme, ramasser une Caisse Bizarre, ou saisir l'adversaire
-function Combat.grab(f, dirX: number, dirY: number)
-	if not canAct(f) then
-		return
-	end
-	local t = now()
-	local facing = if dirX ~= 0 then sign(dirX) else f:facing()
-	if f.armed then
-		f.armed = false
-		f:sync()
-		f.busyUntil = t + 0.3
-		local wt = Config.WeaponThrow
-		local move = { dmg = wt.dmg, bkb = wt.bkb, kbs = wt.kbs, angle = 30, heavy = true, kind = "projectile" }
-		Combat.broadcast("Move", f.model, { slot = "throw", anim = "throw", s = 0.08, a = 0.1, r = 0.2, hits = 1 })
-		Combat.spawnProjectile(f, move, { charge = 1, mult = 1, dirX = facing }, {
-			speed = wt.speed, size = 1.6, life = 1.0, shape = "Block", color = "#8e5a2b", mat = "Wood",
-		})
-		return
-	end
-	if Crates.tryPickup(f) then
-		f.armed = true
-		f:sync()
-		Combat.broadcast("Fx", "pickup", f:position())
-		return
-	end
-	local g = Config.Grab
-	local w = scale(f)
-	local pos = f:position()
-	local target
-	for _, o in Fighter.list do
-		if o ~= f and o:alive() and not o:invulnerable() then
-			local d = o:position() - pos
-			if d.X * facing > -0.5 and math.abs(d.X) < g.range + w and math.abs(d.Y) < 3.5 then
-				target = o
-				break
+-- Remplissage de la barre d'énergie pendant la recharge
+RunService.Heartbeat:Connect(function(dt)
+	for _, model in ipairs(Fighters.all()) do
+		local s = Fighters.get(model)
+		if s.charging then
+			local energy = math.min(Config.ENERGY_MAX, (model:GetAttribute("Energy") or 0) + Config.ENERGY_CHARGE_RATE * dt)
+			model:SetAttribute("Energy", energy)
+			if energy >= Config.ENERGY_MAX or model:GetAttribute("Eliminated") or os.clock() < s.stunnedUntil then
+				Fighters.setCharging(model, false)
 			end
 		end
 	end
-	f.busyUntil = t + 0.45
-	Combat.broadcast("Move", f.model, { slot = "grab", anim = "grab", s = 0.1, a = g.hold, r = 0.25, hits = 1 })
-	if not target then
+end)
+
+-- Point d'entrée des actions envoyées par les joueurs
+function Combat.handleAction(player, action, extra)
+	local model = player.Character
+	local s = model and Fighters.get(model)
+	if not s or model:GetAttribute("Eliminated") then
 		return
 	end
-	target:interrupt()
-	target.grabbedBy = f
-	target.model:SetAttribute("Grabbed", t + g.hold)
-	target:sendHit(Vector3.zero, g.hold + 0.1)
-	local token = f.token
-	task.delay(g.hold, function()
-		target.grabbedBy = nil
-		if not target:alive() or not f:alive() or f.token ~= token then
+	local now = os.clock()
+	if now < s.stunnedUntil or model:GetAttribute("Grabbed") then
+		return
+	end
+	-- il tient un adversaire : il ne peut que le projeter
+	if s.holding then
+		if action == "THROW" then
+			local direction = (extra == "back" or extra == "up" or extra == "down") and extra or "fwd"
+			Combat.throwHeld(model, direction)
+		end
+		return
+	end
+
+	if action == "CHARGE" then
+		-- recharge possible seulement hors d'un coup ; elle s'arrête au relâchement, au premier coup reçu,
+		-- à la première action, ou quand la barre est pleine
+		if now >= s.busyUntil - 0.05 and (model:GetAttribute("Energy") or 0) < Config.ENERGY_MAX then
+			Fighters.setCharging(model, true)
+		end
+		return
+	elseif action == "CHARGE_END" then
+		Fighters.setCharging(model, false)
+		return
+	end
+	Fighters.setCharging(model, false)
+	if actionHook then
+		actionHook(model)
+	end
+
+	-- Dash (double tap) : les autres clients jouent la ruée et la poussière
+	if action == "DASH" then
+		model:SetAttribute("DashStart", workspace:GetServerTimeNow())
+		return
+	end
+
+	-- ✋ : ramasser l'objet le plus proche
+	if action == "PICKUP" then
+		if now >= s.busyUntil - 0.05 and not Pickups.heldId(model) then
+			Pickups.tryPickup(model)
+		end
+		return
+	end
+	-- ✋ avec un objet en main : on le lance (flèche ↑ = vers le haut, ↓ = vers le bas)
+	if action == "THROW_ITEM" then
+		local id = Pickups.heldId(model)
+		if not id or now < s.busyUntil - 0.05 then
 			return
 		end
-		local angle = g.angle
-		if dirY > 0.5 then
-			angle = 85
-		elseif dirY < -0.5 then
-			angle = -30
-		end
-		local move = { dmg = g.dmg, bkb = g.bkb, kbs = g.kbs, angle = angle, heavy = true, kind = "melee" }
-		Combat.applyHit(f, target, move, { charge = 1, mult = Passives.damageMult(f, now()), dirX = facing })
-	end)
-end
-
-function Combat.tick(dt: number)
-	updateProjectiles(dt)
-	updateTraps(dt)
-	local t = now()
-	for _, f in Fighter.list do
-		if f:alive() then
-			if f:hasStatus("burn") then
-				f.burnAcc = (f.burnAcc or 0) + dt
-				if f.burnAcc >= 0.5 then
-					f.burnAcc = 0
-					f.damage = math.min(Config.MaxPercent, f.damage + 1)
-					f:sync()
-				end
+		local direction = (extra == "up" or extra == "down") and extra or "fwd"
+		local character = CharacterList[model:GetAttribute("Character") or Config.DEFAULT_CHARACTER]
+		local key = direction == "fwd" and "ITEM_throw" or "ITEM_throw_" .. direction
+		local move = character.moves[key] or character.moves.ITEM_throw
+		s.busyUntil = now + move.startup + move.active + move.recovery
+		Combat.perform(model, key, move)
+		task.delay(move.startup, function()
+			if Fighters.get(model) and Pickups.heldId(model) == id then
+				Pickups.throw(model, direction)
 			end
-			if f.recoveryUsed and t - (f.lastGroundCheck or 0) > 0.1 and t - (f.recoveryT or 0) > 0.4 then
-				f.lastGroundCheck = t
-				if f:isGrounded() then
-					f.recoveryUsed = false
-				end
-			end
-			Passives.tick(f, dt)
-		end
-	end
-end
-
-function Combat.clear()
-	for _, pr in Combat.projectiles do
-		pr.part:Destroy()
-	end
-	table.clear(Combat.projectiles)
-	for _, tr in Combat.traps do
-		if tr.part.Parent then
-			tr.part:Destroy()
-		end
-	end
-	table.clear(Combat.traps)
-	fxFolder():ClearAllChildren()
-end
-
--- Coup d'environnement (pièges d'arène)
-function Combat.environmentHit(victim, dmg: number, vel: Vector3, hitstun: number, status: string?, statusDur: number?)
-	if not victim:alive() or victim:invulnerable() then
+		end)
 		return
 	end
-	victim.damage = math.min(Config.MaxPercent, victim.damage + dmg)
-	if status then
-		victim:addStatus(status, statusDur or 1.5)
+
+	-- Frappe chargée (J ou K maintenu au sol) : le perso reste en élan jusqu'au relâchement
+	if action == "SMASH_START" then
+		local character = CharacterList[model:GetAttribute("Character")]
+		if typeof(extra) ~= "string" then
+			return
+		end
+		local _, base = MoveSets.split(extra)
+		local smashMove = character and character.moves[extra]
+		if not Config.SMASH_MOVES[base] or not smashMove or not MoveSets.allowed(extra, smashMove, MoveSets.armed(model)) then
+			return
+		end
+		if now < s.busyUntil - 0.05 then
+			return
+		end
+		s.smash = { key = extra, start = now }
+		s.busyUntil = now + Config.SMASH_MAX_TIME + 0.5
+		model:SetAttribute("SmashKey", extra)
+		return
 	end
-	if vel.Magnitude > 0 or hitstun > 0 then
-		victim:interrupt()
-		victim:sendHit(vel, hitstun)
+	-- relâchement : la puissance dépend du temps de charge mesuré ici (pas de triche possible)
+	local smashPower = nil
+	if s.smash then
+		if s.smash.key == action and extra == "SMASH" then
+			smashPower = math.clamp((now - s.smash.start) / Config.SMASH_MAX_TIME, 0, 1)
+		end
+		Fighters.clearSmash(model)
 	end
-	victim:sync()
-	Combat.broadcast("Fx", "hit", victim:position(), vel.Magnitude, false, "#ffffff")
+
+	if action == "DODGE" then
+		if now < s.dodgeReadyAt or now < s.busyUntil then
+			return
+		end
+		s.dodgeReadyAt = now + Config.DODGE_COOLDOWN
+		s.invulnUntil = math.max(s.invulnUntil, now + Config.DODGE_INVULN)
+		model:SetAttribute("DodgeStart", workspace:GetServerTimeNow())
+		return
+	end
+
+	if action == "FATAL" then
+		if fatalHandler and typeof(extra) == "string" then
+			fatalHandler(model, extra)
+		end
+		return
+	end
+
+	local character = CharacterList[model:GetAttribute("Character")]
+	local move = character and character.moves[action]
+	if not move or move.kind == "throw" or move.kind == "item" then
+		return
+	end
+	-- moveset du perso : il faut avoir ouvert une Caisse Bizarre ; coups à mains nues : sans elle
+	if not MoveSets.allowed(action, move, MoveSets.armed(model)) then
+		return
+	end
+	-- petite tolérance pour la latence du téléphone ; un enchaînement peut couper le retour en garde
+	local previous = s.lastMoveKey and character.moves[s.lastMoveKey]
+	local chaining = previous ~= nil
+		and Combat.isLink(previous, action)
+		and now >= s.lastMoveAt + previous.startup + previous.active - 0.08
+	if now < s.busyUntil - 0.05 and not chaining then
+		return
+	end
+	local cost = Fighters.energyCost(move, action)
+	local energy = model:GetAttribute("Energy") or 0
+	if energy < cost then
+		return
+	end
+	if cost > 0 then
+		model:SetAttribute("Energy", energy - cost)
+	end
+	if smashPower then
+		-- version chargée : plus de dégâts, et plus d'éjection (voir Fighters.hit)
+		local charged = table.clone(move)
+		charged.damage = move.damage * (1 + Config.SMASH_DAMAGE_BONUS * smashPower)
+		charged.smashPower = smashPower
+		move = charged
+	end
+	model:SetAttribute("MovePower", smashPower or 0)
+	if move.superCost then
+		if (model:GetAttribute("Super") or 0) < move.superCost then
+			return
+		end
+		model:SetAttribute("Super", 0)
+	end
+
+	s.busyUntil = now + move.startup + move.active + (move.hold or 0) + move.recovery
+	s.lastMoveKey, s.lastMoveAt = action, now
+	if move.invuln then
+		s.invulnUntil = math.max(s.invulnUntil, now + move.invuln)
+	end
+	Combat.perform(model, action, move)
 end
 
 return Combat
