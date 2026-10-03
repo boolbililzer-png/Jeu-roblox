@@ -345,109 +345,115 @@ local data = {
 		},
 
 		------------------------------------------------------------------ Spéciaux (S)
-		-- Jet de fuite : elle brandit une valve et tourne le volant, l'eau part en cloche et trempe l'adversaire
+		-- Jet de fuite (L) : elle brandit une valve et tourne le volant, le jet d'eau part droit sur l'adversaire et le trempe
 		S_neutral = {
-			label = "Jet de fuite", kind = "projectile", energyCost = 20, startup = 0.18, active = 0, recovery = 0.3,
-			damage = 9, kbBase = 22, kbGrowth = 40, kbAngle = 45,
-			projectile = { speed = 45, angle = 50, gravity = 85, lifetime = 1.4, size = 1.8, color = WATER, visual = "water" },
+			label = "Jet de fuite", kind = "projectile", startup = 0.2, active = 0, recovery = 0.45,
+			damage = 13, kbBase = 24, kbGrowth = 45, kbAngle = 40,
+			projectile = { speed = 70, angle = 8, gravity = 0, lifetime = 0.6, size = 2, color = WATER, visual = "water" },
 			status = { name = "wet", duration = 2 },
 			windup = { Root = { 0, -10, 0, 0, -0.2, 0.1 }, Waist = { 0, -14, 0 }, Neck = { 4, 0, 0 }, RS = { 70, 0, -25 }, RE = { 80, 0, 0 }, LS = { 110, 0, 10 }, LE = { 40, 0, 0 } },
-			strike = { Root = { -6, 8, 0, 0, -0.25, -0.15 }, Waist = { 4, 10, 0 }, Neck = { 14, 0, 0 }, RS = { 75, 0, -35 }, RE = { 95, 0, 0 }, LS = { 135, 0, 5 }, LE = { 10, 0, 0 } },
-			follow = { Root = { -4, 10, 0, 0, -0.25, -0.12 }, Waist = { 6, 12, 0 }, Neck = { 18, 0, 0 }, RS = { 72, 0, -30 }, RE = { 100, 0, 0 }, LS = { 138, 0, 5 }, LE = { 10, 0, 0 } },
+			strike = { Root = { -6, 8, 0, 0, -0.25, -0.15 }, Waist = { 4, 10, 0 }, Neck = { 14, 0, 0 }, RS = { 75, 0, -35 }, RE = { 95, 0, 0 }, LS = { 95, 0, 5 }, LE = { 5, 0, 0 } },
+			follow = { Root = { -4, 10, 0, 0, -0.25, -0.12 }, Waist = { 6, 12, 0 }, Neck = { 18, 0, 0 }, RS = { 72, 0, -30 }, RE = { 100, 0, 0 }, LS = { 98, 0, 5 }, LE = { 5, 0, 0 } },
 			shake = true, prop = "valve", windupFx = { { "particles", tex = "smoke", color = WATER, dir = "up", at = "lhand", time = 0.15, speed = 4 } },
-			text = "ÇA FUIT !", hitText = "SPLASH !",
+			fx = { { "particles", tex = "smoke", color = WATER, dir = "front", at = "lhand", time = 0.25, speed = 16, rate = 80 } }, text = "ÇA FUIT !", hitText = "SPLASH !",
 		},
-		-- Ventouse grappin : elle lance la ventouse comme un harpon ; un adversaire est ramené, un mur la tire à lui
+		-- Ventouse grappin (→L) : elle lance la ventouse comme un harpon le long du couloir ; un adversaire est collé et ramené, un mur la tire à lui
 		S_side = {
-			label = "Ventouse grappin", kind = "grapple", energyCost = 25, startup = 0.14, active = 0.2, recovery = 0.3,
-			damage = 7, kbBase = 20, kbGrowth = 20, kbAngle = 20,
-			grapple = { range = 28, angle = 0, speed = 85, pullEnemy = true },
+			label = "Ventouse grappin", kind = "grapple", startup = 0.2, active = 0.2, recovery = 0.5,
+			damage = 13, kbBase = 20, kbGrowth = 20, kbAngle = 20,
+			grapple = { range = 30, angle = 0, speed = 85, pullEnemy = true },
 			windup = { Root = { 4, -25, 0, 0, -0.25, 0.25 }, Waist = { 6, -25, 0 }, Neck = { 0, 20, 0 }, RS = { -30, 0, 30 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 80, 0, -20 }, LE = { 20, 0, 0 } },
 			strike = { Root = { -14, 20, 0, 0, -0.4, -0.45 }, Waist = { -12, 25, 0 }, Neck = { 0, -15, 0 }, RS = { 95, 0, 5 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -20, 0, -40 }, LE = { 30, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
 			follow = { Root = { 10, 10, 0, 0, -0.3, 0.2 }, Waist = { 10, 12, 0 }, Neck = { 6, -6, 0 }, RS = { 75, 0, 10 }, RE = { 70, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, 20 }, LE = { 70, 0, 0 } },
-			trail = "prop", text = "ACCROCHÉ !", hitText = "SHLOOP !",
+			trail = "prop", fx = { { "beam", color = RUBBER, length = 14, width = 0.8, at = "hand" } }, text = "ACCROCHÉ !", hitText = "SHLOOP !",
 		},
-		-- Inondation : accroupie, elle ouvre la valve à ras du sol ; la mare glissante renverse qui marche dedans
+		-- Inondation (↓L) : accroupie, elle ouvre la valve à ras du sol ; la mare s'étale sur tout le couloir et renverse qui s'y trouve
+		-- (piège qui reste au sol)
 		S_down = {
-			label = "Inondation", kind = "trap", energyCost = 25, startup = 0.2, active = 0, recovery = 0.35,
-			damage = 6, kbBase = 30, kbGrowth = 35, kbAngle = 80,
+			label = "Inondation", kind = "trap", startup = 0.22, active = 0, recovery = 0.5,
+			damage = 12, kbBase = 30, kbGrowth = 40, kbAngle = 80,
 			status = { name = "slippery", duration = 2 },
-			trap = { size = Vector3.new(7, 1, 6), offset = 3, lifetime = 5, max = 1, persist = true, color = WATER,
-				-- flaque à plat sur le sol
+			trap = { size = Vector3.new(16, 2, 6), offset = 8, lifetime = 5, max = 1, armTime = 0.2, persist = true, color = WATER,
+				-- longue flaque à plat sur le sol, sur toute la longueur du couloir
 				visual = { shape = "ball", size = 0.5, color = WATER, transparency = 0.3, trail = false, parts = {
-					{ "block", Vector3.new(6.5, 0.12, 3), Vector3.new(0, -0.3, 0), WATER },
-					{ "ball", Vector3.new(1.2, 0.2, 1.2), Vector3.new(2.6, -0.25, 0.6), WATER },
-					{ "ball", Vector3.new(1.0, 0.2, 1.0), Vector3.new(-2.8, -0.25, -0.5), WATER },
+					{ "block", Vector3.new(15, 0.12, 3), Vector3.new(0, -0.3, 0), WATER },
+					{ "ball", Vector3.new(1.4, 0.2, 1.4), Vector3.new(6, -0.25, 0.6), WATER },
+					{ "ball", Vector3.new(1.2, 0.2, 1.2), Vector3.new(-6.5, -0.25, -0.5), WATER },
+					{ "ball", Vector3.new(1.0, 0.2, 1.0), Vector3.new(0.5, -0.25, 0.9), WATER },
 				} } },
 			windup = { Root = { -6, 10, 0, 0, -0.6, 0.1 }, Waist = { -20, 10, 0 }, Neck = { -15, 0, 0 }, RS = { 60, 0, -10 }, RE = { 60, 0, 0 }, LS = { 45, 0, -10 }, LE = { 40, 0, 0 } },
 			strike = { Root = { -10, -10, 0, 0, -0.85, -0.1 }, Waist = { -28, -10, 0 }, Neck = { -20, 0, 0 }, RS = { 50, 0, -30 }, RE = { 70, 0, 0 }, LS = { 30, 0, -5 }, LE = { 20, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
 			follow = { Root = { -4, -5, 0, 0, -0.5, 0.05 }, Waist = { -10, -5, 0 }, Neck = { 10, 0, 0 }, RS = { 40, 0, 40 }, RE = { 60, 0, 0 }, LS = { 30, 0, -10 }, LE = { 30, 0, 0 } },
-			prop = "valve", fx = { { "puddle", color = WATER, width = 7 }, { "particles", tex = "smoke", color = WATER, dir = "up", at = "front", time = 0.3, speed = 8 } },
+			prop = "valve", fx = { { "puddle", color = WATER, width = 16 }, { "particles", tex = "smoke", color = WATER, dir = "front", at = "feet", time = 0.4, speed = 16, rate = 90 } },
 			text = "INONDATION !", hitText = "GLISSADE !",
 		},
-		-- Ventouse au plafond (remontée, gratuite) : elle tire le grappin tout droit vers le haut et se hisse, la ventouse cogne ce qui vole au-dessus
+		-- POP ascensionnel (↑L, remontée) : elle plante la ventouse au sol, s'arc-boute, POP !, et part en diagonale comme un bouchon de
+		-- champagne, ventouse tendue devant, bottes derrière : tout ce qu'elle croise est collé et emporté
 		S_up = {
-			label = "Ventouse au plafond", kind = "grapple", energyCost = 0, startup = 0.06, active = 0.25, recovery = 0.3,
-			hitbox = box(5, 7, 1, 3),
-			damage = 8, kbBase = 0, kbGrowth = 0, kbAngle = 90, selfVelocity = Vector2.new(6, 70),
-			grapple = { range = 34, angle = 90, speed = 95, pullEnemy = false },
-			windup = { Root = { 0, 0, 0, 0, -0.5, 0 }, Waist = { -8, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 60, 0, 20 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -30 }, LE = { 60, 0, 0 } },
-			strike = { Root = { 0, 0, 0, 0, 0.3, 0 }, Waist = { 8, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 180, 0, 5 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 170, 0, -10 }, LE = { 30, 0, 0 }, RH = { 20, 0, 0 }, RK = { -40, 0, 0 }, RA = { -20, 0, 0 }, LH = { -5, 0, 0 }, LK = { -20, 0, 0 }, LA = { -20, 0, 0 } },
-			follow = { Root = { 2, 0, 0, 0, 0.35, 0 }, Waist = { 10, 0, 0 }, Neck = { 32, 0, 0 }, RS = { 178, 0, 5 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 168, 0, -10 }, LE = { 45, 0, 0 }, RH = { 50, 0, 0 }, RK = { -90, 0, 0 }, LH = { 30, 0, 0 }, LK = { -70, 0, 0 } },
-			trail = "prop", text = "AU PLAFOND !", hitText = "SPLOTCH AU PASSAGE !",
+			label = "POP ascensionnel", startup = 0.15, active = 0.3, recovery = 0.45,
+			damage = 13, hitbox = box(10, 11, 3, 4), kbBase = 32, kbGrowth = 45, kbAngle = 80, selfVelocity = Vector2.new(42, 80),
+			windup = { Root = { -10, 0, 0, 0, -0.75, 0 }, Waist = { -25, 0, 0 }, Neck = { -5, 0, 0 }, RS = { 60, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, 15 }, LE = { 0, 0, 0 } },
+			strike = { Root = { -48, 0, 0, 0, 0.3, 0 }, Waist = { -6, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 176, 0, 8 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 130, 0, -20 }, LE = { 110, 0, 0 }, LW = { -30, 0, 0 }, RH = { -25, 0, 6 }, RK = { -35, 0, 0 }, RA = { -30, 0, 0 }, LH = { -35, 0, -6 }, LK = { -50, 0, 0 }, LA = { -30, 0, 0 } },
+			follow = { Root = { -52, 0, 0, 0, 0.35, 0 }, Waist = { -8, 0, 0 }, Neck = { 34, 0, 0 }, RS = { 180, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 135, 0, -22 }, LE = { 110, 0, 0 }, LW = { -30, 0, 0 }, RH = { -30, 0, 8 }, RK = { -45, 0, 0 }, RA = { -30, 0, 0 }, LH = { -40, 0, -8 }, LK = { -60, 0, 0 }, LA = { -30, 0, 0 } },
+			trail = "prop", fx = { { "burst", color = RUBBER, size = 3.5, at = "feet" }, { "ring", color = RUBBER, radius = 4, at = "feet" }, { "particles", tex = "smoke", color = WATER, dir = "down", at = "feet", time = 0.4, speed = 14, rate = 90 } },
+			text = "POP !", hitText = "COLLÉ ET EMPORTÉ !",
 		},
-		-- Chute ventouse (↓S en l'air) : ventouse pointée vers le sol à deux mains, elle s'y colle (POP !) et fait une onde
+		-- Chute ventouse (↓L en l'air) : ventouse pointée vers le sol à deux mains, elle s'y colle (POP !) et l'onde aplatit tout en dessous
 		S_air_down = {
-			label = "Chute ventouse", energyCost = 25, startup = 0.12, active = 0.35, recovery = 0.32,
-			damage = 11, hitbox = box(6, 4, 0.5, -2), kbBase = 26, kbGrowth = 55, kbAngle = -65, selfVelocity = Vector2.new(0, -85),
+			label = "Chute ventouse", startup = 0.16, active = 0.35, recovery = 0.5,
+			damage = 14, hitbox = box(8, 5, 0, -2), kbBase = 28, kbGrowth = 60, kbAngle = -65, selfVelocity = Vector2.new(0, -85),
 			windup = { Root = { 10, 0, 0 }, Waist = { 12, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 170, 0, 10 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 165, 0, 20 }, LE = { 40, 0, 0 }, RH = { 80, 0, 0 }, RK = { -110, 0, 0 }, LH = { 80, 0, 0 }, LK = { -110, 0, 0 } },
 			strike = { Root = { -14, 0, 0 }, Waist = { -18, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 20, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 25, 0, 20 }, LE = { 20, 0, 0 }, RH = { 60, 0, 10 }, RK = { -100, 0, 0 }, LH = { 60, 0, -10 }, LK = { -100, 0, 0 } },
 			follow = { Root = { -16, 0, 0 }, Waist = { -20, 0, 0 }, Neck = { -12, 0, 0 }, RS = { 15, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, 20 }, LE = { 20, 0, 0 }, RH = { 55, 0, 12 }, RK = { -95, 0, 0 }, LH = { 55, 0, -12 }, LK = { -95, 0, 0 } },
-			trail = "prop", fx = { { "ring", color = RUBBER, radius = 5, at = "feet" }, { "particles", tex = "smoke", color = WATER, dir = "all", at = "feet", time = 0.3, speed = 10 } },
+			trail = "prop", fx = { { "ring", color = RUBBER, radius = 6, at = "feet" }, { "burst", color = WATER, size = 3, at = "feet" }, { "particles", tex = "smoke", color = WATER, dir = "all", at = "feet", time = 0.3, speed = 12 } },
 			text = "POP !", hitText = "SPLOUTCH !",
 		},
-		-- Grappin mural (ESQUIVE puis S) : elle lance la ventouse derrière elle sur le mur et, dans le même élan, repousse
-		-- l'adversaire d'un grand coup de botte avant de se faire tirer en arrière
+		-- Coup de bélier (ESQUIVE puis L) : elle braque un bout de tuyau sous pression : un boulet d'eau part droit sur l'adversaire
+		-- et le recul la renvoie en arrière d'un bond (invulnérable)
 		S_dodge = {
-			label = "Grappin mural", kind = "grapple", energyCost = 20, startup = 0.08, active = 0.2, recovery = 0.25,
-			damage = 7, hitbox = box(5.5, 3.5, 2.8, 0.3), kbBase = 26, kbGrowth = 40, kbAngle = 30, selfVelocity = Vector2.new(-30, 18),
-			grapple = { range = 30, angle = 175, speed = 85, pullEnemy = false },
-			windup = { Root = { 6, -20, 0, 0, -0.3, 0.15 }, Waist = { 4, -25, 0 }, Neck = { 0, -30, 0 }, RS = { 90, 0, 40 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -30 }, LE = { 60, 0, 0 }, RH = { 80, 0, 0 }, RK = { -120, 0, 0 } },
-			strike = { Root = { 22, -35, 0, 0, -0.2, 0.3 }, Waist = { 10, -35, 0 }, Neck = { 6, -60, 0 }, RS = { -75, 0, 30 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, -40 }, LE = { 30, 0, 0 }, RH = { 95, 0, 0 }, RK = { -2, 0, 0 }, RA = { 20, 0, 0 } },
-			follow = { Root = { 26, -30, 0, 0, -0.2, 0.4 }, Waist = { 12, -30, 0 }, Neck = { 8, -55, 0 }, RS = { -65, 0, 25 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 100, 0, -45 }, LE = { 30, 0, 0 }, RH = { 100, 0, 0 }, RK = { 0, 0, 0 }, RA = { 20, 0, 0 } },
-			trail = "rightFoot", fx = { "dust" }, text = "HOP, AU MUR !", hitText = "ET HOP, DÉGAGE !",
+			label = "Coup de bélier", kind = "projectile", startup = 0.15, active = 0, recovery = 0.45,
+			damage = 12, kbBase = 30, kbGrowth = 55, kbAngle = 30, selfVelocity = Vector2.new(-34, 18), invuln = 0.3,
+			status = { name = "wet", duration = 1.5 },
+			projectile = { speed = 85, angle = 0, gravity = 0, lifetime = 0.5, size = 2.4, color = WATER, visual = "water" },
+			windup = { Root = { 6, -20, 0, 0, -0.3, 0.15 }, Waist = { 4, -25, 0 }, Neck = { 0, 20, 0 }, RS = { 60, 0, 20 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 80, 0, -10 }, LE = { 80, 0, 0 }, LW = { 0, 0, 0 } },
+			strike = { Root = { 14, 10, 0, 0, -0.2, 0.3 }, Waist = { 10, 12, 0 }, Neck = { 6, -8, 0 }, RS = { 40, 0, 30 }, RE = { 80, 0, 0 }, RW = { 0, 0, 0 }, LS = { 95, 0, 0 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 }, FR = { 0, 0, 0, 0, 0, 0.4 } },
+			follow = { Root = { 18, 10, 0, 0, -0.2, 0.45 }, Waist = { 12, 12, 0 }, Neck = { 8, -8, 0 }, RS = { 36, 0, 32 }, RE = { 80, 0, 0 }, RW = { 0, 0, 0 }, LS = { 100, 0, -5 }, LE = { 5, 0, 0 }, LW = { -10, 0, 0 }, FR = { 0, 0, 0, 0, 0, 0.45 } },
+			shake = true, prop = "tuyau", trail = "leftHand", windupFx = { { "particles", tex = "smoke", color = WATER, dir = "front", at = "lhand", time = 0.15, speed = 4 } },
+			fx = { { "burst", color = WATER, size = 3, at = "lhand" }, { "particles", tex = "smoke", color = WATER, dir = "front", at = "lhand", time = 0.3, speed = 18, rate = 90 }, { "ring", color = WATER, radius = 3, at = "feet" } },
+			text = "COUP DE BÉLIER !", hitText = "SPLAAASH !",
 		},
-		-- Pression (S maintenu) : genou à terre, elle ouvre la valve à fond ; un geyser jaillit devant elle
+		-- Pression (S maintenu) : genou à terre, elle ouvre la valve à fond ; la canalisation claque et une rangée de geysers jaillit sur
+		-- toute la longueur du couloir
 		S_hold = {
-			label = "Pression", energyCost = 35, startup = 0.35, active = 0.2, recovery = 0.45,
-			damage = 15, hitbox = box(4, 11, 3.5, 4), kbBase = 34, kbGrowth = 80, kbAngle = 88,
+			label = "Pression", startup = 0.3, active = 0.25, recovery = 0.6,
+			damage = 15, hitbox = box(14, 8, 7, 2), kbBase = 34, kbGrowth = 75, kbAngle = 85,
 			status = { name = "wet", duration = 2 },
 			windup = { Root = { -6, 15, 0, 0, -0.85, 0 }, Waist = { -20, 15, 0 }, Neck = { -10, 0, 0 }, RS = { 70, 0, -20 }, RE = { 90, 0, 0 }, LS = { 50, 0, -10 }, LE = { 40, 0, 0 }, FR = { 0, 0, 0, 0, 0, 0.4 } },
 			strike = { Root = { 10, -5, 0, 0, -0.3, 0.4 }, Waist = { 12, -5, 0 }, Neck = { 25, 0, 0 }, RS = { 150, 0, 40 }, RE = { 20, 0, 0 }, LS = { 150, 0, -40 }, LE = { 20, 0, 0 } },
 			follow = { Root = { 12, -5, 0, 0, -0.25, 0.45 }, Waist = { 14, -5, 0 }, Neck = { 30, 0, 0 }, RS = { 160, 0, 50 }, RE = { 20, 0, 0 }, LS = { 160, 0, -50 }, LE = { 20, 0, 0 } },
 			shake = true, prop = "valve",
 			windupFx = { { "particles", tex = "smoke", color = WATER, dir = "up", at = "front", time = 0.3, speed = 5 } },
-			fx = { { "pillar", color = WATER, height = 14, width = 2.5, at = "front" }, { "shake", amount = 0.4 } },
+			fx = { { "pillar", color = WATER, height = 14, width = 2.5, at = "front" }, { "beam", color = WATER, length = 16, width = 3, at = "front" }, { "rain", shape = "ball", color = WATER, count = 10, radius = 8, size = 0.5 }, { "shake", amount = 0.4 } },
 			text = "PLEINE PRESSION !", hitText = "GEYSER !",
 		},
-		-- Glissade dans un tuyau (→→S) : elle plonge à plat ventre et file au ras du sol, sous l'adversaire
+		-- Glissade dans un tuyau (→→L) : elle plonge à plat ventre et file au ras du sol tout le long du couloir, sous l'adversaire
 		S_dash = {
-			label = "Glissade dans un tuyau", energyCost = 20, startup = 0.06, active = 0.3, recovery = 0.3,
-			damage = 8, hitbox = box(5, 2, 1.5, -1.5), kbBase = 30, kbGrowth = 45, kbAngle = 80, selfVelocity = Vector2.new(75, 0), invuln = 0.35,
+			label = "Glissade dans un tuyau", startup = 0.15, active = 0.3, recovery = 0.5,
+			damage = 13, hitbox = box(14, 5, 7, -0.5), kbBase = 30, kbGrowth = 50, kbAngle = 80, selfVelocity = Vector2.new(75, 0), invuln = 0.35,
 			windup = { Root = { -20, 0, 0, 0, -0.5, 0 }, Waist = { -10, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 120, 0, 20 }, RE = { 20, 0, 0 }, LS = { 120, 0, -20 }, LE = { 20, 0, 0 } },
 			strike = { Root = { -72, 0, 0, 0, -1.6, 0 }, Waist = { -6, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 175, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 175, 0, -10 }, LE = { 0, 0, 0 }, RH = { -10, 0, 0 }, RK = { -10, 0, 0 }, RA = { -40, 0, 0 }, LH = { -10, 0, 0 }, LK = { -15, 0, 0 }, LA = { -40, 0, 0 } },
 			follow = { Root = { -75, 0, 0, 0, -1.65, 0 }, Waist = { -8, 0, 0 }, Neck = { 32, 0, 0 }, RS = { 178, 0, 12 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 178, 0, -12 }, LE = { 0, 0, 0 }, RH = { -12, 0, 3 }, RK = { -15, 0, 0 }, RA = { -40, 0, 0 }, LH = { -8, 0, -3 }, LK = { -10, 0, 0 }, LA = { -40, 0, 0 } },
-			trail = "body", fx = { { "puddle", color = WATER, width = 6 } }, text = "PAR LES TUYAUX !", hitText = "ZLOUP !",
+			trail = "body", fx = { { "puddle", color = WATER, width = 12 }, { "particles", tex = "smoke", color = WATER, dir = "front", at = "root", time = 0.3, speed = 12, rate = 80 } }, text = "PAR LES TUYAUX !", hitText = "ZLOUP !",
 		},
-		-- Ventouse volante (S en l'air) : elle tire la ventouse en diagonale vers le bas et ramène ce qu'elle accroche
+		-- Ventouse volante (L en l'air) : elle tire la ventouse en diagonale vers le sol et ramène à elle ce qu'elle accroche
 		S_air = {
-			label = "Ventouse volante", kind = "grapple", energyCost = 20, startup = 0.12, active = 0.2, recovery = 0.3,
-			damage = 7, kbBase = 20, kbGrowth = 25, kbAngle = 30,
-			grapple = { range = 26, angle = -35, speed = 85, pullEnemy = true },
+			label = "Ventouse volante", kind = "grapple", startup = 0.18, active = 0.2, recovery = 0.45,
+			damage = 13, kbBase = 20, kbGrowth = 25, kbAngle = 30,
+			grapple = { range = 30, angle = -35, speed = 85, pullEnemy = true },
 			windup = { Root = { -6, -15, 0 }, Waist = { -8, -15, 0 }, Neck = { 0, 10, 0 }, RS = { 150, 0, 30 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -40 }, LE = { 60, 0, 0 }, RH = { 60, 0, 0 }, RK = { -100, 0, 0 }, LH = { 40, 0, 0 }, LK = { -80, 0, 0 } },
 			strike = { Root = { -10, 15, 0 }, Waist = { -14, 18, 0 }, Neck = { -10, -10, 0 }, RS = { 60, 0, 5 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -20, 0, -50 }, LE = { 30, 0, 0 }, RH = { 30, 0, 0 }, RK = { -60, 0, 0 }, LH = { 60, 0, 0 }, LK = { -90, 0, 0 } },
 			follow = { Root = { 4, 10, 0 }, Waist = { 4, 12, 0 }, Neck = { 0, -6, 0 }, RS = { 70, 0, 10 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { -10, 0, -45 }, LE = { 30, 0, 0 }, RH = { 40, 0, 0 }, RK = { -70, 0, 0 }, LH = { 50, 0, 0 }, LK = { -85, 0, 0 } },
-			trail = "prop", text = "VIENS PAR ICI !", hitText = "SHLOOP !",
+			trail = "prop", fx = { { "beam", color = RUBBER, length = 12, width = 0.8, at = "hand" } }, text = "VIENS PAR ICI !", hitText = "SHLOOP !",
 		},
 
 		-- Pompage (P P puis →P) : ventouse collée en pleine figure, elle pompe trois fois comme sur un évier bouché (3 touches)
@@ -481,7 +487,7 @@ local data = {
 		------------------------------------------------------------------ Finitions avec S (dans un enchaînement)
 		-- POP de ventouse (finition) : elle colle la ventouse sur l'adversaire, pousse, tire… POP ! Il part comme un bouchon de champagne
 		S_finish_pop = {
-			label = "POP de ventouse", energyCost = 20, startup = 0.12, active = 0.12, recovery = 0.3,
+			label = "POP de ventouse", startup = 0.12, active = 0.12, recovery = 0.3,
 			damage = 10, hitbox = box(5, 3.5, 3, 0.6), kbBase = 36, kbGrowth = 85, kbAngle = 25,
 			windup = { Root = { 6, -10, 0, 0, -0.2, 0.25 }, Waist = { 8, -12, 0 }, Neck = { 0, 6, 0 }, RS = { 80, 0, 20 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 75, 0, 25 }, LE = { 95, 0, 0 } },
 			strike = { Root = { -12, 6, 0, 0, -0.35, -0.4 }, Waist = { -12, 8, 0 }, Neck = { -6, 0, 0 }, RS = { 92, 0, 5 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 85, 0, 22 }, LE = { 20, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
@@ -490,7 +496,7 @@ local data = {
 		},
 		-- Coup de pression : la valve pointée devant, un jet droit et puissant
 		S_finish_jet = {
-			label = "Coup de pression", kind = "projectile", energyCost = 20, startup = 0.12, active = 0, recovery = 0.28,
+			label = "Coup de pression", kind = "projectile", startup = 0.12, active = 0, recovery = 0.28,
 			damage = 9, kbBase = 36, kbGrowth = 82, kbAngle = 30,
 			projectile = { speed = 80, angle = 0, gravity = 0, lifetime = 0.35, size = 2, color = WATER, visual = "water" },
 			windup = { Root = { 2, -12, 0, 0, -0.2, 0.15 }, Waist = { 2, -15, 0 }, Neck = { 0, 10, 0 }, RS = { 60, 0, -20 }, RE = { 80, 0, 0 }, LS = { 70, 0, 10 }, LE = { 60, 0, 0 } },
@@ -500,10 +506,10 @@ local data = {
 		},
 
 		------------------------------------------------------------------ Supers
-		-- Rupture de canalisation : elle frappe le sol de toutes ses forces avec la ventouse, les geysers jaillissent partout
+		-- Rupture de canalisation (Y) : elle frappe le sol de toutes ses forces avec la ventouse, les geysers jaillissent sur toute l'arène
 		SUPER = {
-			label = "Rupture de canalisation !", superCost = 100, startup = 0.45, active = 0.3, recovery = 0.5,
-			damage = 10, hits = 2, hitbox = box(60, 10, 0, 3), kbBase = 30, kbGrowth = 50, kbAngle = 88,
+			label = "Rupture de canalisation !", startup = 0.45, active = 0.3, recovery = 0.8,
+			damage = 12, hits = 2, hitbox = box(60, 10, 0, 3), kbBase = 30, kbGrowth = 50, kbAngle = 88,
 			status = { name = "wet", duration = 2 },
 			windup = { Root = { 10, 0, 0, 0, 0.1, 0.2 }, Waist = { 16, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 190, 0, 5 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 180, 0, 15 }, LE = { 40, 0, 0 }, FR = { 0, 0, 0, 0, 0.2, 0 }, FL = { 0, 0, 0, 0, 0.2, 0 } },
 			strike = { Root = { -16, 0, 0, 0, -0.9, -0.3 }, Waist = { -30, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 40, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 35, 0, 20 }, LE = { 20, 0, 0 } },
@@ -513,29 +519,29 @@ local data = {
 				{ "rain", shape = "ball", color = WATER, count = 16, radius = 14, size = 0.6 }, { "screen", color = WATER, alpha = 0.3 }, { "shake", amount = 0.7 } },
 			text = "RUPTURE DE CANALISATION !", hitText = "GEYSER !",
 		},
-		-- Super ↑ : elle plaque la ventouse géante au sol devant elle, s'arc-boute de tout son poids… et la décolle d'un coup : un POP
-		-- monstrueux qui envoie tout ce qui est au-dessus au plafond, elle avec, cramponnée au manche
+		-- Super ↑ : elle plaque la ventouse géante au sol devant elle, s'arc-boute de tout son poids… et la décolle d'un coup : le POP
+		-- monstrueux arrache le carrelage de tout le couloir, l'adversaire part au plafond avec les tuyaux, elle avec, cramponnée au manche
 		SUPER_up = {
-			label = "Le Grand POP !", superCost = 100, startup = 0.35, active = 0.25, recovery = 0.55,
-			damage = 22, hitbox = box(7, 12, 2.5, 5), kbBase = 45, kbGrowth = 95, kbAngle = 88, invuln = 0.3,
+			label = "Le Grand POP !", startup = 0.4, active = 0.25, recovery = 0.8,
+			damage = 24, hitbox = box(14, 10, 7, 4), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
 			windup = { Root = { -22, 0, 0, 0, -0.75, -0.2 }, Waist = { -36, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 55, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 55, 0, 15 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 }, FR = { 0, 0, 0, 0, 0, 0.3 } },
 			strike = { Root = { 30, 0, 0, 0, -0.3, 0.5 }, Waist = { 20, 0, 0 }, Neck = { 25, 0, 0 }, RS = { 120, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 120, 0, 15 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 }, FR = { 0, 0, 0, 0, 0, 0.3 } },
 			follow = { Root = { 18, 0, 0, 0, 0.6, 0.2 }, Waist = { 12, 0, 0 }, Neck = { 36, 0, 0 }, RS = { 185, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 180, 0, 12 }, LE = { 10, 0, 0 }, RH = { 40, 0, 10 }, RK = { -80, 0, 0 }, LH = { 10, 0, -10 }, LK = { -40, 0, 0 } },
 			hold = 0.2, selfVelocity = Vector2.new(0, 60), prop = "geante", hideProp = "ventouse",
 			windupFx = { "super", { "text", text = "HNNNNGH…", color = RUBBER, at = "head" } }, trail = "prop",
-			fx = { { "burst", color = RUBBER, size = 6, at = "front" }, { "ring", color = RUBBER, radius = 8, at = "front" }, { "pillar", color = Color3.fromRGB(120, 200, 255), height = 22, width = 4, at = "front" }, { "particles", tex = "smoke", color = WATER, dir = "up", at = "front", time = 0.5, speed = 20, rate = 100 }, { "shake", amount = 0.7 } },
+			fx = { { "burst", color = RUBBER, size = 6, at = "front" }, { "ring", color = RUBBER, radius = 8, at = "front" }, { "pillar", color = Color3.fromRGB(120, 200, 255), height = 22, width = 4, at = "front" }, { "beam", color = Color3.fromRGB(120, 200, 255), length = 18, width = 5, at = "front" }, { "toss", shape = "flat", color = Color3.fromRGB(230, 230, 235), count = 8, size = 0.8, speed = 24 }, { "particles", tex = "smoke", color = WATER, dir = "up", at = "front", time = 0.5, speed = 20, rate = 100 }, { "shake", amount = 0.7 } },
 			text = "ÇA VA DÉBOUCHER !", hitText = "POP GÉANT !",
 		},
-		-- Le Grand Débouchage : une ventouse gigantesque qui aspire tout devant elle (projectiles compris) puis recrache
+		-- Le Grand Débouchage (↓Y) : une ventouse gigantesque qui aspire tout le couloir (projectiles compris) puis recrache d'un POP
 		SUPER_down = {
-			label = "Le Grand Débouchage !", kind = "absorb", superCost = 100, startup = 0.4, active = 0.5, recovery = 0.6,
+			label = "Le Grand Débouchage !", kind = "absorb", startup = 0.4, active = 0.5, recovery = 0.8,
 			damage = 22, hitbox = box(14, 8, 7, 1), kbBase = 40, kbGrowth = 70, kbAngle = 35,
-			absorb = { radius = 8, offset = 5 },
+			absorb = { radius = 10, offset = 6 },
 			windup = { Root = { 8, -15, 0, 0, -0.2, 0.3 }, Waist = { 14, -15, 0 }, Neck = { 10, 10, 0 }, RS = { 175, 0, 20 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 165, 0, 30 }, LE = { 30, 0, 0 } },
 			strike = { Root = { -14, 10, 0, 0, -0.5, -0.3 }, Waist = { -20, 10, 0 }, Neck = { -6, 0, 0 }, RS = { 95, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, 25 }, LE = { 15, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
 			follow = { Root = { 12, 0, 0, 0, -0.3, 0.3 }, Waist = { 14, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 80, 0, 5 }, RE = { 50, 0, 0 }, RW = { 0, 0, 0 }, LS = { 75, 0, 25 }, LE = { 60, 0, 0 } },
 			hold = 0.3, prop = "geante", hideProp = "ventouse", windupFx = { "super" },
-			fx = { { "particles", tex = "smoke", color = Color3.fromRGB(200, 220, 240), dir = "front", at = "front", time = 0.5, speed = 14 }, { "ring", color = RUBBER, radius = 6, at = "front" }, { "shake", amount = 0.5 } },
+			fx = { { "particles", tex = "smoke", color = Color3.fromRGB(200, 220, 240), dir = "front", at = "front", time = 0.5, speed = 16, rate = 100 }, { "beam", color = RUBBER, length = 16, width = 4, at = "hand" }, { "ring", color = RUBBER, radius = 7, at = "front" }, { "shake", amount = 0.5 } },
 			text = "LE GRAND DÉBOUCHAGE !", hitText = "SCHLOOOP… POP !",
 		},
 

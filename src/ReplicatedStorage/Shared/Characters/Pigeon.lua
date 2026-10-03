@@ -1,5 +1,5 @@
 -- Le Roi Pigeon : marquis déchu en cape de plumes, couronne en capsule, roucoule et commande sa nuée.
--- Invocateur : jauge « Nuée » de 6 pigeons qui reviennent avec le temps ; ses envois coûtent des pigeons (meterCost).
+-- Invocateur : jauge « Nuée » de 6 pigeons qui reviennent avec le temps (décorative : les signatures sont sans limite, plus de meterCost).
 -- Arme sortie de la Caisse Bizarre : Baguette de pain (et la Nuée).
 -- Format : voir docs/fiche-perso.md et l'en-tête de Characters/Gege.lua.
 local function box(width, height, forward, up)
@@ -357,20 +357,20 @@ local data = {
 		},
 
 		------------------------------------------------------------------ Spéciaux (S) : la plupart coûtent des pigeons
-		-- Pigeon chercheur : il serre un pigeon contre son jabot puis le lâche vers le ciel ; le pigeon suit l'adversaire
+		-- Pigeon chercheur (L) : il serre un pigeon contre son jabot puis le lâche ; le pigeon fonce sur l'adversaire et le suit en vol
 		S_neutral = {
-			label = "Pigeon chercheur", kind = "projectile", energyCost = 15, meterCost = 1, startup = 0.16, active = 0, recovery = 0.3,
-			damage = 8, kbBase = 22, kbGrowth = 40, kbAngle = 35,
-			projectile = { speed = 26, angle = 10, gravity = 0, lifetime = 2.4, size = 1.6, color = FEATHER, homing = 0.35, visual = PIGEON_VISUAL },
+			label = "Pigeon chercheur", kind = "projectile", startup = 0.2, active = 0, recovery = 0.45,
+			damage = 13, kbBase = 24, kbGrowth = 45, kbAngle = 35,
+			projectile = { speed = 48, angle = 5, gravity = 0, lifetime = 1.6, size = 1.8, color = FEATHER, homing = 0.35, visual = PIGEON_VISUAL },
 			windup = { Root = { 4, 10, 0, 0, -0.15, 0.1 }, Waist = { 8, 12, 0 }, Neck = { -6, 10, 0 }, RS = { 20, 0, 20 }, RE = { 50, 0, 0 }, LS = { 40, 0, 10 }, LE = { 110, 0, 0 }, LW = { -20, 0, 0 } },
 			strike = { Root = { -6, -10, 0, 0, -0.2, -0.2 }, Waist = { -6, -12, 0 }, Neck = { 14, 0, 0 }, RS = { 85, 0, 20 }, RE = { 5, 0, 0 }, RW = { 0, 0, 0 }, LS = { 140, 0, -30 }, LE = { 10, 0, 0 }, LW = { 0, 0, -30 } },
 			follow = { Root = { -7, -12, 0, 0, -0.2, -0.22 }, Waist = { -7, -14, 0 }, Neck = { 18, 0, 0 }, RS = { 88, 0, 22 }, RE = { 5, 0, 0 }, RW = { 0, 0, 0 }, LS = { 152, 0, -34 }, LE = { 8, 0, 0 }, LW = { 0, 0, -30 } },
-			prop = "pigeon", hold = 0.1, text = "VA, MON PIGEON !", hitText = "PIC !",
+			prop = "pigeon", hold = 0.1, fx = { { "particles", tex = "smoke", color = FEATHER, dir = "front", at = "lhand", time = 0.2, speed = 10 } }, text = "VA, MON PIGEON !", hitText = "PIC !",
 		},
-		-- Charge de la Nuée : bras joints devant en pointe de lance, la nuée l'entoure et il fonce
+		-- Charge de la Nuée (→L) : bras joints devant en pointe de lance, la nuée l'entoure et il traverse tout le couloir en bélier de plumes
 		S_side = {
-			label = "Charge de la Nuée", energyCost = 25, meterCost = 2, startup = 0.12, active = 0.3, recovery = 0.32,
-			damage = 4, hits = 3, hitbox = box(5, 4, 2.5, 0.5), kbBase = 30, kbGrowth = 60, kbAngle = 30, selfVelocity = Vector2.new(60, 0),
+			label = "Charge de la Nuée", startup = 0.18, active = 0.3, recovery = 0.5,
+			damage = 14, hitbox = box(14, 6, 7, 0.5), kbBase = 30, kbGrowth = 60, kbAngle = 30, selfVelocity = Vector2.new(60, 0),
 			windup = { Root = { 6, 0, 0, 0, -0.4, 0.2 }, Waist = { 8, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 30, 0, 60 }, RE = { 40, 0, 0 }, LS = { 30, 0, -60 }, LE = { 40, 0, 0 } },
 			strike = { Root = { -30, 0, 0, 0, -0.4, -0.4 }, Waist = { -15, 0, 0 }, Neck = { 22, 0, 0 }, RS = { 150, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, -10 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
 			follow = { Root = { -34, 0, 0, 0, -0.42, -0.45 }, Waist = { -16, 0, 0 }, Neck = { 24, 0, 0 }, RS = { 155, 0, 8 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 155, 0, -8 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.55 } },
@@ -378,89 +378,91 @@ local data = {
 			fx = { { "swarm", shape = "ball", color = FEATHER, count = 8, distance = 18, size = 0.8, time = 0.4, height = 1.5, spreadY = 2 }, { "particles", tex = "smoke", color = FEATHER, dir = "front", at = "root", time = 0.3, speed = 12 } },
 			text = "CHAAARGEZ !", hitText = "ROUCOUBAM !",
 		},
-		-- Jet de miettes : geste du semeur, il lance des miettes au sol ; qui marche dessus voit fondre la nuée sur lui
+		-- Jet de miettes (↓L) : geste du semeur, il sème un tapis de miettes sur tout le couloir ; qui s'y trouve voit la nuée lui fondre
+		-- dessus (piège, aveugle)
 		S_down = {
-			label = "Jet de miettes", kind = "trap", energyCost = 20, meterCost = 1, startup = 0.15, active = 0, recovery = 0.3,
-			damage = 9, kbBase = 25, kbGrowth = 45, kbAngle = 70,
+			label = "Jet de miettes", kind = "trap", startup = 0.2, active = 0, recovery = 0.5,
+			damage = 12, kbBase = 28, kbGrowth = 50, kbAngle = 70,
 			status = { name = "blinded", duration = 1.5 },
-			trap = { size = Vector3.new(4, 1, 6), offset = 3.5, lifetime = 10, max = 2, color = CRUMB,
-				-- tas de miettes à plat sur le sol
+			trap = { size = Vector3.new(16, 2, 6), offset = 8, lifetime = 8, max = 2, armTime = 0.2, color = CRUMB,
+				-- longue traînée de miettes à plat sur le sol, sur toute la longueur du couloir
 				visual = { shape = "ball", size = 0.6, color = CRUMB, trail = false, parts = {
-					{ "block", Vector3.new(3.2, 0.12, 2.2), Vector3.new(0, -0.3, 0), CRUMB },
-					{ "ball", Vector3.new(0.35, 0.3, 0.35), Vector3.new(0.9, -0.15, 0.4), CRUST },
-					{ "ball", Vector3.new(0.3, 0.25, 0.3), Vector3.new(-0.8, -0.15, -0.3), BREAD },
-					{ "ball", Vector3.new(0.25, 0.2, 0.25), Vector3.new(-0.2, -0.15, 0.7), CRUST },
+					{ "block", Vector3.new(15, 0.12, 2.4), Vector3.new(0, -0.3, 0), CRUMB },
+					{ "ball", Vector3.new(0.35, 0.3, 0.35), Vector3.new(5.5, -0.15, 0.4), CRUST },
+					{ "ball", Vector3.new(0.3, 0.25, 0.3), Vector3.new(1.5, -0.15, -0.3), BREAD },
+					{ "ball", Vector3.new(0.25, 0.2, 0.25), Vector3.new(-2.5, -0.15, 0.7), CRUST },
+					{ "ball", Vector3.new(0.3, 0.25, 0.3), Vector3.new(-6, -0.15, -0.5), BREAD },
 				} } },
 			windup = { Root = { 2, 15, 0, 0, -0.2, 0.15 }, Waist = { 4, 18, 0 }, Neck = { -6, 0, 0 }, RS = { 30, 0, 25 }, RE = { 60, 0, 0 }, LS = { -20, 0, -50 }, LE = { 60, 0, 0 } },
 			strike = { Root = { -10, -10, 0, 0, -0.45, -0.15 }, Waist = { -18, -12, 0 }, Neck = { -16, 0, 0 }, RS = { 40, 0, 40 }, RE = { 50, 0, 0 }, LS = { 70, 0, -20 }, LE = { 10, 0, 0 }, LW = { -20, 0, 0 } },
 			follow = { Root = { -11, -14, 0, 0, -0.47, -0.18 }, Waist = { -20, -16, 0 }, Neck = { -18, 0, 0 }, RS = { 42, 0, 42 }, RE = { 50, 0, 0 }, LS = { 80, 0, -35 }, LE = { 8, 0, 0 }, LW = { -25, 0, 0 } },
-			prop = "miettes", fx = { { "toss", shape = "ball", color = CRUMB, count = 8, size = 0.25, speed = 12 } },
+			prop = "miettes", fx = { { "toss", shape = "ball", color = CRUMB, count = 12, size = 0.25, speed = 20 }, { "symbols", symbols = { "🐦", "🍞" }, count = 4, radius = 4, at = "front" } },
 			text = "PETITS PETITS !", hitText = "ROUCOUCOUCOU !",
 		},
-		-- Envol porté (remontée, gratuite) : ses pigeons l'attrapent par la cape et le hissent très haut, jambes ballantes ; qui vole au-dessus se fait emporter au passage
+		-- Envol royal (↑L, remontée) : ses pigeons l'attrapent par la cape et l'emportent en diagonale, baguette pointée devant comme une
+		-- lance, souliers ballants derrière : qui se trouve sur la trajectoire est embarqué par la nuée (il vole : coup très puissant)
 		S_up = {
-			label = "Envol porté", energyCost = 0, startup = 0.08, active = 0.3, recovery = 0.3,
-			hitbox = box(5.5, 7, 1, 3), kbBase = 30, kbGrowth = 45, kbAngle = 82,
-			damage = 8, selfVelocity = Vector2.new(10, 95),
-			windup = { Root = { 0, 0, 0, 0, -0.6, 0 }, Waist = { -10, 0, 0 }, Neck = { -5, 0, 0 }, RS = { 60, 0, 40 }, RE = { 80, 0, 0 }, LS = { 60, 0, -40 }, LE = { 80, 0, 0 } },
-			strike = { Root = { -4, 0, 0, 0, 0.3, 0 }, Waist = { 6, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 165, 0, 25 }, RE = { 30, 0, 0 }, LS = { 165, 0, -25 }, LE = { 30, 0, 0 }, RH = { 10, 0, 0 }, RK = { -20, 0, 0 }, RA = { -35, 0, 0 }, LH = { -5, 0, 0 }, LK = { -35, 0, 0 }, LA = { -35, 0, 0 } },
-			follow = { Root = { -2, 0, 0, 0, 0.35, 0 }, Waist = { 8, 0, 0 }, Neck = { 24, 0, 0 }, RS = { 170, 0, 22 }, RE = { 25, 0, 0 }, LS = { 170, 0, -22 }, LE = { 25, 0, 0 }, RH = { -8, 0, 0 }, RK = { -40, 0, 0 }, RA = { -35, 0, 0 }, LH = { 12, 0, 0 }, LK = { -15, 0, 0 }, LA = { -35, 0, 0 } },
-			fx = { { "particles", tex = "smoke", color = FEATHER, dir = "up", at = "above", time = 0.5, speed = 12 }, { "symbols", symbols = { "🐦", "🕊️" }, count = 5, radius = 2.5, at = "above" } },
-			text = "EMPORTEZ-MOI !", hitText = "EMPORTÉ AVEC MOI !",
+			label = "Envol royal", startup = 0.15, active = 0.3, recovery = 0.5,
+			damage = 17, hitbox = box(10, 11, 3, 4), kbBase = 34, kbGrowth = 50, kbAngle = 80, selfVelocity = Vector2.new(42, 80),
+			windup = { Root = { 2, 0, 0, 0, -0.6, 0.1 }, Waist = { -12, 0, 0 }, Neck = { -5, 0, 0 }, RS = { -40, 0, 25 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -40 }, LE = { 80, 0, 0 }, LW = { 0, 0, -30 } },
+			strike = { Root = { -45, 0, 0, 0, 0.3, 0 }, Waist = { -6, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 176, 0, 8 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -40, 0, -30 }, LE = { 30, 0, 0 }, LW = { 0, 0, -30 }, RH = { -25, 0, 6 }, RK = { -35, 0, 0 }, RA = { -35, 0, 0 }, LH = { -35, 0, -6 }, LK = { -50, 0, 0 }, LA = { -35, 0, 0 } },
+			follow = { Root = { -50, 0, 0, 0, 0.35, 0 }, Waist = { -8, 0, 0 }, Neck = { 34, 0, 0 }, RS = { 180, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -45, 0, -32 }, LE = { 30, 0, 0 }, LW = { 0, 0, -30 }, RH = { -30, 0, 8 }, RK = { -45, 0, 0 }, RA = { -35, 0, 0 }, LH = { -40, 0, -8 }, LK = { -60, 0, 0 }, LA = { -35, 0, 0 } },
+			trail = "prop", fx = { { "burst", color = FEATHER, size = 3, at = "feet" }, { "swarm", shape = "ball", color = FEATHER, count = 8, distance = 12, size = 0.8, time = 0.5, height = 4, spreadY = 4 }, { "symbols", symbols = { "🐦", "🕊️" }, count = 6, radius = 3, at = "above" }, { "particles", tex = "smoke", color = FEATHER, dir = "down", at = "feet", time = 0.4, speed = 12 } },
+			text = "EMPORTEZ-MOI !", hitText = "EMBARQUÉ PAR LA NUÉE !",
 		},
-		-- Piqué collectif (↓S en l'air) : baguette pointée vers le sol, il tourne comme une perceuse au milieu de la nuée
+		-- Piqué collectif (↓L en l'air) : baguette pointée vers le sol, il tourne comme une perceuse au milieu de la nuée et perce tout en dessous
 		S_air_down = {
-			label = "Piqué collectif", energyCost = 25, meterCost = 2, startup = 0.12, active = 0.35, recovery = 0.3,
-			damage = 4, hits = 3, hitbox = box(4, 4, 0.5, -1.5), kbBase = 25, kbGrowth = 55, kbAngle = -70, selfVelocity = Vector2.new(8, -80),
+			label = "Piqué collectif", startup = 0.16, active = 0.35, recovery = 0.5,
+			damage = 14, hitbox = box(8, 5, 0, -2), kbBase = 28, kbGrowth = 60, kbAngle = -70, selfVelocity = Vector2.new(8, -80),
 			windup = { Root = { 10, 0, 0 }, Waist = { 10, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 170, 0, 20 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 170, 0, -20 }, LE = { 20, 0, 0 }, RH = { 60, 0, 0 }, RK = { -100, 0, 0 }, LH = { 60, 0, 0 }, LK = { -100, 0, 0 } },
 			strike = { Root = { 0, 0, 0 }, Waist = { -6, 0, 0 }, Neck = { -15, 0, 0 }, RS = { 10, 0, 8 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 15, 0, -8 }, LE = { 10, 0, 0 }, RH = { -2, 0, 2 }, RK = { 0, 0, 0 }, RA = { -40, 0, 0 }, LH = { -2, 0, -2 }, LK = { 0, 0, 0 }, LA = { -40, 0, 0 } },
 			follow = { Root = { 0, 0, 0 }, Waist = { -6, 0, 0 }, Neck = { -16, 0, 0 }, RS = { 8, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 12, 0, -10 }, LE = { 10, 0, 0 }, RH = { -2, 0, 3 }, RK = { 0, 0, 0 }, RA = { -40, 0, 0 }, LH = { -2, 0, -3 }, LK = { 0, 0, 0 }, LA = { -40, 0, 0 } },
 			spin = { axis = "y", degrees = 720 }, trail = "prop",
-			fx = { { "particles", tex = "smoke", color = FEATHER, dir = "all", at = "root", time = 0.35, speed = 12 }, { "symbols", symbols = { "🐦" }, count = 4, radius = 2.5, at = "root" } },
+			fx = { { "particles", tex = "smoke", color = FEATHER, dir = "all", at = "root", time = 0.35, speed = 12 }, { "symbols", symbols = { "🐦" }, count = 4, radius = 2.5, at = "root" }, { "ring", color = FEATHER, radius = 5, at = "feet" } },
 			text = "PIQUÉ COLLECTIF !", hitText = "VRRRRR !",
 		},
-		-- Bouclier de plumes (ESQUIVE puis S) : cape grande ouverte, il la referme d'un coup sec : le pan de cape claque l'adversaire,
+		-- Bouclier de plumes (ESQUIVE puis L) : cape grande ouverte, il la referme d'un coup sec : le pan de cape claque tout le couloir,
 		-- et le prochain coup reçu est amorti, la nuée riposte
 		S_dodge = {
-			label = "Bouclier de plumes", kind = "counter", energyCost = 20, startup = 0.04, active = 0.5, recovery = 0.3,
-			damage = 7, hitbox = box(5.5, 4, 2.8, 0.6), kbBase = 24, kbGrowth = 40, kbAngle = 35,
-			counter = { window = 0.5, text = "PLUMÉ !", riposte = { damage = 10, kbBase = 35, kbGrowth = 60, kbAngle = 40, hitText = "PICOREZ-LE !" } },
+			label = "Bouclier de plumes", kind = "counter", startup = 0.15, active = 0.5, recovery = 0.45,
+			damage = 12, hitbox = box(14, 6, 7, 0.6), kbBase = 26, kbGrowth = 45, kbAngle = 35,
+			counter = { window = 0.5, text = "PLUMÉ !", riposte = { damage = 14, kbBase = 35, kbGrowth = 60, kbAngle = 40, hitText = "PICOREZ-LE !" } },
 			windup = { Root = { 2, 0, 0, 0, -0.25, 0.15 }, Waist = { 4, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 80, 0, 75 }, RE = { 10, 0, 0 }, LS = { 80, 0, -75 }, LE = { 10, 0, 0 } },
 			strike = { Root = { -8, -15, 0, 0, -0.4, -0.25 }, Waist = { -14, -8, 0 }, Neck = { -14, 12, 0 }, RS = { 88, 0, -60 }, RE = { 70, 0, 0 }, LS = { 88, 0, 60 }, LE = { 70, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.25 } },
 			follow = { Root = { -6, -20, 0, 0, -0.42, -0.25 }, Waist = { -13, -12, 0 }, Neck = { -15, 18, 0 }, RS = { 86, 0, -58 }, RE = { 72, 0, 0 }, LS = { 86, 0, 58 }, LE = { 72, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.25 } },
-			trail = "bothHands", fx = { { "particles", tex = "smoke", color = FEATHER, dir = "front", at = "root", time = 0.4, speed = 8 } }, text = "PAS TOUCHE !", hitText = "FROUCH !",
+			trail = "bothHands", fx = { { "particles", tex = "smoke", color = FEATHER, dir = "front", at = "root", time = 0.4, speed = 16, rate = 90 }, { "beam", color = FEATHER, length = 15, width = 3, at = "front" } }, text = "PAS TOUCHE !", hitText = "FROUCH !",
 		},
-		-- Appel de la nuée (S maintenu) : deux doigts à la bouche, il siffle ; trois pigeons rappliquent à toute vitesse et
-		-- percutent ce qui se trouve devant lui avant de se poser (recharge 3 pigeons)
+		-- Appel de la nuée (S maintenu) : deux doigts à la bouche, il siffle ; trois pigeons rappliquent à toute vitesse et percutent
+		-- tout le couloir avant de se poser sur lui (recharge 3 pigeons)
 		S_hold = {
-			label = "Appel de la nuée", energyCost = 15, startup = 0.25, active = 0.2, recovery = 0.5,
-			damage = 9, hitbox = box(6.5, 4.5, 3.5, 1), kbBase = 30, kbGrowth = 55, kbAngle = 40,
+			label = "Appel de la nuée", startup = 0.3, active = 0.2, recovery = 0.6,
+			damage = 13, hitbox = box(14, 6, 7, 1), kbBase = 30, kbGrowth = 55, kbAngle = 40,
 			selfEffect = { meter = 3 },
 			windup = { Root = { 2, 0, 0, 0, -0.15, 0.1 }, Waist = { 6, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 30, 0, 20 }, RE = { 50, 0, 0 }, LS = { 110, 0, 15 }, LE = { 130, 0, 0 } },
 			strike = { Root = { -8, 10, 0, 0, -0.3, -0.3 }, Waist = { -10, 12, 0 }, Neck = { 6, -8, 0 }, RS = { 96, 0, 8 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -50 }, LE = { 60, 0, 0 }, LW = { 0, 0, -30 }, FL = { 0, 0, 0, 0, 0, -0.35 } },
 			follow = { Root = { 4, 0, 0, 0, 0.05, 0 }, Waist = { 16, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 170, 0, 30 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -40 }, LE = { 80, 0, 0 } },
 			hold = 0.2, trail = "prop", windupFx = { { "text", text = "FUUUIIIT !", color = WHITE, at = "head" } },
-			fx = { { "swarm", shape = "ball", color = FEATHER, count = 3, distance = 16, size = 0.8, time = 0.4, height = 2.5, spreadY = 2 }, { "symbols", symbols = { "🐦", "🕊️" }, count = 5, radius = 4, at = "above" }, { "ring", color = FEATHER, radius = 5, at = "front" } },
+			fx = { { "swarm", shape = "ball", color = FEATHER, count = 3, distance = 18, size = 0.9, time = 0.4, height = 2.5, spreadY = 2 }, { "symbols", symbols = { "🐦", "🕊️" }, count = 5, radius = 4, at = "above" }, { "beam", color = FEATHER, length = 16, width = 3, at = "front" } },
 			text = "ROUCOUUUU !", hitText = "RETOUR DE NUÉE !",
 		},
-		-- Dash de plumes (→→S) : drapé dans sa cape, il file au ras du sol dans un nuage de plumes
+		-- Dash de plumes (→→L) : drapé dans sa cape, il file au ras du sol tout le long du couloir dans un nuage de plumes
 		S_dash = {
-			label = "Dash de plumes", energyCost = 20, startup = 0.05, active = 0.25, recovery = 0.3,
-			damage = 8, hitbox = box(5, 4, 2, 0.5), kbBase = 28, kbGrowth = 50, kbAngle = 30, selfVelocity = Vector2.new(70, 0), invuln = 0.2,
+			label = "Dash de plumes", startup = 0.15, active = 0.25, recovery = 0.5,
+			damage = 13, hitbox = box(14, 6, 7, 0.5), kbBase = 28, kbGrowth = 50, kbAngle = 30, selfVelocity = Vector2.new(70, 0), invuln = 0.2,
 			windup = { Root = { -10, 0, 0, 0, -0.4, 0 }, Waist = { -10, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 60, 0, -30 }, RE = { 90, 0, 0 }, LS = { 60, 0, 30 }, LE = { 90, 0, 0 } },
 			strike = { Root = { -35, 0, 0, 0, -0.6, -0.3 }, Waist = { -10, 0, 0 }, Neck = { 25, 0, 0 }, RS = { -40, 0, 60 }, RE = { 10, 0, 0 }, LS = { -40, 0, -60 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 }, FR = { 0, 0, 0, 0, 0, 0.4 } },
 			follow = { Root = { -32, 0, 0, 0, -0.58, -0.3 }, Waist = { -9, 0, 0 }, Neck = { 24, 0, 0 }, RS = { -45, 0, 65 }, RE = { 10, 0, 0 }, LS = { -45, 0, -65 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 }, FR = { 0, 0, 0, 0, 0, 0.45 } },
-			trail = "body", fx = { { "particles", tex = "smoke", color = FEATHER, dir = "all", at = "root", time = 0.3, speed = 8 } }, hitText = "FRRRT !",
+			trail = "body", fx = { { "particles", tex = "smoke", color = FEATHER, dir = "all", at = "root", time = 0.3, speed = 8 }, { "swarm", shape = "ball", color = FEATHER, count = 4, distance = 14, size = 0.6, time = 0.3, height = 1, spreadY = 1.5 } }, text = "FRRRT !", hitText = "FRRRT !",
 		},
-		-- Escadrille (S en l'air) : il lance trois pigeons en éventail vers le bas, ils corrigent un peu leur vol
+		-- Escadrille (L en l'air) : il lance trois pigeons en éventail, ils convergent sur l'adversaire et lui tombent dessus en rafale
 		S_air = {
-			label = "Escadrille", kind = "projectile", energyCost = 20, meterCost = 2, startup = 0.15, active = 0, recovery = 0.3,
-			damage = 6, kbBase = 22, kbGrowth = 40, kbAngle = 30,
-			projectile = { speed = 40, gravity = 0, lifetime = 1.0, size = 1.5, color = FEATHER, visual = PIGEON_VISUAL, homing = 0.15, fan = { count = 3, from = -45, to = -5 } },
+			label = "Escadrille", kind = "projectile", startup = 0.2, active = 0, recovery = 0.45,
+			damage = 12, kbBase = 22, kbGrowth = 40, kbAngle = 30,
+			projectile = { speed = 50, gravity = 0, lifetime = 1.0, size = 1.6, color = FEATHER, visual = PIGEON_VISUAL, homing = 0.15, fan = { count = 3, from = -45, to = -5 } },
 			windup = { Root = { -8, 10, 0 }, Waist = { -10, 12, 0 }, Neck = { 6, 0, 0 }, RS = { 60, 0, 50 }, RE = { 40, 0, 0 }, LS = { 30, 0, 20 }, LE = { 120, 0, 0 }, RH = { 70, 0, 0 }, RK = { -110, 0, 0 }, LH = { 60, 0, 0 }, LK = { -100, 0, 0 } },
 			strike = { Root = { 10, -10, 0 }, Waist = { 8, -12, 0 }, Neck = { -10, 0, 0 }, RS = { 80, 0, 40 }, RE = { 10, 0, 0 }, LS = { 70, 0, -30 }, LE = { 5, 0, 0 }, LW = { -20, 0, 0 }, RH = { 40, 0, 0 }, RK = { -80, 0, 0 }, LH = { 30, 0, 0 }, LK = { -70, 0, 0 } },
 			follow = { Root = { 12, -12, 0 }, Waist = { 10, -14, 0 }, Neck = { -12, 0, 0 }, RS = { 75, 0, 44 }, RE = { 10, 0, 0 }, LS = { 60, 0, -34 }, LE = { 5, 0, 0 }, LW = { -25, 0, 0 }, RH = { 35, 0, 0 }, RK = { -75, 0, 0 }, LH = { 25, 0, 0 }, LK = { -65, 0, 0 } },
-			prop = "pigeon", text = "ESCADRILLE !", hitText = "ROUCOUPAF !",
+			prop = "pigeon", fx = { { "symbols", symbols = { "🐦" }, count = 3, radius = 2, at = "lhand" } }, text = "ESCADRILLE !", hitText = "ROUCOUPAF !",
 		},
 
 		-- Coup de bec royal (P P puis →P) : il tend le cou comme un pigeon et donne trois coups de bec secs du bout du nez
@@ -494,7 +496,7 @@ local data = {
 		------------------------------------------------------------------ Finitions avec S (dans un enchaînement)
 		-- Nuée vorace : baguette levée comme un chef d'orchestre, il lâche la nuée qui picore quatre fois
 		S_finish_peck = {
-			label = "Nuée vorace", energyCost = 20, meterCost = 1, startup = 0.12, active = 0.3, recovery = 0.3,
+			label = "Nuée vorace", startup = 0.12, active = 0.3, recovery = 0.3,
 			damage = 3, hits = 4, hitbox = box(6, 5, 3, 1), kbBase = 36, kbGrowth = 85, kbAngle = 45,
 			windup = { Root = { 6, 10, 0, 0, -0.1, 0.1 }, Waist = { 10, 10, 0 }, Neck = { 14, 0, 0 }, RS = { 150, 0, 40 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -50 }, LE = { 70, 0, 0 } },
 			strike = { Root = { -6, -10, 0, 0, -0.2, -0.2 }, Waist = { -6, -12, 0 }, Neck = { 6, 0, 0 }, RS = { 100, 0, 15 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 95, 0, -10 }, LE = { 10, 0, 0 }, LW = { 0, 0, -30 } },
@@ -504,7 +506,7 @@ local data = {
 		},
 		-- Baguette volante : lancer de côté façon frisbee, la baguette tournoie et revient dans sa main
 		S_finish_bread = {
-			label = "Baguette volante", kind = "projectile", energyCost = 20, startup = 0.12, active = 0, recovery = 0.3,
+			label = "Baguette volante", kind = "projectile", startup = 0.12, active = 0, recovery = 0.3,
 			damage = 8, kbBase = 34, kbGrowth = 80, kbAngle = 40,
 			projectile = { speed = 55, angle = 0, gravity = 0, lifetime = 0.9, size = 1.6, color = BREAD, returns = true,
 				visual = { shape = "cyl", size = 3.0, color = BREAD, material = "Sand", spin = 18 } },
@@ -515,11 +517,12 @@ local data = {
 		},
 
 		------------------------------------------------------------------ Supers
-		-- La Grande Volée : drapé dans sa cape, il l'ouvre d'un coup et pointe la baguette ; cent pigeons traversent l'écran
+		-- La Grande Volée (Y) : drapé dans sa cape, il l'ouvre d'un coup et pointe la baguette ; huit vagues de pigeons convergent sur
+		-- l'adversaire et le traversent en rafale
 		SUPER = {
-			label = "La Grande Volée !", kind = "projectile", superCost = 100, startup = 0.35, active = 0, recovery = 0.5,
+			label = "La Grande Volée !", kind = "projectile", startup = 0.4, active = 0, recovery = 0.7,
 			damage = 3, kbBase = 20, kbGrowth = 30, kbAngle = 30,
-			projectile = { speed = 65, gravity = 0, lifetime = 1.4, size = 1.8, color = FEATHER, visual = PIGEON_VISUAL, pierce = true, fan = { count = 10, from = -8, to = 30, gap = 0.05 } },
+			projectile = { speed = 70, gravity = 0, lifetime = 1.4, size = 2, color = FEATHER, visual = PIGEON_VISUAL, pierce = true, fan = { count = 8, from = -8, to = 30, gap = 0.05 } },
 			windup = { Root = { -6, 0, 0, 0, -0.7, 0.15 }, Waist = { -20, 0, 0 }, Neck = { -12, 0, 0 }, RS = { 70, 0, -45 }, RE = { 90, 0, 0 }, LS = { 70, 0, 45 }, LE = { 90, 0, 0 } },
 			strike = { Root = { 4, 0, 0, 0, 0.1, -0.1 }, Waist = { 16, 0, 0 }, Neck = { 22, 0, 0 }, RS = { 100, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 160, 0, -60 }, LE = { 10, 0, 0 }, LW = { 0, 0, -30 } },
 			follow = { Root = { 6, 0, 0, 0, 0.1, -0.12 }, Waist = { 18, 0, 0 }, Neck = { 25, 0, 0 }, RS = { 104, 0, 12 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 168, 0, -66 }, LE = { 10, 0, 0 }, LW = { 0, 0, -30 } },
@@ -527,29 +530,29 @@ local data = {
 			fx = { { "screen", color = FEATHER, alpha = 0.25 }, { "shake", amount = 0.6 }, { "swarm", shape = "ball", color = FEATHER, count = 12, distance = 30, size = 1, time = 0.8, height = 2, spreadY = 4 } },
 			text = "LA GRANDE VOLÉE !", hitText = "ROUCOUROUCOU !",
 		},
-		-- Super ↑ : il se drape dans sa cape, tape du soulier… et la nuée entière décolle avec lui en tornade de plumes : bras en
-		-- croix, il tourne comme une toupie en montant, perruque au vent, et emporte tout ce qui vole au-dessus
+		-- Super ↑ : il se drape dans sa cape, tape du soulier… et la nuée entière décolle avec lui en tornade de plumes qui traverse le couloir
+		-- en diagonale : bras en croix, il tourne comme une toupie, perruque au vent, et emporte tout ce qu'il croise
 		SUPER_up = {
-			label = "Tornade roucoulante !", superCost = 100, startup = 0.35, active = 0.4, recovery = 0.6,
-			damage = 22, hitbox = box(9, 14, 0.5, 6), kbBase = 45, kbGrowth = 95, kbAngle = 88, invuln = 0.3,
+			label = "Tornade roucoulante !", startup = 0.4, active = 0.4, recovery = 0.8,
+			damage = 24, hitbox = box(14, 10, 7, 3), kbBase = 45, kbGrowth = 95, kbAngle = 85, invuln = 0.3, selfVelocity = Vector2.new(50, 70),
 			windup = { Root = { -8, 0, 0, 0, -0.6, 0.1 }, Waist = { -16, 0, 0 }, Neck = { -14, 0, 0 }, RS = { 70, 0, -50 }, RE = { 100, 0, 0 }, LS = { 70, 0, 50 }, LE = { 100, 0, 0 }, FR = { 0, 0, 0, 0, 0.3, 0 } },
-			strike = { Root = { 6, 0, 0, 0, 0.5, 0 }, Waist = { 8, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 90, 0, 95 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, -95 }, LE = { 0, 0, 0 }, LW = { 0, 0, -30 }, RH = { 20, 0, 10 }, RK = { -60, 0, 0 }, RA = { -30, 0, 0 }, LH = { 20, 0, -10 }, LK = { -60, 0, 0 }, LA = { -30, 0, 0 } },
-			follow = { Root = { 8, 0, 0, 0, 0.6, 0 }, Waist = { 10, 0, 0 }, Neck = { 34, 0, 0 }, RS = { 95, 0, 98 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 95, 0, -98 }, LE = { 0, 0, 0 }, LW = { 0, 0, -30 }, RH = { 25, 0, 12 }, RK = { -65, 0, 0 }, RA = { -30, 0, 0 }, LH = { 25, 0, -12 }, LK = { -65, 0, 0 }, LA = { -30, 0, 0 } },
-			spin = { axis = "y", degrees = 1080 }, selfVelocity = Vector2.new(0, 70), status = { name = "blinded", duration = 1.5 },
+			strike = { Root = { -40, 0, 0, 0, 0.5, 0 }, Waist = { 8, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 90, 0, 95 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, -95 }, LE = { 0, 0, 0 }, LW = { 0, 0, -30 }, RH = { -20, 0, 10 }, RK = { -40, 0, 0 }, RA = { -30, 0, 0 }, LH = { -30, 0, -10 }, LK = { -50, 0, 0 }, LA = { -30, 0, 0 } },
+			follow = { Root = { -45, 0, 0, 0, 0.6, 0 }, Waist = { 10, 0, 0 }, Neck = { 34, 0, 0 }, RS = { 95, 0, 98 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 95, 0, -98 }, LE = { 0, 0, 0 }, LW = { 0, 0, -30 }, RH = { -25, 0, 12 }, RK = { -45, 0, 0 }, RA = { -30, 0, 0 }, LH = { -35, 0, -12 }, LK = { -55, 0, 0 }, LA = { -30, 0, 0 } },
+			spin = { axis = "y", degrees = 1080 }, status = { name = "blinded", duration = 1.5 },
 			windupFx = { "super", { "symbols", symbols = { "🐦", "🕊️" }, count = 6, radius = 4, at = "above" } }, trail = "body",
-			fx = { { "pillar", color = FEATHER, height = 22, width = 7, at = "root" }, { "swarm", shape = "ball", color = FEATHER, count = 14, distance = 10, size = 0.9, time = 0.8, height = 8, spreadY = 8 }, { "particles", tex = "smoke", color = FEATHER, dir = "all", at = "root", time = 0.6, speed = 14, rate = 110 }, { "shake", amount = 0.5 } },
+			fx = { { "pillar", color = FEATHER, height = 18, width = 7, at = "root" }, { "swarm", shape = "ball", color = FEATHER, count = 14, distance = 16, size = 0.9, time = 0.8, height = 6, spreadY = 8 }, { "particles", tex = "smoke", color = FEATHER, dir = "all", at = "root", time = 0.6, speed = 14, rate = 110 }, { "shake", amount = 0.5 } },
 			text = "TORNADE ROUCOULANTE !", hitText = "ROUCOULÉ AU CIEL !",
 		},
-		-- La Statue : il cadre l'adversaire entre ses mains, puis le fige d'un coup de baguette ; les pigeons s'y posent
+		-- La Statue (↓Y) : il cadre l'arène entre ses mains, puis fige tout le monde d'un coup de baguette ; les pigeons se posent sur les statues
 		SUPER_down = {
-			label = "La Statue !", superCost = 100, startup = 0.4, active = 0.2, recovery = 0.6,
-			damage = 10, hitbox = box(40, 20, 8, 4), kbBase = 10, kbGrowth = 10, kbAngle = 60,
+			label = "La Statue !", startup = 0.4, active = 0.2, recovery = 0.8,
+			damage = 22, hitbox = box(40, 20, 8, 4), kbBase = 10, kbGrowth = 10, kbAngle = 60,
 			status = { name = "statue", duration = 2 },
 			windup = { Root = { 2, 0, 0, 0, -0.15, 0.1 }, Waist = { 6, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 95, 0, -30 }, RE = { 60, 0, 0 }, LS = { 95, 0, 30 }, LE = { 60, 0, 0 } },
 			strike = { Root = { 6, 10, 0, 0, -0.05, -0.1 }, Waist = { 14, 10, 0 }, Neck = { 24, -10, 0 }, RS = { 125, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -10, 0, -40 }, LE = { 100, 0, 0 } },
 			follow = { Root = { 7, 12, 0, 0, -0.05, -0.1 }, Waist = { 16, 12, 0 }, Neck = { 28, -10, 0 }, RS = { 128, 0, 12 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -12, 0, -42 }, LE = { 102, 0, 0 } },
 			hold = 0.5, windupFx = { "super" },
-			fx = { { "screen", color = MARBLE, alpha = 0.3 }, { "symbols", symbols = { "🐦", "🕊️", "🗿" }, count = 8, radius = 6, at = "front" } },
+			fx = { { "screen", color = MARBLE, alpha = 0.3 }, { "beam", color = MARBLE, length = 18, width = 2, at = "hand" }, { "symbols", symbols = { "🐦", "🕊️", "🗿" }, count = 8, radius = 6, at = "front" } },
 			text = "NE BOUGEZ PLUS !", hitText = "STATUE !",
 		},
 
@@ -680,7 +683,7 @@ local data = {
 		},
 	},
 
-	-- Mécanique : la Nuée (6 pigeons au plus, un pigeon revient toutes les 2 s) ; ses envois coûtent meterCost
+	-- Mécanique : la Nuée (6 pigeons au plus, un pigeon revient toutes les 2 s) ; plus de coût : les signatures sont sans limite
 	passive = { kind = "flock", name = "Nuée", icon = "🐦", max = 6, regen = 0.5, start = 6, color = FEATHER },
 
 	-- Recharge ⚡ : accroupi, il jette des miettes et picore avec ses pigeons, puis se relève et lisse sa cape en roucoulant

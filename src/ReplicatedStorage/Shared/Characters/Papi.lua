@@ -327,24 +327,24 @@ local data = {
 		},
 
 		------------------------------------------------------------------ Spéciaux (S)
-		-- Vinyle-boomerang : lancer en revers comme un frisbee, le disque fait l'aller-retour
+		-- Vinyle-boomerang (L) : lancer en revers comme un frisbee, le disque fonce sur l'adversaire, le tranche et revient dans sa main
 		S_neutral = {
-			label = "Vinyle-boomerang", kind = "projectile", energyCost = 20, startup = 0.15, active = 0, recovery = 0.3,
-			damage = 8, kbBase = 22, kbGrowth = 40, kbAngle = 30,
-			projectile = { speed = 60, angle = 0, gravity = 0, lifetime = 1.0, size = 1.8, color = BLACK, returns = true, visual = VINYL },
+			label = "Vinyle-boomerang", kind = "projectile", startup = 0.2, active = 0, recovery = 0.45,
+			damage = 13, kbBase = 24, kbGrowth = 45, kbAngle = 30,
+			projectile = { speed = 65, angle = 0, gravity = 0, lifetime = 1.0, size = 2, color = BLACK, returns = true, visual = VINYL },
 			windup = { Root = { 0, 30, 0, 0, -0.25, 0.1 }, Waist = { -6, 35, 0 }, Neck = { 0, -25, 0 }, RS = { 85, 0, -50 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { -40, 0, -20 }, LE = { 100, 0, 0 } },
 			strike = { Root = { -6, -15, 0, 0, -0.3, -0.25 }, Waist = { -10, -25, 0 }, Neck = { 0, 10, 0 }, RS = { 92, 0, 40 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -40, 0, -20 }, LE = { 100, 0, 0 } },
 			follow = { Root = { -7, -18, 0, 0, -0.3, -0.28 }, Waist = { -11, -28, 0 }, Neck = { 0, 12, 0 }, RS = { 88, 0, 55 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { -42, 0, -20 }, LE = { 100, 0, 0 } },
-			hideProp = "vinyles", text = "ALLER-RETOUR !", hitText = "TCHAK !",
+			hideProp = "vinyles", fx = { { "symbols", symbols = { "♪", "💿" }, color = PINK, count = 3, radius = 2, at = "hand" } }, text = "ALLER-RETOUR !", hitText = "TCHAK !",
 		},
-		-- Drop des basses : il lève le poing et l'abat sur un bouton imaginaire, une onde part à l'horizontale
+		-- Drop des basses (→L) : il lève le poing et l'abat sur un bouton imaginaire, l'onde de basse file droit sur l'adversaire
 		-- et la Playlist passe au morceau suivant
 		S_side = {
-			label = "Drop des basses", kind = "projectile", energyCost = 25, startup = 0.2, active = 0, recovery = 0.35,
-			damage = 9, kbBase = 35, kbGrowth = 60, kbAngle = 15,
+			label = "Drop des basses", kind = "projectile", startup = 0.22, active = 0, recovery = 0.5,
+			damage = 14, kbBase = 35, kbGrowth = 60, kbAngle = 15,
 			selfEffect = { nextTrack = true },
-			projectile = { speed = 60, angle = 0, gravity = 0, lifetime = 0.45, size = 4, color = PINK, pierce = true,
-				visual = { shape = "block", size = 3, color = PINK, neon = true, transparency = 0.45 } },
+			projectile = { speed = 70, angle = 0, gravity = 0, lifetime = 0.5, size = 4.5, color = PINK, pierce = true,
+				visual = { shape = "block", size = 3.5, color = PINK, neon = true, transparency = 0.45 } },
 			windup = { Root = { 6, 0, 0, 0, -0.05, 0.1 }, Waist = { 10, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 175, 0, 15 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { -40, 0, -20 }, LE = { 100, 0, 0 } },
 			strike = { Root = { -10, 0, 0, 0, -0.45, -0.15 }, Waist = { -20, 0, 0 }, Neck = { -15, 0, 0 }, RS = { 60, 0, 5 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { -40, 0, -20 }, LE = { 100, 0, 0 } },
 			follow = { Root = { -12, 0, 0, 0, -0.5, -0.18 }, Waist = { -24, 0, 0 }, Neck = { -18, 0, 0 }, RS = { 55, 0, 5 }, RE = { 35, 0, 0 }, RW = { 0, 0, 0 }, LS = { -42, 0, -20 }, LE = { 100, 0, 0 } },
@@ -353,78 +353,81 @@ local data = {
 			fx = { { "ring", color = PINK, radius = 6, at = "front" }, { "symbols", symbols = { "♪", "♫", "🔊" }, color = PINK, count = 4, radius = 3 }, { "shake", amount = 0.3 } },
 			text = "DROP !", hitText = "BWOOOM !",
 		},
-		-- Mur d'enceintes : il tape du pied et lève les bras, deux baffles jaillissent du sol en pleine face de l'adversaire et bloquent les tirs
+		-- Mur d'enceintes (↓L) : il tape du pied et lève les bras : deux baffles jaillissent du sol, l'onde de basse balaie tout le couloir
+		-- et le mur bloque ensuite les tirs
 		S_down = {
-			label = "Mur d'enceintes", kind = "wall", energyCost = 25, startup = 0.2, active = 0.1, recovery = 0.35,
-			hitbox = box(5.5, 6, 3.5, 2), kbBase = 30, kbGrowth = 45, kbAngle = 70,
-			damage = 7,
+			label = "Mur d'enceintes", kind = "wall", startup = 0.25, active = 0.12, recovery = 0.5,
+			hitbox = box(14, 6, 7, 1), kbBase = 30, kbGrowth = 50, kbAngle = 60,
+			damage = 12,
 			wall = { size = Vector3.new(2.6, 6, 6), offset = 3.5, lifetime = 5, max = 2, visual = SPEAKERS, color = BLACK },
 			windup = { Root = { -6, 0, 0, 0, -0.45, 0 }, Waist = { -20, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 30, 0, 20 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -20 }, LE = { 60, 0, 0 } },
 			strike = { Root = { 4, 0, 0, 0, -0.05, -0.1 }, Waist = { 10, 0, 0 }, Neck = { 15, 0, 0 }, RS = { 160, 0, 30 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 160, 0, -30 }, LE = { 10, 0, 0 }, FR = { 0, 0, 0, 0, 0, -0.5 } },
 			follow = { Root = { 5, 0, 0, 0, -0.05, 0 }, Waist = { 12, 0, 0 }, Neck = { 18, 0, 0 }, RS = { 165, 0, 32 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 165, 0, -32 }, LE = { 10, 0, 0 } },
-			fx = { { "burst", color = PINK, size = 3, at = "front" }, { "shake", amount = 0.2 } },
+			fx = { { "burst", color = PINK, size = 3, at = "front" }, { "beam", color = PINK, length = 16, width = 3, at = "front" }, { "symbols", symbols = { "♪", "🔊" }, color = PINK, count = 4, radius = 3, at = "front" }, { "shake", amount = 0.3 } },
 			text = "MUR DE SON !", hitText = "BAFFLE DANS LE NEZ !",
 		},
-		-- Slam (remontée gratuite) : il se jette en arrière dans une foule imaginaire, bras écartés
+		-- Stage diving (↑L, remontée) : il se jette en diagonale dans une foule imaginaire, bras en croix, casque au vent, charentaises
+		-- derrière : la foule le porte vers le haut et il emporte tout ce qu'il croise au passage
 		S_up = {
-			label = "Slam", energyCost = 0, startup = 0.06, active = 0.3, recovery = 0.3,
-			damage = 7, hitbox = box(5, 7, 0.5, 2), kbBase = 30, kbGrowth = 40, kbAngle = 80, selfVelocity = Vector2.new(10, 85),
-			windup = { Root = { -6, 0, 0, 0, -0.7, 0 }, Waist = { -15, 0, 0 }, RS = { -30, 0, 30 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { -30, 0, -30 }, LE = { 20, 0, 0 } },
-			strike = { Root = { 30, 0, 0, 0, 0.3, 0 }, Waist = { 15, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 170, 0, 60 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 170, 0, -60 }, LE = { 0, 0, 0 }, RH = { 20, 0, 0 }, RK = { -40, 0, 0 }, LH = { 10, 0, 0 }, LK = { -60, 0, 0 } },
-			follow = { Root = { 38, 0, 0, 0, 0.35, 0 }, Waist = { 18, 0, 0 }, Neck = { 34, 0, 0 }, RS = { 175, 0, 65 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 175, 0, -65 }, LE = { 0, 0, 0 }, RH = { 25, 0, 0 }, RK = { -45, 0, 0 }, LH = { 15, 0, 0 }, LK = { -65, 0, 0 } },
-			fx = { { "symbols", symbols = { "🙌", "♪" }, color = GOLD, count = 4, radius = 3 } }, text = "SLAAAM !", hitText = "YEAH !",
+			label = "Stage diving", startup = 0.15, active = 0.3, recovery = 0.45,
+			damage = 13, hitbox = box(10, 11, 3, 4), kbBase = 32, kbGrowth = 45, kbAngle = 80, selfVelocity = Vector2.new(42, 80),
+			windup = { Root = { 6, 0, 0, 0, -0.7, 0.1 }, Waist = { -16, 0, 0 }, Neck = { 10, 0, 0 }, RS = { -35, 0, 35 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { -40, 0, -20 }, LE = { 100, 0, 0 } },
+			strike = { Root = { -48, 0, 0, 0, 0.3, 0 }, Waist = { 6, 0, 0 }, Neck = { 32, 0, 0 }, RS = { 150, 0, 70 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, -70 }, LE = { 0, 0, 0 }, RH = { -25, 0, 8 }, RK = { -35, 0, 0 }, RA = { -30, 0, 0 }, LH = { -35, 0, -8 }, LK = { -50, 0, 0 }, LA = { -30, 0, 0 } },
+			follow = { Root = { -52, 0, 0, 0, 0.35, 0 }, Waist = { 8, 0, 0 }, Neck = { 36, 0, 0 }, RS = { 155, 0, 75 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 155, 0, -75 }, LE = { 0, 0, 0 }, RH = { -30, 0, 10 }, RK = { -45, 0, 0 }, RA = { -30, 0, 0 }, LH = { -40, 0, -10 }, LK = { -60, 0, 0 }, LA = { -30, 0, 0 } },
+			trail = "body", fx = { { "burst", color = GOLD, size = 3, at = "feet" }, { "symbols", symbols = { "🙌", "🙌", "♪" }, color = GOLD, count = 6, radius = 3, at = "feet" }, { "particles", tex = "spark", color = PINK, dir = "down", at = "feet", time = 0.4, speed = 12, rate = 90 } },
+			text = "STAGE DIVING !", hitText = "PORTÉ PAR LA FOULE !",
 		},
-		-- Rewind Drop (↓S en l'air) : il pique droit vers le sol, vinyle brandi (le retour à sa hauteur est approché)
+		-- Rewind Drop (↓L en l'air) : il pique droit vers le sol, vinyle brandi, et l'impact fait sauter tout ce qui est en dessous
 		S_air_down = {
-			label = "Rewind Drop", energyCost = 25, startup = 0.12, active = 0.4, recovery = 0.35,
-			damage = 12, hitbox = box(4.5, 4, 0.5, -2.5), kbBase = 28, kbGrowth = 65, kbAngle = -78, selfVelocity = Vector2.new(0, -105),
+			label = "Rewind Drop", startup = 0.16, active = 0.4, recovery = 0.5,
+			damage = 14, hitbox = box(8, 5, 0, -2), kbBase = 28, kbGrowth = 65, kbAngle = -78, selfVelocity = Vector2.new(0, -105),
 			windup = { Root = { 10, 0, 0 }, Waist = { 10, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 170, 0, 20 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { -40, 0, -20 }, LE = { 100, 0, 0 }, RH = { 70, 0, 0 }, RK = { -100, 0, 0 }, LH = { 70, 0, 0 }, LK = { -100, 0, 0 } },
 			strike = { Root = { 0, 0, 0 }, Waist = { -10, 0, 0 }, Neck = { -15, 0, 0 }, RS = { 160, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -40, 0, -20 }, LE = { 100, 0, 0 }, RH = { 0, 0, 3 }, RK = { -10, 0, 0 }, RA = { -20, 0, 0 }, LH = { 0, 0, -3 }, LK = { -10, 0, 0 }, LA = { -20, 0, 0 } },
 			follow = { Root = { 0, 0, 0 }, Waist = { -12, 0, 0 }, Neck = { -18, 0, 0 }, RS = { 162, 0, 12 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -42, 0, -20 }, LE = { 100, 0, 0 }, RH = { 0, 0, 4 }, RK = { -10, 0, 0 }, RA = { -20, 0, 0 }, LH = { 0, 0, -4 }, LK = { -10, 0, 0 }, LA = { -20, 0, 0 } },
-			trail = "body", fx = { { "burst", color = BLUE, size = 3, at = "feet" }, { "symbols", symbols = { "⏪" }, color = BLUE, count = 2, radius = 2 } },
+			trail = "body", fx = { { "burst", color = BLUE, size = 3.5, at = "feet" }, { "ring", color = BLUE, radius = 6, at = "feet" }, { "symbols", symbols = { "⏪" }, color = BLUE, count = 2, radius = 2 } },
 			text = "REWIND DROP !", hitText = "BADABOUM !",
 		},
-		-- Rewind (ESQUIVE puis S) : il fouette l'adversaire avec le câble jack, puis tourne les bras comme une bande qu'on
+		-- Rewind (ESQUIVE puis L) : il fouette tout le couloir avec le câble jack, puis tourne les bras comme une bande qu'on
 		-- rembobine et revient 12 studs en arrière (invulnérable)
 		S_dodge = {
-			label = "Rewind", energyCost = 20, startup = 0.1, active = 0.1, recovery = 0.25,
-			damage = 9, hitbox = box(6.5, 3.5, 3.5, 0.6), kbBase = 30, kbGrowth = 55, kbAngle = 35, teleport = -12, invuln = 0.3,
+			label = "Rewind", startup = 0.15, active = 0.12, recovery = 0.45,
+			damage = 12, hitbox = box(14, 5, 7, 0.6), kbBase = 30, kbGrowth = 55, kbAngle = 35, teleport = -12, invuln = 0.3,
 			windup = { Root = { 4, -30, 0, 0, -0.25, 0.15 }, Waist = { 0, -35, 0 }, Neck = { 6, 25, 0 }, RS = { 130, 0, 45 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { -40, 0, -20 }, LE = { 100, 0, 0 } },
 			strike = { Root = { -10, 25, 0, 0, -0.35, -0.35 }, Waist = { -12, 30, 0 }, Neck = { 0, -15, 0 }, RS = { 92, 0, -10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -40, 0, -20 }, LE = { 100, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
 			follow = { Root = { 10, 0, 0, 0, -0.15, 0.3 }, Waist = { 8, 0, 0 }, Neck = { 15, 0, 0 }, RS = { 120, 0, 30 }, RE = { 80, 0, 0 }, RW = { 0, 0, 0 }, LS = { 120, 0, -30 }, LE = { 80, 0, 0 } },
 			spin = { axis = "y", degrees = -360 }, prop = "jack", hideProp = "vinyles", trail = "prop",
 			windupFx = { { "symbols", symbols = { "⏪", "⏪" }, color = BLUE, count = 3, radius = 2 } },
-			fx = { { "ring", color = BLUE, radius = 3, at = "root" } }, text = "REWIND !", hitText = "CLAC ! REMBOBINÉ !",
+			fx = { { "beam", color = BLACK, length = 15, width = 1.2, at = "hand" }, { "ring", color = BLUE, radius = 3, at = "root" } }, text = "REWIND !", hitText = "CLAC ! REMBOBINÉ !",
 		},
-		-- Changer de piste (S maintenu) : platine dans la main gauche, il scratche fort ; l'onde repousse autour de
-		-- lui et la Playlist passe au morceau suivant
+		-- Changer de piste (S maintenu) : platine dans la main gauche, il scratche comme un forcené ; l'onde repousse tout autour de lui,
+		-- des deux côtés, et la Playlist passe au morceau suivant
 		S_hold = {
-			label = "Changer de piste", energyCost = 25, startup = 0.25, active = 0.15, recovery = 0.4,
-			damage = 9, hitbox = box(10, 6, 0, 0.5), kbBase = 30, kbGrowth = 55, kbAngle = 50,
+			label = "Changer de piste", startup = 0.3, active = 0.15, recovery = 0.6,
+			damage = 14, hitbox = box(24, 7, 0, 1), kbBase = 30, kbGrowth = 55, kbAngle = 50,
 			selfEffect = { nextTrack = true },
 			windup = { Root = { 0, 0, 0, 0, -0.25, 0 }, Waist = { -10, 0, 0 }, Neck = { -15, -10, 0 }, RS = { 70, 0, -10 }, RE = { 80, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, 10 }, LE = { 40, 0, 0 }, LW = { 0, 0, 0 } },
 			strike = { Root = { 0, 0, -6, 0, -0.3, 0 }, Waist = { -12, 0, 6 }, Neck = { -20, 0, 10 }, RS = { 75, 0, -30 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, 10 }, LE = { 40, 0, 0 }, LW = { 0, 0, 0 } },
 			follow = { Root = { 0, 0, 6, 0, -0.3, 0 }, Waist = { -12, 0, -6 }, Neck = { -20, 0, -10 }, RS = { 75, 0, -5 }, RE = { 85, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, 10 }, LE = { 40, 0, 0 }, LW = { 0, 0, 0 } },
 			hold = 0.3, shake = true, wobble = true, prop = "platine",
-			fx = { { "ring", color = PINK, radius = 6, at = "root" }, { "symbols", symbols = { "♪", "♫", "⏭️" }, color = BLUE, count = 5, radius = 3 } },
+			fx = { { "ring", color = PINK, radius = 12, at = "root" }, { "pillar", color = BLUE, height = 8, width = 4, at = "root" }, { "symbols", symbols = { "♪", "♫", "⏭️" }, color = BLUE, count = 6, radius = 4 }, { "shake", amount = 0.3 } },
 			text = "CHANGEMENT DE PISTE !", hitText = "WIKI-WIKI !",
 		},
-		-- Pas de danse rétro (→→S) : twist endiablé lancé en avant, les hanches d'abord (2 touches)
+		-- Pas de danse rétro (→→L) : twist endiablé lancé en avant, les hanches d'abord, il traverse tout le couloir en dansant
 		S_dash = {
-			label = "Pas de danse rétro", energyCost = 25, startup = 0.05, active = 0.3, recovery = 0.3,
-			damage = 5, hits = 2, hitbox = box(5, 4, 2, 0.3), kbBase = 26, kbGrowth = 50, kbAngle = 35, selfVelocity = Vector2.new(60, 0), invuln = 0.15,
+			label = "Pas de danse rétro", startup = 0.15, active = 0.3, recovery = 0.5,
+			damage = 13, hitbox = box(14, 6, 7, 0.5), kbBase = 28, kbGrowth = 55, kbAngle = 35, selfVelocity = Vector2.new(60, 0), invuln = 0.15,
 			windup = { Root = { 0, -30, -8, 0, -0.3, 0 }, Waist = { 0, -20, 8 }, RS = { 60, 0, 60 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -60 }, LE = { 90, 0, 0 } },
 			strike = { Root = { -10, 30, 8, 0, -0.35, -0.3 }, Waist = { -6, 20, -8 }, Neck = { 10, -10, 0 }, RS = { 160, 0, 30 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -30, 0, -40 }, LE = { 30, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
 			follow = { Root = { -10, -20, -8, 0, -0.35, -0.35 }, Waist = { -6, -15, 8 }, Neck = { 10, 10, 0 }, RS = { 150, 0, 35 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -32, 0, -42 }, LE = { 30, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
-			wobble = true, trail = "prop", fx = { { "symbols", symbols = { "♪", "🕺" }, color = GOLD, count = 3, radius = 2 } },
+			wobble = true, trail = "prop", fx = { { "symbols", symbols = { "♪", "🕺" }, color = GOLD, count = 4, radius = 2.5 }, { "particles", tex = "spark", color = GOLD, dir = "front", at = "feet", time = 0.3, speed = 10, rate = 70 } },
 			text = "PAS DE DANSE RÉTRO", hitText = "TWIST !",
 		},
-		-- Pluie de vinyles (S en l'air) : il lance sa pile de disques en l'air, ils retombent sur la piste devant lui
+		-- Pluie de vinyles (L en l'air) : il lance sa pile de disques en l'air, ils retombent pile sur la tête de l'adversaire
 		S_air = {
-			label = "Pluie de vinyles", kind = "projectile", energyCost = 25, startup = 0.18, active = 0, recovery = 0.32,
-			damage = 5, kbBase = 20, kbGrowth = 35, kbAngle = 60,
-			projectile = { speed = 50, gravity = 30, lifetime = 0.8, size = 1.8, color = BLACK, visual = VINYL,
-				rain = { count = 5, spread = 7, ahead = 8, height = 18 } },
+			label = "Pluie de vinyles", kind = "projectile", startup = 0.2, active = 0, recovery = 0.45,
+			damage = 12, kbBase = 22, kbGrowth = 40, kbAngle = 60,
+			projectile = { speed = 55, gravity = 0, lifetime = 0.8, size = 2, color = BLACK, visual = VINYL,
+				rain = { count = 3, spread = 3, ahead = 8, height = 18 } },
 			windup = { Root = { -10, 0, 0 }, Waist = { -10, 0, 0 }, RS = { 40, 0, 20 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -20 }, LE = { 90, 0, 0 }, RH = { 60, 0, 0 }, RK = { -90, 0, 0 }, LH = { 50, 0, 0 }, LK = { -90, 0, 0 } },
 			strike = { Root = { 10, 0, 0 }, Waist = { 12, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 175, 0, 25 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 175, 0, -25 }, LE = { 0, 0, 0 }, RH = { 20, 0, 0 }, RK = { -40, 0, 0 }, LH = { 10, 0, 0 }, LK = { -50, 0, 0 } },
 			follow = { Root = { 12, 0, 0 }, Waist = { 14, 0, 0 }, Neck = { 34, 0, 0 }, RS = { 178, 0, 30 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 178, 0, -30 }, LE = { 0, 0, 0 }, RH = { 15, 0, 0 }, RK = { -40, 0, 0 }, LH = { 10, 0, 0 }, LK = { -50, 0, 0 } },
@@ -484,7 +487,7 @@ local data = {
 		},
 		-- Scratch infernal (finition S) : platine en main, il scratche comme un forcené, l'onde éjecte l'adversaire
 		S_finish_scratch = {
-			label = "Scratch infernal", energyCost = 20, startup = 0.12, active = 0.16, recovery = 0.34,
+			label = "Scratch infernal", startup = 0.12, active = 0.16, recovery = 0.34,
 			damage = 10, hitbox = box(6, 4, 3.5, 0.5), kbBase = 38, kbGrowth = 88, kbAngle = 35,
 			windup = { Root = { 0, -10, 0, 0, -0.25, 0.1 }, Waist = { -10, -10, 0 }, Neck = { -15, 0, 0 }, RS = { 70, 0, -10 }, RE = { 85, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, 10 }, LE = { 40, 0, 0 }, LW = { 0, 0, 0 } },
 			strike = { Root = { -6, 10, -6, 0, -0.3, -0.25 }, Waist = { -12, 10, 6 }, Neck = { -20, 0, 10 }, RS = { 78, 0, -35 }, RE = { 55, 0, 0 }, RW = { 0, 0, 0 }, LS = { 75, 0, 10 }, LE = { 30, 0, 0 }, LW = { 0, 0, 0 } },
@@ -495,7 +498,7 @@ local data = {
 		},
 		-- Tube de l'été (finition S) : il lance trois vinyles en éventail d'un grand geste de bras
 		S_finish_tube = {
-			label = "Tube de l'été", kind = "projectile", energyCost = 25, startup = 0.12, active = 0, recovery = 0.35,
+			label = "Tube de l'été", kind = "projectile", startup = 0.12, active = 0, recovery = 0.35,
 			damage = 6, kbBase = 32, kbGrowth = 80, kbAngle = 30,
 			projectile = { speed = 70, gravity = 0, lifetime = 0.5, size = 1.8, color = BLACK, visual = VINYL, fan = { count = 3, from = -5, to = 25 } },
 			windup = { Root = { 0, 30, 0, 0, -0.25, 0.1 }, Waist = { -6, 35, 0 }, Neck = { 0, -25, 0 }, RS = { 85, 0, -60 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { -40, 0, -20 }, LE = { 100, 0, 0 } },
@@ -505,24 +508,24 @@ local data = {
 		},
 
 		------------------------------------------------------------------ Supers
-		-- Le Drop ultime : penché sur la platine, doigt levé pendant la montée… puis il abat la main : tout explose
+		-- Le Drop ultime (Y) : penché sur la platine, doigt levé pendant la montée… puis il abat la main : tout explose des deux côtés
 		SUPER = {
-			label = "Le Drop ultime !", superCost = 100, startup = 0.55, active = 0.2, recovery = 0.5,
+			label = "Le Drop ultime !", startup = 0.45, active = 0.2, recovery = 0.8,
 			damage = 24, hitbox = box(26, 10, 4, 1), kbBase = 40, kbGrowth = 100, kbAngle = 40,
 			windup = { Root = { 0, 0, 0, 0, -0.2, 0 }, Waist = { -10, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 175, 0, 10 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, 10 }, LE = { 40, 0, 0 }, LW = { 0, 0, 0 } },
 			strike = { Root = { -10, 0, 0, 0, -0.6, -0.2 }, Waist = { -25, 0, 0 }, Neck = { -15, 0, 0 }, RS = { 70, 0, -10 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, 10 }, LE = { 40, 0, 0 }, LW = { 0, 0, 0 } },
 			follow = { Root = { 6, 0, 0, 0, -0.1, 0 }, Waist = { 15, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 170, 0, 35 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 170, 0, -35 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 } },
 			hold = 0.2, shake = true, prop = "platine",
 			windupFx = { { "screen", color = PINK, alpha = 0.2 }, { "text", text = "3… 2… 1…", color = PINK } },
-			fx = { { "ring", color = PINK, radius = 12, at = "root" }, { "pillar", color = BLUE, height = 14, width = 4, at = "front" }, { "symbols", symbols = { "♪", "♫", "🔊" }, color = GOLD, count = 8, radius = 6 }, { "shake", amount = 0.8 } },
+			fx = { { "ring", color = PINK, radius = 13, at = "root" }, { "pillar", color = BLUE, height = 14, width = 4, at = "front" }, { "symbols", symbols = { "♪", "♫", "🔊" }, color = GOLD, count = 8, radius = 6 }, { "shake", amount = 0.8 } },
 			text = "LE DROP ULTIME !", hitText = "BOUM BOUM BOUM !",
 		},
-		-- Super ↑ : il sort une boule à facettes géante, la soulève à bout de bras (aïe le dos) et la lance au plafond : elle monte en
-		-- tournoyant, emporte ce qui est au-dessus et force tout le monde à danser
+		-- Super ↑ : il sort une boule à facettes géante, la soulève à bout de bras (aïe le dos) et la lance : elle fonce sur l'adversaire
+		-- en tournoyant, l'emporte vers le plafond et force tout le monde à danser
 		SUPER_up = {
-			label = "Boule à facettes !", kind = "projectile", superCost = 100, startup = 0.35, active = 0, recovery = 0.6,
-			damage = 22, kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
-			projectile = { speed = 55, angle = 88, gravity = 30, lifetime = 1.4, size = 4.5, color = SILVER, from = "above", pierce = true,
+			label = "Boule à facettes !", kind = "projectile", startup = 0.4, active = 0, recovery = 0.8,
+			damage = 24, kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
+			projectile = { speed = 60, angle = 30, gravity = 0, lifetime = 1.2, size = 4.5, color = SILVER, from = "above", pierce = true,
 				visual = { shape = "ball", size = 4, color = SILVER, material = "Foil", spin = 10, parts = {
 					{ "block", Vector3.new(1, 1, 1), Vector3.new(1.6, 1.2, 0), WHITE },
 					{ "block", Vector3.new(0.9, 0.9, 0.9), Vector3.new(-1.5, -1.1, 0.6), PINK },
@@ -538,10 +541,10 @@ local data = {
 			fx = { { "screen", color = PINK, alpha = 0.2 }, { "symbols", symbols = { "✨", "🪩", "♪" }, color = GOLD, count = 10, radius = 6, at = "above" }, { "beam", color = WHITE, length = 14, width = 1.2, at = "above" }, { "shake", amount = 0.4 } },
 			text = "QUE LA LUMIÈRE SOIT !", hitText = "DISCO !",
 		},
-		-- Le Slow : il ouvre les bras et se balance ; l'adversaire est forcé de danser un slow pendant que Papi se soigne
+		-- Le Slow (↓Y) : il ouvre les bras et se balance ; tout le monde autour de lui est forcé de danser un slow pendant que Papi se soigne
 		SUPER_down = {
-			label = "Le Slow", superCost = 100, startup = 0.4, active = 0.2, recovery = 0.5,
-			damage = 18, hitbox = box(20, 8, 0, 1), kbBase = 12, kbGrowth = 15, kbAngle = 60,
+			label = "Le Slow", startup = 0.4, active = 0.2, recovery = 0.7,
+			damage = 22, hitbox = box(24, 8, 0, 1), kbBase = 12, kbGrowth = 15, kbAngle = 60,
 			status = { name = "dancing", duration = 3 },
 			selfEffect = { heal = 15 },
 			windup = { Root = { 0, 0, 0, 0, -0.2, 0 }, Neck = { 10, 0, 8 }, RS = { 60, 0, 40 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -40 }, LE = { 30, 0, 0 } },
@@ -549,7 +552,7 @@ local data = {
 			follow = { Root = { 0, 0, 6, 0, -0.22, 0 }, Waist = { 4, 0, 6 }, Neck = { 10, 0, 12 }, RS = { 85, 0, -25 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 110, 0, 25 }, LE = { 70, 0, 0 } },
 			hold = 0.5,
 			windupFx = { { "text", text = "UN PETIT SLOW ?", color = PINK } },
-			fx = { { "symbols", symbols = { "💕", "♪", "🎶" }, color = PINK, count = 8, radius = 5 }, { "screen", color = PINK, alpha = 0.15 } },
+			fx = { { "ring", color = PINK, radius = 12, at = "root" }, { "symbols", symbols = { "💕", "♪", "🎶" }, color = PINK, count = 10, radius = 6 }, { "screen", color = PINK, alpha = 0.15 } },
 			text = "LE SLOW…", hitText = "OH OUI…",
 		},
 

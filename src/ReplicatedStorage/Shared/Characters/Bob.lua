@@ -344,11 +344,11 @@ local data = {
 		},
 
 		------------------------------------------------------------------ Spéciaux (S)
-		-- Boule de neige : il gonfle les joues, se penche en arrière et crache un gros boulet de glace (ralentit)
+		-- Boule de neige (L) : il gonfle les joues, se penche en arrière et crache un gros boulet de glace qui fonce droit sur l'adversaire (ralentit)
 		S_neutral = {
-			label = "Boule de neige", kind = "projectile", energyCost = 25, startup = 0.2, active = 0, recovery = 0.32,
-			damage = 11, kbBase = 26, kbGrowth = 50, kbAngle = 25,
-			projectile = { speed = 60, angle = 0, gravity = 0, lifetime = 0.7, size = 2.4, color = SNOW, visual = SNOWBALL },
+			label = "Boule de neige", kind = "projectile", startup = 0.2, active = 0, recovery = 0.45,
+			damage = 13, kbBase = 28, kbGrowth = 55, kbAngle = 25,
+			projectile = { speed = 72, angle = 0, gravity = 0, lifetime = 0.7, size = 2.6, color = SNOW, visual = SNOWBALL },
 			status = { name = "slowed", duration = 2 },
 			windup = { Root = { 8, 0, 0, 0, -0.15, 0.25 }, Waist = { 18, 0, 0 }, Neck = { 25, 0, 0 }, RS = { 30, 0, 50 }, RE = { 50, 0, 0 }, LS = { 30, 0, -50 }, LE = { 50, 0, 0 } },
 			strike = { Root = { -10, 0, 0, 0, -0.3, -0.2 }, Waist = { -18, 0, 0 }, Neck = { -20, 0, 0 }, RS = { -30, 0, 50 }, RE = { 30, 0, 0 }, LS = { -30, 0, -50 }, LE = { 30, 0, 0 } },
@@ -356,20 +356,20 @@ local data = {
 			shake = true, windupFx = { { "particles", tex = "smoke", color = ICE, at = "head", dir = "up", time = 0.2, speed = 4 } },
 			fx = { { "particles", tex = "smoke", color = SNOW, at = "head", dir = "front", time = 0.2, speed = 10 } }, text = "PTOU !", hitText = "PLAF !",
 		},
-		-- Charge en luge (→S) : il s'assoit sur sa glacière et fonce, rien ne l'arrête (super-armure)
+		-- Charge en luge (→L) : assis sur sa glacière, il dévale tout le couloir comme une luge folle, rien ne l'arrête (super-armure)
 		S_side = {
-			label = "Charge en luge", energyCost = 25, startup = 0.12, active = 0.4, recovery = 0.32,
-			damage = 12, hitbox = box(5, 3, 2.2, -0.8), kbBase = 32, kbGrowth = 68, kbAngle = 32, selfVelocity = Vector2.new(65, 0), armor = true,
+			label = "Charge en luge", startup = 0.18, active = 0.4, recovery = 0.5,
+			damage = 14, hitbox = box(14, 6, 7, 0), kbBase = 32, kbGrowth = 68, kbAngle = 32, selfVelocity = Vector2.new(65, 0), armor = true,
 			windup = { Root = { -10, 0, 0, 0, -0.6, 0.2 }, Waist = { -10, 0, 0 }, RS = { 40, 0, 20 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -30 }, LE = { 50, 0, 0 } },
 			strike = { Root = { 10, 0, 0, 0, -1.2, 0 }, Waist = { 6, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 20, 0, 20 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 120, 0, -50 }, LE = { 20, 0, 0 }, RH = { 85, 0, 8 }, RK = { -10, 0, 0 }, RA = { 20, 0, 0 }, LH = { 85, 0, -8 }, LK = { -10, 0, 0 }, LA = { 20, 0, 0 } },
 			follow = { Root = { 12, 0, 0, 0, -1.2, 0 }, Waist = { 8, 0, 0 }, Neck = { -12, 0, 0 }, RS = { 20, 0, 22 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 130, 0, -55 }, LE = { 20, 0, 0 }, RH = { 88, 0, 8 }, RK = { -10, 0, 0 }, RA = { 20, 0, 0 }, LH = { 88, 0, -8 }, LK = { -10, 0, 0 }, LA = { 20, 0, 0 } },
-			trail = "body", fx = { { "particles", tex = "smoke", color = SNOW, at = "feet", dir = "up", time = 0.4, speed = 10, rate = 80 } }, text = "LUGE !", hitText = "SCHLAAAF !",
+			trail = "body", fx = { { "particles", tex = "smoke", color = SNOW, at = "feet", dir = "up", time = 0.4, speed = 10, rate = 80 }, { "puddle", color = ICE, width = 12 } }, text = "LUGE !", hitText = "SCHLAAAF !",
 		},
-		-- Mur de glace (↓S) : glacière levée à deux mains, il l'abat sur le sol : le choc glace qui est devant et une barricade jaillit
+		-- Mur de glace (↓L) : glacière levée à deux mains, il l'abat sur le sol : l'onde de gel balaie tout le couloir et une barricade jaillit
 		S_down = {
-			label = "Mur de glace", kind = "wall", energyCost = 25, startup = 0.2, active = 0.1, recovery = 0.35,
-			hitbox = box(6, 4.5, 3, 0.5), kbBase = 30, kbGrowth = 45, kbAngle = 40,
-			damage = 7, selfEffect = { meter = 35 },
+			label = "Mur de glace", kind = "wall", startup = 0.22, active = 0.12, recovery = 0.5,
+			hitbox = box(14, 6, 7, 1), kbBase = 30, kbGrowth = 50, kbAngle = 40,
+			damage = 12, selfEffect = { meter = 35 },
 			wall = { size = Vector3.new(1.8, 7, 6), offset = 3.5, lifetime = 6, max = 1, color = ICE,
 				visual = { shape = "block", size = 0.2, color = ICE, material = "Ice", transparency = 0.15, trail = false, parts = {
 					{ "block", Vector3.new(1.8, 7, 3), Vector3.new(0, 0, 0), ICE, "Ice" },
@@ -378,64 +378,68 @@ local data = {
 			windup = { Root = { 10, 0, 0, 0, 0.05, 0.1 }, Waist = { 16, 0, 0 }, Neck = { 15, 0, 0 }, RS = { 170, 0, 20 }, RE = { 30, 0, 0 }, LS = { 170, 0, -20 }, LE = { 30, 0, 0 } },
 			strike = { Root = { -16, 0, 0, 0, -0.7, -0.35 }, Waist = { -30, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 40, 0, 20 }, RE = { 10, 0, 0 }, LS = { 40, 0, -20 }, LE = { 10, 0, 0 } },
 			follow = { Root = { -18, 0, 0, 0, -0.75, -0.22 }, Waist = { -32, 0, 0 }, Neck = { -12, 0, 0 }, RS = { 30, 0, 22 }, RE = { 10, 0, 0 }, LS = { 30, 0, -22 }, LE = { 10, 0, 0 } },
-			fx = { { "pillar", color = ICE, height = 7, width = 2, at = "front" }, { "shake", amount = 0.3 } }, trail = "prop", text = "MUR DE GLACE !", hitText = "CRIIIC ! GELÉ !",
+			fx = { { "pillar", color = ICE, height = 7, width = 2, at = "front" }, { "beam", color = ICE, length = 16, width = 2.5, at = "front" }, { "particles", tex = "smoke", color = SNOW, at = "front", dir = "front", time = 0.35, speed = 18, rate = 100 }, { "shake", amount = 0.3 } },
+			trail = "prop", text = "MUR DE GLACE !", hitText = "CRIIIC ! GELÉ !",
 		},
-		-- Avalanche ascendante (remontée, gratuite) : une petite éruption de neige jaillit sous lui et le propulse vers le haut
+		-- Plongeon polaire (↑L, remontée) : accroupi dans une éruption de neige, il bondit en diagonale vers l'avant, grosses paluches tendues,
+		-- ventre en avant, tongs derrière, comme un ours polaire qui plongerait vers le ciel : tout ce qu'il croise part avec lui
 		S_up = {
-			label = "Avalanche ascendante", energyCost = 0, startup = 0.06, active = 0.3, recovery = 0.32,
-			damage = 7, hitbox = box(5.5, 7, 0.5, 1.5), kbBase = 30, kbGrowth = 40, kbAngle = 82, selfVelocity = Vector2.new(6, 92),
-			windup = { Root = { 0, 0, 0, 0, -0.85, 0 }, Waist = { -16, 0, 0 }, RS = { 20, 0, 40 }, RE = { 30, 0, 0 }, LS = { 20, 0, -40 }, LE = { 30, 0, 0 } },
-			strike = { Root = { 4, 0, 0, 0, 0.4, 0 }, Waist = { 10, 0, 0 }, Neck = { 25, 0, 0 }, RS = { 170, 0, 30 }, RE = { 10, 0, 0 }, LS = { 170, 0, -30 }, LE = { 10, 0, 0 }, RH = { 10, 0, 10 }, RK = { -40, 0, 0 }, LH = { 10, 0, -10 }, LK = { -40, 0, 0 } },
-			follow = { Root = { 4, 0, 0, 0, 0.4, 0 }, Waist = { 12, 0, 0 }, Neck = { 28, 0, 0 }, RS = { 178, 0, 35 }, RE = { 10, 0, 0 }, LS = { 178, 0, -35 }, LE = { 10, 0, 0 }, RH = { 15, 0, 12 }, RK = { -55, 0, 0 }, LH = { 15, 0, -12 }, LK = { -55, 0, 0 } },
-			fx = { { "pillar", color = SNOW, height = 13, width = 3 }, { "particles", tex = "smoke", color = SNOW, at = "feet", dir = "all", time = 0.4, speed = 14, rate = 90 } }, text = "WOUUUSH !", hitText = "FLOCON !",
+			label = "Plongeon polaire", startup = 0.15, active = 0.3, recovery = 0.45,
+			damage = 13, hitbox = box(10, 11, 3, 4), kbBase = 32, kbGrowth = 45, kbAngle = 80, selfVelocity = Vector2.new(42, 80),
+			windup = { Root = { 8, 0, 0, 0, -0.85, 0.15 }, Waist = { -14, 0, 0 }, Neck = { 12, 0, 0 }, RS = { -45, 0, 30 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { -45, 0, -30 }, LE = { 40, 0, 0 } },
+			strike = { Root = { -50, 0, 0, 0, 0.3, 0 }, Waist = { -8, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 172, 0, 25 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 172, 0, -25 }, LE = { 0, 0, 0 }, RH = { -25, 0, 6 }, RK = { -30, 0, 0 }, RA = { -30, 0, 0 }, LH = { -35, 0, -6 }, LK = { -45, 0, 0 }, LA = { -30, 0, 0 } },
+			follow = { Root = { -55, 0, 0, 0, 0.35, 0 }, Waist = { -10, 0, 0 }, Neck = { 34, 0, 0 }, RS = { 176, 0, 28 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 176, 0, -28 }, LE = { 0, 0, 0 }, RH = { -30, 0, 8 }, RK = { -40, 0, 0 }, RA = { -30, 0, 0 }, LH = { -40, 0, -8 }, LK = { -55, 0, 0 }, LA = { -30, 0, 0 } },
+			trail = "body", fx = { { "burst", color = SNOW, size = 3.5, at = "feet" }, { "pillar", color = SNOW, height = 10, width = 3, at = "feet" }, { "particles", tex = "smoke", color = SNOW, at = "feet", dir = "down", time = 0.4, speed = 16, rate = 100 } },
+			text = "PLOUF À L'ENVERS !", hitText = "EMPORTÉ !",
 		},
-		-- Souffle polaire (S maintenu) : il inspire à fond, bombe le torse, puis souffle un vent glacé qui gèle sur place
+		-- Souffle polaire (S maintenu) : il inspire à fond, bombe le torse, puis souffle un blizzard qui traverse tout le couloir et gèle sur place
 		S_hold = {
-			label = "Souffle polaire", energyCost = 35, startup = 0.25, active = 0.3, recovery = 0.4,
-			damage = 12, hitbox = box(8, 3.5, 4.5, 1), kbBase = 26, kbGrowth = 55, kbAngle = 25,
+			label = "Souffle polaire", startup = 0.3, active = 0.3, recovery = 0.6,
+			damage = 15, hitbox = box(14, 6, 7, 1), kbBase = 26, kbGrowth = 55, kbAngle = 25,
 			status = { name = "frozen", duration = 1 },
 			windup = { Root = { 10, 0, 0, 0, -0.1, 0.25 }, Waist = { 20, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 20, 0, 70 }, RE = { 40, 0, 0 }, LS = { 20, 0, -70 }, LE = { 40, 0, 0 } },
 			strike = { Root = { -8, 0, 0, 0, -0.25, -0.2 }, Waist = { -14, 0, 0 }, Neck = { -10, 0, 0 }, RS = { -40, 0, 40 }, RE = { 30, 0, 0 }, LS = { -40, 0, -40 }, LE = { 30, 0, 0 } },
 			follow = { Root = { -10, 0, 0, 0, -0.28, -0.3 }, Waist = { -18, 0, 0 }, Neck = { -14, 0, 0 }, RS = { -45, 0, 42 }, RE = { 30, 0, 0 }, LS = { -45, 0, -42 }, LE = { 30, 0, 0 } },
-			hold = 0.15, shake = true, fx = { { "beam", color = ICE, length = 9, width = 2.2, at = "head" }, { "particles", tex = "smoke", color = SNOW, at = "head", dir = "front", time = 0.35, speed = 16, rate = 90 } },
+			hold = 0.15, shake = true, fx = { { "beam", color = ICE, length = 16, width = 3, at = "head" }, { "particles", tex = "smoke", color = SNOW, at = "head", dir = "front", time = 0.4, speed = 22, rate = 110 }, { "rain", shape = "ball", color = ICE, count = 8, radius = 7, size = 0.35 } },
 			text = "FFFFFFFFHHH !", hitText = "GLAGLA !",
 		},
-		-- Glissade pingouin (→→S) : il plonge sur le ventre et file sur la glace comme un pingouin, ailerons collés
+		-- Glissade pingouin (→→L) : il plonge sur le ventre et file sur la glace tout le long du couloir comme un pingouin, ailerons collés
 		S_dash = {
-			label = "Glissade pingouin", energyCost = 25, startup = 0.06, active = 0.35, recovery = 0.32,
-			damage = 11, hitbox = box(5, 2.5, 2, -1.3), kbBase = 30, kbGrowth = 60, kbAngle = 40, selfVelocity = Vector2.new(74, 0), invuln = 0.15,
+			label = "Glissade pingouin", startup = 0.15, active = 0.35, recovery = 0.5,
+			damage = 13, hitbox = box(14, 5, 7, -0.5), kbBase = 30, kbGrowth = 60, kbAngle = 40, selfVelocity = Vector2.new(74, 0), invuln = 0.15,
 			windup = { Root = { -20, 0, 0, 0, -0.5, 0 }, Waist = { -10, 0, 0 }, RS = { -20, 0, 15 }, LS = { -20, 0, -15 } },
 			strike = { Root = { -80, 0, 0, 0, -1.5, -0.4 }, Waist = { 8, 0, 0 }, Neck = { 40, 0, 0 }, RS = { -10, 0, 12 }, RE = { 0, 0, 0 }, LS = { -10, 0, -12 }, LE = { 0, 0, 0 }, RH = { -6, 0, 4 }, RK = { -5, 0, 0 }, RA = { 20, 0, 0 }, LH = { -6, 0, -4 }, LK = { -5, 0, 0 }, LA = { 20, 0, 0 } },
 			follow = { Root = { -82, 0, 0, 0, -1.5, -0.45 }, Waist = { 10, 0, 0 }, Neck = { 42, 0, 0 }, RS = { -14, 0, 18 }, RE = { 0, 0, 0 }, LS = { -14, 0, -18 }, LE = { 0, 0, 0 }, RH = { -8, 0, 4 }, RK = { -10, 0, 0 }, RA = { 20, 0, 0 }, LH = { -8, 0, -4 }, LK = { -10, 0, 0 }, LA = { 20, 0, 0 } },
-			trail = "body", fx = { { "puddle", color = ICE, width = 10, time = 1 } }, text = "PINGOUIIIN !", hitText = "SCHLOUF !",
+			trail = "body", fx = { { "puddle", color = ICE, width = 14, time = 1 }, { "particles", tex = "smoke", color = SNOW, at = "root", dir = "front", time = 0.35, speed = 12, rate = 80 } }, text = "PINGOUIIIN !", hitText = "SCHLOUF !",
 		},
-		-- Granita (ESQUIVE puis S) : il aspire un granita à la paille (soigne, remonte la Fraîcheur)… gel du cerveau !
-		-- Il se plie en deux et crache un nuage glacé en pleine figure de l'adversaire
+		-- Granita (ESQUIVE puis L) : il aspire un granita à la paille (soigne, remonte la Fraîcheur)… gel du cerveau ! Il se plie en deux
+		-- et crache un nuage glacé qui balaie tout le couloir
 		S_dodge = {
-			label = "Granita", energyCost = 25, startup = 0.2, active = 0.14, recovery = 0.45,
-			damage = 9, hitbox = box(6, 4, 3.5, 0.8), kbBase = 30, kbGrowth = 55, kbAngle = 35,
+			label = "Granita", startup = 0.25, active = 0.15, recovery = 0.55,
+			damage = 12, hitbox = box(14, 6, 7, 1), kbBase = 30, kbGrowth = 55, kbAngle = 35,
 			selfEffect = { heal = 6, meter = 50 }, status = { name = "slowed", duration = 1.5 },
 			windup = { Root = { 2, 0, 0, 0, -0.2, 0.1 }, Waist = { -6, 0, 0 }, Neck = { -18, 0, 0 }, RS = { 80, 0, -15 }, RE = { 110, 0, 0 }, RW = { -80, 0, 0 }, LS = { 60, 0, 15 }, LE = { 110, 0, 0 } },
 			strike = { Root = { -16, 0, 0, 0, -0.45, -0.35 }, Waist = { -30, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 60, 0, 60 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -60 }, LE = { 30, 0, 0 } },
 			follow = { Root = { -18, 0, 0, 0, -0.48, -0.4 }, Waist = { -34, 0, 0 }, Neck = { -24, 0, 0 }, RS = { 55, 0, 65 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 55, 0, -65 }, LE = { 30, 0, 0 } },
 			shake = true, windupFx = { { "text", text = "SLUUURP !", color = ICE }, { "symbols", symbols = { "❄️", "💙" }, color = ICE, count = 4, radius = 2.5 } },
-			fx = { { "particles", tex = "smoke", color = ICE, at = "head", dir = "front", time = 0.3, speed = 16, rate = 90 }, { "burst", color = SNOW, size = 3, at = "front" } },
+			fx = { { "particles", tex = "smoke", color = ICE, at = "head", dir = "front", time = 0.4, speed = 22, rate = 110 }, { "beam", color = ICE, length = 15, width = 2.5, at = "head" }, { "burst", color = SNOW, size = 3, at = "front" } },
 			text = "GEL DU CERVEAU !", hitText = "BRRRRAAAH !",
 		},
-		-- Grêlons (S en l'air) : il secoue la glacière ouverte au-dessus de la zone, une pluie de glaçons tombe devant lui
+		-- Grêlon géant (L en l'air) : il ouvre la glacière au-dessus de sa tête : un grêlon gros comme lui en sort et tombe pile sur l'adversaire
 		S_air = {
-			label = "Grêlons", kind = "projectile", energyCost = 25, startup = 0.16, active = 0, recovery = 0.3,
-			damage = 3, kbBase = 16, kbGrowth = 25, kbAngle = -30,
-			projectile = { speed = 60, gravity = 0, lifetime = 0.9, size = 1.2, color = ICE, visual = ICE_CUBE, rain = { count = 5, spread = 6, ahead = 7, height = 16 } },
+			label = "Grêlon géant", kind = "projectile", startup = 0.2, active = 0, recovery = 0.45,
+			damage = 13, kbBase = 28, kbGrowth = 55, kbAngle = -40,
+			projectile = { speed = 70, gravity = 0, lifetime = 0.9, size = 3.2, color = ICE, rain = { count = 1, spread = 0, ahead = 8, height = 18 },
+				visual = { shape = "block", size = 3, color = ICE, material = "Ice", spin = 6, parts = { { "ball", Vector3.new(1.2, 1.2, 1.2), Vector3.new(1.2, 1.1, 0), SNOW } } } },
 			windup = { Root = { 6, 0, 0 }, Waist = { 8, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 160, 0, 20 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -50 }, LE = { 40, 0, 0 }, RH = { 50, 0, 0 }, RK = { -90, 0, 0 }, LH = { 40, 0, 0 }, LK = { -80, 0, 0 } },
 			strike = { Root = { -6, 0, 0 }, Waist = { -8, 0, 0 }, Neck = { 15, 0, 0 }, RS = { 120, 0, -10 }, RE = { 20, 0, 0 }, RW = { 150, 0, 0 }, LS = { 60, 0, -60 }, LE = { 30, 0, 0 }, RH = { 30, 0, 0 }, RK = { -60, 0, 0 }, LH = { 30, 0, 0 }, LK = { -60, 0, 0 } },
 			follow = { Root = { -6, 0, 0 }, Waist = { -8, 0, 0 }, Neck = { 15, 0, 0 }, RS = { 130, 0, 10 }, RE = { 20, 0, 0 }, RW = { 150, 0, 0 }, LS = { 60, 0, -62 }, LE = { 30, 0, 0 }, RH = { 30, 0, 0 }, RK = { -60, 0, 0 }, LH = { 30, 0, 0 }, LK = { -60, 0, 0 } },
-			wobble = true, fx = { { "rain", shape = "ball", color = ICE, count = 8, radius = 5, size = 0.4 } }, text = "IL GRÊLE !", hitText = "TOC TOC TOC !",
+			wobble = true, fx = { { "rain", shape = "ball", color = ICE, count = 6, radius = 4, size = 0.4 }, { "particles", tex = "smoke", color = SNOW, at = "hand", dir = "up", time = 0.25, speed = 8 } }, text = "ATTENTION LA TÊTE !", hitText = "KRRRONK !",
 		},
-		-- Pluie de grêlons (↓S en l'air, plongeon) : il tombe assis sur sa glacière, les glaçons pleuvent tout autour
+		-- Pluie de grêlons (↓L en l'air, plongeon) : il tombe assis sur sa glacière, les glaçons pleuvent tout autour
 		S_air_down = {
-			label = "Pluie de grêlons", energyCost = 25, startup = 0.14, active = 0.4, recovery = 0.34,
-			damage = 12, hitbox = box(8, 4, 0, -2), kbBase = 28, kbGrowth = 60, kbAngle = 42, selfVelocity = Vector2.new(0, -85),
+			label = "Pluie de grêlons", startup = 0.16, active = 0.4, recovery = 0.5,
+			damage = 14, hitbox = box(8, 5, 0, -2), kbBase = 28, kbGrowth = 60, kbAngle = 42, selfVelocity = Vector2.new(0, -85),
 			windup = { Root = { 10, 0, 0 }, Waist = { 10, 0, 0 }, Neck = { 15, 0, 0 }, RS = { 170, 0, 20 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 170, 0, -20 }, LE = { 30, 0, 0 }, RH = { 60, 0, 0 }, RK = { -90, 0, 0 }, LH = { 60, 0, 0 }, LK = { -90, 0, 0 } },
 			strike = { Root = { 6, 0, 0 }, Waist = { 0, 0, 0 }, Neck = { 0, 0, 0 }, RS = { 10, 0, 10 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -70 }, LE = { 20, 0, 0 }, RH = { 90, 0, 8 }, RK = { -80, 0, 0 }, RA = { 10, 0, 0 }, LH = { 90, 0, -8 }, LK = { -80, 0, 0 }, LA = { 10, 0, 0 } },
 			follow = { Root = { 8, 0, 0 }, Waist = { 2, 0, 0 }, Neck = { -4, 0, 0 }, RS = { 10, 0, 12 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 65, 0, -75 }, LE = { 20, 0, 0 }, RH = { 92, 0, 8 }, RK = { -82, 0, 0 }, RA = { 10, 0, 0 }, LH = { 92, 0, -8 }, LK = { -82, 0, 0 }, LA = { 10, 0, 0 } },
@@ -505,7 +509,7 @@ local data = {
 		------------------------------------------------------------------ Finitions avec S (dans un enchaînement)
 		-- Boule à bout portant : il écrase une boule de neige sur le visage de l'adversaire (ralentit)
 		S_finish_snow = {
-			label = "Boule à bout portant", energyCost = 20, startup = 0.12, active = 0.1, recovery = 0.3,
+			label = "Boule à bout portant", startup = 0.12, active = 0.1, recovery = 0.3,
 			damage = 9, hitbox = box(5, 3.5, 2.8, 0.8), kbBase = 36, kbGrowth = 82, kbAngle = 35,
 			status = { name = "slowed", duration = 2 },
 			windup = { Root = { 2, 20, 0, 0, -0.25, 0.2 }, Waist = { 4, 24, 0 }, RS = { 40, 0, 40 }, RE = { 50, 0, 0 }, LS = { 70, 0, 40 }, LE = { 120, 0, 0 }, LW = { 0, 0, 0 } },
@@ -515,7 +519,7 @@ local data = {
 		},
 		-- Pic de glace : il frappe le sol de la glacière, un pic de glace jaillit sous l'adversaire et le fait décoller
 		S_finish_ice = {
-			label = "Pic de glace", energyCost = 25, startup = 0.12, active = 0.14, recovery = 0.34,
+			label = "Pic de glace", startup = 0.12, active = 0.14, recovery = 0.34,
 			damage = 11, hitbox = box(4, 7, 3.5, 2), kbBase = 38, kbGrowth = 88, kbAngle = 86,
 			windup = { Root = { 8, 0, 0, 0, 0, 0.15 }, Waist = { 14, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 180, 0, 10 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, -40 }, LE = { 30, 0, 0 } },
 			strike = { Root = { -16, 0, 0, 0, -0.6, -0.3 }, Waist = { -30, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 50, 0, 5 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -50 }, LE = { 30, 0, 0 } },
@@ -524,11 +528,11 @@ local data = {
 		},
 
 		------------------------------------------------------------------ Supers
-		-- Avalanche : il soulève une boule de neige géante au-dessus de sa tête et la fait dévaler sur l'adversaire
+		-- Avalanche (Y) : il soulève une boule de neige géante au-dessus de sa tête et la fait dévaler droit sur l'adversaire, elle traverse tout
 		SUPER = {
-			label = "Avalanche !", kind = "projectile", superCost = 100, startup = 0.4, active = 0, recovery = 0.55,
+			label = "Avalanche !", kind = "projectile", startup = 0.4, active = 0, recovery = 0.7,
 			damage = 24, kbBase = 36, kbGrowth = 60, kbAngle = 45,
-			projectile = { speed = 42, angle = 0, gravity = 0, lifetime = 1.6, size = 5, color = SNOW, from = "feet", pierce = true,
+			projectile = { speed = 48, angle = 0, gravity = 0, lifetime = 1.6, size = 5, color = SNOW, from = "feet", pierce = true,
 				visual = { shape = "ball", size = 5, color = SNOW, spin = 6, parts = {
 					{ "ball", Vector3.new(1.5, 1.2, 1.2), Vector3.new(1.6, 1.2, 0), ICE },
 					{ "ball", Vector3.new(1.2, 1, 1), Vector3.new(-1.4, -1.5, 0), ICE },
@@ -540,27 +544,30 @@ local data = {
 			hold = 0.2, shake = true, windupFx = { "super" }, fx = { { "shake", amount = 0.6 }, { "particles", tex = "smoke", color = SNOW, at = "feet", dir = "all", time = 0.6, speed = 14, rate = 100 } },
 			text = "AVALAAANCHE !", hitText = "BRRRRR !",
 		},
-		-- Super ↑ : il abat la glacière sur le sol : un iceberg jaillit sous l'adversaire et l'emporte au ciel, Bob assis au sommet, bras en l'air
+		-- Super ↑ : il abat la glacière sur le sol : un iceberg entier jaillit sur toute la longueur du couloir et emporte l'adversaire au ciel,
+		-- Bob assis au sommet, bras en l'air comme sur un télésiège
 		SUPER_up = {
-			label = "Iceberg !", superCost = 100, startup = 0.3, active = 0.25, recovery = 0.55,
-			damage = 22, hitbox = box(7, 12, 3, 5), kbBase = 45, kbGrowth = 95, kbAngle = 88, invuln = 0.3,
+			label = "Iceberg !", startup = 0.35, active = 0.3, recovery = 0.75,
+			damage = 24, hitbox = box(14, 12, 7, 5), kbBase = 45, kbGrowth = 95, kbAngle = 88, invuln = 0.3,
 			windup = { Root = { 10, 0, 0, 0, -0.1, 0.25 }, Waist = { 18, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 195, 0, 20 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 195, 0, -20 }, LE = { 30, 0, 0 } },
 			strike = { Root = { -18, 0, 0, 0, -0.8, -0.4 }, Waist = { -34, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 45, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 45, 0, -10 }, LE = { 0, 0, 0 } },
 			follow = { Root = { 12, 0, 0, 0, 0.5, 0 }, Waist = { 10, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 170, 0, 40 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 170, 0, -40 }, LE = { 10, 0, 0 }, RH = { 85, 0, 10 }, RK = { -20, 0, 0 }, RA = { 20, 0, 0 }, LH = { 85, 0, -10 }, LK = { -20, 0, 0 }, LA = { 20, 0, 0 } },
 			hold = 0.2, selfVelocity = Vector2.new(0, 55), status = { name = "frozen", duration = 1.2 },
 			windupFx = { "super" }, trail = "prop",
-			fx = { { "pillar", color = ICE, height = 24, width = 5, at = "front" }, { "rain", shape = "ball", color = SNOW, count = 14, radius = 7, size = 0.5 }, { "particles", tex = "smoke", color = SNOW, at = "feet", dir = "all", time = 0.5, speed = 14, rate = 100 }, { "shake", amount = 0.6 } },
+			fx = { { "pillar", color = ICE, height = 24, width = 5, at = "front" }, { "beam", color = ICE, length = 18, width = 5, at = "front" }, { "rain", shape = "ball", color = SNOW, count = 14, radius = 9, size = 0.5 }, { "particles", tex = "smoke", color = SNOW, at = "feet", dir = "all", time = 0.5, speed = 14, rate = 100 }, { "shake", amount = 0.6 } },
 			text = "ICEBERG DROIT DEVANT !", hitText = "GLAGLABOUM !",
 		},
-		-- Bonhomme de neige : il attrape l'adversaire dans un câlin, le transforme en bonhomme de neige gelé… puis grosse claque
+		-- Bonhomme de neige (↓Y) : il tape dans ses grosses paluches : une bourrasque de neige roule sur tout le couloir, l'adversaire en
+		-- ressort en bonhomme de neige (carotte comprise, gelé), et Bob lui colle une claque de yéti du revers qui l'envoie valser
 		SUPER_down = {
-			label = "Bonhomme de neige !", superCost = 100, startup = 0.3, active = 0.15, recovery = 0.55,
-			damage = 20, hitbox = box(4.5, 4.5, 2.2, 0.5), kbBase = 38, kbGrowth = 65, kbAngle = 40,
+			label = "Bonhomme de neige !", startup = 0.35, active = 0.2, recovery = 0.75,
+			damage = 22, hitbox = box(14, 6, 7, 1), kbBase = 40, kbGrowth = 70, kbAngle = 40,
 			status = { name = "frozen", duration = 2 },
-			windup = { Root = { 6, 0, 0, 0, -0.1, 0.1 }, Waist = { 12, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 120, 0, 60 }, RE = { 10, 0, 0 }, LS = { 120, 0, -60 }, LE = { 10, 0, 0 } },
-			strike = { Root = { -8, 0, 0, 0, -0.2, -0.3 }, Waist = { -14, 0, 0 }, RS = { 82, 0, -22 }, RE = { 80, 0, 0 }, LS = { 82, 0, 22 }, LE = { 80, 0, 0 } },
-			follow = { Root = { -10, -20, 0, 0, -0.35, -0.4 }, Waist = { -14, -24, 0 }, Neck = { 0, 16, 0 }, RS = { 60, 0, 40 }, RE = { 40, 0, 0 }, LS = { 95, 0, -60 }, LE = { 5, 0, 0 } },
-			hold = 0.45, windupFx = { "super" }, fx = { { "burst", color = SNOW, size = 4 }, { "symbols", symbols = { "⛄", "❄️" }, color = ICE, count = 6, radius = 3, at = "front" } },
+			windup = { Root = { 6, 0, 0, 0, -0.2, 0.1 }, Waist = { 10, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 90, 0, 80 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, -80 }, LE = { 10, 0, 0 } },
+			strike = { Root = { -12, 0, 0, 0, -0.3, -0.3 }, Waist = { -18, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 92, 0, -5 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 92, 0, 5 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+			follow = { Root = { -10, -30, 0, 0, -0.32, -0.4 }, Waist = { -14, -34, 0 }, Neck = { 0, 20, 0 }, RS = { 60, 0, 30 }, RE = { 50, 0, 0 }, RW = { 0, 0, 0 }, LS = { 95, 0, 50 }, LE = { 5, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+			hold = 0.3, shake = true, windupFx = { "super" }, trail = "bothHands",
+			fx = { { "burst", color = SNOW, size = 4, at = "front" }, { "beam", color = SNOW, length = 16, width = 4, at = "front" }, { "particles", tex = "smoke", color = SNOW, at = "front", dir = "front", time = 0.5, speed = 18, rate = 110 }, { "symbols", symbols = { "⛄", "🥕", "❄️" }, color = ICE, count = 8, radius = 4, at = "front" }, { "shake", amount = 0.5 } },
 			text = "UN BEAU BONHOMME DE NEIGE !", hitText = "PAF ! GLAGLA !",
 		},
 

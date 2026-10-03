@@ -4,7 +4,7 @@
 --
 -- Format : voir docs/fiche-perso.md et Characters/Gege.lua (clés de coups, poses, links, effets).
 -- Mécanique « tank » (server/Mechanics.lua) : les coups kind = "absorb" avalent les projectiles proches et
--- remplissent la jauge ; les coups à meterCost la vident (recrachat).
+-- remplissent la jauge Réservoir (décorative : les signatures sont sans limite, plus de meterCost).
 -- Style « robot » : angles nets, coudes à 90°, buste droit, la tête tourne par crans.
 
 local function box(width, height, forward, up)
@@ -307,105 +307,106 @@ local data = {
 		},
 
 		------------------------------------------------------------------ Spéciaux (S)
-		-- Aspiration : trou noir frontal ; arc-bouté, il avale les projectiles et attire l'adversaire
+		-- Aspiration (L) : trou noir frontal ; arc-bouté sur ses roulettes, il avale les projectiles et aspire tout le couloir vers lui
 		S_neutral = {
-			label = "Aspiration", kind = "absorb", energyCost = 20, startup = 0.12, active = 0.7, recovery = 0.3,
-			damage = 3, hits = 2, hitbox = box(9, 4, 5, 0.5), kbBase = 22, kbGrowth = 10, kbAngle = 10, pull = true,
-			absorb = { radius = 6, offset = 3.5 },
+			label = "Aspiration", kind = "absorb", startup = 0.2, active = 0.5, recovery = 0.5,
+			damage = 12, hitbox = box(14, 6, 7, 1), kbBase = 24, kbGrowth = 20, kbAngle = 10, pull = true,
+			absorb = { radius = 8, offset = 5 },
 			windup = { Root = { 6, 0, 0, 0, -0.35, 0.2 }, Waist = { 5, 0, 0 }, RS = { 70, 0, 10 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, 25 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
 			strike = { Root = { 10, 0, 0, 0, -0.45, 0.3 }, Waist = { 8, 0, 0 }, Neck = { -5, 0, 0 }, RS = { 88, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 80, 0, 30 }, LE = { 50, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
 			follow = { Root = { 12, 0, 0, 0, -0.45, 0.35 }, Waist = { 10, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 86, 0, 0 }, RE = { 0, 0, 0 }, RW = { 2, 0, 0 }, LS = { 78, 0, 30 }, LE = { 52, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
 			shake = true, wobble = true,
 			windupFx = { { "ring", color = CYAN, radius = 3, at = "hand" } },
-			fx = { { "ring", color = DARK, radius = 5, at = "front" }, { "particles", tex = "smoke", color = DUST, dir = "all", at = "front", time = 0.6, speed = 4, size = 0.8, rate = 70 } },
+			fx = { { "ring", color = DARK, radius = 6, at = "front" }, { "beam", color = DUST, length = 14, width = 2.5, at = "hand" }, { "particles", tex = "smoke", color = DUST, dir = "all", at = "front", time = 0.5, speed = 6, size = 0.8, rate = 80 } },
 			text = "ASPIRATION", hitText = "SLUUURP !",
 		},
-		-- Recrachat : il vise et recrache un projectile avalé, 50 % plus vite (coûte 1 du Réservoir)
+		-- Recrachat (→L) : il vise et recrache une boule de poussière compactée qui fonce droit sur l'adversaire, 50 % plus vite qu'à l'aller
 		S_side = {
-			label = "Recrachat", kind = "projectile", energyCost = 15, meterCost = 1, startup = 0.14, active = 0, recovery = 0.3,
-			damage = 13, kbBase = 30, kbGrowth = 75, kbAngle = 25,
-			projectile = { speed = 95, angle = 0, gravity = 0, lifetime = 0.6, size = 2, color = DUST,
-				visual = { shape = "ball", size = 1.6, color = DUST, material = "Sand", spin = 12,
+			label = "Recrachat", kind = "projectile", startup = 0.2, active = 0, recovery = 0.5,
+			damage = 14, kbBase = 30, kbGrowth = 75, kbAngle = 25,
+			projectile = { speed = 95, angle = 0, gravity = 0, lifetime = 0.6, size = 2.2, color = DUST,
+				visual = { shape = "ball", size = 1.8, color = DUST, material = "Sand", spin = 12,
 					parts = { { "ball", Vector3.new(0.8, 0.8, 0.8), Vector3.new(0.6, 0.4, 0), DUST_DARK }, { "ball", Vector3.new(0.6, 0.6, 0.6), Vector3.new(-0.5, -0.5, 0), STEEL } } } },
 			windup = { Root = { -6, 0, 0, 0, -0.25, -0.1 }, Waist = { -10, 0, 0 }, RS = { 80, 0, 10 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, 25 }, LE = { 70, 0, 0 } },
 			strike = { Root = { 10, 0, 0, 0, -0.3, 0.35 }, Waist = { 10, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 95, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 85, 0, 25 }, LE = { 40, 0, 0 } },
 			follow = { Root = { 8, 0, 0, 0, -0.3, 0.3 }, Waist = { 8, 0, 0 }, Neck = { 8, 0, 0 }, RS = { 100, 0, 0 }, RE = { 0, 0, 0 }, RW = { 5, 0, 0 }, LS = { 88, 0, 25 }, LE = { 38, 0, 0 } },
-			shake = true, fx = { { "burst", color = DUST, size = 2, at = "hand" } }, text = "RECRACHAT", hitText = "PTOU !",
+			shake = true, fx = { { "burst", color = DUST, size = 2.5, at = "hand" }, { "particles", tex = "smoke", color = DUST, dir = "front", at = "hand", time = 0.2, speed = 16, rate = 70 } }, text = "RECRACHAT", hitText = "PTOU !",
 		},
-		-- Sac à poussière : il secoue le sac au-dessus de lui, un nuage aveuglant reste au sol devant
+		-- Sac à poussière (↓L) : il secoue le sac au-dessus de lui ; le nuage aveuglant roule jusqu'à l'adversaire et reste sur place
 		S_down = {
-			label = "Sac à poussière", kind = "projectile", energyCost = 25, startup = 0.18, active = 0, recovery = 0.35,
-			damage = 3, kbBase = 8, kbGrowth = 8, kbAngle = 60,
+			label = "Sac à poussière", kind = "projectile", startup = 0.22, active = 0, recovery = 0.5,
+			damage = 12, kbBase = 12, kbGrowth = 10, kbAngle = 60,
 			status = { name = "blinded", duration = 2.5 },
-			projectile = { speed = 10, angle = -60, gravity = 40, lifetime = 0.5, size = 7, color = DUST, linger = 2.5, from = "feet",
+			projectile = { speed = 34, angle = 0, gravity = 0, lifetime = 0.6, size = 7, color = DUST, linger = 2.5, from = "feet",
 				visual = { shape = "ball", size = 6, color = DUST, material = "Sand", transparency = 0.45, trail = false } },
 			windup = { Root = { 0, 0, 0, 0, -0.15, 0 }, Waist = { 5, 0, 0 }, Neck = { 15, 0, 0 }, RS = { 150, 0, 10 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 140, 0, -10 }, LE = { 40, 0, 0 } },
 			strike = { Root = { -8, 0, 0, 0, -0.3, 0 }, Waist = { -16, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 120, 0, 0 }, RE = { 10, 0, 0 }, RW = { 40, 0, 0 }, LS = { 115, 0, -5 }, LE = { 20, 0, 0 } },
 			follow = { Root = { -10, 0, 0, 0, -0.32, 0 }, Waist = { -18, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 110, 0, 5 }, RE = { 15, 0, 0 }, RW = { 60, 0, 0 }, LS = { 108, 0, -8 }, LE = { 25, 0, 0 } },
 			prop = "sac", hideProp = "tuyau", wobble = true,
-			fx = { { "particles", tex = "smoke", color = DUST, dir = "all", at = "feet", time = 1.2, speed = 6, size = 1.6, rate = 90 } },
+			fx = { { "particles", tex = "smoke", color = DUST, dir = "front", at = "feet", time = 1.2, speed = 8, size = 1.6, rate = 90 } },
 			text = "VIDAGE DU SAC", hitText = "ATCHOUM !",
 		},
-		-- Turbo vertical : raide comme une fusée, le propulseur à poussière le projette vers le haut (remontée gratuite)
+		-- Turbo diagonal (↑L, remontée) : il se comprime comme un ressort, le propulseur à poussière s'allume et il part en diagonale, raide
+		-- comme une fusée, tuyau et bras tendus devant, roulettes derrière : tout ce qu'il croise est emporté
 		S_up = {
-			label = "Turbo vertical", energyCost = 0, startup = 0.06, active = 0.3, recovery = 0.3,
-			damage = 7, hitbox = box(5, 7, 0.5, 2), kbBase = 30, kbGrowth = 40, kbAngle = 80, selfVelocity = Vector2.new(8, 90),
-			windup = { Root = { 0, 0, 0, 0, -0.7, 0 }, Waist = { -10, 0, 0 }, Neck = { -10, 0, 0 }, RS = { -20, 0, 30 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -20, 0, -30 }, LE = { 0, 0, 0 } },
-			strike = { Root = { 0, 0, 0, 0, 0.3, 0 }, Waist = { 5, 0, 0 }, Neck = { 15, 0, 0 }, RS = { 0, 0, 8 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 0, 0, -8 }, LE = { 0, 0, 0 }, RH = { 0, 0, 3 }, RK = { 0, 0, 0 }, RA = { -30, 0, 0 }, LH = { 0, 0, -3 }, LK = { 0, 0, 0 }, LA = { -30, 0, 0 } },
-			follow = { Root = { 0, 0, 0, 0, 0.35, 0 }, Waist = { 6, 0, 0 }, Neck = { 18, 0, 0 }, RS = { 0, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 0, 0, -10 }, LE = { 0, 0, 0 }, RH = { 0, 0, 4 }, RK = { 0, 0, 0 }, RA = { -30, 0, 0 }, LH = { 0, 0, -4 }, LK = { 0, 0, 0 }, LA = { -30, 0, 0 } },
-			fx = { { "burst", color = DUST, size = 3, at = "feet" }, { "particles", tex = "smoke", color = DUST, dir = "down", at = "feet", time = 0.4, speed = 14, size = 1, rate = 100 } },
+			label = "Turbo diagonal", startup = 0.15, active = 0.3, recovery = 0.45,
+			damage = 13, hitbox = box(10, 11, 3, 4), kbBase = 32, kbGrowth = 45, kbAngle = 80, selfVelocity = Vector2.new(42, 80),
+			windup = { Root = { 0, 0, 0, 0, -0.8, 0 }, Waist = { -12, 0, 0 }, Neck = { -15, 0, 0 }, RS = { -30, 0, 20 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -30, 0, -20 }, LE = { 0, 0, 0 } },
+			strike = { Root = { -45, 0, 0, 0, 0.3, 0 }, Waist = { 0, 0, 0 }, Neck = { 25, 0, 0 }, RS = { 178, 0, 5 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 178, 0, -5 }, LE = { 0, 0, 0 }, RH = { -15, 0, 3 }, RK = { 0, 0, 0 }, RA = { -40, 0, 0 }, LH = { -15, 0, -3 }, LK = { 0, 0, 0 }, LA = { -40, 0, 0 } },
+			follow = { Root = { -50, 0, 0, 0, 0.35, 0 }, Waist = { 0, 0, 0 }, Neck = { 28, 0, 0 }, RS = { 180, 0, 5 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 180, 0, -5 }, LE = { 0, 0, 0 }, RH = { -18, 0, 3 }, RK = { 0, 0, 0 }, RA = { -40, 0, 0 }, LH = { -18, 0, -3 }, LK = { 0, 0, 0 }, LA = { -40, 0, 0 } },
+			trail = "prop", fx = { { "burst", color = DUST, size = 3, at = "feet" }, { "particles", tex = "fire", color = YELLOW, dir = "down", at = "feet", time = 0.4, speed = 16, size = 0.9, rate = 110 }, { "ring", color = CYAN, radius = 4, at = "feet" } },
 			text = "TURBO !", hitText = "WHOOSH !",
 		},
-		-- Puissance max (S maintenu) : arc-bouté, jambes écartées, attraction forte et longue (encaisse sans broncher)
+		-- Puissance max (S maintenu) : arc-bouté, jambes écartées, le tuyau aspire tout le couloir d'un coup et avale les tirs (encaisse sans broncher)
 		S_hold = {
-			label = "Puissance max", kind = "absorb", energyCost = 35, startup = 0.25, active = 1.0, recovery = 0.4,
-			damage = 5, hits = 3, hitbox = box(12, 5, 6.5, 0.5), kbBase = 25, kbGrowth = 20, kbAngle = 10, pull = true, armor = true,
-			absorb = { radius = 8, offset = 4 },
+			label = "Puissance max", kind = "absorb", startup = 0.3, active = 0.6, recovery = 0.6,
+			damage = 14, hitbox = box(16, 6, 8, 1), kbBase = 26, kbGrowth = 25, kbAngle = 10, pull = true, armor = true,
+			absorb = { radius = 9, offset = 5 },
 			windup = { Root = { 0, 0, 0, 0, -0.4, 0.2 }, Waist = { 10, 0, 0 }, RS = { 60, 0, 0 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, 30 }, LE = { 80, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 }, FR = { 0, 0, 0, 0, 0, 0.2 } },
 			strike = { Root = { 14, 0, 0, 0, -0.55, 0.4 }, Waist = { 12, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 85, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 80, 0, 28 }, LE = { 45, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 }, FR = { 0, 0, 0, 0, 0, 0.25 } },
 			follow = { Root = { 16, 0, 0, 0, -0.55, 0.45 }, Waist = { 14, 0, 0 }, Neck = { -12, 0, 0 }, RS = { 84, 0, 0 }, RE = { 0, 0, 0 }, RW = { 3, 0, 0 }, LS = { 79, 0, 28 }, LE = { 46, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 }, FR = { 0, 0, 0, 0, 0, 0.25 } },
 			shake = true, wobble = true,
 			windupFx = { { "text", text = "PUISSANCE 100 %", color = CYAN } },
-			fx = { { "ring", color = DARK, radius = 7, at = "front" }, { "particles", tex = "smoke", color = DUST, dir = "all", at = "front", time = 1, speed = 6, size = 1, rate = 100 }, { "shake", amount = 0.3 } },
+			fx = { { "ring", color = DARK, radius = 8, at = "front" }, { "beam", color = DUST, length = 17, width = 3.5, at = "hand" }, { "particles", tex = "smoke", color = DUST, dir = "all", at = "front", time = 0.8, speed = 8, size = 1, rate = 100 }, { "shake", amount = 0.3 } },
 			text = "PUISSANCE MAX", hitText = "SHLUUURP !",
 		},
-		-- Nettoyage programmé (→→S) : buste penché, il file en zigzag en brossant tout sur son passage
+		-- Nettoyage programmé (→→L) : buste penché, il file en zigzag et brosse tout le couloir sur son passage
 		S_dash = {
-			label = "Nettoyage programmé", energyCost = 25, startup = 0.05, active = 0.3, recovery = 0.3,
-			damage = 4, hits = 3, hitbox = box(5, 4, 2, 0), kbBase = 25, kbGrowth = 45, kbAngle = 35, selfVelocity = Vector2.new(60, 0), invuln = 0.15,
+			label = "Nettoyage programmé", startup = 0.15, active = 0.3, recovery = 0.5,
+			damage = 13, hitbox = box(14, 6, 7, 0.5), kbBase = 28, kbGrowth = 55, kbAngle = 35, selfVelocity = Vector2.new(60, 0), invuln = 0.15,
 			windup = { Root = { -15, 0, 0, 0, -0.4, 0 }, Waist = { -10, 0, 0 }, RS = { 40, 0, 30 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -30 }, LE = { 90, 0, 0 } },
 			strike = { Root = { -25, 0, 0, 0, -0.5, -0.3 }, Waist = { -10, 0, 0 }, Neck = { 15, 0, 0 }, RS = { 70, 0, -10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -20, 0, -40 }, LE = { 90, 0, 0 } },
 			follow = { Root = { -25, 0, 0, 0, -0.5, -0.35 }, Waist = { -10, 0, 0 }, Neck = { 15, 0, 0 }, RS = { 65, 0, 30 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -22, 0, -40 }, LE = { 90, 0, 0 } },
-			wobble = true, trail = "prop", fx = { { "particles", tex = "smoke", color = DUST, dir = "up", at = "feet", time = 0.3, speed = 5, size = 0.8, rate = 80 } },
+			wobble = true, trail = "prop", fx = { { "particles", tex = "smoke", color = DUST, dir = "up", at = "feet", time = 0.3, speed = 5, size = 0.8, rate = 80 }, { "particles", tex = "spark", color = YELLOW, dir = "front", at = "hand", time = 0.3, speed = 12, size = 0.4, rate = 80 } },
 			text = "NETTOYAGE PROGRAMMÉ", hitText = "SHRK SHRK !",
 		},
-		-- Mode bordure (ESQUIVE puis S) : de profil, au ras du sol, il longe l'adversaire et ressort derrière lui
+		-- Mode bordure (ESQUIVE puis L) : de profil, au ras du sol, il longe tout le couloir en cognant du pare-chocs et ressort derrière l'adversaire
 		S_dodge = {
-			label = "Mode bordure", energyCost = 20, startup = 0.06, active = 0.25, recovery = 0.3,
-			damage = 9, hitbox = box(4, 2.5, 1, -1), kbBase = 28, kbGrowth = 55, kbAngle = 115, selfVelocity = Vector2.new(70, 0), invuln = 0.3,
+			label = "Mode bordure", startup = 0.15, active = 0.25, recovery = 0.45,
+			damage = 12, hitbox = box(14, 5, 7, 0.5), kbBase = 28, kbGrowth = 55, kbAngle = 115, selfVelocity = Vector2.new(70, 0), invuln = 0.3,
 			windup = { Root = { 0, 60, 0, 0, -0.8, 0 }, Waist = { -10, 0, 0 }, Neck = { 0, -40, 0 }, RS = { 30, 0, 40 }, RE = { 90, 0, 0 }, LS = { 30, 0, -40 }, LE = { 90, 0, 0 } },
 			strike = { Root = { -10, 90, 0, 0, -1.0, -0.4 }, Waist = { -15, 0, 0 }, Neck = { 0, -60, 0 }, RS = { 10, 0, 80 }, RE = { 0, 0, 0 }, LS = { 10, 0, -80 }, LE = { 0, 0, 0 } },
 			follow = { Root = { -10, 95, 0, 0, -1.0, -0.45 }, Waist = { -15, 0, 0 }, Neck = { 0, -65, 0 }, RS = { 8, 0, 82 }, RE = { 0, 0, 0 }, LS = { 8, 0, -82 }, LE = { 0, 0, 0 } },
-			fx = { { "particles", tex = "smoke", color = DUST, dir = "up", at = "feet", time = 0.3, speed = 4, size = 0.6, rate = 60 } },
+			trail = "body", fx = { { "particles", tex = "smoke", color = DUST, dir = "up", at = "feet", time = 0.3, speed = 4, size = 0.6, rate = 60 }, { "ring", color = CYAN, radius = 3, at = "root" } },
 			text = "MODE BORDURE", hitText = "PAR DERRIÈRE !",
 		},
-		-- Disque volant (S en l'air) : jambes repliées, bras à l'horizontale, il tourne comme un disque d'aspirateur
+		-- Disque volant (L en l'air) : jambes repliées, bras à l'horizontale, il tourne comme un disque d'aspirateur et fauche tout autour
 		S_air = {
-			label = "Disque volant", energyCost = 20, startup = 0.1, active = 0.3, recovery = 0.3,
-			damage = 5, hits = 2, hitbox = box(6, 3, 1.5, 0), kbBase = 26, kbGrowth = 50, kbAngle = 35, selfVelocity = Vector2.new(40, 15),
+			label = "Disque volant", startup = 0.15, active = 0.3, recovery = 0.45,
+			damage = 13, hitbox = box(8, 5, 2, 0), kbBase = 28, kbGrowth = 55, kbAngle = 35, selfVelocity = Vector2.new(40, 15),
 			windup = { Root = { 0, 0, 0 }, Waist = { -10, 0, 0 }, RS = { 40, 0, 30 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -30 }, LE = { 90, 0, 0 }, RH = { 100, 0, 0 }, RK = { -130, 0, 0 }, LH = { 100, 0, 0 }, LK = { -130, 0, 0 } },
 			strike = { Root = { 0, 0, 0 }, Waist = { -15, 0, 0 }, RS = { 90, 0, 90 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, -90 }, LE = { 0, 0, 0 }, RH = { 110, 0, 0 }, RK = { -140, 0, 0 }, LH = { 110, 0, 0 }, LK = { -140, 0, 0 } },
 			follow = { Root = { 0, 0, 0 }, Waist = { -15, 0, 0 }, RS = { 90, 0, 92 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, -92 }, LE = { 0, 0, 0 }, RH = { 110, 0, 0 }, RK = { -140, 0, 0 }, LH = { 110, 0, 0 }, LK = { -140, 0, 0 } },
-			spin = { axis = "y", degrees = 720 }, trail = "prop", text = "DISQUE VOLANT", hitText = "ZING !",
+			spin = { axis = "y", degrees = 720 }, trail = "prop", fx = { { "ring", color = CYAN, radius = 5, at = "root" } }, text = "DISQUE VOLANT", hitText = "ZING !",
 		},
-		-- Chute du disque (↓S en l'air) : bras rentrés, raide comme une plaque d'acier, il tombe comme un poids mort
+		-- Chute du disque (↓L en l'air) : bras rentrés, raide comme une plaque d'acier, il tombe comme un poids mort et aplatit tout en dessous
 		S_air_down = {
-			label = "Chute du disque", energyCost = 25, startup = 0.15, active = 0.4, recovery = 0.35,
-			damage = 13, hitbox = box(5, 4, 0, -2.5), kbBase = 30, kbGrowth = 70, kbAngle = -80, selfVelocity = Vector2.new(0, -110), armor = true,
+			label = "Chute du disque", startup = 0.18, active = 0.4, recovery = 0.5,
+			damage = 14, hitbox = box(8, 5, 0, -2.5), kbBase = 30, kbGrowth = 70, kbAngle = -80, selfVelocity = Vector2.new(0, -110), armor = true,
 			windup = { Root = { 0, 0, 0 }, Waist = { 0, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 150, 0, 30 }, RE = { 0, 0, 0 }, LS = { 150, 0, -30 }, LE = { 0, 0, 0 }, RH = { 60, 0, 0 }, RK = { -90, 0, 0 }, LH = { 60, 0, 0 }, LK = { -90, 0, 0 } },
 			strike = { Root = { 0, 0, 0 }, Waist = { 0, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 0, 0, 2 }, RE = { 0, 0, 0 }, LS = { 0, 0, -2 }, LE = { 0, 0, 0 }, RH = { 0, 0, 0 }, RK = { 0, 0, 0 }, RA = { 0, 0, 0 }, LH = { 0, 0, 0 }, LK = { 0, 0, 0 }, LA = { 0, 0, 0 } },
 			follow = { Root = { 0, 0, 0 }, Waist = { 0, 0, 0 }, Neck = { -12, 0, 0 }, RS = { 0, 0, 3 }, RE = { 0, 0, 0 }, LS = { 0, 0, -3 }, LE = { 0, 0, 0 }, RH = { 0, 0, 2 }, RK = { 0, 0, 0 }, RA = { 0, 0, 0 }, LH = { 0, 0, -2 }, LK = { 0, 0, 0 }, LA = { 0, 0, 0 } },
-			trail = "body", fx = { { "burst", color = STEEL, size = 3, at = "feet" }, { "shake", amount = 0.4 } },
+			trail = "body", fx = { { "burst", color = STEEL, size = 3.5, at = "feet" }, { "ring", color = CYAN, radius = 6, at = "feet" }, { "shake", amount = 0.4 } },
 			text = "POIDS MORT", hitText = "KLANG !",
 		},
 
@@ -458,7 +459,7 @@ local data = {
 		},
 		-- Souffle turbo (finition S) : le tuyau passe en soufflerie et éjecte l'adversaire au loin
 		S_finish_souffle = {
-			label = "Souffle turbo", energyCost = 20, startup = 0.12, active = 0.14, recovery = 0.32,
+			label = "Souffle turbo", startup = 0.12, active = 0.14, recovery = 0.32,
 			damage = 10, hitbox = box(7, 4, 4, 0.5), kbBase = 38, kbGrowth = 88, kbAngle = 30,
 			windup = { Root = { -6, 0, 0, 0, -0.3, -0.1 }, Waist = { -8, 0, 0 }, RS = { 70, 0, 15 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, 25 }, LE = { 80, 0, 0 } },
 			strike = { Root = { 10, 0, 0, 0, -0.35, 0.3 }, Waist = { 8, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 92, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 86, 0, 25 }, LE = { 45, 0, 0 }, FR = { 0, 0, 0, 0, 0, 0.2 } },
@@ -469,7 +470,7 @@ local data = {
 		},
 		-- Vidange du réservoir (finition S) : trois projectiles avalés recrachés en éventail (coûte 2 du Réservoir)
 		S_finish_vidange = {
-			label = "Vidange du réservoir", kind = "projectile", energyCost = 20, meterCost = 2, startup = 0.12, active = 0, recovery = 0.35,
+			label = "Vidange du réservoir", kind = "projectile", startup = 0.12, active = 0, recovery = 0.35,
 			damage = 7, kbBase = 34, kbGrowth = 80, kbAngle = 30,
 			projectile = { speed = 85, gravity = 0, lifetime = 0.5, size = 1.6, color = DUST, fan = { count = 3, from = -12, to = 22 },
 				visual = { shape = "ball", size = 1.3, color = DUST, material = "Sand", spin = 14, parts = { { "ball", Vector3.new(0.6, 0.6, 0.6), Vector3.new(0.5, 0.3, 0), DUST_DARK } } } },
@@ -480,44 +481,46 @@ local data = {
 		},
 
 		------------------------------------------------------------------ Supers
-		-- Grand ménage : bras en croix, il tourne sur lui-même et devient une tornade d'aspiration
+		-- Grand ménage (Y) : bras en croix, il tourne sur lui-même et devient une tornade d'aspiration qui ratisse des deux côtés
 		SUPER = {
-			label = "Grand ménage !", kind = "absorb", superCost = 100, startup = 0.35, active = 1.5, recovery = 0.5,
-			damage = 5, hits = 5, hitbox = box(16, 10, 0, 2), kbBase = 18, kbGrowth = 20, kbAngle = 70, pull = true, armor = true,
-			absorb = { radius = 10, offset = 0 },
+			label = "Grand ménage !", kind = "absorb", startup = 0.35, active = 1.2, recovery = 0.7,
+			damage = 8, hits = 3, hitbox = box(30, 10, 0, 2), kbBase = 20, kbGrowth = 25, kbAngle = 70, pull = true, armor = true,
+			absorb = { radius = 12, offset = 0 },
 			windup = { Root = { 0, 0, 0, 0, -0.6, 0 }, Waist = { -15, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 60, 0, 60 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -60 }, LE = { 60, 0, 0 } },
 			strike = { Root = { 0, 0, 0, 0, -0.2, 0 }, Waist = { 5, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 160, 0, 40 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, -90 }, LE = { 0, 0, 0 } },
 			follow = { Root = { 0, 0, 0, 0, -0.2, 0 }, Waist = { 6, 0, 0 }, Neck = { 22, 0, 0 }, RS = { 165, 0, 42 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, -92 }, LE = { 0, 0, 0 } },
 			spin = { axis = "y", degrees = 1080 }, trail = "prop",
 			windupFx = { { "screen", color = CYAN, alpha = 0.25 }, { "text", text = "GRAND MÉNAGE ACTIVÉ", color = CYAN } },
-			fx = { { "pillar", color = DUST, height = 14, width = 8, at = "root" }, { "particles", tex = "smoke", color = DUST, dir = "up", at = "root", time = 1.5, speed = 10, size = 1.5, rate = 120 }, { "shake", amount = 0.5 } },
+			fx = { { "pillar", color = DUST, height = 14, width = 10, at = "root" }, { "ring", color = DARK, radius = 15, at = "root" }, { "particles", tex = "smoke", color = DUST, dir = "up", at = "root", time = 1.2, speed = 10, size = 1.5, rate = 120 }, { "shake", amount = 0.5 } },
 			text = "GRAND MÉNAGE !", hitText = "VROOOOOM !",
 		},
-		-- Super ↑ : il se comprime comme un ressort, le propulseur à poussière s'allume et il décolle à la verticale, raide comme
-		-- une fusée, bras joints au-dessus de la tête, en vrille : tout ce qui est au-dessus part en orbite
+		-- Super ↑ : compte à rebours, le propulseur s'allume et il traverse le couloir en diagonale comme une fusée, bras joints devant,
+		-- en vrille : tout ce qui est sur la trajectoire part en orbite avec lui
 		SUPER_up = {
-			label = "Décollage fusée !", superCost = 100, startup = 0.3, active = 0.4, recovery = 0.55,
-			damage = 22, hitbox = box(6.5, 13, 0.8, 5), kbBase = 45, kbGrowth = 95, kbAngle = 88, invuln = 0.3,
+			label = "Décollage fusée !", startup = 0.35, active = 0.4, recovery = 0.75,
+			damage = 24, hitbox = box(14, 8, 7, 2), kbBase = 45, kbGrowth = 95, kbAngle = 80, invuln = 0.3, selfVelocity = Vector2.new(55, 70),
 			windup = { Root = { 0, 0, 0, 0, -1.0, 0 }, Waist = { -10, 0, 0 }, Neck = { -35, 0, 0 }, RS = { 0, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 0, 0, -10 }, LE = { 0, 0, 0 } },
-			strike = { Root = { 0, 0, 0, 0, 0.5, 0 }, Waist = { 0, 0, 0 }, Neck = { 25, 0, 0 }, RS = { 180, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 180, 0, 0 }, LE = { 0, 0, 0 }, RH = { 0, 0, 2 }, RK = { 0, 0, 0 }, RA = { -40, 0, 0 }, LH = { 0, 0, -2 }, LK = { 0, 0, 0 }, LA = { -40, 0, 0 } },
-			follow = { Root = { 0, 0, 0, 0, 0.6, 0 }, Waist = { 0, 0, 0 }, Neck = { 28, 0, 0 }, RS = { 182, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 182, 0, 0 }, LE = { 0, 0, 0 }, RH = { 0, 0, 2 }, RK = { 0, 0, 0 }, RA = { -40, 0, 0 }, LH = { 0, 0, -2 }, LK = { 0, 0, 0 }, LA = { -40, 0, 0 } },
-			spin = { axis = "y", degrees = 1080 }, selfVelocity = Vector2.new(0, 95),
+			strike = { Root = { -50, 0, 0, 0, 0.4, 0 }, Waist = { 0, 0, 0 }, Neck = { 25, 0, 0 }, RS = { 180, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 180, 0, 0 }, LE = { 0, 0, 0 }, RH = { -15, 0, 2 }, RK = { 0, 0, 0 }, RA = { -40, 0, 0 }, LH = { -15, 0, -2 }, LK = { 0, 0, 0 }, LA = { -40, 0, 0 } },
+			follow = { Root = { -55, 0, 0, 0, 0.5, 0 }, Waist = { 0, 0, 0 }, Neck = { 28, 0, 0 }, RS = { 182, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 182, 0, 0 }, LE = { 0, 0, 0 }, RH = { -18, 0, 2 }, RK = { 0, 0, 0 }, RA = { -40, 0, 0 }, LH = { -18, 0, -2 }, LK = { 0, 0, 0 }, LA = { -40, 0, 0 } },
+			spin = { axis = "y", degrees = 1080 },
 			windupFx = { "super", { "text", text = "DÉCOLLAGE DANS 3… 2… 1…", color = CYAN } }, trail = "prop",
-			fx = { { "pillar", color = DUST, height = 18, width = 3, at = "root" }, { "particles", tex = "fire", color = YELLOW, dir = "down", at = "feet", time = 0.6, speed = 18, size = 1, rate = 120 }, { "burst", color = DUST, size = 4, at = "feet" }, { "shake", amount = 0.5 } },
+			fx = { { "beam", color = DUST, length = 18, width = 3, at = "root" }, { "particles", tex = "fire", color = YELLOW, dir = "down", at = "feet", time = 0.6, speed = 18, size = 1, rate = 120 }, { "burst", color = DUST, size = 4, at = "feet" }, { "shake", amount = 0.5 } },
 			text = "FUSÉE.EXE", hitText = "EN ORBITE !",
 		},
-		-- Mise à jour : tête basse, il redémarre… puis se redresse bras au ciel : onde, vitesse et armure 3 s
+		-- Mise à jour (↓Y) : tête basse, il redémarre… puis écarte les bras : une barre de chargement géante traverse l'arène des deux côtés,
+		-- qui la touche attend la fin du téléchargement (« en attente »), pendant que R-0B0 ressort avec armure et turbo 3 s
 		SUPER_down = {
-			label = "Mise à jour !", superCost = 100, startup = 0.4, active = 0.15, recovery = 0.4,
-			damage = 15, hitbox = box(9, 6, 0, 0.5), kbBase = 32, kbGrowth = 60, kbAngle = 50,
+			label = "Mise à jour !", startup = 0.4, active = 0.2, recovery = 0.7,
+			damage = 22, hitbox = box(30, 8, 0, 2), kbBase = 30, kbGrowth = 55, kbAngle = 50,
+			status = { name = "waiting", duration = 2 },
 			selfEffect = { armor = 3, buff = { "turbo", 3 } },
 			windup = { Root = { 0, 0, 0, 0, -0.1, 0 }, Waist = { 0, 0, 0 }, Neck = { -35, 0, 0 }, RS = { 0, 0, 5 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 0, 0, -5 }, LE = { 0, 0, 0 } },
-			strike = { Root = { 0, 0, 0, 0, 0.15, 0 }, Waist = { 6, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 170, 0, 30 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 170, 0, -30 }, LE = { 0, 0, 0 }, FR = { 0, 0, 0, 0, 0.2, 0 }, FL = { 0, 0, 0, 0, 0.2, 0 } },
+			strike = { Root = { 0, 0, 0, 0, 0.15, 0 }, Waist = { 4, 0, 0 }, Neck = { 15, 0, 0 }, RS = { 90, 0, 90 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, -90 }, LE = { 0, 0, 0 }, FR = { 0, 0, 0, 0, 0.2, 0 }, FL = { 0, 0, 0, 0, 0.2, 0 } },
 			follow = { Root = { 0, 0, 0, 0, 0.1, 0 }, Waist = { 8, 0, 0 }, Neck = { 24, 0, 0 }, RS = { 172, 0, 32 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 172, 0, -32 }, LE = { 0, 0, 0 } },
 			hold = 0.3, shake = true,
 			windupFx = { { "text", text = "TÉLÉCHARGEMENT… 99 %", color = CYAN } },
-			fx = { { "ring", color = CYAN, radius = 7, at = "root" }, { "pillar", color = CYAN, height = 10, width = 3, at = "root" }, { "screen", color = CYAN, alpha = 0.2 } },
-			text = "MISE À JOUR TERMINÉE", hitText = "BIP BIP !",
+			fx = { { "ring", color = CYAN, radius = 15, at = "root" }, { "beam", color = CYAN, length = 15, width = 2.2, at = "root" }, { "pillar", color = CYAN, height = 10, width = 3, at = "root" }, { "screen", color = CYAN, alpha = 0.2 }, { "text", text = "VEUILLEZ PATIENTER", color = CYAN, at = "above" } },
+			text = "MISE À JOUR TERMINÉE", hitText = "VEUILLEZ PATIENTER…",
 		},
 
 		------------------------------------------------------------------ Chope (bouton ✋) et projections
