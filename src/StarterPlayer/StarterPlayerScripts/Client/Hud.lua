@@ -9,6 +9,7 @@ local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Config = require(Shared:WaitForChild("Config"))
 local CharacterList = require(Shared:WaitForChild("CharacterList"))
 local Items = require(Shared:WaitForChild("Items"))
+local Statuses = require(Shared:WaitForChild("Statuses"))
 
 local Hud = {}
 
@@ -16,6 +17,40 @@ local STATUS_TEXT = {
 	inverted = "🔄 Commandes inversées",
 	stunned = "💫 Étourdi",
 }
+for name, info in pairs(Statuses.LIST) do
+	STATUS_TEXT[name] = STATUS_TEXT[name] or (info.icon .. " " .. string.lower(info.text))
+end
+local TRACK_TEXT = { rap = "🎤 Rap", slow = "💕 Slow", techno = "🎛️ Techno" }
+
+-- Jauge propre au perso (Likes de Lola, Rage de Jordan, Pression du Canard…), voir server/Mechanics.lua
+local function meterText(model)
+	local parts = {}
+	local max = model:GetAttribute("MeterMax") or 0
+	local icon = model:GetAttribute("MeterIcon") or ""
+	if max > 0 then
+		local value = model:GetAttribute("Meter") or 0
+		if max <= 6 then
+			table.insert(parts, icon .. " " .. math.floor(value + 0.001) .. "/" .. max)
+		else
+			table.insert(parts, icon .. " " .. math.floor(value / max * 100) .. "%")
+		end
+	end
+	local track = TRACK_TEXT[model:GetAttribute("Track") or ""]
+	if track then
+		table.insert(parts, track)
+	end
+	local trick = model:GetAttribute("NextTrick") or 0
+	if trick > 0 then
+		local data = CharacterList[model:GetAttribute("Character") or ""]
+		local icons = data and data.passive and data.passive.icons or { "✨", "💥", "🐇" }
+		table.insert(parts, "🎩→" .. (icons[trick] or "?"))
+	end
+	local forms = model:GetAttribute("Forms") or 0
+	if forms > 0 then
+		table.insert(parts, "📋x" .. forms)
+	end
+	return table.concat(parts, "  ")
+end
 local ARROWS = { up = "↑", down = "↓", left = "←", right = "→" }
 local ENERGY_COLOR = Color3.fromRGB(70, 180, 255)
 local ENERGY_LOW = Color3.fromRGB(120, 120, 150)
@@ -146,8 +181,19 @@ function Hud.start()
 	-- chrono sous les cartes (mode « temps » façon Smash)
 	local timer = textLabel(gui, UDim2.fromOffset(220, 34), UDim2.new(0.5, -110, 0, 116))
 
+	-- aveuglé (statut « blinded ») : l'écran s'assombrit pour le joueur touché
+	local blind = Instance.new("Frame")
+	blind.Size = UDim2.fromScale(1, 1)
+	blind.BackgroundColor3 = Color3.new(0, 0, 0)
+	blind.BackgroundTransparency = 1
+	blind.BorderSizePixel = 0
+	blind.ZIndex = 0
+	blind.Parent = gui
+
 	local cards = {}
 	RunService.RenderStepped:Connect(function()
+		local me = player.Character
+		blind.BackgroundTransparency = (me and Statuses.flags(me).blind) and 0.25 or 1
 		local now = workspace:GetServerTimeNow()
 		local seen = {}
 		for _, model in ipairs(CollectionService:GetTagged("Fighter")) do
@@ -200,6 +246,14 @@ function Hud.start()
 			if bulles > 0 then
 				statusText = "Bulles x" .. bulles .. "  " .. statusText
 			end
+			local buff = model:GetAttribute("Buff") or ""
+			if not active and buff ~= "" and (model:GetAttribute("BuffUntil") or 0) > now and Statuses.BUFFS[buff] then
+				statusText = Statuses.BUFFS[buff].icon .. " " .. Statuses.BUFFS[buff].text .. "  " .. statusText
+			end
+			local meter = meterText(model)
+			if meter ~= "" then
+				statusText = meter .. "  " .. statusText
+			end
 			if model:GetAttribute("Grabbed") then
 				statusText = "✋ Saisi !  " .. statusText
 			elseif (model:GetAttribute("ObeseUntil") or 0) > now then
@@ -211,7 +265,9 @@ function Hud.start()
 			local heldId = model:GetAttribute("Held") or ""
 			local item = Items.LIST[heldId]
 			if not item then
-				refs.held.Text = ""
+				-- Caisse Bizarre ouverte : le perso a sorti son arme
+				refs.held.Text = model:GetAttribute("Armed") and "📦" or ""
+				refs.held.TextColor3 = Color3.fromRGB(255, 220, 120)
 			elseif heldId == "bomb" then
 				local left = math.max(0, Config.BOMB_FUSE - (now - (model:GetAttribute("HeldSince") or now)))
 				refs.held.Text = item.icon .. math.ceil(left)

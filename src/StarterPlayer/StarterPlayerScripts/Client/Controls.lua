@@ -79,6 +79,8 @@ end
 -- S part au relâchement : tap = S, maintenu = S_HOLD. CHARGE dure tant que la touche est maintenue.
 -- P et K partent à l'appui ; leur relâchement est aussi signalé (frappe chargée façon Smash).
 function Controls:_press(name)
+	self.held = self.held or {}
+	self.held[name] = true
 	if name == "S" then
 		self.sPressedAt = os.clock()
 	else
@@ -86,7 +88,15 @@ function Controls:_press(name)
 	end
 end
 
+-- Bouton maintenu (SAUT maintenu = plané du Capitaine Canard)
+function Controls:isHeld(name)
+	return self.held ~= nil and self.held[name] == true
+end
+
 function Controls:_release(name)
+	if self.held then
+		self.held[name] = false
+	end
 	if name == "S" and self.sPressedAt then
 		local held = os.clock() - self.sPressedAt
 		self.sPressedAt = nil

@@ -5,6 +5,7 @@ local CollectionService = game:GetService("CollectionService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Config = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Config"))
+local Statuses = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Statuses"))
 
 local Fighters = {}
 Fighters.TAG = "Fighter"
@@ -14,6 +15,8 @@ local remotes = {}
 
 -- Appelé quand un combattant encaisse un coup (Combat s'en sert pour lâcher une saisie)
 Fighters.onHit = nil
+-- Mécaniques des persos (server/Mechanics.lua), branchées par Main.server (évite un require circulaire)
+Fighters.mechanics = nil
 
 function Fighters.init(remoteTable)
 	remotes = remoteTable
@@ -48,6 +51,9 @@ function Fighters.resetAttributes(model)
 	model:SetAttribute("Grabbed", false) -- saisi par un adversaire
 	model:SetAttribute("ObeseUntil", 0)
 	model:SetAttribute("FragileUntil", 0)
+	if Fighters.mechanics then
+		Fighters.mechanics.reset(model)
+	end
 end
 
 function Fighters.register(model, characterId, displayName)
@@ -67,6 +73,8 @@ function Fighters.register(model, characterId, displayName)
 		holding = nil, -- adversaire saisi
 		heldBy = nil, -- saisi par
 		immunity = {},
+		armorUntil = 0, -- encaisse sans être éjecté (armor d'un coup, titubade…)
+		counter = nil, -- contre en cours : { untilTime, move, key }
 	}
 	CollectionService:AddTag(model, Fighters.TAG)
 	model.Destroying:Connect(function()
@@ -177,8 +185,10 @@ function Fighters.applyStatus(model, name, duration)
 	model:SetAttribute("Status", name)
 	model:SetAttribute("StatusUntil", now + duration)
 	s.immunity[name] = now + duration + Config.STATUS_IMMUNITY
-	if name == "stunned" then
+	local flags = Statuses.LIST[name]
+	if flags and flags.noAct then
 		Fighters.stun(model, duration)
+		Fighters.setCharging(model, false)
 	end
 end
 
@@ -219,7 +229,19 @@ function Fighters.applyKnockback(model, velocity, hitstun)
 	end)
 end
 
--- Applique un coup. direction = 1 (vers +X) ou -1. Renvoie true si le coup a porté.
+-- Petite poussée sans sonner (rebond sur Sumo, aspiration…)
+function Fighters.nudge(model, velocity)
+	local player = Players:GetPlayerFromCharacter(model)
+	if player then
+		remotes.Knockback:FireClient(player, velocity, 0.08)
+		return
+	end
+	local root = Fighters.root(model)
+	if root then
+		root.AssemblyLinearVelocity = velocity
+	end
+end
+
 function Fighters.isObese(model)
 	return (model:GetAttribute("ObeseUntil") or 0) > workspace:GetServerTimeNow()
 end
@@ -248,6 +270,7 @@ function Fighters.makeObese(model)
 	end
 end
 
+-- Applique un coup. direction = 1 (vers +X) ou -1. Renvoie true si le coup a porté.
 function Fighters.hit(attacker, target, move, damageMultiplier, direction)
 	if target == attacker or not state[target] then
 		return false
@@ -257,6 +280,24 @@ function Fighters.hit(attacker, target, move, damageMultiplier, direction)
 	end
 	if sameTeam(attacker, target) and not Config.TEAM_ATTACK then
 		return false
+	end
+	-- contre en cours (spécial d'esquive de beaucoup de persos) : le coup est annulé et l'attaquant prend la riposte
+	local ts = state[target]
+	if ts.counter and os.clock() < ts.counter.untilTime and attacker and state[attacker] and not move.unblockable then
+		local counter = ts.counter
+		ts.counter = nil
+		ts.invulnUntil = math.max(ts.invulnUntil, os.clock() + 0.3)
+		if remotes.Fx then
+			remotes.Fx:FireAllClients("Counter", { model = target, attacker = attacker, text = counter.move.counter.text })
+		end
+		local riposte = counter.move.counter.riposte or { damage = 8, kbBase = 35, kbGrowth = 60, kbAngle = 35, hitText = "CONTRÉ !" }
+		local attackerRoot, targetRoot = Fighters.root(attacker), Fighters.root(target)
+		local back = (attackerRoot and targetRoot and attackerRoot.Position.X < targetRoot.Position.X) and -1 or 1
+		task.defer(Fighters.hit, target, attacker, riposte, 1, back)
+		return false
+	end
+	if move.pull then
+		direction = -direction -- attire vers l'attaquant (ventouse, aimant…)
 	end
 
 	-- un coup encaissé interrompt la recharge et la frappe chargée : recharger, c'est prendre un risque
@@ -300,13 +341,18 @@ function Fighters.hit(attacker, target, move, damageMultiplier, direction)
 	if comboPiece then
 		hitstun = math.max(hitstun, Config.COMBO_HITSTUN)
 	end
-	if not obese then
+	local armored = Fighters.mechanics ~= nil and Fighters.mechanics.hasArmor(target)
+	if not obese and not armored then
 		Fighters.applyKnockback(target, velocity, hitstun)
-	end -- gavé de croustillant : personne ne peut l'éjecter, il encaisse juste les dégâts
+	end -- gavé de croustillant ou en armure : personne ne peut l'éjecter, il encaisse juste les dégâts
 
 	if move.status then
-		Fighters.applyStatus(target, move.status.name, move.status.duration)
+		Fighters.applyStatus(target, move.status.name or move.status[1], move.status.duration or move.status[2] or 2)
 	end
+	if Fighters.mechanics then
+		Fighters.mechanics.onHit(attacker, target, move, damage, direction)
+	end
+	local onBeat = attacker ~= nil and Fighters.mechanics ~= nil and Fighters.mechanics.onBeat(attacker)
 
 	local targetRoot = Fighters.root(target)
 	if targetRoot and remotes.Fx then
@@ -316,7 +362,7 @@ function Fighters.hit(attacker, target, move, damageMultiplier, direction)
 			target = target,
 			position = position,
 			power = obese and 20 or speed,
-			text = obese and "MOELLEUX !" or fragile and "FRAGILE !" or move.hitText,
+			text = obese and "MOELLEUX !" or armored and "MÊME PAS MAL !" or fragile and "FRAGILE !" or onBeat and "SUR LE TEMPO !" or move.hitText,
 		})
 	end
 	if attacker and state[attacker] then

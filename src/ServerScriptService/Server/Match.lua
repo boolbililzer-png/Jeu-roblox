@@ -18,6 +18,8 @@ local Fatals = require(script.Parent:WaitForChild("Fatals"))
 local Costumes = require(script.Parent:WaitForChild("Costumes"))
 local Combat = require(script.Parent:WaitForChild("Combat"))
 local Pickups = require(script.Parent:WaitForChild("Pickups"))
+local Mechanics = require(script.Parent:WaitForChild("Mechanics"))
+local Specials = require(script.Parent:WaitForChild("Specials"))
 
 local Match = {}
 
@@ -262,10 +264,33 @@ PLATFORMS.default = function(model)
 	return { { base, CFrame.new(0, -0.3, 0) * CFrame.Angles(0, 0, math.rad(90)) } }
 end
 
+-- Plateforme décrite dans la fiche : respawn.platform = { pieces = { { nom, "base" ou "", forme, taille,
+-- position, rotation, couleur, matière, options }, ... } } (même format que look.parts ; position par rapport
+-- au dessus de la plateforme ; les pièces "base" portent le perso)
+local function platformFromSpec(model, spec)
+	local parts = {}
+	for _, piece in ipairs(spec.pieces or {}) do
+		local part, offset = Costumes.buildPiece(piece)
+		part.Anchored = true
+		part.CanCollide = piece[2] == "base"
+		part.Parent = model
+		table.insert(parts, { part, offset })
+	end
+	if #parts == 0 then
+		return PLATFORMS.default(model)
+	end
+	return parts
+end
+
 local function buildPlatform(kind)
 	local model = Instance.new("Model")
 	model.Name = "PlateformeDeRetour"
-	local parts = (PLATFORMS[kind] or PLATFORMS.default)(model)
+	local parts
+	if typeof(kind) == "table" then
+		parts = platformFromSpec(model, kind)
+	else
+		parts = (PLATFORMS[kind] or PLATFORMS.default)(model)
+	end
 	model.Parent = workspace
 	return model, function(top)
 		for _, entry in ipairs(parts) do
@@ -312,6 +337,8 @@ local function resetFighterState(model)
 	Combat.releaseGrabs(model)
 	Pickups.clear(model)
 	Pickups.disarm(model) -- éjecté : on perd son arme, retour aux mains nues
+	Specials.clear(model) -- ses pièges et murs disparaissent
+	Mechanics.reset(model)
 	model:SetAttribute("ObeseUntil", 0)
 	model:SetAttribute("FragileUntil", 0)
 	model:SetAttribute("Damage", 0)
@@ -496,7 +523,7 @@ function Match.tryFatal(attacker, fatalId)
 		fxRemote:FireAllClients("Fatal", { attacker = attacker, target = target, id = fatal.id })
 	end
 
-	Fatals.play(fatal.id, attacker, target)
+	Fatals.play(fatal.id, attacker, target, fatal)
 	if target.Parent and Fighters.get(target) then
 		Fighters.get(target).invulnUntil = 0
 		knockOut(target, attacker)
@@ -513,6 +540,7 @@ startRound = function()
 		Combat.releaseGrabs(model)
 		Pickups.clear(model)
 		Pickups.disarm(model)
+		Specials.clear(model)
 		Fighters.resetAttributes(model)
 		local s = Fighters.get(model)
 		s.busyUntil = 0

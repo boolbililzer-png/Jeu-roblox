@@ -8,8 +8,11 @@ local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Config = require(Shared:WaitForChild("Config"))
 local CharacterList = require(Shared:WaitForChild("CharacterList"))
 local MoveSets = require(Shared:WaitForChild("MoveSets"))
+local Statuses = require(Shared:WaitForChild("Statuses"))
 local Fighters = require(script.Parent:WaitForChild("Fighters"))
 local Pickups = require(script.Parent:WaitForChild("Pickups"))
+local Mechanics = require(script.Parent:WaitForChild("Mechanics"))
+local Specials = require(script.Parent:WaitForChild("Specials"))
 
 local Combat = {}
 
@@ -100,9 +103,10 @@ local function showMoveName(model, text)
 end
 
 local function damageMultiplier(model)
-	return 1 + 0.1 * (model:GetAttribute("Bulles") or 0)
+	return Mechanics.damageMultiplier(model)
 end
 
+-- hits = n : le coup touche n fois pendant active (rafale de coups de sac, griffes du chat…)
 local function doMelee(attacker, move)
 	local root = Fighters.root(attacker)
 	if not root then
@@ -110,11 +114,19 @@ local function doMelee(attacker, move)
 	end
 	local alreadyHit = {}
 	local multiplier = damageMultiplier(attacker)
-	local endTime = os.clock() + math.max(move.active, 0.03)
+	local active = math.max(move.active, 0.03)
+	local endTime = os.clock() + active
+	local hits = move.hits or 1
+	local interval = hits > 1 and active / hits or math.huge
+	local nextReset = os.clock() + interval
 	local touched = false
 	repeat
 		if not root.Parent or Fighters.get(attacker) == nil then
 			return
+		end
+		if os.clock() >= nextReset then
+			alreadyHit = {}
+			nextReset += interval
 		end
 		local facing = Fighters.facing(attacker)
 		local offset = move.hitbox.offset
@@ -336,8 +348,37 @@ RunService.Heartbeat:Connect(function()
 	end
 end)
 
--- Le serveur calcule le trajet et les touches ; chaque client dessine le projectile (plus fluide)
-local function launchProjectile(attacker, move, angleDegrees, multiplier)
+-- Le serveur calcule le trajet et les touches ; chaque client dessine le projectile (plus fluide).
+-- projectile = { speed, angle, gravity, lifetime, size, color, visual,
+--   fan = { count, from, to }            éventail de plusieurs projectiles
+--   hits = n, pierce = true              touche n fois / traverse les adversaires
+--   bounce = n                           rebondit n fois sur le sol
+--   returns = true                       boomerang : revient vers le lanceur à mi-course
+--   homing = 0..1                        tête chercheuse (0,3 = douce)
+--   rain = { count, spread, height }     tombe du ciel au-dessus de la zone devant le perso
+--   linger = s                           reste sur place (nuage, flaque) et touche ce qui passe dedans
+--   from = "above" / "feet"              point de départ }
+local function nearestEnemy(attacker, position)
+	local best, bestDistance = nil, math.huge
+	for _, model in ipairs(Fighters.all()) do
+		local r = Fighters.root(model)
+		if model ~= attacker and r and not model:GetAttribute("Eliminated") then
+			local d = (r.Position - position).Magnitude
+			if d < bestDistance then
+				best, bestDistance = r, d
+			end
+		end
+	end
+	return best
+end
+
+local function sendUpdate(id, position, velocity)
+	if fxRemote then
+		fxRemote:FireAllClients("ProjectileUpdate", { id = id, position = position, velocity = velocity })
+	end
+end
+
+local function launchProjectile(attacker, move, angleDegrees, multiplier, originOverride)
 	local root = Fighters.root(attacker)
 	if not root then
 		return
@@ -346,8 +387,10 @@ local function launchProjectile(attacker, move, angleDegrees, multiplier)
 	local facing = Fighters.facing(attacker)
 	local angle = math.rad(angleDegrees)
 	local velocity = Vector3.new(math.cos(angle) * spec.speed * facing, math.sin(angle) * spec.speed, 0)
-	local position = root.Position + Vector3.new(2.5 * facing, 1, 0)
-	local size = Vector3.new(spec.size, spec.size, 6)
+	local position = originOverride or root.Position + Vector3.new(2.5 * facing, spec.from == "feet" and -2 or (spec.from == "above" and 4 or 1), 0)
+	local size = Vector3.new(spec.size or 1.5, spec.size or 1.5, 6)
+	local gravity = spec.gravity or 0
+	local lifetime = spec.lifetime or 1
 
 	nextProjectileId += 1
 	local id = nextProjectileId
@@ -356,34 +399,130 @@ local function launchProjectile(attacker, move, angleDegrees, multiplier)
 			id = id,
 			origin = position,
 			velocity = velocity,
-			gravity = spec.gravity or 0,
-			lifetime = spec.lifetime,
+			gravity = gravity,
+			lifetime = lifetime + (spec.linger or 0),
 			visual = spec.visual or "ball",
 			color = spec.color,
 		})
 	end
 
 	local alreadyHit = { [attacker] = true }
+	local hitsLeft = spec.hits or 1
+	local bounces = spec.bounce or 0
+	local returning = false
+	local owner = attacker
 	local elapsed = 0
+	local lingering = false
+	local rehitAt = {}
+	local rayParams = RaycastParams.new()
+	rayParams.FilterType = Enum.RaycastFilterType.Include
+	rayParams.FilterDescendantsInstances = { workspace:FindFirstChild("Arena") }
 	local connection
+	local function finish(touched)
+		connection:Disconnect()
+		if fxRemote then
+			fxRemote:FireAllClients("ProjectileEnd", { id = id, position = position, touched = touched })
+		end
+	end
 	connection = RunService.Heartbeat:Connect(function(dt)
 		elapsed += dt
-		velocity += Vector3.new(0, -(spec.gravity or 0) * dt, 0)
-		position += velocity * dt
-		local cframe = CFrame.new(position)
-		showHitbox(cframe, size)
-		local direction = velocity.X >= 0 and 1 or -1
-		local touched = false
-		for _, target in ipairs(queryHits(attacker, cframe, size, alreadyHit)) do
-			if Fighters.hit(attacker, target, move, multiplier, direction) then
-				touched = true
+		if not lingering then
+			-- tête chercheuse : le cap tourne doucement vers l'adversaire le plus proche
+			if spec.homing and not returning then
+				local target = nearestEnemy(owner, position)
+				if target then
+					local wanted = (target.Position - position).Unit * velocity.Magnitude
+					velocity = velocity:Lerp(wanted, math.clamp(spec.homing * dt * 6, 0, 1))
+					sendUpdate(id, position, velocity)
+				end
+			end
+			-- boomerang : à mi-course, il repart vers le lanceur
+			if spec.returns and not returning and elapsed >= lifetime / 2 then
+				returning = true
+				alreadyHit = { [attacker] = true }
+				local r = Fighters.root(attacker)
+				if r then
+					velocity = (r.Position - position).Unit * spec.speed
+					sendUpdate(id, position, velocity)
+				end
+			end
+			local previous = position
+			velocity += Vector3.new(0, -gravity * dt, 0)
+			position += velocity * dt
+			-- rebond sur le sol (en descendant)
+			if velocity.Y < 0 then
+				local hit = workspace:Raycast(previous, position - previous, rayParams)
+				if hit then
+					if bounces > 0 then
+						bounces -= 1
+						position = hit.Position + Vector3.new(0, 0.3, 0)
+						velocity = Vector3.new(velocity.X, -velocity.Y * 0.7, 0)
+						sendUpdate(id, position, velocity)
+					elseif spec.linger then
+						lingering = true
+						lifetime = elapsed + spec.linger
+						velocity = Vector3.zero
+						sendUpdate(id, position, velocity)
+					elseif gravity > 0 or spec.rain then
+						finish(false)
+						return
+					end
+				end
 			end
 		end
-		if touched or elapsed >= spec.lifetime then
-			connection:Disconnect()
-			if fxRemote then
-				fxRemote:FireAllClients("ProjectileEnd", { id = id, position = position, touched = touched })
+		-- murs (Marcel, pull-bouclier…) : bloqué ou renvoyé
+		local wall = Specials.wallAt(position, size, owner)
+		if wall then
+			if wall.reflect then
+				owner = wall.owner
+				alreadyHit = { [owner] = true }
+				velocity = Vector3.new(-velocity.X, velocity.Y, 0)
+				sendUpdate(id, position, velocity)
+			else
+				finish(false)
+				return
 			end
+		end
+		-- aspirateur de R-0B0
+		if Specials.absorbedBy(position, owner) then
+			finish(false)
+			return
+		end
+		local cframe = CFrame.new(position)
+		showHitbox(cframe, size)
+		local direction = velocity.X >= 0 and 1 or (velocity.X < 0 and -1 or facing)
+		local touched = false
+		local now = os.clock()
+		for _, target in ipairs(queryHits(owner, cframe, size, lingering and {} or alreadyHit)) do
+			if not lingering or now >= (rehitAt[target] or 0) then
+				rehitAt[target] = now + 0.5
+				if Fighters.hit(owner, target, move, multiplier, direction) then
+					touched = true
+				end
+			end
+		end
+		if touched and not lingering then
+			hitsLeft -= 1
+			if spec.pierce or hitsLeft > 0 then
+				-- encore des touches : on oublie les victimes après un court instant
+				task.delay(0.18, function()
+					for model in pairs(alreadyHit) do
+						if model ~= owner then
+							alreadyHit[model] = nil
+						end
+					end
+				end)
+			end
+		end
+		local done = (touched and not lingering and not spec.pierce and hitsLeft <= 0) or elapsed >= lifetime
+		if spec.returns and returning then
+			local r = Fighters.root(attacker)
+			if r and (r.Position - position).Magnitude < 2.5 then
+				done = true
+			end
+		end
+		if done then
+			finish(touched)
 		end
 	end)
 end
@@ -391,11 +530,32 @@ end
 local function doProjectile(attacker, move)
 	local spec = move.projectile
 	local multiplier = damageMultiplier(attacker)
+	if spec.rain then
+		-- pluie : les projectiles tombent du ciel sur la zone devant le perso
+		local root = Fighters.root(attacker)
+		if not root then
+			return
+		end
+		local facing = Fighters.facing(attacker)
+		local rain = spec.rain
+		local center = root.Position + Vector3.new(facing * (rain.ahead or 10), rain.height or 22, 0)
+		for i = 1, rain.count or 5 do
+			task.delay((i - 1) * (rain.gap or 0.08), function()
+				local x = center.X + (math.random() - 0.5) * 2 * (rain.spread or 8)
+				launchProjectile(attacker, move, -90 * facing + (facing < 0 and 180 or 0), multiplier, Vector3.new(x, center.Y, 0))
+			end)
+		end
+		return
+	end
 	if spec.fan then
 		local count = spec.fan.count
 		for i = 0, count - 1 do
 			local t = count > 1 and i / (count - 1) or 0
-			launchProjectile(attacker, move, spec.fan.from + (spec.fan.to - spec.fan.from) * t, multiplier)
+			if spec.fan.gap then
+				task.delay(i * spec.fan.gap, launchProjectile, attacker, move, spec.fan.from + (spec.fan.to - spec.fan.from) * t, multiplier)
+			else
+				launchProjectile(attacker, move, spec.fan.from + (spec.fan.to - spec.fan.from) * t, multiplier)
+			end
 		end
 	else
 		launchProjectile(attacker, move, spec.angle or 0, multiplier)
@@ -403,9 +563,16 @@ local function doProjectile(attacker, move)
 end
 
 local function doSelf(attacker, move)
-	if move.effect == "sip" then
-		local bulles = math.min(3, (attacker:GetAttribute("Bulles") or 0) + 1)
-		attacker:SetAttribute("Bulles", bulles)
+	Mechanics.applySelf(attacker, move)
+	-- téléportation (Gaston, Marcel…) : quelques studs devant, sans traverser le bord du monde
+	if move.teleport then
+		local root = Fighters.root(attacker)
+		if root then
+			local facing = Fighters.facing(attacker)
+			local target = root.Position + Vector3.new(facing * move.teleport, move.teleportUp or 0, 0)
+			Fighters.nudge(attacker, Vector3.zero)
+			attacker:PivotTo(CFrame.new(target) * (root.CFrame - root.Position))
+		end
 	end
 end
 
@@ -428,6 +595,23 @@ function Combat.perform(attacker, key, move, forced)
 		elseif kind == "projectile" then
 			doProjectile(attacker, move)
 		elseif kind == "self" then
+			doSelf(attacker, move)
+		elseif kind == "trap" then
+			Specials.placeTrap(attacker, move)
+		elseif kind == "wall" then
+			Specials.placeWall(attacker, move)
+		elseif kind == "counter" then
+			Specials.startCounter(attacker, move)
+		elseif kind == "absorb" then
+			Specials.startAbsorb(attacker, move)
+			if move.hitbox then
+				doMelee(attacker, move)
+			end
+		elseif kind == "grapple" then
+			Specials.grapple(attacker, move)
+		end
+		-- un coup qui fait aussi un effet sur soi (gorgée, buff…) en plus de frapper
+		if kind ~= "self" and (move.selfEffect or move.teleport) then
 			doSelf(attacker, move)
 		end
 	end)
@@ -557,7 +741,7 @@ function Combat.handleAction(player, action, extra)
 	end
 
 	if action == "DODGE" then
-		if now < s.dodgeReadyAt or now < s.busyUntil then
+		if now < s.dodgeReadyAt or now < s.busyUntil or Statuses.flags(model).noDodge then
 			return
 		end
 		s.dodgeReadyAt = now + Config.DODGE_COOLDOWN
@@ -580,6 +764,15 @@ function Combat.handleAction(player, action, extra)
 	end
 	-- moveset du perso : il faut avoir ouvert une Caisse Bizarre ; coups à mains nues : sans elle
 	if not MoveSets.allowed(action, move, MoveSets.armed(model)) then
+		return
+	end
+	-- statut loufoque en cours (fou rire = pas de K ni de ⭐, muet = pas de S…)
+	local _, baseKey = MoveSets.split(action)
+	if Statuses.blocks(Statuses.flags(model), baseKey) then
+		return
+	end
+	-- jauge du perso (pression d'eau, pigeons, réservoir…)
+	if not Mechanics.canPay(model, move) then
 		return
 	end
 	-- petite tolérance pour la latence du téléphone ; un enchaînement peut couper le retour en garde
@@ -618,6 +811,13 @@ function Combat.handleAction(player, action, extra)
 	if move.invuln then
 		s.invulnUntil = math.max(s.invulnUntil, now + move.invuln)
 	end
+	if move.armor then
+		-- armure pendant le coup : il encaisse sans broncher (titubade, charge du déambulateur…)
+		s.armorUntil = math.max(s.armorUntil or 0, now + move.startup + move.active + (move.hold or 0))
+	end
+	Mechanics.pay(model, move)
+	-- Gaston : un des 3 résultats possibles (le prochain est annoncé au-dessus de lui)
+	move = Mechanics.variant(model, move)
 	Combat.perform(model, action, move)
 end
 

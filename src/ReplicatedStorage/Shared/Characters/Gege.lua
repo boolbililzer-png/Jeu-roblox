@@ -329,7 +329,7 @@ local data = {
 		-- Titubade folle : charge en zigzag, bras grands ouverts
 		S_dash = {
 			label = "Titubade folle", energyCost = 25, startup = 0.05, active = 0.3, recovery = 0.3,
-			damage = 10, hitbox = box(5, 4, 2, 0.5), kbBase = 30, kbGrowth = 60, kbAngle = 35, selfVelocity = Vector2.new(60, 0), invuln = 0.2,
+			damage = 10, hitbox = box(5, 4, 2, 0.5), kbBase = 30, kbGrowth = 60, kbAngle = 35, selfVelocity = Vector2.new(60, 0), invuln = 0.2, armor = true,
 			windup = { Root = { -10, 0, 0 }, RS = { 60, 0, 50 }, LS = { 60, 0, -50 } },
 			strike = { Root = { -25, 0, 0 }, Waist = { -10, 0, 0 }, RS = { 80, 0, 70 }, RE = { 30, 0, 0 }, LS = { 80, 0, -70 }, LE = { 30, 0, 0 } },
 			follow = { Root = { -22, 0, 0 }, Waist = { -8, 0, 0 }, RS = { 70, 0, 80 }, RE = { 40, 0, 0 }, LS = { 70, 0, -80 }, LE = { 40, 0, 0 } },
@@ -661,9 +661,47 @@ local data = {
 	},
 
 	-- Séquences relatives à l'adversaire : forward = vers lui, back = à l'opposé
+	-- 1er fatal offert, 2e au niveau de maîtrise 5, 3e au niveau 15 (voir shared/Progression.lua)
 	fatals = {
 		{ id = "derniere_tournee", label = "La Dernière Tournée", sequence = { "forward", "down", "back" } },
+		{
+			id = "gueule_de_bois", label = "Gueule de bois", sequence = { "down", "down", "up" },
+			-- l'adversaire s'endort, Gégé lui dessine une moustache au feutre et s'endort à côté
+			scene = {
+				{ "text", "Zzz…" },
+				{ "fx", { "symbols", symbols = { "Z", "z", "💤" }, count = 6, color = Color3.fromRGB(170, 200, 255) } },
+				{ "spin", 90, axis = "z", time = 0.5 },
+				{ "spawn", at = "target", offset = Vector3.new(0, 1.2, -1.1), life = 4, pieces = {
+					{ "Moustache", "", "block", Vector3.new(1.6, 0.25, 0.2), Vector3.new(0, 0, 0), Vector3.new(0, 0, 0), Color3.fromRGB(20, 20, 20) },
+				} },
+				{ "fxAttacker", { "text", text = "HÉ HÉ…", color = Color3.fromRGB(255, 230, 120) } },
+				{ "wait", 0.8 },
+				{ "fxAttacker", { "symbols", symbols = { "Z", "z" }, count = 5, color = Color3.fromRGB(170, 200, 255) } },
+				{ "text", "RONFLEMENTS EN STÉRÉO" },
+				{ "wait", 1.2 },
+			},
+		},
+		{
+			id = "le_bouchon", label = "Le Bouchon", sequence = { "back", "forward", "forward" },
+			-- Gégé secoue la bouteille, le bouchon part avec l'adversaire dessus : étoile filante
+			scene = {
+				{ "fxAttacker", { "particles", at = "hand", tex = "smoke", color = SODA, dir = "up", time = 0.8, speed = 10 } },
+				{ "fxAttacker", { "text", text = "PSCHHH…", color = SODA } },
+				{ "wait", 0.7 },
+				{ "spawn", at = "target", offset = Vector3.new(0, -2.6, 0), life = 2.5, name = "Bouchon", pieces = {
+					{ "Bouchon", "", "cyl", Vector3.new(1.2, 2.4, 2.4), Vector3.new(0, 0, 0), Vector3.new(0, 0, 90), Color3.fromRGB(150, 100, 60), "Wood" },
+				} },
+				{ "fx", { "burst", at = "feet", color = SODA, size = 4 } },
+				{ "text", "POP !" },
+				{ "launch", Vector3.new(40, 90, 0), time = 0.9 },
+				{ "fx", { "burst", color = Color3.fromRGB(255, 240, 150), size = 5 } },
+				{ "wait", 0.4 },
+			},
+		},
 	},
+
+	-- Mécanique : jauge de Bulles (Petite gorgée, ↓S), voir server/Mechanics.lua
+	passive = { kind = "bulles", name = "Bulles", icon = "🫧" },
 
 	-- Recharge d'énergie (maintenir O / bouton ⚡) : Gégé boit au goulot à grandes gorgées en se tapotant
 	-- la bedaine, puis lâche un petit rot. keys = { temps, pose partielle } joués en boucle sur loop secondes ;

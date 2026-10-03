@@ -304,6 +304,11 @@ local function buildPiece(spec)
 	return part, offset
 end
 
+-- Utilisé aussi pour les plateformes de retour et les fatals décrits dans les fiches
+Costumes.buildPiece = function(spec)
+	return buildPiece(spec)
+end
+
 local function buildProp(folder, hand, prop, name, mirrorCopy)
 	local model = Instance.new("Model")
 	model.Name = name

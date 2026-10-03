@@ -82,7 +82,245 @@ Fatals.default = function(_attacker, target)
 	end
 end
 
-function Fatals.play(fatalId, attacker, target)
+------------------------------------------------------------------------ Scènes décrites dans les fiches
+-- fatal.scene = liste d'étapes jouées dans l'ordre (la victime est figée pendant toute la scène) :
+--   { "text", "LE PULL DE NOËL !" }                 bulle au-dessus de la victime
+--   { "wait", 0.5 }
+--   { "shrink", 0.3, time = 0.6 } / { "grow", 2 }   la victime rapetisse / grossit (échelle finale)
+--   { "spawn", pieces = { … }, at = "target", offset = Vector3, life = 4 }
+--        décor construit en pièces (même format que look.parts) ; at = "target", "attacker", "between", "above"
+--   { "move", to = "attacker" / "between" / "above", offset = Vector3, time = 0.5 }  la victime glisse jusque-là
+--   { "lift", 6, time = 0.6 }                       la victime monte de n studs
+--   { "launch", Vector3.new(avant, haut, 0), time = 1 }  envoyée au loin (avant = loin du perso)
+--   { "spin", 720, time = 0.8, axis = "y" }         la victime tourne sur elle-même
+--   { "orbit", 6, turns = 2, time = 1.2 }           elle tourne autour du perso
+--   { "color", Color3 } / { "material", "Slate" }   repeinte (statue, pull, glaçon…)
+--   { "squash", 0.3 }                               aplatie comme une crêpe
+--   { "hide" } / { "show" }                         disparaît / réapparaît
+--   { "fx", { "burst", color = … } }                effet client (voir client/Fx.lua), joué sur la victime
+--   { "fxAttacker", { "symbols", … } }              effet client joué sur le perso
+local Costumes = require(script.Parent:WaitForChild("Costumes"))
+
+local fxRemote = nil
+function Fatals.setFxRemote(remote)
+	fxRemote = remote
+end
+
+local function anchorPoint(at, attacker, target)
+	local a = attacker:FindFirstChild("HumanoidRootPart")
+	local t = target:FindFirstChild("HumanoidRootPart")
+	if not a or not t then
+		return Vector3.zero
+	end
+	if at == "attacker" then
+		return a.Position
+	elseif at == "between" then
+		return (a.Position + t.Position) / 2
+	elseif at == "above" then
+		return t.Position + Vector3.new(0, 6, 0)
+	end
+	return t.Position
+end
+
+local function setParts(model, fn)
+	for _, p in ipairs(model:GetDescendants()) do
+		if p:IsA("BasePart") and p.Name ~= "HumanoidRootPart" then
+			fn(p)
+		end
+	end
+end
+
+local function tweenRoot(root, toCFrame, time)
+	local from = root.CFrame
+	local steps = math.max(1, math.floor(time / 0.03))
+	for i = 1, steps do
+		root.CFrame = from:Lerp(toCFrame, i / steps)
+		task.wait(0.03)
+	end
+end
+
+local STEPS = {}
+
+STEPS.text = function(step, _attacker, target)
+	local head = target:FindFirstChild("Head") or target:FindFirstChild("HumanoidRootPart")
+	if head then
+		label(head, step[2])
+	end
+end
+
+STEPS.wait = function(step)
+	task.wait(step[2] or 0.5)
+end
+
+STEPS.shrink = function(step, _attacker, target)
+	local time = step.time or 0.6
+	shrink(target, step[2] or 0.3, math.max(1, math.floor(time / 0.05)), 0.05)
+end
+STEPS.grow = STEPS.shrink
+
+STEPS.spawn = function(step, attacker, target, props)
+	local model = Instance.new("Model")
+	model.Name = step.name or "DecorFatal"
+	local base = anchorPoint(step.at or "target", attacker, target) + (step.offset or Vector3.zero)
+	local dir = 1
+	local a, t = attacker:FindFirstChild("HumanoidRootPart"), target:FindFirstChild("HumanoidRootPart")
+	if a and t and t.Position.X < a.Position.X then
+		dir = -1
+	end
+	for _, piece in ipairs(step.pieces or {}) do
+		local part, offset = Costumes.buildPiece(piece)
+		part.Anchored = true
+		part.CanCollide = false
+		part.CFrame = CFrame.new(base) * CFrame.new(offset.Position.X * dir, offset.Position.Y, offset.Position.Z) * (offset - offset.Position)
+		part.Parent = model
+	end
+	model.Parent = workspace
+	table.insert(props, model)
+	task.delay(step.life or 5, function()
+		model:Destroy()
+	end)
+end
+
+STEPS.move = function(step, attacker, target)
+	local root = target:FindFirstChild("HumanoidRootPart")
+	if root then
+		local to = anchorPoint(step.to or "between", attacker, target) + (step.offset or Vector3.zero)
+		tweenRoot(root, CFrame.new(to) * (root.CFrame - root.Position), step.time or 0.5)
+	end
+end
+
+STEPS.lift = function(step, _attacker, target)
+	local root = target:FindFirstChild("HumanoidRootPart")
+	if root then
+		tweenRoot(root, root.CFrame + Vector3.new(0, step[2] or 6, 0), step.time or 0.6)
+	end
+end
+
+STEPS.launch = function(step, attacker, target)
+	local root = target:FindFirstChild("HumanoidRootPart")
+	local a = attacker:FindFirstChild("HumanoidRootPart")
+	if root and a then
+		local dir = root.Position.X >= a.Position.X and 1 or -1
+		local v = step[2] or Vector3.new(60, 60, 0)
+		tweenRoot(root, root.CFrame + Vector3.new(v.X * dir, v.Y, v.Z), step.time or 1)
+	end
+end
+
+STEPS.spin = function(step, _attacker, target)
+	local root = target:FindFirstChild("HumanoidRootPart")
+	if not root then
+		return
+	end
+	local time = step.time or 0.8
+	local steps = math.max(1, math.floor(time / 0.03))
+	local per = math.rad(step[2] or 720) / steps
+	for _ = 1, steps do
+		if step.axis == "x" then
+			root.CFrame *= CFrame.Angles(per, 0, 0)
+		elseif step.axis == "z" then
+			root.CFrame *= CFrame.Angles(0, 0, per)
+		else
+			root.CFrame *= CFrame.Angles(0, per, 0)
+		end
+		task.wait(0.03)
+	end
+end
+
+STEPS.orbit = function(step, attacker, target)
+	local root = target:FindFirstChild("HumanoidRootPart")
+	local a = attacker:FindFirstChild("HumanoidRootPart")
+	if not root or not a then
+		return
+	end
+	local time = step.time or 1.2
+	local steps = math.max(1, math.floor(time / 0.03))
+	local radius = step[2] or 6
+	for i = 1, steps do
+		local angle = (i / steps) * math.pi * 2 * (step.turns or 2)
+		root.CFrame = CFrame.new(a.Position + Vector3.new(math.cos(angle) * radius, 2 + math.sin(angle) * radius * 0.6, 0))
+		task.wait(0.03)
+	end
+end
+
+STEPS.color = function(step, _attacker, target)
+	setParts(target, function(p)
+		p.Color = step[2]
+	end)
+end
+
+STEPS.material = function(step, _attacker, target)
+	setParts(target, function(p)
+		p.Material = Enum.Material[step[2]] or Enum.Material.SmoothPlastic
+	end)
+end
+
+STEPS.squash = function(step, _attacker, target)
+	local root = target:FindFirstChild("HumanoidRootPart")
+	if root then
+		local scale = target:GetScale()
+		target:ScaleTo(scale * 0.98)
+		-- aplatie : on la couche au sol
+		tweenRoot(root, root.CFrame * CFrame.Angles(math.rad(-90), 0, 0) - Vector3.new(0, 2.2, 0), step.time or 0.25)
+	end
+end
+
+STEPS.hide = function(_step, _attacker, target)
+	setParts(target, function(p)
+		p:SetAttribute("FatalTransparency", p.Transparency)
+		p.Transparency = 1
+	end)
+end
+
+STEPS.show = function(_step, _attacker, target)
+	setParts(target, function(p)
+		p.Transparency = p:GetAttribute("FatalTransparency") or 0
+	end)
+end
+
+STEPS.fx = function(step, _attacker, target)
+	if fxRemote then
+		fxRemote:FireAllClients("FatalFx", { model = target, fx = step[2] })
+	end
+end
+
+STEPS.fxAttacker = function(step, attacker)
+	if fxRemote then
+		fxRemote:FireAllClients("FatalFx", { model = attacker, fx = step[2] })
+	end
+end
+
+local function playScene(scene, attacker, target)
+	local props = {}
+	-- apparence d'origine, rendue à la fin (repeinte en statue, pull…)
+	local saved = {}
+	setParts(target, function(p)
+		saved[p] = { p.Color, p.Material, p.Transparency }
+	end)
+	for _, step in ipairs(scene) do
+		if not target.Parent or not attacker.Parent then
+			break
+		end
+		local fn = STEPS[step[1]]
+		if fn then
+			local ok, err = pcall(fn, step, attacker, target, props)
+			if not ok then
+				warn("[Fatal] étape " .. tostring(step[1]) .. " : " .. tostring(err))
+			end
+		end
+	end
+	-- la victime retrouve son apparence (elle repart de toute façon au retour)
+	for p, look in pairs(saved) do
+		if p.Parent then
+			p.Color, p.Material, p.Transparency = look[1], look[2], look[3]
+		end
+	end
+end
+
+function Fatals.play(fatalId, attacker, target, fatal)
+	if fatal and fatal.scene then
+		playScene(fatal.scene, attacker, target)
+		return
+	end
 	local scene = Fatals[fatalId] or Fatals.default
 	scene(attacker, target)
 end

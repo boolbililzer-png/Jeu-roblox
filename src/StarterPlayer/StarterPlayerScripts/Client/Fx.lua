@@ -1203,11 +1203,141 @@ function Fx.endProjectile(data)
 	end
 end
 
+------------------------------------------------------------------------ Objets posés (pièges, murs) et spéciaux
+-- Évènements de server/Specials.lua : « Object » / « ObjectEnd », « Grapple », « Counter », « Absorbed »
+local objects = {}
+local STATUS_LOOK -- défini plus bas (statuts au-dessus de la tête)
+
+local function onObject(data)
+	local visual = data.visual
+	local holder, place
+	if typeof(visual) == "table" then
+		holder, place = buildCustomProjectile(table.clone(visual), data.color)
+	elseif data.kind == "wall" then
+		-- mur invisible (Marcel le Mime) : un contour qui scintille à peine
+		holder = Instance.new("Model")
+		local size = data.size or Vector3.new(1.2, 8, 6)
+		local glass = part({ Size = Vector3.new(size.X, size.Y, 0.2), Color = Color3.fromRGB(220, 235, 255), Material = Enum.Material.Glass, Transparency = 0.85 })
+		glass.Parent = holder
+		holder.Parent = folder
+		place = function(cf)
+			glass.CFrame = cf * CFrame.new(0, 0, 1)
+		end
+	else
+		holder, place = buildCustomProjectile({ shape = "disc", size = 2.2, color = data.color or Color3.fromRGB(230, 120, 160), trail = false }, data.color)
+	end
+	local base = data.kind == "trap" and (data.position + Vector3.new(0, 0.4, 0)) or data.position
+	local entry = { model = holder, place = place, position = base, follow = data.follow, offset = data.follow and data.follow:FindFirstChild("HumanoidRootPart") and (base - data.follow.HumanoidRootPart.Position) }
+	objects[data.id] = entry
+	place(CFrame.new(base))
+	Fx.ring(base, data.color or YELLOW, 3, 0.3)
+	cleanup(holder, (data.lifetime or 10) + 2)
+end
+
+local function onObjectEnd(data)
+	local entry = objects[data.id]
+	if not entry then
+		return
+	end
+	objects[data.id] = nil
+	if entry.model then
+		entry.model:Destroy()
+	end
+	if data.burst and data.position then
+		Fx.burst(data.position, data.color or YELLOW, 2.2)
+	end
+end
+
+local function updateObjects()
+	for _, entry in pairs(objects) do
+		if entry.follow and entry.offset then
+			local root = entry.follow:FindFirstChild("HumanoidRootPart")
+			if root then
+				entry.place(CFrame.new(root.Position + entry.offset))
+			end
+		end
+	end
+end
+
+local function onGrapple(data)
+	local root = data.model and data.model:FindFirstChild("HumanoidRootPart")
+	if not root or not data.to then
+		return
+	end
+	local from = root.Position
+	local rope = part({ Size = Vector3.new(0.2, 0.2, 0.2), Color = Color3.fromRGB(220, 60, 60), Material = Enum.Material.SmoothPlastic })
+	local cup = part({ Shape = Enum.PartType.Ball, Size = Vector3.new(1, 1, 1), Color = Color3.fromRGB(230, 40, 40) })
+	local t0 = os.clock()
+	local connection
+	connection = RunService.RenderStepped:Connect(function()
+		local t = os.clock() - t0
+		local k = math.clamp(t / 0.12, 0, 1)
+		local start = root.Parent and root.Position or from
+		local tip = start:Lerp(data.to, k)
+		rope.Size = Vector3.new(0.2, 0.2, math.max(0.2, (tip - start).Magnitude))
+		rope.CFrame = CFrame.lookAt((start + tip) / 2, tip)
+		cup.Position = tip
+		if t > 0.45 then
+			connection:Disconnect()
+			rope:Destroy()
+			cup:Destroy()
+		end
+	end)
+	playSound(SOUND_SWOOSH, root, 0.4, 0.7)
+end
+
+local function onSpecialEvent(kind, data)
+	if kind == "Object" then
+		onObject(data)
+	elseif kind == "ObjectEnd" then
+		onObjectEnd(data)
+	elseif kind == "Grapple" then
+		onGrapple(data)
+	elseif kind == "Counter" then
+		local root = data.model and data.model:FindFirstChild("HumanoidRootPart")
+		if root then
+			Fx.ring(root.Position, Color3.fromRGB(120, 220, 255), 5, 0.3)
+			Fx.popText(root.Position + Vector3.new(0, 4, 1), data.text or "CONTRE !", Color3.fromRGB(120, 220, 255), 1.2, 0.9)
+			CameraRig.shake(0.3, 0.2)
+		end
+	elseif kind == "Absorbed" then
+		if data.position then
+			Fx.burst(data.position, Color3.fromRGB(180, 180, 200), 1.6)
+		end
+		local root = data.model and data.model:FindFirstChild("HumanoidRootPart")
+		if root then
+			Fx.popText(root.Position + Vector3.new(0, 4, 1), "SLURP !", Color3.fromRGB(200, 200, 230), 0.9, 0.7)
+		end
+	elseif kind == "Sneeze" then
+		local head = data.model and data.model:FindFirstChild("Head")
+		if head then
+			Fx.popText(head.Position + Vector3.new(0, 2, 1), "ATCHOUM !", Color3.fromRGB(160, 230, 160), 1, 0.7)
+			Fx.burst(head.Position + Vector3.new(facingOf(data.model) * 1.2, 0, 0), Color3.fromRGB(200, 240, 200), 1.5)
+		end
+	elseif kind == "Buff" then
+		local root = data.model and data.model:FindFirstChild("HumanoidRootPart")
+		local look = STATUS_LOOK[data.name or ""]
+		if root and look then
+			Fx.ring(root.Position, look[2], 6, 0.45)
+			Fx.popText(root.Position + Vector3.new(0, 5, 1), look[1] .. " !", look[2], 1.3, 1.2)
+		end
+	elseif kind == "Popup" then
+		local root = data.model and data.model:FindFirstChild("HumanoidRootPart")
+		if root then
+			Fx.popText(root.Position + Vector3.new(0, 5, 1), (data.icon or "") .. " " .. (data.text or ""), Color3.new(1, 1, 1), 1, 1)
+		end
+	elseif kind == "FatalFx" then
+		if data.model and data.fx then
+			Fx.runNamed(data.model, data.fx)
+		end
+	end
+end
+
 ------------------------------------------------------------------------ Statuts au-dessus de la tête
 local statusGuis = {}
 
 -- Statuts loufoques (3 s max) : texte au-dessus de la tête, couleur, mouvement
-local STATUS_LOOK = {
+STATUS_LOOK = {
 	inverted = { "⇄ ?!", SODA, "sway" },
 	stunned = { "★★★", YELLOW, "spin" },
 	slowed = { "🐌", Color3.fromRGB(200, 170, 120), "sway" },
@@ -1230,6 +1360,10 @@ local STATUS_LOOK = {
 	viral = { "📈 VIRALE", Color3.fromRGB(255, 120, 200), "shake" },
 	tilt = { "😡 TILT", Color3.fromRGB(255, 60, 60), "shake" },
 	caprice = { "😭 CAPRICE", Color3.fromRGB(150, 200, 255), "shake" },
+	wet = { "💧 TREMPÉ", Color3.fromRGB(120, 190, 255), "sway" },
+	rap = { "🎤 RAP", Color3.fromRGB(255, 200, 60), "shake" },
+	slow = { "💕 SLOW", Color3.fromRGB(255, 150, 190), "sway" },
+	techno = { "🎛️ TECHNO", Color3.fromRGB(120, 255, 220), "shake" },
 }
 
 local function statusGui(model)
@@ -1760,6 +1894,9 @@ function Fx.start()
 		elseif kind == "ItemSpawn" or kind == "ItemTaken" or kind == "ItemBroken" or kind == "Explosion" or kind == "Obese"
 			or kind == "Splat" or kind == "Grab" or kind == "TooHeavy" or kind == "GeyserWarn" or kind == "Geyser" then
 			onItemEvent(kind, data)
+		elseif kind == "Object" or kind == "ObjectEnd" or kind == "Grapple" or kind == "Counter" or kind == "Absorbed"
+			or kind == "Sneeze" or kind == "Buff" or kind == "Popup" or kind == "FatalFx" then
+			onSpecialEvent(kind, data)
 		elseif kind == "Fatal" then
 			local root = data.target and data.target:FindFirstChild("HumanoidRootPart")
 			if root then
@@ -1775,6 +1912,7 @@ function Fx.start()
 		updateGlows()
 		updateRespawns()
 		updateHeldEffects()
+		updateObjects()
 	end)
 end
 

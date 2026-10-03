@@ -1,0 +1,407 @@
+   BAGARRE BIZARRE
+   Grille exhaustive des Combos et Signatures (20 Personnages)
+
+
+Le Système de Combos 100% Uniques
+Dans Bagarre Bizarre, l'apparition des armes repose sur un déclencheur dynamique. Les personnages entrent
+dans l'arène à mains nues (utilisant un moveset de survie générique partagé par tout le casting).
+                                                         ✋
+Dès qu'un joueur ramasse une Caisse Bizarre (touche ), le personnage s'équipe de son arme
+emblématique. À cet instant précis, la totalité de son arsenal d'animations bascule sur son Moveset 100%
+Unique, listé dans ce document.
+
+Nomenclature des Attaques (Grille Standard)
+Pour garantir des contrôles fluides sur mobile avec un seul bouton à la fois, le moveset de chaque personnage
+est divisé en deux catégories : les Attaques Légères (P) et les Signatures (S). Le joystick définit la direction de
+l'attaque.
+                Attaques Légères (Bouton P) - Combos rapides pour accumuler les dégâts
+                        Neutre (P)                         Combo sur place. Généralement 2 à 3 coups rapides.
+                        Côté (→P)                          Attaque vers l'avant, repousse légèrement l'adversaire.
+
+                         Bas (↓P)
+                                                           Attaque basse, croche-patte ou balayage pour amorcer un
+                                                           combo aérien.
+
+                     Aérien (P en l'air)
+                                                           Attaques en suspension (Neutre, Côté, ou Bas selon le
+                                                           joystick).
+
+                    Signatures (Bouton S) - Coups uniques pour éjecter hors de l'arène
+                        Neutre (S)                         Attaque puissante sur place ou anti-air direct.
+                        Côté (→S)                          Charge ou projectile vers l'avant (ferme la distance).
+                         Bas (↓S)                          Piège au sol, esquive punitive ou attaque de zone.
+
+                    Remontée (↑S l'air)
+                                                           Recovery : Propulse le joueur vers le haut pour revenir sur
+                                                           le terrain.
+
+                    Plongeon (↓S l'air)
+                                                           Ground Pound : Chute lourde pour écraser l'adversaire
+                                                           vers le bas.
+Note : Les 6 premiers personnages listés (Gégé, Mamie Tricot, Dylan, Sumo Gélatine, Marcel, Roi Pigeon)
+constituent le roster de lancement recommandé pour maîtriser la charge de production des animations.
+
+
+
+
+BAGARRE BIZARRE - Combos & Signatures                                                                         Page 1 / 11
+  1. Gégé le Pochtron                                                                Arme : Bouteille de soda douteux
+Passif : Jauge de Bulles (3 crans, mouvements illisibles).
+ATTAQUES LÉGÈRES (P)
+        Direction           Animation & Effet
+          Neutre            Coup de goulot rapide enchaîné d'une savate molle.
+           Côté             Revers de bouteille ample vers l'avant.
+           Bas              Croche-patte en titubant. Envoie l'adversaire légèrement en l'air.
+      Aérien (Toutes)       Neutre: Bouteille plongeante. Côté: Ruade titubante. Bas: Chute genou en avant.
+
+SIGNATURES (S)
+        Direction           Animation & Effet
+          Neutre            Haleine-briquet : Flamme cartoon devant lui (inverse les commandes si passif chargé).
+           Côté             Titubade folle : Avance en zigzag avec super-armure, finit par un gros coup de bouteille.
+           Bas              Petite gorgée : Boit (charge le passif) et crache une flaque glissante au sol.
+      Remontée (Air)        Le Lampadaire : Un lampadaire pousse du vide, il s'y accroche et se propulse en l'air.
+      Plongeon (Air)        Plongeon du comptoir : Tombe à plat ventre, créant une onde de choc pétillante.
+
+  2. Mamie Tricot (Germaine)                                                                Arme : Sac à main & Canne
+Passif : Pelotes-pièges (Zone et contrôle).
+ATTAQUES LÉGÈRES (P)
+        Direction           Animation & Effet
+          Neutre            Coup de sac à main suivi d'un pincement de joue.
+           Côté             Long coup d'aiguille à tricoter en estoc. Très bonne allonge.
+           Bas              Balayage de canne au ras du sol.
+      Aérien (Toutes)       Neutre: Parapluie tournoyant. Côté: Pantoufle jetée courte. Bas: Dentier mordant.
+
+SIGNATURES (S)
+        Direction           Animation & Effet
+          Neutre            Lancer de chat : Envoie un chat en cloche (anti-air). Le chat donne 3 coups de griffes.
+           Côté             Charge du déambulateur : Sort un déambulateur et fonce devant elle. Hitbox continue.
+
+           Bas
+                            Pose de pelote : Dépose un piège qui ligote temporairement l'adversaire qui marche
+                            dessus.
+      Remontée (Air)        Envol de châle : Ouvre son châle comme un parachute et s'envole en diagonale haute.
+      Plongeon (Air)        Pluie de bonbons : Plonge en diagonale en dispersant des bonbons durs à la menthe.
+BAGARRE BIZARRE - Combos & Signatures                                                                           Page 2 / 11
+  3. Dylan le Livreur                                                                      Arme : Trottinette & Sac Cube
+Passif : Note client (Enchaîner monte la vitesse, prendre des coups la baisse).
+ATTAQUES LÉGÈRES (P)
+        Direction           Animation & Effet
+          Neutre            Jab de klaxon enchaîné d'un coup de sac isotherme.
+           Côté             Kick de béquille violent vers l'avant.
+           Bas              Ticket de caisse coupant au niveau des chevilles.
+      Aérien (Toutes)       Neutre: Uppercut de casque. Côté: Coup de sac aérien. Bas: Roue avant plongeante.
+
+SIGNATURES (S)
+        Direction           Animation & Effet
+          Neutre            Pizza frisbee : Projectile droit et très rapide pour interrompre les actions.
+           Côté             Rush trottinette : Dash percutant traversant une grande partie de l'arène.
+           Bas              Colis « Livré ! » : Dépose un colis piégé qui explose en confettis avec un léger délai.
+      Remontée (Air)        Wheelie : Cabre sa trottinette vers le haut, la roue avant frappant en remontant.
+      Plongeon (Air)        Livraison parachutée : Tombe en piqué rectiligne, debout sur son sac isotherme.
+
+  4. Bernard du Guichet                                                               Arme : Tampon Géant & Dossiers
+Passif : Paperasse (3 formulaires collés = adversaire ralenti 2s).
+ATTAQUES LÉGÈRES (P)
+        Direction           Animation & Effet
+          Neutre            Coup de mug enchaîné d'un coup d'agrafeuse.
+           Côté             Classeur claqué lourdement vers l'avant.
+           Bas              Trombone géant piquant les pieds.
+      Aérien (Toutes)       Neutre: Tampon aérien. Côté: « Suivant ! » (repousse). Bas: Pied de chaise de bureau.
+
+SIGNATURES (S)
+        Direction           Animation & Effet
+          Neutre            Avion en papier : Projectile qui colle automatiquement un formulaire au contact.
+           Côté             Tampon REFUSÉ : Gros coup de tampon chargé vers l'avant qui renverse l'adversaire.
+           Bas              File d'attente : Invoque une silhouette qui bloque le prochain projectile (Bouclier).
+      Remontée (Air)        Pile de dossiers : Une pile de dossiers monte du bas de l'écran, Bernard s'assoit dessus.
+      Plongeon (Air)        Plongeon de dossier : Se laisse tomber lourdement avec les bras chargés d'archives.
+
+BAGARRE BIZARRE - Combos & Signatures                                                                               Page 3 / 11
+  5. Chef Flambé                                                                  Arme : Poêle & Rouleau à pâtisserie
+Passif : Cuisson (Ses attaques de feu laissent une brûlure infligeant des dégâts sur la durée).
+ATTAQUES LÉGÈRES (P)
+        Direction          Animation & Effet
+          Neutre           Coups rapides de louche et de fouet.
+           Côté            Violent coup de poêle frontal.
+           Bas             Balayage avec le tablier pour faire trébucher.
+      Aérien (Toutes)      Neutre: Coup de couvercle. Côté: Retourné de crêpe. Bas: Coup de sabot plongeant.
+
+SIGNATURES (S)
+        Direction          Animation & Effet
+          Neutre           Crêpe volante : Projectile planant avec une trajectoire imprévisible.
+           Côté            Flambage : Crache un jet de flammes court mais très large (applique Brûlure).
+           Bas             Oignon émincé : Coupe un oignon. L'adversaire proche pleure (écran flou 1,5s).
+      Remontée (Air)       Sauté à la poêle : Se sert de sa poêle géante pour rebondir sur l'air et remonter.
+      Plongeon (Air)       Pluie de spaghettis : Chute lourde qui ligote brièvement les ennemis au sol.
+
+  6. Marcel le Mime                                                                       Arme : Accessoires Invisibles
+Passif : Murs invisibles (Expert en contrôle d'espace et blocages).
+ATTAQUES LÉGÈRES (P)
+        Direction          Animation & Effet
+          Neutre           Fausse claque enchaînée d'un coup de canne invisible.
+           Côté            Tire une corde invisible, attirant légèrement l'adversaire pour un combo.
+           Bas             Marche d'escalier invisible frappant les pieds.
+      Aérien (Toutes)      Neutre: Parapluie invisible. Côté: Ballon éclaté. Bas: Ascenseur qui descend.
+
+SIGNATURES (S)
+        Direction          Animation & Effet
+          Neutre           Mur invisible : Pose un mur qui bloque instantanément les projectiles et les dashs.
+           Côté            Tir à la corde : Lance un lasso invisible. S'il touche, tire l'ennemi brusquement vers lui.
+           Bas             Contre silencieux : Parade. S'il est frappé, encaisse sans dégât et riposte violemment.
+      Remontée (Air)       Échelle invisible : Mime l'ascension rapide d'une échelle (hitbox verticale active).
+      Plongeon (Air)       Le Piano : Lâche un poids massif imaginaire. Effet sonore lourd à l'impact au sol.
+
+BAGARRE BIZARRE - Combos & Signatures                                                                              Page 4 / 11
+  7. Bébé Colosse                                                                     Arme : Hochet Géant & Couche
+Passif : Caprice (Jauge remplie par les coups reçus = Crise de larmes et Super-Armure 5s).
+ATTAQUES LÉGÈRES (P)
+        Direction         Animation & Effet
+         Neutre           Coups maladroits de hochet gauche-droite.
+          Côté            Violent coup de fesse/couche vers l'avant.
+           Bas            Roulade à quatre pattes (esquive basse et frappe).
+     Aérien (Toutes)      Neutre: Coup de tétine. Côté: Jet de purée. Bas: Atterrissage fesses lourd.
+
+SIGNATURES (S)
+        Direction         Animation & Effet
+         Neutre           Hurlement : Onde de choc sonore autour de lui qui repousse fortement.
+          Côté            Charge 4 pattes : Fonce au sol, saisit l'adversaire (Chope) et le jette derrière lui.
+           Bas            Colère sismique : Frappe le sol des poings, créant un séisme de courte portée.
+      Remontée (Air)      Saut du lit : Rebondit sur un lit à barreaux élastique qui apparaît sous lui.
+
+      Plongeon (Air)
+                          Plongeon Dodo : Tombe lourdement sur le ventre, s'endormant une fraction de seconde à
+                          l'impact.
+
+  8. Gloria Zumba                                                                  Arme : Enceinte Fluo & Jambières
+Passif : Tempo (Métronome visuel. Attaquer sur le temps donne +30% de dégâts).
+ATTAQUES LÉGÈRES (P)
+        Direction         Animation & Effet
+         Neutre           Clap en rythme suivi d'un high kick.
+          Côté            Coude salsa avec une bonne avancée corporelle.
+           Bas            Twist balayé au niveau du sol.
+     Aérien (Toutes)      Neutre: Saut étoile (Hitbox large). Côté: Ciseaux aériens. Bas: Squat-punch descendant.
+
+SIGNATURES (S)
+        Direction         Animation & Effet
+         Neutre           Onde de basse : Pose son enceinte qui crache un projectile sonore rectiligne.
+          Côté            Pas de conga : Danse agressive vers l'avant frappant 3 fois de suite (multi-hit).
+           Bas            Piétinement cardio : Onde de choc au sol centrée sur elle-même.
+      Remontée (Air)      Saut pom-pom : Grande pirouette verticale ascendante, propulsée par le son de l'enceinte.
+      Plongeon (Air)      Boule à facettes : Tombe sur une boule disco. Aveugle très brièvement à l'impact.
+BAGARRE BIZARRE - Combos & Signatures                                                                             Page 5 / 11
+  9. Lola Filtre                                                                    Arme : Perche à selfie & Ring Light
+Passif : Likes (1000 likes = Mode "Virale", dégâts et projectiles boostés pendant 8s).
+ATTAQUES LÉGÈRES (P)
+        Direction           Animation & Effet
+          Neutre            Coup de smartphone suivi d'un flash éblouissant.
+           Côté             Coup d'estoc avec la perche à selfie (longue portée).
+           Bas              Glissade "pose photo" élégante.
+      Aérien (Toutes)       Neutre: Coup de Ring Light. Côté: Kick compensé. Bas: Perche plongeante.
+
+SIGNATURES (S)
+        Direction           Animation & Effet
+          Neutre            Le Flash : Écran blanc localisé étourdissant l'ennemi pendant 0.5s pour placer un combo.
+           Côté             Hashtag : Tire un gros # bleu flottant horizontalement.
+           Bas              Filtre chien : Piège. Applique des oreilles de chien à l'ennemi (portée réduite 3s).
+      Remontée (Air)        Drone Caméra : S'accroche à son drone de vlog qui la tire en diagonale vers le haut.
+      Plongeon (Air)        Pluie de cœurs : Piqué générant une cascade de cœurs (génère des likes à l'impact).
+
+  10. Jordan « RageQuit »                                                               Arme : Manette filaire & Clavier
+Passif : Rage (Les coups subis remplissent la jauge. Pleine = "Tilt", +50% de dégâts, 0 esquive).
+ATTAQUES LÉGÈRES (P)
+        Direction           Animation & Effet
+          Neutre            Combo furieux de manette façon "Spam bouton".
+           Côté             Coup de clavier balancé à l'horizontale.
+           Bas              Souris filaire lancée comme un yo-yo au ras du sol.
+      Aérien (Toutes)       Neutre: Coup de casque RGB. Côté: Câble-fouet. Bas: Smash de manette à deux mains.
+
+SIGNATURES (S)
+        Direction           Animation & Effet
+          Neutre            Paquet de chips : Projectile explosant en un nuage de miettes grasses.
+           Côté             Speedrun : Dash frénétique glissant sur les genoux (traverse l'adversaire).
+           Bas              Câble tendu : Tend son câble de manette au sol (Piège trébuchant).
+      Remontée (Air)        Rage Jump : Cri de rage propulsant Jordan vers le haut (Ventilo RGB s'allume).
+      Plongeon (Air)        Écran Bleu (BSOD) : Tombe avec un écran de PC lourd, figeant l'adversaire 0.5s à l'impact.
+
+BAGARRE BIZARRE - Combos & Signatures                                                                              Page 6 / 11
+  11. Dr Fraise, Dentiste                                                                  Arme : Fraise géante & Miroir
+Passif : Fou rire (Gaz hilarant empêchant l'adversaire d'utiliser K et S pendant 3s).
+ATTAQUES LÉGÈRES (P)
+        Direction           Animation & Effet
+          Neutre            Coup de miroir dentaire et genou stérile.
+           Côté             Fraise vrombissante tenue en avant (multi-hit court).
+           Bas              Fil dentaire tendu au sol façon lasso.
+      Aérien (Toutes)       Neutre: Lampe aveuglante. Côté: Pince plongeante. Bas: Coup de roulette de chaise.
+
+SIGNATURES (S)
+        Direction           Animation & Effet
+          Neutre            Gaz hilarant : Bulle stationnaire infligeant le statut Fou Rire au contact.
+           Côté             Fraise perforante : Dash chargé perçant la garde avec la roulette géante.
+           Bas              Bain de bouche : Crache une grande flaque bleue glissante au sol.
+      Remontée (Air)        Fauteuil éjectable : Un fauteuil de dentiste apparaît, le propulse en l'air et retombe.
+      Plongeon (Air)        Pluie de dents : Chute droite en semant des dents en sucre autour de lui.
+
+  12. Sumo Gélatine                                                     Arme : Gants en Guimauve (Son propre corps)
+Passif : Rebond (Les attaquants au corps à corps rebondissent légèrement en arrière).
+ATTAQUES LÉGÈRES (P)
+        Direction           Animation & Effet
+          Neutre            Grosses claques molles et poussée de paumes (Shiko).
+           Côté             Ventre-rebond (donne un coup de bedaine élastique).
+           Bas              Glissade gluante sur le ventre.
+      Aérien (Toutes)       Neutre: Bras-ressort élastique. Côté: Coup de bide. Bas: Plat ventre amorti.
+
+SIGNATURES (S)
+        Direction           Animation & Effet
+          Neutre            Boulette de gelée : Arrache un bout de son ventre et le lance (projectile ralentissant).
+           Côté             Charge Sumo : Dash inarrêtable (Armure) écrasant l'adversaire.
+           Bas              La Flaque : Se liquéfie totalement (esquive les tirs) puis rejaillit en uppercut massif.
+      Remontée (Air)        Tremblote géante : S'étire vers le ciel comme un ressort vert, frappant tout sur son passage.
+      Plongeon (Air)        Le Splash : Bombe à eau. S'il touche le sol, projette de la gelée de part et d'autre.
+
+BAGARRE BIZARRE - Combos & Signatures                                                                                  Page 7 / 11
+  13. Ramsès le Patraque                                                          Arme : Bandelettes & Thermomètre
+Passif : Contagion (Adversaire touché éternue au hasard 1 fois, annulant son action).
+ATTAQUES LÉGÈRES (P)
+        Direction          Animation & Effet
+          Neutre           Coup de thermomètre géant.
+           Côté            Mouchoir-fouet, claque l'adversaire à mi-distance.
+           Bas             Bandelette traînante fouettant les chevilles.
+      Aérien (Toutes)      Neutre: Atchoum anti-air. Côté: Coup de pied plâtré. Bas: Bandelette plongeante.
+
+SIGNATURES (S)
+        Direction          Animation & Effet
+          Neutre           Éternuement : Nuage microbien à courte portée (applique Contagion garantie).
+           Côté            Grappin bandelette : Lance son bras au loin, si touche, se tire vers l'ennemi.
+           Bas             Mouchoirs usagés : Sème 3 pièges contagieux au sol devant lui.
+
+      Remontée (Air)
+                           Sortie de sarcophage : S'enferme dans un sarcophage qui lévite brusquement en
+                           diagonale.
+      Plongeon (Air)       Sirop gluant : Chute lourdement en éclatant une fiole de sirop (ralentit la zone).
+
+  14. Capitaine Canard                                                          Arme : Bouée Canard & Pistolet à eau
+Passif : Flottaison (Possède 1 saut aérien supplémentaire et un léger plané).
+ATTAQUES LÉGÈRES (P)
+        Direction          Animation & Effet
+          Neutre           Coup de bouée caoutchouteux et éclaboussure.
+           Côté            Bec de bouée tendu (coup de tête du plastique).
+           Bas             Glissade palmée sur le ventre.
+      Aérien (Toutes)      Neutre: Jet d'eau court. Côté: Battement de palmes. Bas: Plongeon bec en piqué.
+
+SIGNATURES (S)
+        Direction          Animation & Effet
+          Neutre           Coin-coin : Onde sonore circulaire centrée sur lui qui étourdit 0.5s.
+           Côté            Torpille canard : Tourbillonne horizontalement propulsé par son pistolet à eau.
+           Bas             Piscine gonflable : Déploie une mare d'eau bloquant les déplacements rapides.
+      Remontée (Air)       Envol de bouée : S'envole très haut sur un geyser, puis plane brièvement.
+      Plongeon (Air)       Bombe à eau : Chute les genoux repliés (faire la bombe), grande zone d'éclaboussure.
+BAGARRE BIZARRE - Combos & Signatures                                                                           Page 8 / 11
+  15. Gaston le Magnifique                                                      Arme : Baguette de Magie & Chapeau
+Passif : Tours ratés (Les signatures tirent aléatoirement 1 des 3 effets : Colombe, Confettis, Lapin agressif).
+ATTAQUES LÉGÈRES (P)
+        Direction           Animation & Effet
+          Neutre            Coup de baguette crépitante enchaîné d'un foulard sans fin.
+           Côté             Cartes tranchantes projetées en éventail court.
+           Bas              Chaussure vernie en balayage magique.
+      Aérien (Toutes)       Neutre: Cape tournoyante. Côté: Disparition ratée. Bas: Chapeau plongeant.
+
+SIGNATURES (S)
+        Direction           Animation & Effet
+          Neutre            Tour aléatoire : Déclenche l'effet du passif au bout de sa baguette (Courte portée).
+           Côté             Passe-passe : Dash de téléportation courte. S'il traverse un ennemi, l'étourdit.
+           Bas              Trappe : Un trou s'ouvre au sol. L'ennemi tombe et est éjecté du haut de l'écran.
+      Remontée (Air)        Lévitation ratée : Le lapin du chapeau le tire violemment vers le haut par les oreilles.
+      Plongeon (Air)        Pluie de colombes : Chute piqué tout en lâchant des colombes éblouissantes.
+
+  16. Gros Bob                                                                                  Arme : Glacière & Tongs
+Passif : Fraîcheur (Haute, ses coups ont une chance de geler. Bouger fait baisser la jauge).
+ATTAQUES LÉGÈRES (P)
+        Direction           Animation & Effet
+          Neutre            Double claque poilue très lourde.
+           Côté             Grand coup de glacière balancée par l'anse.
+           Bas              Glissade sur glace (coup de tong bas).
+      Aérien (Toutes)       Neutre: Parasol ouvert. Côté: Pied de yéti volant. Bas: Avalanche de ventre.
+
+SIGNATURES (S)
+        Direction           Animation & Effet
+          Neutre            Boule de neige : Crache un gros projectile de glace droit devant (ralentit).
+           Côté             Charge en luge : S'assoit sur sa glacière et fonce, repoussant tout avec super-armure.
+           Bas              Mur de glace / Granita : Crée une barricade glacée (remonte sa Jauge de Fraîcheur).
+      Remontée (Air)        Avalanche ascendante : Propulsé vers le haut par une petite éruption de neige.
+      Plongeon (Air)        Pluie de Grêlons : Tombe assis sur sa glacière, des glaçons tombant autour de lui.
+
+BAGARRE BIZARRE - Combos & Signatures                                                                              Page 9 / 11
+  17. R-0B0, l'aspirateur                                                        Arme : Tuyau flexible & Brosse rotative
+Passif : Réservoir (Peut aspirer les projectiles et les recracher avec +50% de vitesse).
+ATTAQUES LÉGÈRES (P)
+        Direction           Animation & Effet
+          Neutre            Coups mécaniques de pare-chocs et brosse rotative.
+           Côté             Tuyau-poing s'étirant droit devant (très bonne allonge).
+           Bas              Coup de balai rotatif au niveau du sol.
+      Aérien (Toutes)       Neutre: Brosse tournoyante. Côté: Mode souffleur. Bas: Tuyau plongeant.
+
+SIGNATURES (S)
+        Direction           Animation & Effet
+          Neutre            Aspiration : Trou noir frontal. Attire les joueurs et avale les projectiles.
+           Côté             Recrachat / Nettoyage : Dash en zigzag si vide. Recrache un projectile mortel si plein.
+           Bas              Sac à poussière : Libère un nuage aveuglant autour de lui.
+      Remontée (Air)        Turbo vertical : Propulseur de poussière le projetant violemment vers le haut.
+      Plongeon (Air)        Chute du disque : Rentre ses bras et tombe comme un poids mort en acier (très lourd).
+
+  18. Papi DJ                                                                        Arme : Vinyles Tranchants & Platine
+Passif : Playlist (Pivote entre Rap = Vitesse, Slow = Soin léger, Techno = Dégâts).
+ATTAQUES LÉGÈRES (P)
+        Direction           Animation & Effet
+          Neutre            Coup de vinyle comme une dague, enchaîné d'un coup de charentaise.
+           Côté             Scratch (Double frappe en se dandinant).
+           Bas              Câble jack fouettant les chevilles.
+      Aérien (Toutes)       Neutre: Casque balancé. Côté: Saut de scène. Bas: Vinyle plongeant.
+
+SIGNATURES (S)
+        Direction           Animation & Effet
+          Neutre            Vinyle-boomerang : Lance un disque qui fait l'aller-retour.
+                            Drop des basses : Onde de choc horizontale poussant l'ennemi. (Change la piste du
+           Côté
+                            Passif).
+           Bas              Mur d'enceintes : Fait jaillir deux énormes baffles bloquant tout projectile.
+      Remontée (Air)        Slam : Se jette en l'air comme dans une foule imaginaire.
+      Plongeon (Air)        Rewind Drop : Tombe très vite, et s'il rate, revient instantanément à sa hauteur initiale.
+BAGARRE BIZARRE - Combos & Signatures                                                                             Page 10 / 11
+  19. Le Roi Pigeon                                                                 Arme : Baguette de Pain & Nuée
+Passif : Nuée (Génère passivement jusqu'à 6 pigeons. Les attaques spéciales les consomment).
+ATTAQUES LÉGÈRES (P)
+        Direction         Animation & Effet
+         Neutre           Coup de pied royal et picorage rapide (si pigeons dispos).
+          Côté            Baguette en estoc (épée longue).
+           Bas            Miettes glissantes balayées sous le pied.
+     Aérien (Toutes)      Neutre: Battement d'ailes. Côté: Serres de pigeon. Bas: Piqué de baguette.
+
+SIGNATURES (S)
+        Direction         Animation & Effet
+         Neutre           Pigeon chercheur : Envoie 1 pigeon lent à tête chercheuse (Suit l'adversaire).
+          Côté            Charge de la Nuée : La nuée forme une pointe de lance et dash vers l'avant.
+           Bas            Jet de miettes : Jette des miettes au sol. La nuée fond agressivement sur la zone (Piège).
+      Remontée (Air)      Envol porté : Ses pigeons l'attrapent par la cape et le hissent très haut (sans hitbox).
+      Plongeon (Air)      Piqué collectif : Plonge entouré de ses pigeons formant une perceuse redoutable.
+
+  20. Madame Ventouse                                                      Arme : Ventouse Géante & Clé à molette
+Passif : Grappin (Sa ventouse peut s'accrocher aux murs et au sous-sol des plateformes).
+ATTAQUES LÉGÈRES (P)
+        Direction         Animation & Effet
+         Neutre           Coup de clé à molette rapide et coup de botte.
+          Côté            Coup de tuyau balancé violemment à l'horizontale.
+           Bas            Serre-joint écrasant les orteils.
+     Aérien (Toutes)      Neutre: Rodéo sur tuyau. Côté: Ventouse frontale. Bas: Glissade dans l'eau.
+
+SIGNATURES (S)
+        Direction         Animation & Effet
+         Neutre           Jet de fuite : Ouvre une valve crachant un projectile d'eau en cloche.
+          Côté            Ventouse grappin : Tire sa ventouse. Si touche un joueur, l'attire. Si touche un mur, s'y tire.
+           Bas            Inondation : Crée une mare glissante envoyant valser l'adversaire (Renversement).
+      Remontée (Air)      Ventouse plafond : Tire le grappin vers le haut pour une récupération de hauteur extrême.
+
+      Plongeon (Air)
+                          Chute Ventouse : Tombe la ventouse en avant, s'accroche au sol (Pop !) en créant une
+                          onde.
+BAGARRE BIZARRE - Combos & Signatures                                                                           Page 11 / 11
+

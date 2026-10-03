@@ -349,6 +349,7 @@ local function stepModel(model, rig, dt, now, serverNow)
 				hitstun = serverNow < (model:GetAttribute("HitstunUntil") or 0),
 				frozen = (root.Anchored and not model:GetAttribute("Grabbed")) or model:GetAttribute("Eliminated") == true,
 				style = data and data.style,
+				fidgets = data and data.fidgets, -- manies propres au perso (sinon celles de Gégé)
 				bottle = data ~= nil and data.holdsBottle == true and armed, -- la bouteille sort de la Caisse Bizarre
 				drunk = model:GetAttribute("Bulles") or 0,
 				mirror = mirrored,

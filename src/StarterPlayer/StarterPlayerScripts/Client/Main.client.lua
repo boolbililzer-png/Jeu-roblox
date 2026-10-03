@@ -11,6 +11,7 @@ local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Config = require(Shared:WaitForChild("Config"))
 local CharacterList = require(Shared:WaitForChild("CharacterList"))
 local MoveSets = require(Shared:WaitForChild("MoveSets"))
+local Statuses = require(Shared:WaitForChild("Statuses"))
 local Items = require(Shared:WaitForChild("Items"))
 local Controls = require(script.Parent:WaitForChild("Controls"))
 local CameraRig = require(script.Parent:WaitForChild("CameraRig"))
@@ -88,6 +89,11 @@ local function isObese()
 	return character ~= nil and (character:GetAttribute("ObeseUntil") or 0) > workspace:GetServerTimeNow()
 end
 
+-- Statut loufoque et bonus en cours (voir shared/Statuses.lua)
+local function flags()
+	return character and Statuses.flags(character) or {}
+end
+
 local function canAct()
 	return root ~= nil
 		and not root.Anchored
@@ -95,17 +101,21 @@ local function canAct()
 		and not character:GetAttribute("Grabbed")
 		and not character:GetAttribute("Holding")
 		and os.clock() >= stunnedUntil
-		and not statusActive("stunned")
+		and not flags().noAct
 		and not isObese()
 end
 
 -- Direction lue au joystick, inversée si on a pris le jet de soda de Gégé
 local function moveInput()
 	local v = controls:getMoveVector()
-	if statusActive("inverted") then
+	if flags().invert then
 		v = Vector2.new(-v.X, v.Y)
 	end
 	return v
+end
+
+local function maxAirJumps()
+	return Config.AIR_JUMPS + (character and character:GetAttribute("AirJumpsBonus") or 0)
 end
 
 local function isGrounded()
@@ -242,6 +252,16 @@ end
 local function performMove(key, chaining, power)
 	local move = characterData().moves[key]
 	if not move or not canAct() then
+		return false
+	end
+	local _, statusKey = MoveSets.split(key)
+	if Statuses.blocks(flags(), statusKey) then
+		Fx.noEnergy(character)
+		return false
+	end
+	-- jauge du perso (pression d'eau du Canard, pigeons, réservoir de R-0B0…)
+	if move.meterCost and (character:GetAttribute("Meter") or 0) < move.meterCost then
+		Fx.noEnergy(character)
 		return false
 	end
 	-- un enchaînement (ou le relâchement d'une frappe chargée) coupe l'attente du coup précédent
@@ -467,7 +487,7 @@ end
 local function doDodge()
 	local v = moveInput()
 	local now = os.clock()
-	if now < dodgeReadyAt or now < busyUntil then
+	if now < dodgeReadyAt or now < busyUntil or flags().noDodge then
 		return
 	end
 	dodgeReadyAt = now + Config.DODGE_COOLDOWN
@@ -493,6 +513,9 @@ local function doDodge()
 end
 
 local function doJump()
+	if flags().noMove then
+		return
+	end
 	if isGrounded() then
 		humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
 	elseif airJumpsLeft > 0 then
@@ -624,7 +647,7 @@ RunService.Heartbeat:Connect(function(dt)
 	local busy = now < busyUntil
 
 	if grounded then
-		airJumpsLeft = Config.AIR_JUMPS
+		airJumpsLeft = maxAirJumps()
 		upSpecialUsed = false
 	end
 
@@ -699,17 +722,27 @@ RunService.Heartbeat:Connect(function(dt)
 		running = false
 	end
 	local dashing = now < dashUntil and acting
-	humanoid.WalkSpeed = (dashing and Config.DASH_SPEED) or (running and Config.RUN_SPEED) or Config.WALK_SPEED
+	local status = flags()
+	local speedMult = Statuses.speed(character)
+	humanoid.WalkSpeed = ((dashing and Config.DASH_SPEED) or (running and Config.RUN_SPEED) or Config.WALK_SPEED) * speedMult
+	if status.noMove then
+		humanoid.WalkSpeed = 0
+	end
+	-- plané (Capitaine Canard) : SAUT maintenu en tombant, la chute est freinée
+	if character:GetAttribute("Glide") and not grounded and controls:isHeld("SAUT") and root.AssemblyLinearVelocity.Y < -8 then
+		local velocity = root.AssemblyLinearVelocity
+		root.AssemblyLinearVelocity = Vector3.new(velocity.X, -8, 0)
+	end
 
 	-- Orientation et marche (pas pendant la recharge : on boit sur place)
 	if acting and not busy and not charging and math.abs(v.X) > 0.3 then
 		facing = v.X > 0 and 1 or -1
 	end
 	local moveX = 0
-	if dashing then
+	if dashing and not status.noMove then
 		moveX = dashDir
-		root.AssemblyLinearVelocity = Vector3.new(dashDir * Config.DASH_SPEED, root.AssemblyLinearVelocity.Y, 0)
-	elseif acting and not charging and (not busy or not grounded) and math.abs(v.X) > 0.2 then
+		root.AssemblyLinearVelocity = Vector3.new(dashDir * Config.DASH_SPEED * speedMult, root.AssemblyLinearVelocity.Y, 0)
+	elseif acting and not charging and not status.noMove and (not busy or not grounded) and math.abs(v.X) > 0.2 then
 		moveX = v.X
 	end
 	humanoid:Move(Vector3.new(moveX, 0, 0), false)
