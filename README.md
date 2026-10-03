@@ -6,7 +6,7 @@ téléphone. Il est construit sur le prototype v7 (`BagarreBizarre_7.rbxlx`).
 Au programme :
 - 20 combattants loufoques et 20 arènes avec leur piège ;
 - une jauge de dégâts en %, des éjections hors de l'arène et 3 coups fatals par perso ;
-- la Caisse Bizarre, qui donne l'arme de chaque perso ;
+- la Caisse Bizarre, qui donne au hasard une des 3 armes de chaque perso, chacune avec ses coups et sa capacité ;
 - des bots pour jouer seul ou compléter une partie.
 
 Tout est construit par code : costumes, accessoires, animations, effets et arènes. Il n'y a aucun modèle ni
@@ -35,16 +35,18 @@ On ne combine jamais deux boutons : la direction tenue au moment de l'appui choi
 | Sauter (double saut en l'air) | Espace | SAUT |
 | **P** attaque rapide | J | P (rouge) |
 | **K** attaque lourde | K | K (bleu) |
-| **S** spécial, sans limite (maintenu = S chargé) | L | S (jaune) |
+| **S** spécial du perso, même sans arme (maintenu = portée allongée) | L | S (jaune) |
 | Esquive (puis S = spécial d'esquive) | Maj | ESQ |
-| ⭐ 3 Supers (1,4 s de recharge entre deux) : ↑Y, →Y (ou Y), ↓Y ; et coup fatal | Y | ⭐ |
+| ⭐ 4 Supers (1,4 s de recharge entre deux) : Y, →Y, ↑Y, ↓Y ; et coup fatal | Y | ⭐ |
 | ✋ Ramasser une caisse ou un objet, lancer l'objet, **jeter son arme** (pas de saisie) | U | ✋ |
 | 😀 Emotes | 1, 2, 3, 4 | 😀 |
 | Aide des touches | H | — |
 
 - **Double tap ← ou →** : ruée. P, K ou S pendant la ruée ou juste après donnent un coup de dash, qui garde
   l'élan. On peut aussi marcher pendant un coup (plus lentement).
-- **Spéciaux (L)** : neutre, ↑, →, ↓, maintenu, en l'air… Ils ont une plus grande portée (`Config.S_RANGE`).
+- **Spéciaux (L)** : neutre, ↑, →, ↓, en l'air… Ils ont une plus grande portée (`Config.S_RANGE`) et restent ceux du
+  perso même sans arme. **L maintenu** au sol (L, →L, ↓L) : le même coup part au relâchement avec une portée allongée
+  jusqu'à +80 % (`Config.S_HOLD_RANGE`).
 - **↓ maintenu** sur une plateforme fine : on passe au travers. **↓ maintenu en l'air** : chute rapide.
 - **Sauts** : 1 au sol et 2 en l'air, puis ↑L pour remonter (comme Brawlhalla).
 - **Esquive de poursuite** : juste après avoir touché, l'esquive revient presque tout de suite pour suivre
@@ -54,7 +56,7 @@ On ne combine jamais deux boutons : la direction tenue au moment de l'appui choi
 - **Signatures (L)** : toujours plus fortes que les attaques P / K. L, →L et ↓L frappent tout le couloir devant
   le perso (16 studs, même hauteur de plateforme) : sûrs de toucher. Leurs projectiles visent l'adversaire et
   foncent droit sur lui. ↑L fait décoller en diagonale vers l'avant en frappant (remontée façon Brawlhalla).
-- **Supers (Y)** : même principe avec un couloir 1,3 fois plus grand, et plus farfelus.
+- **Supers (Y)** : 4 par jeu d'arme (Y, →Y, ↑Y, ↓Y), même principe avec un couloir 1,3 fois plus grand, et plus farfelus.
 - **Sans limite** : plus de jauge d'énergie ni de jauge Super, les L se font à volonté. Les Y ont seulement un
   **temps de recharge** de 1,4 s entre deux (`Config.SUPER_COOLDOWN`) : le bouton ⭐ affiche les secondes qui
   restent et la barre ⭐ de la carte du joueur se remplit. Le coup fatal, lui, n'attend pas.
@@ -74,9 +76,10 @@ On ne combine jamais deux boutons : la direction tenue au moment de l'appui choi
 - **Jeter son arme** : avec la caisse ouverte, ✋ lance l'arme sur l'adversaire, même pendant qu'on se fait
   frapper ; ça casse alors le combo adverse (0,5 s d'invulnérabilité). On repasse à mains nues, et l'arme
   retombe en Caisse Bizarre que n'importe qui peut reprendre.
-- **Caisse Bizarre** 📦 : on entre à mains nues, avec des coups communs à tous. Ouvrir une caisse avec ✋
-  sort l'arme du perso, et P, K et S deviennent son moveset unique jusqu'à la prochaine éjection. La
-  saisie, les Supers, les fatals et la mécanique du perso marchent toujours.
+- **Caisse Bizarre** 📦 : on entre à mains nues : P et K sont des coups communs à tous, mais les L, les Y, la saisie,
+  les fatals et la mécanique restent ceux du perso. Ouvrir une caisse avec ✋ sort **une de ses 3 armes, au hasard** ;
+  chaque arme a ses propres J / K / L / Y et une **capacité** (vitesse, portée, soin, armure…). Ouvrir une autre
+  caisse change d'arme. L'arme est perdue à l'éjection.
 - **Jauge de dégâts** : elle passe au rouge à 150 %. Un adversaire sur sa dernière vie et dans le rouge
   peut être achevé par un **coup fatal** : 3 flèches puis ⭐. Les séquences débloquées s'affichent à
   l'écran.
@@ -104,7 +107,7 @@ Il n'y a **aucun bonus de stats**, dans aucun mode.
 
 ```
 src/ReplicatedStorage/Shared/
-  Characters/<Id>.lua   les 20 fiches de persos (look, ~40 coups, fatals, mécanique, recharge, retour)
+  Characters/<Id>.lua   les 20 fiches de persos (look, 3 armes, ~80 coups, fatals, mécanique, recharge, retour)
   BareMoves.lua         coups à mains nues (sans caisse), communs à tous
   CommonMoves.lua       lancer d'objet ; saisie et projections par défaut
   CharacterList.lua     charge les fiches dans l'ordre de Roster.lua

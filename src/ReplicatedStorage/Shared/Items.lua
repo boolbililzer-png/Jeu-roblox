@@ -1,5 +1,5 @@
 -- Objets qui tombent sur l'arène, comme les armes de Brawlhalla : tout le monde peut les ramasser (✋ / U).
---   kind = "crate"     : la Caisse Bizarre. On l'ouvre en la ramassant : le perso sort son arme emblématique et
+--   kind = "crate"     : la Caisse Bizarre. On l'ouvre en la ramassant : le perso sort une de ses 3 armes au hasard et
 --                        P, K, S deviennent son moveset unique (Characters/*.lua) au lieu des coups à mains nues
 --                        (shared/BareMoves.lua). On la garde jusqu'à sa prochaine éjection (attribut Armed).
 --   kind = "throwable" : se lance avec ✋ (flèche ↑ = en cloche vers le haut, ↓ en l'air = vers le bas).

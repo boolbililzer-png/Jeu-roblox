@@ -1,9 +1,9 @@
--- Coups « mains nues », communs à tous les persos (voir la Grille des Combos & Signatures) :
--- chaque perso entre dans l'arène à mains nues avec ce moveset de survie. Dès qu'il ramasse une Caisse Bizarre
--- (bouton ✋), il sort son arme emblématique et TOUS ses coups P / K / S deviennent les siens (Characters/*.lua).
--- Les Supers, la chope et les projections restent ceux du perso, avec ou sans arme.
+-- Coups « mains nues » (P / K seulement), communs à tous les persos : chaque perso entre dans l'arène avec ce moveset
+-- de survie. Ses spéciaux (L), ses Supers (Y), sa saisie et ses fatals restent les siens, même sans arme.
+-- Dès qu'il ramasse une Caisse Bizarre (bouton ✋), il sort UNE de ses 3 armes au hasard et ses coups P / K / S / Y
+-- deviennent ceux de l'arme (Characters/*.lua, data.moves pour l'arme n° 1, data.weapons[i].moves pour les autres).
 -- Même format que les coups des persos (voir l'en-tête de Characters/Gege.lua). Rangés sous « bare.clé »
--- (voir shared/MoveSets.lua et CharacterList.lua).
+-- (voir shared/MoveSets.lua et CharacterList.lua). Les suites vers un S_… renvoient au spécial du perso.
 local function box(width, height, forward, up)
 	return { size = Vector3.new(width, height, 6), offset = Vector2.new(forward, up) }
 end

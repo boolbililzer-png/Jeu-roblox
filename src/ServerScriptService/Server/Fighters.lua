@@ -45,7 +45,10 @@ function Fighters.resetAttributes(model)
 	model:SetAttribute("MovePower", 0)
 	-- objet tenu (voir shared/Items.lua), saisies, croustillant
 	model:SetAttribute("Held", "")
-	model:SetAttribute("Armed", false) -- Caisse Bizarre ouverte : moveset du perso (sinon mains nues)
+	model:SetAttribute("Armed", false) -- Caisse Bizarre ouverte : moveset de l'arme (sinon mains nues)
+	model:SetAttribute("Weapon", "")
+	model:SetAttribute("WeaponSpeed", 1)
+	model:SetAttribute("WeaponJumps", 0)
 	model:SetAttribute("HeldUses", -1)
 	model:SetAttribute("HeldSince", 0)
 	model:SetAttribute("Holding", false) -- tient un adversaire saisi
