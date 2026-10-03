@@ -267,6 +267,24 @@ end
 -- Un objet caché (visible = false) n'apparaît que pendant les coups qui le citent (champ prop du coup).
 local AXIS = { x = CFrame.new(), y = ALONG_Y, z = FACING_FRONT }
 
+-- Taille d'un cylindre : on accepte les deux écritures
+--   « à la Roblox » : (longueur, diamètre, diamètre), la longueur sur X avant d'être tournée vers l'axe ;
+--   « encombrement » : (largeur, hauteur, profondeur), la longueur étant la dimension de l'axe choisi.
+-- Les deux diamètres égaux disent de quelle écriture il s'agit.
+function Costumes.cylinderSize(size, axis)
+	local x, y, z = size.X, size.Y, size.Z
+	if axis == "x" then
+		return Vector3.new(x, math.max(y, z), math.max(y, z))
+	end
+	local alongAxis = axis == "z" and z or y
+	local robloxStyle = math.abs(y - z) < 1e-3 and math.abs(x - y) > 1e-3
+	if robloxStyle then
+		return Vector3.new(x, y, y)
+	end
+	local diameter = axis == "z" and math.max(x, y) or math.max(x, z)
+	return Vector3.new(alongAxis, diameter, diameter)
+end
+
 local function buildPiece(spec)
 	local name, shape, size, color, material, options = spec[1], spec[3], spec[4], spec[7], spec[8], spec[9] or {}
 	local mat = material and Enum.Material[material] or Enum.Material.SmoothPlastic
@@ -277,7 +295,7 @@ local function buildPiece(spec)
 	if shape == "ball" then
 		part = ellipsoid(name, size, color, mat)
 	elseif shape == "cyl" then
-		part = newPart(name, size, color, mat)
+		part = newPart(name, Costumes.cylinderSize(size, options.axis or "y"), color, mat)
 		part.Shape = Enum.PartType.Cylinder
 	elseif shape == "wedge" then
 		part = Instance.new("WedgePart")

@@ -88,6 +88,23 @@ local function require(inst)
 	end
 	return cache[path]
 end
+-- Chaque module est compilé à part (une fiche en cours d'écriture ne casse pas les autres)
+local GLOBALS = getfenv()
+local ENV = { Vector3 = Vector3, Vector2 = Vector2, Color3 = Color3, CFrame = CFrame, Enum = Enum, NumberSequence = NumberSequence,
+	ColorSequence = ColorSequence, NumberRange = NumberRange, UDim2 = UDim2, Random = Random, typeof = typeof, warn = warn,
+	workspace = workspace, require = require }
+local function loadModule(source, path, script)
+	local chunk, err = loadstring(source, "=" .. path)
+	if not chunk then
+		error(err, 0)
+	end
+	setfenv(chunk, setmetatable({ script = script }, { __index = function(_, k)
+		local v = ENV[k]
+		if v ~= nil then return v end
+		return GLOBALS[k]
+	end }))
+	return chunk()
+end
 '''
 
 CHECKS = r'''
@@ -378,7 +395,11 @@ def build(args):
                 src = fh.read()
             parts.append(f'do local p = shared for seg in string.gmatch("{parent[len("Shared"):]}", "[^/]+") do p = p.children[seg] end '
                          f'p.children["{name}"] = node("{name}", p, "{path}") end')
-            parts.append(f'MODULES["{path}"] = function(script)\n{src}\nend')
+            level = 1
+            while ("]" + "=" * level + "]") in src:
+                level += 1
+            eq = "=" * level
+            parts.append(f'MODULES["{path}"] = function(script) return loadModule([{eq}[{src}]{eq}], "{path}", script) end')
     parts.append("local ARGS = {" + ",".join('"%s"' % a for a in args) + "}")
     parts.append(CHECKS)
     return "\n".join(parts)

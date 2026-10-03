@@ -1,100 +1,120 @@
 # Bagarre Bizarre
 
-Jeu de combat de plateforme pour Roblox, inspiré de Brawlhalla et Super Smash Bros. Il est pensé d'abord pour le téléphone.
+Jeu de combat de plateforme pour Roblox, façon Brawlhalla et Super Smash Bros, pensé d'abord pour le
+téléphone. Il est construit sur le prototype v7 (`BagarreBizarre_7.rbxlx`).
 
-20 combattants loufoques, 20 arènes, une jauge de dégâts en %, des éjections hors de l'arène, des Caisses Bizarres qui donnent l'arme de chaque perso, et des bots pour jouer seul.
+Au programme :
+- 20 combattants loufoques et 20 arènes avec leur piège ;
+- une jauge de dégâts en %, des éjections hors de l'arène et 3 coups fatals par perso ;
+- la Caisse Bizarre, qui donne l'arme de chaque perso ;
+- des bots pour jouer seul ou compléter une partie.
+
+Tout est construit par code : costumes, accessoires, animations, effets et arènes. Il n'y a aucun modèle ni
+aucune animation à importer.
 
 ## Lancer le jeu dans Roblox Studio
 
-**Méthode simple** : ouvre `BagarreBizarre.rbxlx` dans Roblox Studio (Fichier > Ouvrir), puis clique sur **Play** (F5). Tu arrives au salon : choisis un perso puis clique **PRÊT !**. Un bot est ajouté automatiquement si tu es seul.
+1. Ouvre `BagarreBizarre.rbxlx` dans Roblox Studio (Fichier > Ouvrir), puis lance **Play** (F5).
+2. Dans le salon, choisis un mode, un perso et une arène, puis appuie sur **PRÊT !**.
 
-**Méthode Rojo** (pour développer) : `rojo serve` dans ce dossier, puis connecte le plugin Rojo dans Studio. Le fichier `default.project.json` décrit l'arborescence.
+Les places libres sont prises par des bots.
 
-Pour jouer à plusieurs : publie la place sur Roblox (Fichier > Publier sur Roblox).
+- **Méthode Rojo** (pour développer) : lance `rojo serve` dans ce dossier, puis connecte le plugin Rojo.
+- **Régénérer la place** à partir de `src/` : `python3 tools/build_place.py`.
+- **Sauvegarde des profils** (pièces, persos achetés, maîtrise) : il faut publier le jeu et activer
+  *Game Settings > Security > Enable Studio Access to API Services*. Sans cela, le profil ne dure que le
+  temps de la session.
 
 ## Contrôles
 
-| Action | PC | Manette | Téléphone |
-|---|---|---|---|
-| Se déplacer / viser une direction | ZQSD, WASD ou flèches | stick gauche | joystick |
-| Sauter (1 au sol + 2 en l'air) | Espace | A | bouton SAUT |
-| **P** attaque légère (combos) | J | X | bouton P rouge |
-| **S** signature (maintenir = charger ×1,5) | K | Y | bouton S bleu |
-| Esquive | L ou Maj | B | bouton ESQ |
-| ✋ ramasser / lancer l'arme / saisir | E ou H | R1 | bouton ✋ |
-
 On ne combine jamais deux boutons : la direction tenue au moment de l'appui choisit le coup.
 
-- **P** : neutre, côté (→), bas (↓), et en l'air (neutre, côté, bas).
-- **S** : neutre, côté (→), bas (↓), remontée (↑) et plongeon (↓ en l'air).
+| Action | PC | Téléphone |
+|---|---|---|
+| Se déplacer, viser une direction | ZQSD / WASD / flèches | joystick |
+| Sauter (double saut en l'air) | Espace | SAUT |
+| **P** attaque rapide | J | P (rouge) |
+| **K** attaque lourde | K | K (bleu) |
+| **S** spécial (maintenu = S chargé) | L | S (jaune) |
+| Esquive (puis S = spécial d'esquive) | Maj | ESQ |
+| ⭐ Super (jauge pleine), et coup fatal | I | ⭐ |
+| ⚡ Recharger l'énergie des spéciaux | O (maintenu) | ⚡ |
+| ✋ Ramasser une caisse ou un objet, lancer l'objet, saisir | U | ✋ |
+| Aide des touches | H | — |
 
-Maintenir **bas** sur une plateforme permet de la traverser. Maintenir **bas** en l'air fait chuter plus vite. Contre un mur, on glisse et on peut faire un saut mural.
+- **Double tap ← ou →** : ruée. P, K ou S pendant la ruée ou juste après donnent un coup de dash.
+- **↓ maintenu** sur une plateforme fine : on passe au travers.
+- **J et K maintenus au sol** : frappe chargée, comme les smashs.
+- **↑S** sert de remontée et ne coûte pas d'énergie.
 
-## Règles (façon Brawlhalla)
+## Règles
 
-- Chaque joueur a **3 vies** et commence à **0 %**. Les coups font monter le % ; la jauge passe au rouge à 150 %.
-- Avoir beaucoup de % ne tue pas : on perd une vie seulement quand on est éjecté hors des **Blast Zones**.
-- **Éjection** : `Force = Éjection de base + % de la cible × Multiplicateur`, divisée par le poids du perso. Elle est appliquée via `AssemblyLinearVelocity`. Le temps d'étourdissement (hitstun) dépend de la force reçue.
-- **Attaques légères (P)** : éjection faible et presque fixe, pour enchaîner 2 à 4 coups.
-- **Signatures (S)** : éjection qui s'emballe avec le %. Maintenir S charge le coup jusqu'à ×1,5.
-- **Caisse Bizarre** : on commence à mains nues (moveset commun). Ramasser une caisse avec ✋ équipe l'arme du perso et son moveset 100 % unique. ✋ relance l'arme, et l'arme est perdue à chaque vie perdue.
-- Après une chute, retour en parachute 🪂 avec quelques secondes d'invulnérabilité.
-- **Statuts loufoques** (inversion, fou rire, gel…) : 3 s maximum, pas de cumul, puis 5 s d'immunité.
-- **Pièges d'arène** : un par arène, annoncé 2 s avant. Ils se désactivent dans le salon (Pièges ON/OFF).
-- Fin de partie : dernier survivant, ou à la fin du chrono (5 min). Le départage se fait aux vies restantes, puis au % le plus bas.
+- **Bagarre générale** : 4 combattants, chacun pour soi, 3 minutes. +1 point par éjection, −1 par chute.
+  En cas d'égalité, mort subite à 300 %.
+- **Duel** : 1 contre 1, 3 vies.
+- **Aventure** : 5 combats contre des bots de plus en plus forts, chacun dans l'arène de l'adversaire,
+  avec un boss à la fin. On peut la faire à deux.
+- **Entraînement** : le mannequin, sans chrono. Le bouton ⏏ QUITTER ramène au salon.
+- **Caisse Bizarre** 📦 : on entre à mains nues, avec des coups communs à tous. Ouvrir une caisse avec ✋
+  sort l'arme du perso, et P, K et S deviennent son moveset unique jusqu'à la prochaine éjection. La
+  saisie, les Supers, les fatals et la mécanique du perso marchent toujours.
+- **Jauge de dégâts** : elle passe au rouge à 150 %. Un adversaire sur sa dernière vie et dans le rouge
+  peut être achevé par un **coup fatal** : 3 flèches puis ⭐. Les séquences débloquées s'affichent à
+  l'écran.
+- **Statuts loufoques** (inversion, fou rire, gel, éternuements…) : 3 s maximum, un seul à la fois, puis
+  5 s d'immunité.
+- **Pièges d'arène** : un par arène, annoncé 2 s avant, environ 5 % de dégâts. Pièges ON/OFF se règle
+  dans le salon.
 
-## Ce qui est dans le dépôt
+## Progression
+
+Il n'y a **aucun bonus de stats**, dans aucun mode.
+
+- **Persos gratuits** : Gégé, Mamie Tricot, Dylan, Sumo Gélatine, Marcel et le Roi Pigeon.
+- **Rotation** : 4 autres persos sont gratuits chaque semaine.
+- **Achat** : chaque autre perso coûte 3 000 pièces.
+- **Gains** : environ 30 pièces par partie.
+- **Maîtrise** (niveau 1 à 30 par perso) : 2ᵉ coup fatal au niveau 5, 3ᵉ au niveau 15.
+- Les réglages se trouvent dans `src/ReplicatedStorage/Shared/Roster.lua`.
+
+## Organisation du code
 
 ```
-docs/
-  visionneuse-3d.html        Atelier 3D : les 20 persos et chaque coup animé (avant le coup, élan, frappe, retour)
-  design-personnages.html    Planche de design 2D des 20 persos
-  roster-20-personnages.md, maps-20-arenes.md, specs-moteur-combat.md, grille-combos-signatures.pdf
+src/ReplicatedStorage/Shared/
+  Characters/<Id>.lua   les 20 fiches de persos (look, ~40 coups, fatals, mécanique, recharge, retour)
+  BareMoves.lua         coups à mains nues (sans caisse), communs à tous
+  CommonMoves.lua       lancer d'objet ; saisie et projections par défaut
+  CharacterList.lua     charge les fiches dans l'ordre de Roster.lua
+  Roster.lua            ordre, gratuits, rotation, prix, maîtrise, modes, fiches du menu
+  Arenas.lua            les 20 arènes (décor, lumière, public, piège)
+  AnimCore.lua, Poses.lua   animation procédurale (poses, ressorts, pieds au sol)
+  Statuses.lua          statuts loufoques et bonus passagers
+  MoveSets.lua          coups avec ou sans la Caisse Bizarre
+  Items.lua, Config.lua objets à ramasser ; réglages globaux
+src/ServerScriptService/Server/
+  Main.server.lua       démarrage
+  Lobby.lua             salon, modes, bots de remplissage, Aventure, récompenses
+  Match.lua             vies, points, éjections, retour sur la plateforme, coups fatals
+  Combat.lua            coups, zones de frappe, projectiles, saisies
+  Specials.lua          pièges, murs, contres, aspiration, grappin
+  Mechanics.lua         la mécanique de chaque perso (Bulles, Likes, Rage, Tempo…)
+  Fighters.lua          dégâts, éjection, statuts
+  Bot.lua               IA des bots
+  Arena.lua, Hazards.lua   construction de l'arène et pièges
+  Pickups.lua           Caisse Bizarre et objets
+  Profile.lua           pièces, persos achetés, maîtrise (DataStore)
+  Costumes.lua, Fatals.lua, Dummy.lua
+src/StarterPlayer/StarterPlayerScripts/Client/
+  Main.client.lua       commandes, déplacements, coups
+  Menu.lua              salon et résultats
+  Hud.lua, Fx.lua, Animator.lua, CameraRig.lua, Controls.lua
 tools/
-  gamedata/                  SOURCE UNIQUE des données : rig, looks 3D, poses, 220 coups, 20 arènes
-  build.py                   génère GameData.lua + la visionneuse + BagarreBizarre.rbxlx
-src/
-  ReplicatedStorage/Shared/  code partagé client/serveur
-    GameData.lua             (généré) toutes les données du jeu
-    CharacterBuilder.lua     construit le perso 3D (rig R15 + accessoires, arme cachée/visible)
-    MotorController.lua      déplacements Brawlhalla (sauts, mur, esquive, plateformes, éjection)
-    Pose.lua                 animations procédurales (même calcul que la visionneuse)
-    Knockback.lua            formule d'éjection, hitstun, charge
-  ServerScriptService/
-    Main.server.lua          démarrage, groupes de collision, réception des actions
-    Server/Combat.lua        coups, hitbox spatiales, projectiles, pièges, murs, contres, dashs
-    Server/Passives.lua      les 20 passifs (Jauge de Bulles, Note client, Tempo, Likes, Rage…)
-    Server/Match.lua         salon, compte à rebours, vies, KO, résultats
-    Server/Bot.lua           IA des bots
-    Server/ArenaBuilder.lua, ArenaTraps.lua, Crates.lua, Fighter.lua
-  StarterPlayer/StarterPlayerScripts/
-    Client.client.lua        démarrage client
-    ClientModules/           Controller (entrées + prédiction), Animator, CameraRig, Hud, Menu, Fx, MobileButtons
+  build_place.py        génère BagarreBizarre.rbxlx depuis src/
+  check_characters.py   vérifie les fiches et joue toutes leurs animations hors Roblox
+docs/
+  fiche-perso.md        comment écrire la fiche d'un perso
+  roster-20-personnages.md, grille-combos-signatures.*, maps-20-arenes.md, gameplay-progression.md
 ```
 
-## Modifier le jeu
-
-Les persos, coups, poses et arènes se règlent dans `tools/gamedata/*.py`. Ensuite, lance :
-
-```
-python3 tools/build.py
-```
-
-Cette commande régénère d'un coup `src/ReplicatedStorage/Shared/GameData.lua`, la visionneuse 3D et la place `BagarreBizarre.rbxlx`. Le jeu et la visionneuse lisent les mêmes données, donc ce que tu vois dans l'atelier 3D est ce qui tourne dans Roblox.
-
-Pour afficher les hitbox en rouge pendant les tests, mets `DebugHitboxes = true` dans `src/ReplicatedStorage/Shared/Config.lua`. Ce fichier contient aussi la gravité, les sauts, le hitstun, le nombre de vies, etc.
-
-## Choix techniques
-
-- **Hitbox** : uniquement des requêtes spatiales instantanées (`GetPartBoundsInBox`, `GetPartBoundsInRadius`), jamais `.Touched`.
-- **Vélocité** : uniquement `AssemblyLinearVelocity` (aucun BodyMover obsolète). Pendant le hitstun, l'Humanoid passe en état `Physics` pour ne pas freiner l'éjection.
-- **Réseau** : l'animation part tout de suite chez le joueur qui appuie (prédiction). C'est le serveur qui valide les touches, les dégâts et les éjections.
-- **2.5D** : déplacements bloqués sur l'axe X, ce qui simplifie la synchronisation.
-- **Animations** : procédurales (Motor6D.Transform), sans asset à importer. Ça reste lisible et facile à retoucher dans `poses.py`.
-
-## Limites connues / prochaines étapes
-
-- Les sons utilisent quelques sons intégrés à Roblox. Il faudra les remplacer par des sons du Creator Store (bruitages, musiques d'arène).
-- Les Supers ⭐, les coups fatals et la jauge Super du premier roster ne sont pas codés, car la Grille des Combos ne garde que P et S. Ils pourront revenir comme mode bonus.
-- Les animations procédurales peuvent être remplacées plus tard par des animations faites dans l'Animation Editor ou Moon Animator.
-- Il manque encore le matchmaking classé, la monétisation (packs perso + arène, skins, pass de saison) et la sauvegarde de progression (DataStore).
+Pour ajouter ou retoucher un perso, voir [docs/fiche-perso.md](docs/fiche-perso.md). Pour vérifier une
+fiche : `python3 tools/check_characters.py <Id>` (il faut le binaire `luau`).
