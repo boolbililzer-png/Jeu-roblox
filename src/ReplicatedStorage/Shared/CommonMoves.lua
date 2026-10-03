@@ -1,5 +1,5 @@
 -- Coups communs à tous les persos (ajoutés par CharacterList quand le perso n'a pas les siens) :
--- lancer de l'objet tenu (✋) et, à défaut, une saisie et des projections simples.
+-- lancer de l'objet tenu (✋), les 4 emotes (😀), et une saisie et des projections par défaut (plus utilisées).
 -- Même format que les coups des persos (voir l'en-tête de Characters/Gege.lua).
 local function box(width, height, forward, up)
 	return { size = Vector3.new(width, height, 6), offset = Vector2.new(forward, up) }
@@ -75,5 +75,36 @@ return {
 		strike = { Root = { -20, 0, 0, 0, -0.7, -0.2 }, Waist = { -30, 0, 0 }, RS = { 60, 0, 10 }, RE = { 10, 0, 0 }, LS = { 60, 0, -10 }, LE = { 10, 0, 0 } },
 		follow = { Root = { -22, 0, 0, 0, -0.75, -0.25 }, Waist = { -34, 0, 0 }, RS = { 50, 0, 10 }, RE = { 15, 0, 0 }, LS = { 50, 0, -10 }, LE = { 15, 0, 0 } },
 		hitText = "SPLATCH !",
+	},
+
+	------------------------------------------------------------------ Emotes (bouton 😀, touches 1 à 4)
+	-- Rien à voir avec les attaques : aucun dégât, aucune zone de frappe, juste pour chambrer.
+	EMOTE_1 = {
+		label = "Coucou !", kind = "emote", startup = 0.15, active = 0.6, recovery = 0.25, damage = 0,
+		windup = { Neck = { 6, -20, 0 }, RS = { 160, 0, 30 }, RE = { 40, 0, 0 } },
+		strike = { Neck = { 8, -25, 6 }, Waist = { 0, -8, 0 }, RS = { 170, 0, 45 }, RE = { 70, 0, 0 }, RW = { 0, 0, 20 } },
+		follow = { Neck = { 8, -25, -6 }, Waist = { 0, -8, 0 }, RS = { 170, 0, 20 }, RE = { 30, 0, 0 }, RW = { 0, 0, -20 } },
+		hold = 0.5, wobble = true, text = "COUCOU ! 👋",
+	},
+	EMOTE_2 = {
+		label = "Petite danse", kind = "emote", startup = 0.1, active = 0.9, recovery = 0.25, damage = 0,
+		windup = { Root = { 0, 0, 0, 0, -0.3, 0 }, RS = { 40, 0, 60 }, RE = { 90, 0, 0 }, LS = { 40, 0, -60 }, LE = { 90, 0, 0 } },
+		strike = { Root = { 0, 0, 8, 0, -0.1, 0 }, Waist = { 0, 0, -10 }, RS = { 150, 0, 40 }, RE = { 20, 0, 0 }, LS = { 30, 0, -50 }, LE = { 100, 0, 0 }, FR = { 0, 0, 0, 0, 0.3, 0 } },
+		follow = { Root = { 0, 0, -8, 0, -0.1, 0 }, Waist = { 0, 0, 10 }, RS = { 30, 0, 50 }, RE = { 100, 0, 0 }, LS = { 150, 0, -40 }, LE = { 20, 0, 0 }, FL = { 0, 0, 0, 0, 0.3, 0 } },
+		spin = { axis = "y", degrees = 360 }, fx = { { "symbols", symbols = { "♪", "♫", "✨" }, count = 6 } }, text = "♪ YEAH ♪",
+	},
+	EMOTE_3 = {
+		label = "Mort de rire", kind = "emote", startup = 0.1, active = 0.8, recovery = 0.3, damage = 0,
+		windup = { Waist = { 10, 0, 0 }, Neck = { 15, 0, 0 }, RS = { 30, 0, -20 }, RE = { 100, 0, 0 }, LS = { 30, 0, 20 }, LE = { 100, 0, 0 } },
+		strike = { Root = { 8, 0, 0, 0, -0.2, 0.1 }, Waist = { 22, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 25, 0, -25 }, RE = { 110, 0, 0 }, LS = { 25, 0, 25 }, LE = { 110, 0, 0 } },
+		follow = { Root = { -12, 0, 0, 0, -0.3, -0.1 }, Waist = { -20, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 20, 0, -20 }, RE = { 115, 0, 0 }, LS = { 20, 0, 20 }, LE = { 115, 0, 0 } },
+		hold = 0.4, shake = true, wobble = true, text = "HA HA HA ! 😂",
+	},
+	EMOTE_4 = {
+		label = "Gonflette", kind = "emote", startup = 0.2, active = 0.7, recovery = 0.3, damage = 0,
+		windup = { Root = { 0, 0, 0, 0, -0.3, 0 }, Waist = { -10, 0, 0 }, RS = { 20, 0, 40 }, RE = { 60, 0, 0 }, LS = { 20, 0, -40 }, LE = { 60, 0, 0 } },
+		strike = { Root = { 0, 0, 0, 0, 0, 0 }, Waist = { 8, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 90, 0, 90 }, RE = { 120, 0, 0 }, LS = { 90, 0, -90 }, LE = { 120, 0, 0 } },
+		follow = { Root = { 0, 0, 0, 0, 0.05, 0 }, Waist = { 10, 0, 0 }, Neck = { 15, 0, 0 }, RS = { 95, 0, 95 }, RE = { 130, 0, 0 }, LS = { 95, 0, -95 }, LE = { 130, 0, 0 } },
+		hold = 0.6, shake = true, text = "REGARDE-MOI ÇA ! 💪",
 	},
 }

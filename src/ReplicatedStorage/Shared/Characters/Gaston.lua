@@ -446,8 +446,9 @@ local data = {
 		-- Abracadabra (S maintenu) : il agite la baguette en grands cercles en psalmodiant ; un des trois tours lui profite
 		-- (le moteur ne sait pas « garantir le prochain tour » : chaque résultat donne un bonus différent)
 		S_hold = {
-			label = "Abracadabra", kind = "self", energyCost = 30, startup = 0.3, active = 0, recovery = 0.4,
-			damage = 0, selfEffect = { heal = 4 },
+			label = "Abracadabra", energyCost = 30, startup = 0.3, active = 0, recovery = 0.4,
+			hitbox = box(6, 4, 2.5, 0.5), kbBase = 30, kbGrowth = 55, kbAngle = 35,
+			damage = 9, selfEffect = { heal = 4 },
 			variants = {
 				{ label = "Abracadabra : colombe guérisseuse", selfEffect = { heal = 7 } },
 				{ label = "Abracadabra : feu d'artifice !", selfEffect = { buff = { "turbo", 4 } } },
@@ -461,8 +462,9 @@ local data = {
 		},
 		-- Téléportation (→→S) : il s'enroule dans la cape et disparaît… réussi, en l'air, ou raté (il réapparaît derrière)
 		S_dash = {
-			label = "Téléportation", kind = "self", energyCost = 20, startup = 0.14, active = 0, recovery = 0.25,
-			damage = 0, teleport = 14, invuln = 0.25,
+			label = "Téléportation", energyCost = 20, startup = 0.14, active = 0, recovery = 0.25,
+			hitbox = box(6, 4, 2.5, 0.5), kbBase = 30, kbGrowth = 55, kbAngle = 35,
+			damage = 9, teleport = 14, invuln = 0.25,
 			variants = {
 				{ label = "Téléportation réussie !", teleport = 14 },
 				{ label = "Téléportation… en l'air !", teleport = 9, teleportUp = 7 },
@@ -590,6 +592,16 @@ local data = {
 			text = "MESDAMES ET MESSIEURS… TA-DAAAA !", hitText = "OÙ SUIS-JE ?",
 		},
 		-- Vol à la tire : il serre la main de l'adversaire, lui fait les poches… et le laisse muet de stupeur
+		-- Super ↑ : il tente une lévitation, tourne sur lui-même et emporte tout dans un tourbillon d'étincelles
+		SUPER_up = {
+			label = "Lévitation ratée !", superCost = 100, startup = 0.25, active = 0.45, recovery = 0.55,
+			damage = 22, hitbox = box(9, 10, 0, 3), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
+			windup = { Root = { -8, 0, 0, 0, -0.85, 0 }, Waist = { -18, 0, 0 }, RS = { 40, 0, 70 }, RE = { 20, 0, 0 }, LS = { 40, 0, -70 }, LE = { 20, 0, 0 } },
+			strike = { Root = { 10, 0, 0 }, Waist = { 10, 0, 0 }, Neck = { 25, 0, 0 }, RS = { 120, 0, 80 }, RE = { 0, 0, 0 }, LS = { 120, 0, -80 }, LE = { 0, 0, 0 }, RH = { 20, 0, 10 }, RK = { -30, 0, 0 }, LH = { 10, 0, -10 }, LK = { -40, 0, 0 } },
+			follow = { Root = { 12, 0, 0 }, Waist = { 14, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 150, 0, 70 }, RE = { 10, 0, 0 }, LS = { 150, 0, -70 }, LE = { 10, 0, 0 }, RH = { 30, 0, 10 }, RK = { -50, 0, 0 }, LH = { 20, 0, -10 }, LK = { -60, 0, 0 } },
+			spin = { axis = "y", degrees = 720 }, selfVelocity = Vector2.new(0, 70),
+			windupFx = { "super" }, trail = "prop", variants = { { label = "Lévitation ratée : colombes !", hitText = "ROUCOU !" }, { label = "Lévitation ratée : BOUM !", damage = 26, hitText = "KABOUM !" }, { label = "Lévitation ratée : lapin !", status = { name = "dog", duration = 2 }, hitText = "COUIC !" } }, fx = { { "particles", tex = "spark", color = Color3.fromRGB(190, 110, 255), dir = "all", at = "root", time = 0.7 } }, text = "ABRACADA… OUPS !", hitText = "TA-DAAA !",
+		},
 		-- (le moteur ne sait pas voler la jauge Super : il vole de l'énergie et rend l'adversaire muet)
 		SUPER_down = {
 			label = "Vol à la tire !", superCost = 100, startup = 0.3, active = 0.15, recovery = 0.5,

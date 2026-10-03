@@ -308,7 +308,8 @@ local data = {
 		-- (2 murs au plus, le plus ancien disparaît ; ils bloquent les projectiles et les adversaires)
 		S_neutral = {
 			label = "Mur invisible", energyCost = 20, kind = "wall", startup = 0.14, active = 0.1, recovery = 0.3,
-			damage = 0,
+			hitbox = box(5, 4, 2.5, 0.5), kbBase = 30, kbGrowth = 45, kbAngle = 30,
+			damage = 7,
 			wall = { size = Vector3.new(1.2, 8, 6), offset = 4, lifetime = 6, max = 2 },
 			windup = { Root = { 0, 0, 0, 0, -0.15, 0.1 }, Waist = { -4, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 60, 0, -10 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, 10 }, LE = { 110, 0, 0 }, LW = { 0, 0, 0 } },
 			strike = { Root = { -4, 0, 0, 0, -0.2, -0.15 }, Waist = { -6, 0, 0 }, Neck = { -4, 0, 0 }, RS = { 92, 0, 18 }, RE = { 15, 0, 0 }, RW = { 85, 0, 0 }, LS = { 92, 0, -18 }, LE = { 15, 0, 0 }, LW = { 85, 0, 0 } },
@@ -329,7 +330,8 @@ local data = {
 		-- Contre silencieux : il se fige en statue, mains levées ; un coup reçu pendant la pose est annulé et il riposte
 		S_down = {
 			label = "Contre silencieux", energyCost = 20, kind = "counter", startup = 0.04, active = 0.45, recovery = 0.3,
-			damage = 0,
+			hitbox = box(5, 4, 2.5, 0.5),
+			damage = 7,
 			counter = { window = 0.5, text = "…", riposte = { damage = 13, kbBase = 38, kbGrowth = 72, kbAngle = 35, hitText = "( RETOUR À L'ENVOYEUR )" } },
 			windup = { Root = { 0, 0, 0, 0, -0.1, 0.1 }, Waist = { 4, 0, 0 }, Neck = { 8, 0, 0 }, RS = { 60, 0, 30 }, RE = { 120, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -30 }, LE = { 120, 0, 0 }, LW = { 0, 0, 0 } },
 			strike = { Root = { 6, 0, 0, 0, -0.05, 0.15 }, Waist = { 8, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 95, 0, 45 }, RE = { 100, 0, 0 }, RW = { 80, 0, 0 }, LS = { 95, 0, -45 }, LE = { 100, 0, 0 }, LW = { 80, 0, 0 }, FR = { 0, 0, 0, 0, 0.15, 0 }, FL = { 0, 0, 0, 0, 0.15, 0 } },
@@ -435,6 +437,16 @@ local data = {
 			hold = 0.5, windupFx = { "super" },
 			fx = { { "screen", color = Color3.fromRGB(10, 10, 20), alpha = 0.6, time = 0.8 }, { "symbols", symbols = { "🤫", "…", "🔇" }, count = 8, radius = 5, color = WHITE } },
 			text = "CHUUUT…", hitText = "( … )",
+		},
+		-- Super ↑ : il mime un ascenseur qui monte, l'adversaire est soulevé avec lui
+		SUPER_up = {
+			label = "L'Ascenseur invisible !", superCost = 100, startup = 0.3, active = 0.25, recovery = 0.55,
+			damage = 22, hitbox = box(7, 10, 2, 4), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
+			windup = { Root = { -10, -20, 0, 0, -0.9, 0.2 }, Waist = { -25, -20, 0 }, Neck = { -10, 0, 0 }, RS = { -40, 0, 30 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -30 }, LE = { 80, 0, 0 } },
+			strike = { Root = { 8, 15, 0, 0, 0.5, -0.2 }, Waist = { 18, 20, 0 }, Neck = { 35, 0, 0 }, RS = { 180, 0, 10 }, RE = { 5, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -50 }, LE = { 40, 0, 0 }, FR = { 0, 0, 0, 0, 0.6, 0 }, FL = { 0, 0, 0, 0, 0.4, 0 } },
+			follow = { Root = { 12, 20, 0, 0, 0.6, -0.2 }, Waist = { 22, 25, 0 }, Neck = { 40, 0, 0 }, RS = { 190, 0, 15 }, RE = { 10, 0, 0 }, RW = { -20, 0, 0 }, LS = { 30, 0, -60 }, LE = { 30, 0, 0 }, FR = { 0, 0, 0, 0, 0.7, 0 }, FL = { 0, 0, 0, 0, 0.5, 0 } },
+			hold = 0.25, selfVelocity = Vector2.new(0, 45),
+			windupFx = { "super" }, trail = "rightHand", fx = { { "text", text = "[DING]", color = Color3.fromRGB(240, 240, 240), at = "above" }, { "ring", color = Color3.fromRGB(220, 235, 255), radius = 5, at = "front" } }, text = "…", hitText = "[ÉTAGE SUIVANT]",
 		},
 		-- La Boîte ultime : il mime une cage tout autour de l'adversaire, puis la secoue et cogne dedans
 		SUPER_down = {

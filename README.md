@@ -37,12 +37,15 @@ On ne combine jamais deux boutons : la direction tenue au moment de l'appui choi
 | **K** attaque lourde | K | K (bleu) |
 | **S** spécial (maintenu = S chargé) | L | S (jaune) |
 | Esquive (puis S = spécial d'esquive) | Maj | ESQ |
-| ⭐ Super (jauge pleine), et coup fatal | I | ⭐ |
+| ⭐ 3 Supers (jauge pleine) : ↑I, →I (ou I), ↓I ; et coup fatal | I | ⭐ |
 | ⚡ Recharger l'énergie des spéciaux | O (maintenu) | ⚡ |
-| ✋ Ramasser une caisse ou un objet, lancer l'objet, saisir | U | ✋ |
+| ✋ Ramasser une caisse ou un objet, lancer l'objet (pas de saisie) | U | ✋ |
+| 😀 Emotes | 1, 2, 3, 4 | 😀 |
 | Aide des touches | H | — |
 
-- **Double tap ← ou →** : ruée. P, K ou S pendant la ruée ou juste après donnent un coup de dash.
+- **Double tap ← ou →** : ruée. P, K ou S pendant la ruée ou juste après donnent un coup de dash, qui garde
+  l'élan. On peut aussi marcher pendant un coup (plus lentement).
+- **Spéciaux (L)** : neutre, ↑, →, ↓, maintenu, en l'air… Ils ont une plus grande portée (`Config.S_RANGE`).
 - **↓ maintenu** sur une plateforme fine : on passe au travers.
 - **J et K maintenus au sol** : frappe chargée, comme les smashs.
 - **↑S** sert de remontée et ne coûte pas d'énergie.
@@ -67,6 +70,10 @@ On ne combine jamais deux boutons : la direction tenue au moment de l'appui choi
   dans le salon.
 
 ## Progression
+
+> **Phase de test** : `Roster.UNLOCK_ALL = true` rend les 20 persos et tous leurs fatals jouables par tout le
+> monde. Passe-le à `false` au moment de mettre les persos en vente.
+
 
 Il n'y a **aucun bonus de stats**, dans aucun mode.
 

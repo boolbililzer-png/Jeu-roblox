@@ -484,6 +484,16 @@ local data = {
 			fx = { { "burst", color = BLEU, size = 4, at = "front" }, { "toss", shape = "block", color = BLANC, size = 0.5, count = 8, speed = 26 }, { "shake", amount = 0.5 } },
 			text = "RAGE QUIT !", hitText = "TAC-TAC-TAC !",
 		},
+		-- Super ↑ : il fracasse la manette vers le ciel d'un uppercut de rage
+		SUPER_up = {
+			label = "Uppercut RAGE QUIT !", superCost = 100, startup = 0.3, active = 0.25, recovery = 0.55,
+			damage = 22, hitbox = box(7, 10, 2, 4), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
+			windup = { Root = { -10, -20, 0, 0, -0.9, 0.2 }, Waist = { -25, -20, 0 }, Neck = { -10, 0, 0 }, RS = { -40, 0, 30 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -30 }, LE = { 80, 0, 0 } },
+			strike = { Root = { 8, 15, 0, 0, 0.5, -0.2 }, Waist = { 18, 20, 0 }, Neck = { 35, 0, 0 }, RS = { 180, 0, 10 }, RE = { 5, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -50 }, LE = { 40, 0, 0 }, FR = { 0, 0, 0, 0, 0.6, 0 }, FL = { 0, 0, 0, 0, 0.4, 0 } },
+			follow = { Root = { 12, 20, 0, 0, 0.6, -0.2 }, Waist = { 22, 25, 0 }, Neck = { 40, 0, 0 }, RS = { 190, 0, 15 }, RE = { 10, 0, 0 }, RW = { -20, 0, 0 }, LS = { 30, 0, -60 }, LE = { 30, 0, 0 }, FR = { 0, 0, 0, 0, 0.7, 0 }, FL = { 0, 0, 0, 0, 0.5, 0 } },
+			hold = 0.25, selfVelocity = Vector2.new(0, 45),
+			windupFx = { "super" }, trail = "prop", fx = { { "symbols", symbols = { "!!", "#@%", "💢" }, count = 6, color = Color3.fromRGB(255, 60, 60) }, { "burst", color = Color3.fromRGB(90, 255, 140), size = 4, at = "above" } }, text = "GG NO RE !", hitText = "ALT+F4 !",
+		},
 		-- Code de triche : il tape le code sur la manette, aura « GOD MODE » : invincible 2,5 s et onde de choc
 		SUPER_down = {
 			label = "Code de triche !", superCost = 100, startup = 0.4, active = 0.2, recovery = 0.45,

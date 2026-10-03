@@ -118,10 +118,10 @@ local REQUIRED = {
 	"P_neutral", "P_side", "P_down", "P_up", "P_air", "P_dash",
 	"K_neutral", "K_side", "K_down", "K_up", "K_air", "K_dash",
 	"S_neutral", "S_side", "S_down", "S_up", "S_hold", "S_dash", "S_dodge", "S_air",
-	"SUPER", "SUPER_down", "GRAB", "THROW_fwd", "THROW_back", "THROW_up", "THROW_down",
+	"SUPER", "SUPER_up", "SUPER_down", "GRAB", "THROW_fwd", "THROW_back", "THROW_up", "THROW_down",
 }
 local KINDS = { melee = true, projectile = true, self = true, grab = true, throw = true, item = true,
-	trap = true, wall = true, counter = true, absorb = true, grapple = true }
+	trap = true, wall = true, counter = true, absorb = true, grapple = true, emote = true }
 local PASSIVES = { bulles = true, traps = true, walls = true, rating = true, forms = true, burn = true, caprice = true,
 	tempo = true, likes = true, rage = true, laugh = true, bounce = true, contagion = true, float = true, tricks = true,
 	fresh = true, tank = true, playlist = true, flock = true, grapple = true }

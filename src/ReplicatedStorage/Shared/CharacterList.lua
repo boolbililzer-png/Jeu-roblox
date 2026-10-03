@@ -6,6 +6,28 @@ local MoveSets = require(script.Parent:WaitForChild("MoveSets"))
 local BareMoves = require(script.Parent:WaitForChild("BareMoves"))
 local CommonMoves = require(script.Parent:WaitForChild("CommonMoves"))
 local Roster = require(script.Parent:WaitForChild("Roster"))
+local Config = require(script.Parent:WaitForChild("Config"))
+
+-- Spéciaux (S_…) : portée augmentée (Config.S_RANGE). Chaque coup n'est agrandi qu'une fois.
+local function widenSpecial(move)
+	if move._widened then
+		return
+	end
+	move._widened = true
+	local box = move.hitbox
+	if box and box.size and box.offset then
+		local size, offset = box.size, box.offset
+		move.hitbox = {
+			size = Vector3.new(size.X * Config.S_RANGE, size.Y * (1 + (Config.S_RANGE - 1) * 0.5), size.Z),
+			offset = Vector2.new(offset.X * Config.S_RANGE, offset.Y),
+		}
+	end
+	if move.projectile and move.projectile.lifetime then
+		local projectile = table.clone(move.projectile)
+		projectile.lifetime *= Config.S_PROJECTILE_RANGE
+		move.projectile = projectile
+	end
+end
 
 local list = {}
 for _, id in ipairs(Roster.ORDER) do
@@ -27,5 +49,11 @@ for _, data in pairs(list) do
 		end
 	end
 	MoveSets.install(data, { bare = BareMoves })
+	for key, move in pairs(data.moves) do
+		local _, base = MoveSets.split(key)
+		if string.sub(base, 1, 2) == "S_" then
+			widenSpecial(move)
+		end
+	end
 end
 return list

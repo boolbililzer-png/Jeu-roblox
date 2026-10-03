@@ -83,6 +83,9 @@ end
 
 -- Un perso est jouable s'il est gratuit, dans la rotation de la semaine, ou acheté
 function Profile.canPlay(player, characterId)
+	if Roster.UNLOCK_ALL then
+		return true -- phase de test (voir Roster.UNLOCK_ALL)
+	end
 	local p = profiles[player]
 	return Roster.FREE[characterId] == true or Roster.rotation()[characterId] == true or (p ~= nil and p.owned[characterId] == true)
 end

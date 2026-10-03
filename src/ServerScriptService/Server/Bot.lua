@@ -296,9 +296,8 @@ local function think(brain, now)
 	local roll = rng:NextNumber()
 	local key
 	if super and rng:NextNumber() < 0.5 then
-		key = pick(brain, { "SUPER" })
-	elseif distance < 3.5 and roll < 0.1 then
-		key = "GRAB"
+		-- un des 3 Supers selon la position de l'adversaire
+		key = pick(brain, dy > 3 and { "SUPER_up", "SUPER" } or (rng:NextNumber() < 0.5 and { "SUPER_down", "SUPER" } or { "SUPER" }))
 	elseif not onGround then
 		if dy < -2 then
 			key = pick(brain, roll < 0.5 and { "P_air_down", "P_air" } or { "K_air_down", "K_air" })

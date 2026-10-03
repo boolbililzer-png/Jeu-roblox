@@ -362,7 +362,8 @@ local data = {
 		-- Trampoline (esquive puis S) : ventre gonflé à bloc, bras écartés, il renvoie les projectiles
 		S_dodge = {
 			label = "Trampoline", energyCost = 25, kind = "wall", startup = 0.1, active = 0.6, recovery = 0.3,
-			damage = 0,
+			hitbox = box(5, 4, 2.5, 0.5), kbBase = 30, kbGrowth = 45, kbAngle = 30,
+			damage = 7,
 			wall = { size = Vector3.new(1.5, 6, 6), offset = 2.2, lifetime = 1.4, max = 1, reflect = true, follow = true, solid = false, color = JELLY,
 				visual = { shape = "disc", size = 5.5, color = JELLY, transparency = 0.45, trail = false } },
 			windup = { Root = { -6, 0, 0, 0, -0.5, 0.2 }, Waist = { -14, 0, 0 }, RS = { 60, 0, 20 }, RE = { 70, 0, 0 }, LS = { 60, 0, -20 }, LE = { 70, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
@@ -372,8 +373,9 @@ local data = {
 		},
 		-- Gonflement (S maintenu) : il inspire, gonfle comme un ballon et devient inébranlable un moment
 		S_hold = {
-			label = "Gonflement", energyCost = 35, kind = "self", startup = 0.3, active = 0, recovery = 0.4,
-			damage = 0,
+			label = "Gonflement", energyCost = 35, startup = 0.3, active = 0, recovery = 0.4,
+			hitbox = box(6, 4, 2.5, 0.5), kbBase = 30, kbGrowth = 55, kbAngle = 35,
+			damage = 9,
 			selfEffect = { heal = 6, armor = 2.5 },
 			windup = { Root = { -4, 0, 0, 0, -0.5, 0 }, Waist = { -10, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 30, 0, 20 }, RE = { 90, 0, 0 }, LS = { 30, 0, -20 }, LE = { 90, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
 			strike = { Root = { 6, 0, 0, 0, -0.05, 0 }, Waist = { 14, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 40, 0, 80 }, RE = { 10, 0, 0 }, LS = { 40, 0, -80 }, LE = { 10, 0, 0 }, FR = { 0, 0, 0, 0.5, 0, 0 }, FL = { 0, 0, 0, -0.5, 0, 0 } },
@@ -438,6 +440,16 @@ local data = {
 			strike = { Root = { 6, 0, 0, 0, 0.1, 0 }, Waist = { 14, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 140, 0, 70 }, RE = { 0, 0, 0 }, LS = { 140, 0, -70 }, LE = { 0, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
 			follow = { Root = { 8, 0, 0, 0, 0.12, 0 }, Waist = { 16, 0, 0 }, Neck = { 24, 0, 0 }, RS = { 150, 0, 75 }, RE = { 0, 0, 0 }, LS = { 150, 0, -75 }, LE = { 0, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
 			shake = true, windupFx = { "super" }, fx = { { "burst", color = JELLY, size = 4, at = "root" } }, text = "DIVISION !", hitText = "TRIPLE BOÏNG !",
+		},
+		-- Super ↑ : il tape du pied si fort que la gelée du sol jaillit en geyser
+		SUPER_up = {
+			label = "Shiko volcanique !", superCost = 100, startup = 0.4, active = 0.3, recovery = 0.6,
+			damage = 22, hitbox = box(8, 14, 4, 6), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
+			windup = { Root = { -12, 0, 0, 0, -0.8, 0.1 }, Waist = { -30, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 150, 0, 20 }, RE = { 40, 0, 0 }, LS = { 150, 0, -20 }, LE = { 40, 0, 0 } },
+			strike = { Root = { 6, 0, 0, 0, 0.1, -0.1 }, Waist = { 16, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 175, 0, 35 }, RE = { 0, 0, 0 }, LS = { 175, 0, -35 }, LE = { 0, 0, 0 }, FR = { 0, 0, 0, 0, 0.2, 0 }, FL = { 0, 0, 0, 0, 0.2, 0 } },
+			follow = { Root = { 8, 0, 0, 0, 0.15, -0.1 }, Waist = { 20, 0, 0 }, Neck = { 35, 0, 0 }, RS = { 180, 0, 45 }, RE = { 5, 0, 0 }, LS = { 180, 0, -45 }, LE = { 5, 0, 0 }, FR = { 0, 0, 0, 0, 0.25, 0 }, FL = { 0, 0, 0, 0, 0.25, 0 } },
+			hold = 0.45, shake = true,
+			windupFx = { "super" }, status = { name = "slowed", duration = 2 }, fx = { { "pillar", color = Color3.fromRGB(110, 220, 90), height = 20, width = 6, at = "front" }, { "shake", amount = 0.6 } }, text = "DOSUKOI !", hitText = "GLOUP !",
 		},
 		-- Tsunami de gelée : il frappe le sol à deux mains, une énorme vague verte traverse l'arène
 		SUPER_down = {

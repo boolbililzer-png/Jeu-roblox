@@ -375,7 +375,8 @@ local data = {
 		-- Bloquer l'utilisateur (esquive puis S) : ring light levée en bouclier ; le prochain coup est bloqué et elle riposte
 		S_dodge = {
 			label = "Bloquer l'utilisateur", energyCost = 20, kind = "counter", startup = 0.04, active = 0.45, recovery = 0.3,
-			damage = 0,
+			hitbox = box(5, 4, 2.5, 0.5),
+			damage = 7,
 			counter = { window = 0.45, text = "BLOQUÉ !", riposte = { damage = 11, kbBase = 38, kbGrowth = 70, kbAngle = 35, hitText = "UTILISATEUR BLOQUÉ !" } },
 			windup = { Root = { 6, 0, 0, 0, -0.2, 0.15 }, Waist = { 6, 0, 0 }, Neck = { 6, 20, 0 }, RS = { 60, 0, 10 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -30 }, LE = { 60, 0, 0 } },
 			strike = { Root = { 8, 0, 0, 0, -0.25, 0.2 }, Waist = { 8, 0, 0 }, Neck = { 10, 30, 0 }, RS = { 95, 0, -10 }, RE = { 70, 0, 0 }, RW = { -70, 0, 0 }, LS = { 10, 0, -45 }, LE = { 110, 0, 0 } },
@@ -384,8 +385,9 @@ local data = {
 		},
 		-- Live (S maintenu) : perche levée, elle salue ses abonnés en direct ; les likes pleuvent (+300 likes)
 		S_hold = {
-			label = "Live", energyCost = 30, kind = "self", startup = 0.25, active = 0, recovery = 0.45,
-			damage = 0, selfEffect = { meter = 300 },
+			label = "Live", energyCost = 30, startup = 0.25, active = 0, recovery = 0.45,
+			hitbox = box(6, 4, 2.5, 0.5), kbBase = 30, kbGrowth = 55, kbAngle = 35,
+			damage = 9, selfEffect = { meter = 300 },
 			windup = { Root = { 2, 10, 4, 0, -0.15, 0 }, Waist = { 4, 10, 6 }, Neck = { 16, -6, 0 }, RS = { 140, 0, 10 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -30 }, LE = { 60, 0, 0 } },
 			strike = { Root = { 4, 14, 6, 0, -0.1, 0 }, Waist = { 6, 12, 8 }, Neck = { 20, -10, 6 }, RS = { 145, 0, 10 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, -40 }, LE = { 30, 0, 0 } },
 			follow = { Root = { 4, 10, 6, 0, -0.1, 0 }, Waist = { 6, 8, 8 }, Neck = { 20, -6, 6 }, RS = { 145, 0, 10 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, -10 }, LE = { 40, 0, 0 } },
@@ -447,6 +449,16 @@ local data = {
 			hold = 0.3, windupFx = { "super", { "text", text = "PUBLIER…", color = BLEU } },
 			fx = { { "symbols", symbols = { "🔔", "❤️", "💬", "📈" }, count = 10, radius = 6 }, { "screen", color = ROSE, alpha = 0.25 } },
 			text = "JE SUIS VIRALE !", hitText = "DING DING DING !",
+		},
+		-- Super ↑ : un grand coup de perche vers le haut, flash aveuglant pour la photo
+		SUPER_up = {
+			label = "Selfie en contre-plongée !", superCost = 100, startup = 0.3, active = 0.25, recovery = 0.55,
+			damage = 22, hitbox = box(7, 10, 2, 4), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
+			windup = { Root = { -10, -20, 0, 0, -0.9, 0.2 }, Waist = { -25, -20, 0 }, Neck = { -10, 0, 0 }, RS = { -40, 0, 30 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -30 }, LE = { 80, 0, 0 } },
+			strike = { Root = { 8, 15, 0, 0, 0.5, -0.2 }, Waist = { 18, 20, 0 }, Neck = { 35, 0, 0 }, RS = { 180, 0, 10 }, RE = { 5, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -50 }, LE = { 40, 0, 0 }, FR = { 0, 0, 0, 0, 0.6, 0 }, FL = { 0, 0, 0, 0, 0.4, 0 } },
+			follow = { Root = { 12, 20, 0, 0, 0.6, -0.2 }, Waist = { 22, 25, 0 }, Neck = { 40, 0, 0 }, RS = { 190, 0, 15 }, RE = { 10, 0, 0 }, RW = { -20, 0, 0 }, LS = { 30, 0, -60 }, LE = { 30, 0, 0 }, FR = { 0, 0, 0, 0, 0.7, 0 }, FL = { 0, 0, 0, 0, 0.5, 0 } },
+			hold = 0.25, selfVelocity = Vector2.new(0, 45),
+			windupFx = { "super" }, trail = "prop", status = { name = "blinded", duration = 1.5 }, fx = { { "screen", color = Color3.fromRGB(255, 255, 255), alpha = 0.4 }, { "burst", color = Color3.fromRGB(255, 60, 150), size = 4, at = "above" } }, text = "CHEEEESE !", hitText = "FLASHÉ !",
 		},
 		-- Collab ! : elle lance un appel en live et un perso du roster débarque pour un coup (3 invités possibles)
 		SUPER_down = {

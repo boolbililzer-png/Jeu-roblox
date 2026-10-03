@@ -41,8 +41,8 @@ dans la variable `LUAU`). Le script contrôle la fiche et joue toutes ses animat
 | S maintenu | `S_hold` | roster |
 | →→S | `S_dash` | roster |
 | S en l'air | `S_air` | roster (saut) S |
-| ⭐ · ↓⭐ (`superCost = 100`) | `SUPER` `SUPER_down` | roster |
-| ✋ puis → ← ↑ ↓ | `GRAB` `THROW_fwd` `THROW_back` `THROW_up` `THROW_down` | roster (Saisie) |
+| →⭐ (ou ⭐ seul) · ↑⭐ · ↓⭐ (`superCost = 100`) | `SUPER` `SUPER_up` `SUPER_down` | roster (↑⭐ : anti-air à inventer) |
+| (plus utilisés : pas de saisie, ✋ sert seulement aux objets) | `GRAB` `THROW_*` | gardés dans les fiches |
 | suites d'enchaînement | `P_combo2` `P_combo3` `K_combo2` `K_combo3` `PK_combo` `KP_combo`… | à inventer |
 
 Quand le PDF prend une case dont le roster parlait aussi (par ex. ↓S), le coup du roster peut devenir une
@@ -138,6 +138,8 @@ Les coups qui ont une suite (`links`) éjectent deux fois moins pour que le comb
                  linger = 2, from = "feet" }
   ```
   `returns` = boomerang (le chat qui griffe puis revient), `linger` = reste sur place (nuage, flaque).
+- Tout spécial (S_…) doit frapper : un coup sans dégâts ressemble à une emote. Les emotes sont à part
+  (bouton 😀, touches 1 à 4, `EMOTE_1` à `EMOTE_4` dans `CommonMoves.lua`).
 - `"self"` : effet sur soi, avec `selfEffect = { heal = 5, energy = 30, meter = 1, bulles = 1, armor = 2,
   buff = { "turbo", 4 }, nextTrack = true }` et `teleport = 12` (studs devant). Bonus possibles : armor,
   caprice, turbo, viral, tilt, rap, slow, techno.

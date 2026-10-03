@@ -388,7 +388,8 @@ local data = {
 		-- Ventouse au plafond (remontée, gratuite) : elle tire le grappin tout droit vers le haut et se hisse
 		S_up = {
 			label = "Ventouse au plafond", kind = "grapple", energyCost = 0, startup = 0.06, active = 0.25, recovery = 0.3,
-			damage = 0, kbBase = 0, kbGrowth = 0, kbAngle = 90, selfVelocity = Vector2.new(6, 70),
+			hitbox = box(5, 7, 0.5, 2.5),
+			damage = 8, kbBase = 0, kbGrowth = 0, kbAngle = 90, selfVelocity = Vector2.new(6, 70),
 			grapple = { range = 34, angle = 90, speed = 95, pullEnemy = false },
 			windup = { Root = { 0, 0, 0, 0, -0.5, 0 }, Waist = { -8, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 60, 0, 20 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -30 }, LE = { 60, 0, 0 } },
 			strike = { Root = { 0, 0, 0, 0, 0.3, 0 }, Waist = { 8, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 180, 0, 5 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 170, 0, -10 }, LE = { 30, 0, 0 }, RH = { 20, 0, 0 }, RK = { -40, 0, 0 }, RA = { -20, 0, 0 }, LH = { -5, 0, 0 }, LK = { -20, 0, 0 }, LA = { -20, 0, 0 } },
@@ -408,7 +409,8 @@ local data = {
 		-- Grappin mural (ESQUIVE puis S) : elle lance la ventouse derrière elle, sur le mur, et s'y propulse
 		S_dodge = {
 			label = "Grappin mural", kind = "grapple", energyCost = 20, startup = 0.08, active = 0.2, recovery = 0.25,
-			damage = 0, kbBase = 0, kbGrowth = 0, kbAngle = 0, selfVelocity = Vector2.new(-30, 18),
+			hitbox = box(5, 4, 2.5, 0.5),
+			damage = 7, kbBase = 0, kbGrowth = 0, kbAngle = 0, selfVelocity = Vector2.new(-30, 18),
 			grapple = { range = 30, angle = 175, speed = 85, pullEnemy = false },
 			windup = { Root = { 0, -20, 0, 0, -0.3, 0 }, Waist = { 0, -25, 0 }, Neck = { 0, -40, 0 }, RS = { 80, 0, 40 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -30 }, LE = { 60, 0, 0 } },
 			strike = { Root = { 10, -35, 0, 0, -0.2, 0.3 }, Waist = { 8, -35, 0 }, Neck = { 6, -60, 0 }, RS = { -70, 0, 30 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, -40 }, LE = { 30, 0, 0 } },
@@ -483,6 +485,16 @@ local data = {
 			fx = { { "pillar", color = WATER, height = 16, width = 3, at = "front" }, { "pillar", color = WATER, height = 12, width = 2, at = "root" },
 				{ "rain", shape = "ball", color = WATER, count = 16, radius = 14, size = 0.6 }, { "screen", color = WATER, alpha = 0.3 }, { "shake", amount = 0.7 } },
 			text = "RUPTURE DE CANALISATION !", hitText = "GEYSER !",
+		},
+		-- Super ↑ : elle plante la ventouse et la tire vers le ciel d'un coup sec : POP géant
+		SUPER_up = {
+			label = "Débouchage céleste !", superCost = 100, startup = 0.3, active = 0.25, recovery = 0.55,
+			damage = 22, hitbox = box(7, 10, 2, 4), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
+			windup = { Root = { -10, -20, 0, 0, -0.9, 0.2 }, Waist = { -25, -20, 0 }, Neck = { -10, 0, 0 }, RS = { -40, 0, 30 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -30 }, LE = { 80, 0, 0 } },
+			strike = { Root = { 8, 15, 0, 0, 0.5, -0.2 }, Waist = { 18, 20, 0 }, Neck = { 35, 0, 0 }, RS = { 180, 0, 10 }, RE = { 5, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -50 }, LE = { 40, 0, 0 }, FR = { 0, 0, 0, 0, 0.6, 0 }, FL = { 0, 0, 0, 0, 0.4, 0 } },
+			follow = { Root = { 12, 20, 0, 0, 0.6, -0.2 }, Waist = { 22, 25, 0 }, Neck = { 40, 0, 0 }, RS = { 190, 0, 15 }, RE = { 10, 0, 0 }, RW = { -20, 0, 0 }, LS = { 30, 0, -60 }, LE = { 30, 0, 0 }, FR = { 0, 0, 0, 0, 0.7, 0 }, FL = { 0, 0, 0, 0, 0.5, 0 } },
+			hold = 0.25, selfVelocity = Vector2.new(0, 45),
+			windupFx = { "super" }, trail = "prop", fx = { { "pillar", color = Color3.fromRGB(120, 200, 255), height = 22, width = 3, at = "front" }, { "burst", color = Color3.fromRGB(230, 60, 60), size = 5, at = "above" } }, text = "ÇA VA DÉBOUCHER !", hitText = "POP !",
 		},
 		-- Le Grand Débouchage : une ventouse gigantesque qui aspire tout devant elle (projectiles compris) puis recrache
 		SUPER_down = {

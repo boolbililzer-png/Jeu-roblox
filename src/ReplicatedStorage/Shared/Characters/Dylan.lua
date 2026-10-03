@@ -379,8 +379,9 @@ local data = {
 		},
 		-- Charge batterie (S maintenu) : il brandit la trottinette qui crépite ; turbo et une étoile de plus
 		S_hold = {
-			label = "Charge batterie", kind = "self", energyCost = 25, startup = 0.3, active = 0, recovery = 0.35,
-			damage = 0, selfEffect = { buff = { "turbo", 3 }, meter = 1 },
+			label = "Charge batterie", energyCost = 25, startup = 0.3, active = 0, recovery = 0.35,
+			hitbox = box(6, 4, 2.5, 0.5), kbBase = 30, kbGrowth = 55, kbAngle = 35,
+			damage = 9, selfEffect = { buff = { "turbo", 3 }, meter = 1 },
 			windup = { Root = { 0, 0, 0, 0, -0.3, 0 }, Waist = { -6, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 120, 0, 10 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -20 }, LE = { 90, 0, 0 } },
 			strike = { Root = { 4, 0, 0, 0, 0, 0 }, Waist = { 8, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 170, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -40 }, LE = { 30, 0, 0 } },
 			follow = { Root = { 4, 0, 0, 0, 0, 0 }, Waist = { 8, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 172, 0, 12 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -45 }, LE = { 30, 0, 0 } },
@@ -389,8 +390,9 @@ local data = {
 		},
 		-- Raccourci GPS (→→S) : « Recalcul de l'itinéraire… », il disparaît et réapparaît plus loin
 		S_dash = {
-			label = "Raccourci GPS", kind = "self", energyCost = 25, startup = 0.1, active = 0, recovery = 0.22,
-			damage = 0, teleport = 12, invuln = 0.25,
+			label = "Raccourci GPS", energyCost = 25, startup = 0.1, active = 0, recovery = 0.22,
+			hitbox = box(6, 4, 2.5, 0.5), kbBase = 30, kbGrowth = 55, kbAngle = 35,
+			damage = 9, teleport = 12, invuln = 0.25,
 			windup = { Root = { -6, 0, 0, 0, -0.3, 0 }, Waist = { -10, 0, 0 }, Neck = { 30, 15, 0 }, RS = { 30, 0, 30 }, RE = { 50, 0, 0 }, LS = { 150, 0, 30 }, LE = { 120, 0, 0 } },
 			strike = { Root = { -14, 0, 0, 0, -0.35, -0.2 }, Waist = { -14, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 60, 0, 10 }, RE = { 30, 0, 0 }, LS = { 60, 0, -10 }, LE = { 30, 0, 0 } },
 			follow = { Root = { -6, 0, 0, 0, -0.25, 0 }, Waist = { -6, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 40, 0, 25 }, RE = { 60, 0, 0 }, LS = { 40, 0, -25 }, LE = { 60, 0, 0 } },
@@ -440,10 +442,21 @@ local data = {
 			fx = { { "symbols", symbols = { "📦", "📦", "⭐" }, count = 8, radius = 5, at = "above" }, { "shake", amount = 0.4 } },
 			text = "COMMANDE GROUPÉE !", hitText = "LIVRÉ !",
 		},
+		-- Super ↑ : il cabre la trottinette et décolle en vrille comme un colis au décollage
+		SUPER_up = {
+			label = "Livraison express en orbite !", superCost = 100, startup = 0.25, active = 0.45, recovery = 0.55,
+			damage = 22, hitbox = box(9, 10, 0, 3), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
+			windup = { Root = { -8, 0, 0, 0, -0.85, 0 }, Waist = { -18, 0, 0 }, RS = { 40, 0, 70 }, RE = { 20, 0, 0 }, LS = { 40, 0, -70 }, LE = { 20, 0, 0 } },
+			strike = { Root = { 10, 0, 0 }, Waist = { 10, 0, 0 }, Neck = { 25, 0, 0 }, RS = { 120, 0, 80 }, RE = { 0, 0, 0 }, LS = { 120, 0, -80 }, LE = { 0, 0, 0 }, RH = { 20, 0, 10 }, RK = { -30, 0, 0 }, LH = { 10, 0, -10 }, LK = { -40, 0, 0 } },
+			follow = { Root = { 12, 0, 0 }, Waist = { 14, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 150, 0, 70 }, RE = { 10, 0, 0 }, LS = { 150, 0, -70 }, LE = { 10, 0, 0 }, RH = { 30, 0, 10 }, RK = { -50, 0, 0 }, LH = { 20, 0, -10 }, LK = { -60, 0, 0 } },
+			spin = { axis = "y", degrees = 720 }, selfVelocity = Vector2.new(0, 70),
+			windupFx = { "super" }, trail = "prop", fx = { { "ring", color = Color3.fromRGB(255, 140, 30), radius = 6, at = "feet" }, { "particles", tex = "spark", color = Color3.fromRGB(255, 200, 60), dir = "down", at = "feet", time = 0.6 } }, text = "LIVRÉ EN 2 MIN !", hitText = "COLIS EN ORBITE !",
+		},
 		-- Mode Turbo : il tape « livraison express » sur son casque, ses baskets fument : vitesse et note en hausse
 		SUPER_down = {
-			label = "Mode Turbo !", kind = "self", superCost = 100, startup = 0.35, active = 0, recovery = 0.3,
-			damage = 0, selfEffect = { buff = { "turbo", 5 }, meter = 2, energy = 30 },
+			label = "Mode Turbo !", superCost = 100, startup = 0.35, active = 0, recovery = 0.3,
+			hitbox = box(10, 6, 2, 1), kbBase = 45, kbGrowth = 90, kbAngle = 45,
+			damage = 18, selfEffect = { buff = { "turbo", 5 }, meter = 2, energy = 30 },
 			windup = { Root = { 0, 0, 0, 0, -0.5, 0 }, Waist = { -16, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 30, 0, 30 }, RE = { 60, 0, 0 }, LS = { 150, 0, 30 }, LE = { 130, 0, 0 } },
 			strike = { Root = { 6, 0, 0, 0, 0.1, 0 }, Waist = { 10, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 20, 0, 30 }, RE = { 110, 0, 0 }, LS = { 20, 0, -30 }, LE = { 110, 0, 0 }, FR = { 0, 0, 0, 0, 0.2, 0 }, FL = { 0, 0, 0, 0, 0.2, 0 } },
 			follow = { Root = { -10, 0, 0, 0, -0.3, 0 }, Waist = { -10, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 60, 0, 25 }, RE = { 90, 0, 0 }, LS = { -40, 0, -25 }, LE = { 90, 0, 0 } },

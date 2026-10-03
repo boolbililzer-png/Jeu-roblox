@@ -600,8 +600,14 @@ function Combat.perform(attacker, key, move, forced)
 			Specials.placeTrap(attacker, move)
 		elseif kind == "wall" then
 			Specials.placeWall(attacker, move)
+			if move.hitbox and (move.damage or 0) > 0 then
+				task.spawn(doMelee, attacker, move) -- le geste qui pose le mur frappe aussi
+			end
 		elseif kind == "counter" then
 			Specials.startCounter(attacker, move)
+			if move.hitbox and (move.damage or 0) > 0 then
+				task.spawn(doMelee, attacker, move)
+			end
 		elseif kind == "absorb" then
 			Specials.startAbsorb(attacker, move)
 			if move.hitbox then
@@ -611,7 +617,7 @@ function Combat.perform(attacker, key, move, forced)
 			Specials.grapple(attacker, move)
 		end
 		-- un coup qui fait aussi un effet sur soi (gorgée, buff…) en plus de frapper
-		if kind ~= "self" and (move.selfEffect or move.teleport) then
+		if kind ~= "self" and (move.selfEffect or move.teleport or move.effect) then
 			doSelf(attacker, move)
 		end
 	end)
@@ -765,7 +771,8 @@ function Combat.handleModelAction(model, action, extra)
 
 	local character = CharacterList[model:GetAttribute("Character")]
 	local move = character and character.moves[action]
-	if not move or move.kind == "throw" or move.kind == "item" then
+	-- pas de saisie d'adversaire dans ce jeu : ✋ ne sert qu'à ramasser et lancer des objets
+	if not move or move.kind == "throw" or move.kind == "item" or move.kind == "grab" then
 		return
 	end
 	-- moveset du perso : il faut avoir ouvert une Caisse Bizarre ; coups à mains nues : sans elle

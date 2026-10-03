@@ -398,8 +398,9 @@ local data = {
 		},
 		-- Arrêt maladie (esquive puis S) : il s'allonge par terre, bras croisés, invulnérable une seconde
 		S_dodge = {
-			label = "Arrêt maladie", energyCost = 20, kind = "self", startup = 0.05, active = 0.85, recovery = 0.25, invuln = 1.0,
-			damage = 0,
+			label = "Arrêt maladie", energyCost = 20, startup = 0.05, active = 0.85, recovery = 0.25, invuln = 1.0,
+			hitbox = box(6, 4, 2.5, 0.5), kbBase = 30, kbGrowth = 55, kbAngle = 35,
+			damage = 9,
 			selfEffect = { heal = 2 },
 			windup = { Root = { 30, 0, 0, 0, -0.8, 0.2 }, Waist = { 10, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 60, 0, -40 }, RE = { 110, 0, 0 }, LS = { 60, 0, 40 }, LE = { 110, 0, 0 }, RH = { 60, 0, 0 }, RK = { -60, 0, 0 }, LH = { 60, 0, 0 }, LK = { -60, 0, 0 } },
 			strike = { Root = { 80, 0, 0, 0, -1.8, 0.3 }, Waist = { 0, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 60, 0, -45 }, RE = { 120, 0, 0 }, LS = { 60, 0, 45 }, LE = { 120, 0, 0 }, RH = { 5, 0, 2 }, RK = { 0, 0, 0 }, RA = { 20, 0, 0 }, LH = { 5, 0, -2 }, LK = { 0, 0, 0 }, LA = { 20, 0, 0 } },
@@ -482,6 +483,16 @@ local data = {
 			hold = 0.2, shake = true, windupFx = { "super" },
 			fx = { { "screen", color = GERM, alpha = 0.3, time = 0.5 }, { "shake", amount = 0.6 }, { "particles", tex = "smoke", color = GERM, at = "head", dir = "front", time = 0.5, rate = 150, speed = 20, size = 1.5 } },
 			text = "AAAAAH… AAAAAAH… ATCHOUUUM !", hitText = "CONTAGIÉ !",
+		},
+		-- Super ↑ : il lève les bras au ciel : une tornade de bandelettes enrhumées emporte tout
+		SUPER_up = {
+			label = "Tornade de bandelettes !", superCost = 100, startup = 0.4, active = 0.3, recovery = 0.6,
+			damage = 22, hitbox = box(8, 14, 4, 6), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
+			windup = { Root = { -12, 0, 0, 0, -0.8, 0.1 }, Waist = { -30, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 150, 0, 20 }, RE = { 40, 0, 0 }, LS = { 150, 0, -20 }, LE = { 40, 0, 0 } },
+			strike = { Root = { 6, 0, 0, 0, 0.1, -0.1 }, Waist = { 16, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 175, 0, 35 }, RE = { 0, 0, 0 }, LS = { 175, 0, -35 }, LE = { 0, 0, 0 }, FR = { 0, 0, 0, 0, 0.2, 0 }, FL = { 0, 0, 0, 0, 0.2, 0 } },
+			follow = { Root = { 8, 0, 0, 0, 0.15, -0.1 }, Waist = { 20, 0, 0 }, Neck = { 35, 0, 0 }, RS = { 180, 0, 45 }, RE = { 5, 0, 0 }, LS = { 180, 0, -45 }, LE = { 5, 0, 0 }, FR = { 0, 0, 0, 0, 0.25, 0 }, FL = { 0, 0, 0, 0, 0.25, 0 } },
+			hold = 0.45, shake = true,
+			windupFx = { "super" }, status = { name = "sneezy", duration = 3 }, fx = { { "pillar", color = Color3.fromRGB(228, 214, 176), height = 22, width = 5, at = "front" }, { "symbols", symbols = { "🤧", "🦠" }, count = 6 } }, text = "ATCHOUM DIVIN !", hitText = "CONTAMINÉ !",
 		},
 		-- Malédiction du pharaon : bras levés vers le ciel, une nuée de scarabées cartoon s'abat devant lui
 		SUPER_down = {

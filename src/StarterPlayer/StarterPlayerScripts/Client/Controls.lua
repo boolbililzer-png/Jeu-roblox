@@ -39,7 +39,15 @@ local BUTTON_KEYS = {
 	[Enum.KeyCode.I] = "SUPER",
 	[Enum.KeyCode.O] = "CHARGE",
 	[Enum.KeyCode.U] = "MAIN",
+	-- emotes (à part des attaques)
+	[Enum.KeyCode.One] = "EMOTE_1",
+	[Enum.KeyCode.Two] = "EMOTE_2",
+	[Enum.KeyCode.Three] = "EMOTE_3",
+	[Enum.KeyCode.Four] = "EMOTE_4",
 }
+
+-- Les 4 emotes du bouton 😀 (voir shared/CommonMoves.lua)
+local EMOTES = { { "EMOTE_1", "👋" }, { "EMOTE_2", "💃" }, { "EMOTE_3", "😂" }, { "EMOTE_4", "💪" } }
 
 -- name, texte, couleur, position (part de l'écran), taille (part de la hauteur)
 local BUTTONS = {
@@ -51,6 +59,7 @@ local BUTTONS = {
 	{ "SUPER", "⭐", Color3.fromRGB(255, 170, 0), Vector2.new(0.67, 0.46), 0.15 },
 	{ "CHARGE", "⚡", Color3.fromRGB(70, 170, 255), Vector2.new(0.555, 0.88), 0.13 },
 	{ "MAIN", "✋", Color3.fromRGB(170, 90, 220), Vector2.new(0.8, 0.42), 0.14 },
+	{ "EMOTE", "😀", Color3.fromRGB(90, 90, 110), Vector2.new(0.95, 0.12), 0.1 },
 }
 
 function Controls.new()
@@ -79,6 +88,13 @@ end
 -- S part au relâchement : tap = S, maintenu = S_HOLD. CHARGE dure tant que la touche est maintenue.
 -- P et K partent à l'appui ; leur relâchement est aussi signalé (frappe chargée façon Smash).
 function Controls:_press(name)
+	if name == "EMOTE" then
+		-- le bouton 😀 ouvre ou ferme la petite roue des emotes
+		if self.emotePanel then
+			self.emotePanel.Visible = not self.emotePanel.Visible
+		end
+		return
+	end
 	self.held = self.held or {}
 	self.held[name] = true
 	if name == "S" then
@@ -110,7 +126,9 @@ end
 
 function Controls:_bindKeyboard()
 	UserInputService.InputBegan:Connect(function(input, processed)
-		if processed then
+		-- I et O servent au zoom de la caméra Roblox par défaut, Maj au verrouillage de caméra : Roblox les marque
+		-- « déjà traitées » alors que notre caméra est scriptée. On ne les ignore que si l'on tape dans un champ texte.
+		if processed and (UserInputService:GetFocusedTextBox() ~= nil or not (BUTTON_KEYS[input.KeyCode] or DIRECTION_KEYS[input.KeyCode])) then
 			return
 		end
 		if input.KeyCode == Enum.KeyCode.H and self.helpPanel then
@@ -246,6 +264,37 @@ function Controls:_buildTouchUi()
 	end
 	self.buttons.SUPER.Visible = false
 
+	-- roue des emotes : 4 boutons sous le bouton 😀
+	local panel = Instance.new("Frame")
+	panel.Name = "Emotes"
+	panel.BackgroundTransparency = 1
+	panel.AnchorPoint = Vector2.new(1, 0)
+	panel.Position = UDim2.fromScale(0.99, 0.19)
+	panel.SizeConstraint = Enum.SizeConstraint.RelativeYY
+	panel.Size = UDim2.fromScale(0.42, 0.11)
+	panel.Visible = false
+	panel.Parent = gui
+	local layout = Instance.new("UIListLayout")
+	layout.FillDirection = Enum.FillDirection.Horizontal
+	layout.HorizontalAlignment = Enum.HorizontalAlignment.Right
+	layout.Padding = UDim.new(0.02, 0)
+	layout.Parent = panel
+	for _, emote in ipairs(EMOTES) do
+		local b = Instance.new("TextButton")
+		b.SizeConstraint = Enum.SizeConstraint.RelativeYY
+		b.Size = UDim2.fromScale(1, 1)
+		b.BackgroundColor3 = Color3.fromRGB(90, 90, 110)
+		b.Text = emote[2]
+		b.TextScaled = true
+		b.Parent = panel
+		Instance.new("UICorner", b).CornerRadius = UDim.new(1, 0)
+		b.Activated:Connect(function()
+			panel.Visible = false
+			self._fire(emote[1])
+		end)
+	end
+	self.emotePanel = panel
+
 	-- ⚡ : petite jauge d'énergie sous le bouton, et contour qui pulse pendant la recharge
 	local charge = self.buttons.CHARGE
 	local gauge = Instance.new("Frame")
@@ -287,21 +336,21 @@ local HELP_ROWS = {
 	{ "Coup de poing (P)", "J", "J" },
 	{ "Coup de pied (K)", "K", "K" },
 	{ "Frappe chargée", "maintenir J ou K au sol", "hold J or K on ground" },
-	{ "Spécial (S)", "L", "L" },
+	{ "Spécial (S)", "L, ↑L, →L, ↓L", "L, ↑L, →L, ↓L" },
 	{ "Spécial chargé", "maintenir L", "hold L" },
 	{ "Saut / double saut", "Espace", "Space" },
 	{ "Esquive", "Maj gauche", "Left Shift" },
 	{ "Main ✋ : ramasser / lancer", "U (+ flèche pour viser)", "U (+ arrow to aim)" },
-	{ "Saisir puis projeter", "U au contact, puis flèche ou U", "U at contact, then arrow or U" },
 	{ "Passer sous une plateforme", "maintenir bas", "hold down" },
-	{ "Super / fatal", "I", "I" },
+	{ "3 Supers / fatal", "↑I, →I (ou I), ↓I", "↑I, →I (or I), ↓I" },
 	{ "Recharge énergie", "maintenir O", "hold O" },
 	{ "Dash", "2× gauche ou droite", "2× left or right" },
 	{ "Combos J / K", "J J J, J K J, K J K, K K J…", "J J J, J K J, K J K, K K J…" },
 	{ "Combos fléchés", "flèche + J ou K, puis J / K", "arrow + J or K, then J / K" },
 	{ "Finir un combo", "… puis L (coûte de l'énergie)", "… then L (uses energy)" },
 	{ "En l'air", "saut puis J K J…, L ou ↓ L", "jump then J K J…, L or ↓ L" },
-	{ "Attaque en course", "dash puis J ou K", "dash then J or K" },
+	{ "Attaque en course", "J, K ou L pendant le dash", "J, K or L while dashing" },
+	{ "Emotes", "1, 2, 3, 4", "1, 2, 3, 4" },
 	{ "Victoire", "le plus de points : +1 éjection, -1 chute", "most points: +1 KO, -1 fall" },
 }
 
@@ -377,7 +426,7 @@ function Controls:_buildKeyboardHelp()
 	end)
 end
 
--- Le bouton ✋ dit ce qu'il va faire : CHOPE (saisir), PRENDS (objet au sol), LANCE (objet tenu ou adversaire saisi)
+-- Le bouton ✋ dit ce qu'il va faire : PRENDS (caisse ou objet au sol), ou l'icône de l'objet tenu à lancer
 function Controls:setHandLabel(text, color)
 	local button = self.buttons.MAIN
 	if button and button:GetAttribute("Label") ~= text then

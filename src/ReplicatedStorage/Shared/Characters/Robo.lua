@@ -465,6 +465,16 @@ local data = {
 			fx = { { "pillar", color = DUST, height = 14, width = 8, at = "root" }, { "particles", tex = "smoke", color = DUST, dir = "up", at = "root", time = 1.5, speed = 10, size = 1.5, rate = 120 }, { "shake", amount = 0.5 } },
 			text = "GRAND MÉNAGE !", hitText = "VROOOOOM !",
 		},
+		-- Super ↑ : il tourne sur lui-même à pleine puissance et aspire tout vers le plafond
+		SUPER_up = {
+			label = "Turbo-aspiration verticale !", superCost = 100, startup = 0.25, active = 0.45, recovery = 0.55,
+			damage = 22, hitbox = box(9, 10, 0, 3), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
+			windup = { Root = { -8, 0, 0, 0, -0.85, 0 }, Waist = { -18, 0, 0 }, RS = { 40, 0, 70 }, RE = { 20, 0, 0 }, LS = { 40, 0, -70 }, LE = { 20, 0, 0 } },
+			strike = { Root = { 10, 0, 0 }, Waist = { 10, 0, 0 }, Neck = { 25, 0, 0 }, RS = { 120, 0, 80 }, RE = { 0, 0, 0 }, LS = { 120, 0, -80 }, LE = { 0, 0, 0 }, RH = { 20, 0, 10 }, RK = { -30, 0, 0 }, LH = { 10, 0, -10 }, LK = { -40, 0, 0 } },
+			follow = { Root = { 12, 0, 0 }, Waist = { 14, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 150, 0, 70 }, RE = { 10, 0, 0 }, LS = { 150, 0, -70 }, LE = { 10, 0, 0 }, RH = { 30, 0, 10 }, RK = { -50, 0, 0 }, LH = { 20, 0, -10 }, LK = { -60, 0, 0 } },
+			spin = { axis = "y", degrees = 720 }, selfVelocity = Vector2.new(0, 70),
+			windupFx = { "super" }, trail = "prop", pull = true, fx = { { "ring", color = Color3.fromRGB(80, 220, 255), radius = 7, at = "root" }, { "particles", tex = "smoke", color = Color3.fromRGB(200, 200, 210), dir = "all", at = "root", time = 0.8 } }, text = "MODE TURBO.EXE", hitText = "ASPIRÉ !",
+		},
 		-- Mise à jour : tête basse, il redémarre… puis se redresse bras au ciel : onde, vitesse et armure 3 s
 		SUPER_down = {
 			label = "Mise à jour !", superCost = 100, startup = 0.4, active = 0.15, recovery = 0.4,

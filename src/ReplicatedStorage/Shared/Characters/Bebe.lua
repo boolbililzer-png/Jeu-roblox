@@ -368,8 +368,9 @@ local data = {
 		},
 		-- Biberon (esquive puis S) : il s'assoit, tète un biberon en fermant les yeux et se soigne (vulnérable)
 		S_dodge = {
-			label = "Biberon", energyCost = 25, kind = "self", startup = 0.15, active = 0, recovery = 0.8,
-			damage = 0, selfEffect = { heal = 6 },
+			label = "Biberon", energyCost = 25, startup = 0.15, active = 0, recovery = 0.8,
+			hitbox = box(6, 4, 2.5, 0.5), kbBase = 30, kbGrowth = 55, kbAngle = 35,
+			damage = 9, selfEffect = { heal = 6 },
 			windup = { Root = { -4, 0, 0, 0, -0.4, 0.1 }, Neck = { 10, 0, 0 }, RS = { 110, 0, -15 }, RE = { 110, 0, 0 }, RW = { -80, 0, 0 }, LS = { 100, 0, 10 }, LE = { 110, 0, 0 } },
 			strike = { Root = { -6, 0, 0, 0, -0.5, 0.15 }, Waist = { 10, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 140, 0, -15 }, RE = { 120, 0, 0 }, RW = { -110, 0, 0 }, LS = { 130, 0, 15 }, LE = { 120, 0, 0 } },
 			follow = { Root = { -6, 0, 0, 0, -0.5, 0.15 }, Waist = { 12, 0, 0 }, Neck = { 36, 0, 0 }, RS = { 145, 0, -15 }, RE = { 118, 0, 0 }, RW = { -115, 0, 0 }, LS = { 135, 0, 15 }, LE = { 118, 0, 0 } },
@@ -444,6 +445,16 @@ local data = {
 			hold = 0.3, shake = true, windupFx = { "super", { "symbols", symbols = { "😭", "💧" }, count = 6, radius = 2.5, color = TEARS } },
 			fx = { { "screen", color = TEARS, alpha = 0.35 }, { "puddle", color = TEARS, width = 10, time = 2 }, { "particles", tex = "smoke", color = TEARS, dir = "front", at = "head", time = 0.8, speed = 18, size = 1, rate = 90 } },
 			text = "BOUHOUHOUUU !", hitText = "PLOUF !",
+		},
+		-- Super ↑ : il pique une colère en tournoyant et projette ses jouets vers le ciel
+		SUPER_up = {
+			label = "Lancer de jouets !", superCost = 100, startup = 0.25, active = 0.45, recovery = 0.55,
+			damage = 22, hitbox = box(9, 10, 0, 3), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
+			windup = { Root = { -8, 0, 0, 0, -0.85, 0 }, Waist = { -18, 0, 0 }, RS = { 40, 0, 70 }, RE = { 20, 0, 0 }, LS = { 40, 0, -70 }, LE = { 20, 0, 0 } },
+			strike = { Root = { 10, 0, 0 }, Waist = { 10, 0, 0 }, Neck = { 25, 0, 0 }, RS = { 120, 0, 80 }, RE = { 0, 0, 0 }, LS = { 120, 0, -80 }, LE = { 0, 0, 0 }, RH = { 20, 0, 10 }, RK = { -30, 0, 0 }, LH = { 10, 0, -10 }, LK = { -40, 0, 0 } },
+			follow = { Root = { 12, 0, 0 }, Waist = { 14, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 150, 0, 70 }, RE = { 10, 0, 0 }, LS = { 150, 0, -70 }, LE = { 10, 0, 0 }, RH = { 30, 0, 10 }, RK = { -50, 0, 0 }, LH = { 20, 0, -10 }, LK = { -60, 0, 0 } },
+			spin = { axis = "y", degrees = 720 }, selfVelocity = Vector2.new(0, 70),
+			windupFx = { "super" }, trail = "prop", fx = { { "toss", shape = "ball", color = Color3.fromRGB(150, 200, 255), count = 8, speed = 12, lift = 45 }, { "symbols", symbols = { "😭", "🧸", "🍼" }, count = 6 } }, text = "OUIIIN !", hitText = "BOING !",
 		},
 		-- « Encore ! » : il attrape l'adversaire comme un jouet et le fait tourner autour de lui à toute vitesse
 		SUPER_down = {

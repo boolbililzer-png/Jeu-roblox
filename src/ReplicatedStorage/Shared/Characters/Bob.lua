@@ -368,7 +368,8 @@ local data = {
 		-- Mur de glace / Granita (↓S) : il frappe le sol, une barricade de glace jaillit devant lui ; ça le rafraîchit
 		S_down = {
 			label = "Mur de glace", kind = "wall", energyCost = 25, startup = 0.2, active = 0.1, recovery = 0.35,
-			damage = 0, selfEffect = { meter = 35 },
+			hitbox = box(5, 4, 2.5, 0.5), kbBase = 30, kbGrowth = 45, kbAngle = 30,
+			damage = 7, selfEffect = { meter = 35 },
 			wall = { size = Vector3.new(1.8, 7, 6), offset = 3.5, lifetime = 6, max = 1, color = ICE,
 				visual = { shape = "block", size = 0.2, color = ICE, material = "Ice", transparency = 0.15, trail = false, parts = {
 					{ "block", Vector3.new(1.8, 7, 3), Vector3.new(0, 0, 0), ICE, "Ice" },
@@ -411,8 +412,9 @@ local data = {
 		-- Granita (ESQUIVE puis S) : il ouvre la glacière, aspire un granita à la paille et frissonne de bonheur
 		-- (soigne un peu et remonte beaucoup la Fraîcheur)
 		S_dodge = {
-			label = "Granita", kind = "self", energyCost = 25, startup = 0.15, active = 0, recovery = 0.55,
-			damage = 0, selfEffect = { heal = 6, meter = 50 },
+			label = "Granita", energyCost = 25, startup = 0.15, active = 0, recovery = 0.55,
+			hitbox = box(6, 4, 2.5, 0.5), kbBase = 30, kbGrowth = 55, kbAngle = 35,
+			damage = 9, selfEffect = { heal = 6, meter = 50 },
 			windup = { Neck = { 10, 0, 0 }, RS = { 70, 0, -10 }, RE = { 90, 0, 0 }, RW = { -60, 0, 0 }, LS = { 60, 0, 10 }, LE = { 100, 0, 0 } },
 			strike = { Root = { 0, 0, 0, 0, -0.2, 0 }, Waist = { -10, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 80, 0, -15 }, RE = { 110, 0, 0 }, RW = { -80, 0, 0 }, LS = { 60, 0, 15 }, LE = { 110, 0, 0 } },
 			follow = { Root = { 0, 0, 0, 0, -0.2, 0 }, Waist = { -8, 0, 0 }, Neck = { -18, 0, 0 }, RS = { 82, 0, -15 }, RE = { 112, 0, 0 }, RW = { -82, 0, 0 }, LS = { 62, 0, 15 }, LE = { 112, 0, 0 } },
@@ -495,6 +497,16 @@ local data = {
 			follow = { Root = { -18, 0, 0, 0, -0.65, -0.45 }, Waist = { -34, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 55, 0, 15 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 55, 0, -15 }, LE = { 0, 0, 0 } },
 			hold = 0.2, shake = true, windupFx = { "super" }, fx = { { "shake", amount = 0.6 }, { "particles", tex = "smoke", color = SNOW, at = "feet", dir = "all", time = 0.6, speed = 14, rate = 100 } },
 			text = "AVALAAANCHE !", hitText = "BRRRRR !",
+		},
+		-- Super ↑ : il soulève la glacière d'un grand coup : un bloc de glace jaillit vers le ciel
+		SUPER_up = {
+			label = "Avalanche inversée !", superCost = 100, startup = 0.3, active = 0.25, recovery = 0.55,
+			damage = 22, hitbox = box(7, 10, 2, 4), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
+			windup = { Root = { -10, -20, 0, 0, -0.9, 0.2 }, Waist = { -25, -20, 0 }, Neck = { -10, 0, 0 }, RS = { -40, 0, 30 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -30 }, LE = { 80, 0, 0 } },
+			strike = { Root = { 8, 15, 0, 0, 0.5, -0.2 }, Waist = { 18, 20, 0 }, Neck = { 35, 0, 0 }, RS = { 180, 0, 10 }, RE = { 5, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -50 }, LE = { 40, 0, 0 }, FR = { 0, 0, 0, 0, 0.6, 0 }, FL = { 0, 0, 0, 0, 0.4, 0 } },
+			follow = { Root = { 12, 20, 0, 0, 0.6, -0.2 }, Waist = { 22, 25, 0 }, Neck = { 40, 0, 0 }, RS = { 190, 0, 15 }, RE = { 10, 0, 0 }, RW = { -20, 0, 0 }, LS = { 30, 0, -60 }, LE = { 30, 0, 0 }, FR = { 0, 0, 0, 0, 0.7, 0 }, FL = { 0, 0, 0, 0, 0.5, 0 } },
+			hold = 0.25, selfVelocity = Vector2.new(0, 45),
+			windupFx = { "super" }, trail = "prop", status = { name = "frozen", duration = 1.2 }, fx = { { "pillar", color = Color3.fromRGB(165, 225, 255), height = 18, width = 4, at = "front" }, { "rain", shape = "ball", color = Color3.fromRGB(248, 252, 255), count = 14, radius = 6 } }, text = "RAFRAÎCHISSANT !", hitText = "GLAGLA !",
 		},
 		-- Bonhomme de neige : il attrape l'adversaire dans un câlin, le transforme en bonhomme de neige gelé… puis grosse claque
 		SUPER_down = {

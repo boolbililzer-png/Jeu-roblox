@@ -356,7 +356,8 @@ local data = {
 		-- Mur d'enceintes : il tape du pied et lève les bras, deux baffles jaillissent du sol et bloquent les tirs
 		S_down = {
 			label = "Mur d'enceintes", kind = "wall", energyCost = 25, startup = 0.2, active = 0, recovery = 0.35,
-			damage = 0,
+			hitbox = box(5, 4, 2.5, 0.5), kbBase = 30, kbGrowth = 45, kbAngle = 30,
+			damage = 7,
 			wall = { size = Vector3.new(2.6, 6, 6), offset = 3.5, lifetime = 5, max = 2, visual = SPEAKERS, color = BLACK },
 			windup = { Root = { -6, 0, 0, 0, -0.45, 0 }, Waist = { -20, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 30, 0, 20 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -20 }, LE = { 60, 0, 0 } },
 			strike = { Root = { 4, 0, 0, 0, -0.05, 0 }, Waist = { 10, 0, 0 }, Neck = { 15, 0, 0 }, RS = { 160, 0, 30 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 160, 0, -30 }, LE = { 10, 0, 0 } },
@@ -385,8 +386,9 @@ local data = {
 		},
 		-- Rewind (ESQUIVE puis S) : il tourne les bras comme une bande qu'on rembobine et recule d'un bond
 		S_dodge = {
-			label = "Rewind", kind = "self", energyCost = 20, startup = 0.1, active = 0, recovery = 0.25,
-			damage = 0, teleport = -12, invuln = 0.3,
+			label = "Rewind", energyCost = 20, startup = 0.1, active = 0, recovery = 0.25,
+			hitbox = box(6, 4, 2.5, 0.5), kbBase = 30, kbGrowth = 55, kbAngle = 35,
+			damage = 9, teleport = -12, invuln = 0.3,
 			windup = { Root = { 0, 0, 0, 0, -0.2, 0 }, Waist = { 5, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 90, 0, 30 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, -30 }, LE = { 90, 0, 0 } },
 			strike = { Root = { 10, 0, 0, 0, -0.1, 0.3 }, Waist = { 10, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 60, 0, 60 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -60 }, LE = { 40, 0, 0 } },
 			follow = { Root = { 6, 0, 0, 0, -0.15, 0.2 }, Waist = { 6, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 120, 0, 30 }, RE = { 80, 0, 0 }, RW = { 0, 0, 0 }, LS = { 120, 0, -30 }, LE = { 80, 0, 0 } },
@@ -483,6 +485,16 @@ local data = {
 			windupFx = { { "screen", color = PINK, alpha = 0.2 }, { "text", text = "3… 2… 1…", color = PINK } },
 			fx = { { "ring", color = PINK, radius = 12, at = "root" }, { "pillar", color = BLUE, height = 14, width = 4, at = "front" }, { "symbols", symbols = { "♪", "♫", "🔊" }, color = GOLD, count = 8, radius = 6 }, { "shake", amount = 0.8 } },
 			text = "LE DROP ULTIME !", hitText = "BOUM BOUM BOUM !",
+		},
+		-- Super ↑ : il lance son vinyle vers le haut d'un grand scratch et fait trembler la piste
+		SUPER_up = {
+			label = "Scratch du ciel !", superCost = 100, startup = 0.3, active = 0.25, recovery = 0.55,
+			damage = 22, hitbox = box(7, 10, 2, 4), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
+			windup = { Root = { -10, -20, 0, 0, -0.9, 0.2 }, Waist = { -25, -20, 0 }, Neck = { -10, 0, 0 }, RS = { -40, 0, 30 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -30 }, LE = { 80, 0, 0 } },
+			strike = { Root = { 8, 15, 0, 0, 0.5, -0.2 }, Waist = { 18, 20, 0 }, Neck = { 35, 0, 0 }, RS = { 180, 0, 10 }, RE = { 5, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -50 }, LE = { 40, 0, 0 }, FR = { 0, 0, 0, 0, 0.6, 0 }, FL = { 0, 0, 0, 0, 0.4, 0 } },
+			follow = { Root = { 12, 20, 0, 0, 0.6, -0.2 }, Waist = { 22, 25, 0 }, Neck = { 40, 0, 0 }, RS = { 190, 0, 15 }, RE = { 10, 0, 0 }, RW = { -20, 0, 0 }, LS = { 30, 0, -60 }, LE = { 30, 0, 0 }, FR = { 0, 0, 0, 0, 0.7, 0 }, FL = { 0, 0, 0, 0, 0.5, 0 } },
+			hold = 0.25, selfVelocity = Vector2.new(0, 45),
+			windupFx = { "super" }, trail = "prop", status = { name = "dancing", duration = 2 }, fx = { { "symbols", symbols = { "♪", "♫", "🎶" }, count = 8, color = Color3.fromRGB(255, 200, 60) }, { "shake", amount = 0.4 } }, text = "ON MONTE LE SON !", hitText = "WIKI-WIKI !",
 		},
 		-- Le Slow : il ouvre les bras et se balance ; l'adversaire est forcé de danser un slow pendant que Papi se soigne
 		SUPER_down = {

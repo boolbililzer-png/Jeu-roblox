@@ -298,14 +298,15 @@ local data = {
 			follow = { Root = { 15, 0, 0, 0, -0.15, 0.45 }, Waist = { 30, 0, 0 }, Neck = { 40, 0, 0 }, RS = { 65, 0, 78 }, RE = { 15, 0, 0 }, LS = { 65, 0, -78 }, LE = { 15, 0, 0 } },
 			fx = { "burp" }, text = "BUUURP !", hitText = "BEURK !",
 		},
-		-- Petite gorgée : il porte la bouteille à la bouche et boit la tête en arrière (gratuite : ce n'est pas une attaque)
+		-- Gorgée et crachat : il boit au goulot (+1 bulle) et recrache une flaque pétillante qui fait glisser (gratuit)
 		S_down = {
-			label = "Petite gorgée", energyCost = 0, kind = "self", effect = "sip", startup = 0.1, active = 0, recovery = 0.6,
-			damage = 0,
+			label = "Gorgée et crachat", energyCost = 0, effect = "sip", startup = 0.1, active = 0.15, recovery = 0.5,
+			hitbox = box(6, 3, 2.5, -1), kbBase = 25, kbGrowth = 45, kbAngle = 40,
+			damage = 8, status = { name = "slippery", duration = 2 }, hitText = "PTOU ! ÇA GLISSE !",
 			windup = { Neck = { 8, 0, 0 }, RS = { 115, 0, -20 }, RE = { 125, 0, 0 }, RW = { -95, 0, 0 } },
 			strike = { Root = { 6, 0, 0 }, Waist = { 12, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 140, 0, -22 }, RE = { 115, 0, 0 }, RW = { -115, 0, 0 }, LS = { 10, 0, -30 }, LE = { 30, 0, 0 } },
 			follow = { Root = { 8, 0, 0 }, Waist = { 16, 0, 0 }, Neck = { 38, 0, 0 }, RS = { 150, 0, -22 }, RE = { 110, 0, 0 }, RW = { -125, 0, 0 }, LS = { 5, 0, -32 }, LE = { 30, 0, 0 } },
-			hold = 0.35, fx = { "sip" }, text = "GLOU GLOU",
+			hold = 0.35, fx = { "sip", "puddle" }, text = "GLOU… PTOU !",
 		},
 		-- Lampadaire : accroupi, il bondit en s'accrochant au lampadaire qui sort du sol et tourne autour
 		-- (gratuit : c'est la remontée, on ne doit jamais tomber faute d'énergie)
@@ -596,6 +597,16 @@ local data = {
 			strike = { Root = { 0, 0, 0, 0, 0.3, 0 }, Waist = { 20, 0, 0 }, Neck = { 25, 0, 0 }, RS = { 150, 0, 70 }, RE = { 0, 0, 0 }, LS = { 150, 0, -70 }, LE = { 0, 0, 0 }, FR = { 0, 0, 0, 0, 0.2, 0 }, FL = { 0, 0, 0, 0, 0.2, 0 } },
 			follow = { Root = { 4, 0, 0, 0, 0.2, 0 }, Waist = { 24, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 160, 0, 80 }, RE = { 5, 0, 0 }, LS = { 160, 0, -80 }, LE = { 5, 0, 0 } },
 			windupFx = { "super" }, text = "TOURNÉE GÉNÉRALE !", hitText = "GLOUPS !",
+		},
+		-- Super ↑ : il secoue la bouteille, le bouchon part vers le ciel avec tout ce qui est au-dessus
+		SUPER_up = {
+			label = "Bouchon de champagne !", superCost = 100, startup = 0.3, active = 0.25, recovery = 0.55,
+			damage = 22, hitbox = box(7, 10, 2, 4), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
+			windup = { Root = { -10, -20, 0, 0, -0.9, 0.2 }, Waist = { -25, -20, 0 }, Neck = { -10, 0, 0 }, RS = { -40, 0, 30 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -30 }, LE = { 80, 0, 0 } },
+			strike = { Root = { 8, 15, 0, 0, 0.5, -0.2 }, Waist = { 18, 20, 0 }, Neck = { 35, 0, 0 }, RS = { 180, 0, 10 }, RE = { 5, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -50 }, LE = { 40, 0, 0 }, FR = { 0, 0, 0, 0, 0.6, 0 }, FL = { 0, 0, 0, 0, 0.4, 0 } },
+			follow = { Root = { 12, 20, 0, 0, 0.6, -0.2 }, Waist = { 22, 25, 0 }, Neck = { 40, 0, 0 }, RS = { 190, 0, 15 }, RE = { 10, 0, 0 }, RW = { -20, 0, 0 }, LS = { 30, 0, -60 }, LE = { 30, 0, 0 }, FR = { 0, 0, 0, 0, 0.7, 0 }, FL = { 0, 0, 0, 0, 0.5, 0 } },
+			hold = 0.25, selfVelocity = Vector2.new(0, 45),
+			windupFx = { "super" }, trail = "bottle", fx = { { "pillar", color = Color3.fromRGB(170, 220, 60), height = 22, width = 3, at = "front" }, { "burst", color = Color3.fromRGB(255, 240, 150), size = 4, at = "above" } }, text = "SANTÉ !", hitText = "PLOP !",
 		},
 		-- Karaoké : micro à la main gauche, bras droit tendu vers le ciel, il se balance en chantant
 		SUPER_down = {

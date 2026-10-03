@@ -39,6 +39,10 @@ Roster.MODES = {
 	{ id = "training", name = "Entraînement", icon = "🎯", text = "Le mannequin, sans chrono" },
 }
 
+-- PHASE DE TEST : tous les persos et tous leurs fatals sont jouables par tout le monde.
+-- Mettre à false le jour où les persos sont mis en vente (gratuits, rotation et achats reprennent alors).
+Roster.UNLOCK_ALL = true
+
 -- Gratuits pour toujours
 Roster.FREE = { Gege = true, Mamie = true, Dylan = true, Sumo = true, Marcel = true, Pigeon = true }
 
@@ -87,6 +91,9 @@ end
 
 -- Nombre de fatals débloqués à ce niveau de maîtrise
 function Roster.fatalsUnlocked(level)
+	if Roster.UNLOCK_ALL then
+		return #Roster.FATAL_LEVELS
+	end
 	local n = 0
 	for _, needed in ipairs(Roster.FATAL_LEVELS) do
 		if (level or 1) >= needed then

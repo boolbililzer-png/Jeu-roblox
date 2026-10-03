@@ -401,7 +401,8 @@ local data = {
 		-- Gonflage (S maintenu) : il gonfle sa bouée à bloc ; le prochain coup reçu rebondit dessus et repart à l'envoyeur
 		S_hold = {
 			label = "Gonflage", kind = "counter", energyCost = 30, startup = 0.1, active = 0.6, recovery = 0.3,
-			damage = 0,
+			hitbox = box(5, 4, 2.5, 0.5),
+			damage = 7,
 			counter = { window = 0.6, text = "BOING !", riposte = { damage = 12, kbBase = 42, kbGrowth = 70, kbAngle = 40, hitText = "REBOND !" } },
 			windup = { Root = { -6, 0, 0, 0, -0.3, 0 }, Waist = { -20, 0, 0 }, Neck = { -15, 0, 0 }, RS = { 70, 0, -20 }, RE = { 120, 0, 0 }, LS = { 70, 0, 20 }, LE = { 120, 0, 0 } },
 			strike = { Root = { 6, 0, 0, 0, -0.1, 0.1 }, Waist = { 14, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 40, 0, 85 }, RE = { 30, 0, 0 }, LS = { 40, 0, -85 }, LE = { 30, 0, 0 } },
@@ -506,6 +507,16 @@ local data = {
 			hold = 0.2, prop = "corne", windupFx = { "super" },
 			fx = { { "puddle", color = WATER, width = 14, time = 1.5 }, { "symbols", symbols = { "🦆", "COIN" }, color = DUCK, count = 8, radius = 6 }, { "shake", amount = 0.4 } },
 			text = "RAZ-DE-MARÉE !", hitText = "COUIIIC !",
+		},
+		-- Super ↑ : il vise le sol avec son pistolet à eau : un geyser propulse tout vers le haut
+		SUPER_up = {
+			label = "Geyser de bain !", superCost = 100, startup = 0.4, active = 0.3, recovery = 0.6,
+			damage = 22, hitbox = box(8, 14, 4, 6), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
+			windup = { Root = { -12, 0, 0, 0, -0.8, 0.1 }, Waist = { -30, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 150, 0, 20 }, RE = { 40, 0, 0 }, LS = { 150, 0, -20 }, LE = { 40, 0, 0 } },
+			strike = { Root = { 6, 0, 0, 0, 0.1, -0.1 }, Waist = { 16, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 175, 0, 35 }, RE = { 0, 0, 0 }, LS = { 175, 0, -35 }, LE = { 0, 0, 0 }, FR = { 0, 0, 0, 0, 0.2, 0 }, FL = { 0, 0, 0, 0, 0.2, 0 } },
+			follow = { Root = { 8, 0, 0, 0, 0.15, -0.1 }, Waist = { 20, 0, 0 }, Neck = { 35, 0, 0 }, RS = { 180, 0, 45 }, RE = { 5, 0, 0 }, LS = { 180, 0, -45 }, LE = { 5, 0, 0 }, FR = { 0, 0, 0, 0, 0.25, 0 }, FL = { 0, 0, 0, 0, 0.25, 0 } },
+			hold = 0.45, shake = true,
+			windupFx = { "super" }, status = { name = "wet", duration = 2 }, fx = { { "pillar", color = Color3.fromRGB(80, 180, 255), height = 24, width = 4, at = "front" }, { "puddle", color = Color3.fromRGB(225, 245, 255), width = 6 } }, text = "COIN COIN !", hitText = "SPLAAASH !",
 		},
 		-- Escadrille : il décolle en planant, pistolet pointé vers le bas, et arrose tout l'écran d'une pluie d'eau
 		SUPER_down = {

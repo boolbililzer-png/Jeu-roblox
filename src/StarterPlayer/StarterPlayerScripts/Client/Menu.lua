@@ -86,7 +86,7 @@ local function rotationSet()
 end
 
 local function availability(id)
-	if Roster.FREE[id] then
+	if Roster.FREE[id] or Roster.UNLOCK_ALL then
 		return "free"
 	elseif decode("Owned")[id] then
 		return "owned"

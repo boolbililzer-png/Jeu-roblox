@@ -363,7 +363,8 @@ local data = {
 		-- File d'attente : un figurant en carton se place devant lui et bloque le prochain projectile
 		S_down = {
 			label = "File d'attente", kind = "wall", energyCost = 25, startup = 0.2, active = 0.1, recovery = 0.3,
-			damage = 0,
+			hitbox = box(5, 4, 2.5, 0.5), kbBase = 30, kbGrowth = 45, kbAngle = 30,
+			damage = 7,
 			wall = { size = Vector3.new(1.5, 6.5, 6), offset = 4, lifetime = 6, max = 2, absorbs = true, solid = false, color = GREY,
 				visual = { shape = "block", size = 1.6, color = GREY, trail = false, parts = {
 					{ "block", Vector3.new(1.8, 3, 1), Vector3.new(0, -0.6, 0), GREY },
@@ -377,8 +378,9 @@ local data = {
 		},
 		-- Pause café (après une esquive) : il s'arrête et sirote son mug ; il récupère un peu, mais il est sans défense
 		S_dodge = {
-			label = "Pause café", kind = "self", energyCost = 30, startup = 0.2, active = 0, recovery = 0.8,
-			damage = 0, selfEffect = { heal = 6 },
+			label = "Pause café", energyCost = 30, startup = 0.2, active = 0, recovery = 0.8,
+			hitbox = box(6, 4, 2.5, 0.5), kbBase = 30, kbGrowth = 55, kbAngle = 35,
+			damage = 9, selfEffect = { heal = 6 },
 			windup = { Root = { 2, 0, 0, 0, -0.1, 0 }, Waist = { 4, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 20, 0, 25 }, RE = { 50, 0, 0 }, LS = { 90, 0, 20 }, LE = { 120, 0, 0 }, LW = { 0, 0, 0 } },
 			strike = { Root = { 6, 0, 0, 0, -0.05, 0 }, Waist = { 10, 0, 0 }, Neck = { 28, 0, 0 }, RS = { 20, 0, 25 }, RE = { 50, 0, 0 }, LS = { 130, 0, 25 }, LE = { 140, 0, 0 }, LW = { -30, 0, 0 } },
 			follow = { Root = { 8, 0, 0, 0, -0.05, 0 }, Waist = { 12, 0, 0 }, Neck = { 34, 0, 0 }, RS = { 20, 0, 25 }, RE = { 50, 0, 0 }, LS = { 138, 0, 25 }, LE = { 138, 0, 0 }, LW = { -40, 0, 0 } },
@@ -461,6 +463,16 @@ local data = {
 			text = "GRÈVE GÉNÉRALE !", hitText = "TOUT EST FERMÉ !",
 		},
 		-- Formulaire Cerfa 12-B : il plaque un formulaire interminable sur l'adversaire ; selon qu'il est bien rempli
+		-- Super ↑ : il relève le tampon géant d'un grand geste administratif vers le ciel
+		SUPER_up = {
+			label = "Tampon REFUSÉ céleste !", superCost = 100, startup = 0.3, active = 0.25, recovery = 0.55,
+			damage = 22, hitbox = box(7, 10, 2, 4), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
+			windup = { Root = { -10, -20, 0, 0, -0.9, 0.2 }, Waist = { -25, -20, 0 }, Neck = { -10, 0, 0 }, RS = { -40, 0, 30 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -30 }, LE = { 80, 0, 0 } },
+			strike = { Root = { 8, 15, 0, 0, 0.5, -0.2 }, Waist = { 18, 20, 0 }, Neck = { 35, 0, 0 }, RS = { 180, 0, 10 }, RE = { 5, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -50 }, LE = { 40, 0, 0 }, FR = { 0, 0, 0, 0, 0.6, 0 }, FL = { 0, 0, 0, 0, 0.4, 0 } },
+			follow = { Root = { 12, 20, 0, 0, 0.6, -0.2 }, Waist = { 22, 25, 0 }, Neck = { 40, 0, 0 }, RS = { 190, 0, 15 }, RE = { 10, 0, 0 }, RW = { -20, 0, 0 }, LS = { 30, 0, -60 }, LE = { 30, 0, 0 }, FR = { 0, 0, 0, 0, 0.7, 0 }, FL = { 0, 0, 0, 0, 0.5, 0 } },
+			hold = 0.25, selfVelocity = Vector2.new(0, 45),
+			windupFx = { "super" }, trail = "prop", status = { name = "waiting", duration = 2 }, fx = { { "text", text = "REFUSÉ", color = Color3.fromRGB(220, 40, 40), at = "above" }, { "rain", shape = "flat", color = Color3.fromRGB(250, 250, 245), count = 12, radius = 6 } }, text = "SUIVANT !", hitText = "TAMPONNÉ !",
+		},
 		-- ou non, le résultat change (le mini-jeu de saisie n'existe pas dans le moteur : variantes au hasard)
 		SUPER_down = {
 			label = "Formulaire Cerfa 12-B", superCost = 100, startup = 0.4, active = 0.15, recovery = 0.5,

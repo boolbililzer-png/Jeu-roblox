@@ -21,6 +21,7 @@ Config.AIR_JUMP_VELOCITY = 62
 Config.DASH_SPEED = 62 -- double tap gauche ou droite : ruée rapide…
 Config.DASH_TIME = 0.22 -- …pendant ce temps…
 Config.RUN_SPEED = 34 -- …puis on court tant que la direction reste tenue
+Config.ATTACK_MOVE_SPEED = 0.55 -- on peut marcher pendant un coup au sol, à 55 % de la vitesse
 Config.DROP_HOLD = 0.2 -- ↓ tenu ce temps sur une plateforme fine : on passe au travers
 
 -- Esquive
@@ -55,6 +56,10 @@ Config.ENERGY_MAX = 100
 Config.ENERGY_START = 100 -- au début du match et à chaque nouvelle vie
 Config.ENERGY_S_COST = 25 -- coût par défaut d'un spécial (chaque coup peut préciser energyCost)
 Config.ENERGY_CHARGE_RATE = 45 -- énergie gagnée par seconde de recharge
+-- Portée des spéciaux (L / S) : zones de frappe plus larges et projectiles qui vont plus loin (appliqué au chargement
+-- des persos dans CharacterList, pour tous les spéciaux, avec ou sans Caisse Bizarre)
+Config.S_RANGE = 1.5 -- largeur et allonge des zones de frappe
+Config.S_PROJECTILE_RANGE = 1.4 -- durée de vol des projectiles (donc leur distance)
 
 -- Éjection façon Smash : plus la jauge de % est haute, plus on vole loin
 -- vitesse = (kbBase * KB_BASE_SCALE + kbGrowth * KB_GROWTH_SCALE * % / 100 * (1 + % / KB_RAMP)) * KB_SCALE

@@ -471,6 +471,16 @@ local data = {
 			fx = { { "particles", tex = "spark", color = SPARK, at = "hand", dir = "all", time = 0.6, rate = 150, speed = 14, size = 0.35 }, { "shake", amount = 0.3, time = 0.6 } },
 			text = "DÉTARTRAGE !", hitText = "BZZZRRRIIIK !",
 		},
+		-- Super ↑ : elle arrache la « dent » de l'adversaire d'un grand coup de fraise vers le haut
+		SUPER_up = {
+			label = "Extraction royale !", superCost = 100, startup = 0.3, active = 0.25, recovery = 0.55,
+			damage = 22, hitbox = box(7, 10, 2, 4), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
+			windup = { Root = { -10, -20, 0, 0, -0.9, 0.2 }, Waist = { -25, -20, 0 }, Neck = { -10, 0, 0 }, RS = { -40, 0, 30 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -30 }, LE = { 80, 0, 0 } },
+			strike = { Root = { 8, 15, 0, 0, 0.5, -0.2 }, Waist = { 18, 20, 0 }, Neck = { 35, 0, 0 }, RS = { 180, 0, 10 }, RE = { 5, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -50 }, LE = { 40, 0, 0 }, FR = { 0, 0, 0, 0, 0.6, 0 }, FL = { 0, 0, 0, 0, 0.4, 0 } },
+			follow = { Root = { 12, 20, 0, 0, 0.6, -0.2 }, Waist = { 22, 25, 0 }, Neck = { 40, 0, 0 }, RS = { 190, 0, 15 }, RE = { 10, 0, 0 }, RW = { -20, 0, 0 }, LS = { 30, 0, -60 }, LE = { 30, 0, 0 }, FR = { 0, 0, 0, 0, 0.7, 0 }, FL = { 0, 0, 0, 0, 0.5, 0 } },
+			hold = 0.25, selfVelocity = Vector2.new(0, 45),
+			windupFx = { "super" }, trail = "prop", status = { name = "laughing", duration = 2 }, fx = { { "particles", tex = "spark", color = Color3.fromRGB(150, 205, 240), dir = "up", at = "hand", time = 0.5 }, { "text", text = "🦷", at = "above" } }, text = "OUVREZ GRAND !", hitText = "ARRACHÉ !",
+		},
 		-- Grand fou rire : il ouvre en grand toutes les bonbonnes, l'arène entière se remplit de gaz rose
 		SUPER_down = {
 			label = "Grand fou rire !", superCost = 100, startup = 0.4, active = 0.2, recovery = 0.6,

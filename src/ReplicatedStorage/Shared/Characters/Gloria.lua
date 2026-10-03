@@ -375,8 +375,9 @@ local data = {
 		},
 		-- Échauffement (S maintenu) : étirements, bras au ciel, petites foulées : bonus de vitesse
 		S_hold = {
-			label = "Échauffement", energyCost = 30, kind = "self", startup = 0.25, active = 0, recovery = 0.4,
-			damage = 0, selfEffect = { buff = { "turbo", 4 } },
+			label = "Échauffement", energyCost = 30, startup = 0.25, active = 0, recovery = 0.4,
+			hitbox = box(6, 4, 2.5, 0.5), kbBase = 30, kbGrowth = 55, kbAngle = 35,
+			damage = 9, selfEffect = { buff = { "turbo", 4 } },
 			windup = { Root = { 0, 0, -8, 0, -0.3, 0 }, Waist = { 0, 0, -18 }, Neck = { 0, 0, -10 }, RS = { 175, 0, -10 }, RE = { 20, 0, 0 }, LS = { 20, 0, -15 }, LE = { 30, 0, 0 } },
 			strike = { Root = { 0, 0, 8, 0, -0.3, 0 }, Waist = { 0, 0, 18 }, Neck = { 0, 0, 10 }, RS = { 20, 0, 15 }, RE = { 30, 0, 0 }, LS = { 175, 0, 10 }, LE = { 20, 0, 0 } },
 			follow = { Root = { 0, 0, 0, 0, -0.05, 0 }, Waist = { 6, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 170, 0, 30 }, RE = { 10, 0, 0 }, LS = { 170, 0, -30 }, LE = { 10, 0, 0 }, FR = { 0, 0, 0, 0, 0.15, 0 }, FL = { 0, 0, 0, 0, 0.15, 0 } },
@@ -438,6 +439,16 @@ local data = {
 			hold = 0.4, windupFx = { "super", { "text", text = "PRIIIT !", color = JAUNE } },
 			fx = { { "symbols", symbols = { "♪", "♫", "💃" }, count = 10, radius = 6, color = ROSE }, { "ring", color = JAUNE, radius = 9 }, { "pillar", color = ROSE, height = 14, width = 3 } },
 			text = "COURS COLLECTIF !", hitText = "ET ON DANSE !",
+		},
+		-- Super ↑ : elle lève l'enceinte au ciel : le drop des basses fait sauter tout le monde
+		SUPER_up = {
+			label = "Saut de pom-pom !", superCost = 100, startup = 0.4, active = 0.3, recovery = 0.6,
+			damage = 22, hitbox = box(8, 14, 4, 6), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
+			windup = { Root = { -12, 0, 0, 0, -0.8, 0.1 }, Waist = { -30, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 150, 0, 20 }, RE = { 40, 0, 0 }, LS = { 150, 0, -20 }, LE = { 40, 0, 0 } },
+			strike = { Root = { 6, 0, 0, 0, 0.1, -0.1 }, Waist = { 16, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 175, 0, 35 }, RE = { 0, 0, 0 }, LS = { 175, 0, -35 }, LE = { 0, 0, 0 }, FR = { 0, 0, 0, 0, 0.2, 0 }, FL = { 0, 0, 0, 0, 0.2, 0 } },
+			follow = { Root = { 8, 0, 0, 0, 0.15, -0.1 }, Waist = { 20, 0, 0 }, Neck = { 35, 0, 0 }, RS = { 180, 0, 45 }, RE = { 5, 0, 0 }, LS = { 180, 0, -45 }, LE = { 5, 0, 0 }, FR = { 0, 0, 0, 0, 0.25, 0 }, FL = { 0, 0, 0, 0, 0.25, 0 } },
+			hold = 0.45, shake = true,
+			windupFx = { "super" }, trail = "prop", fx = { { "pillar", color = Color3.fromRGB(255, 45, 170), height = 20, width = 4, at = "front" }, { "symbols", symbols = { "♪", "♫", "💥" }, count = 8, color = Color3.fromRGB(220, 255, 40) } }, text = "ET ON SAUTE !", hitText = "DROP !",
 		},
 		-- Final disco : elle brandit une boule à facettes géante, la salle s'illumine et tout explose de lumière
 		SUPER_down = {

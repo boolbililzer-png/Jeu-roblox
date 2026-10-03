@@ -61,6 +61,7 @@ local buffered = nil -- appui arrivé un peu trop tôt dans un enchaînement : {
 local charging = false -- recharge d'énergie en cours (O / ⚡ maintenu)
 local smash = nil -- J ou K maintenu au sol : { button, key, pressedAt, startedAt }
 local dashUntil, dashDir, running = 0, 0, false -- dash (double tap) puis course
+local carry = nil -- coup lancé en ruée ou en course : { dir, speed, untilTime } (le perso garde son élan)
 local downSince, dropUntil = nil, 0 -- ↓ maintenu sur une plateforme fine : on passe au travers
 local holdDirection = "neutral" -- direction tenue quand on a saisi quelqu'un
 
@@ -209,6 +210,13 @@ local function pickMove(candidates)
 	return MoveSets.pick(characterData().moves, candidates, MoveSets.armed(character))
 end
 
+-- Le coup en cours donne-t-il son propre élan (selfVelocity) ? On ne le remplace pas alors.
+local function move_has_own_velocity()
+	local data = characterData()
+	local move = lastMoveKey and data and data.moves[lastMoveKey]
+	return move ~= nil and move.selfVelocity ~= nil and move.selfVelocity.X ~= 0
+end
+
 -- Fenêtre des coups de dash : pendant la ruée, pendant la course qui suit, et un court instant après
 local function inDashWindow(now)
 	return now < dashUntil or running or now - lastDashTime < Config.DASH_S_WINDOW
@@ -247,7 +255,13 @@ local function resolveMove(button)
 	elseif button == "S_HOLD" then
 		return pickMove({ "S_hold", "S_neutral" })
 	elseif button == "SUPER" then
-		return pickMove(dir == "down" and { "SUPER_down", "SUPER" } or { "SUPER" })
+		-- 3 Supers : ↑I, →I (ou I seul) et ↓I
+		if dir == "up" then
+			return pickMove({ "SUPER_up", "SUPER" })
+		elseif dir == "down" then
+			return pickMove({ "SUPER_down", "SUPER" })
+		end
+		return pickMove({ "SUPER" })
 	end
 	return nil
 end
@@ -272,6 +286,7 @@ local function performMove(key, chaining, power)
 		return false
 	end
 	if move.superCost and (character:GetAttribute("Super") or 0) < move.superCost then
+		Fx.popText(root.Position + Vector3.new(0, 4, 1), "⭐ SUPER PAS ENCORE PRÊT", Color3.fromRGB(255, 190, 60), 0.8, 0.8)
 		return false
 	end
 	local cost = energyCost(move, key)
@@ -290,6 +305,9 @@ local function performMove(key, chaining, power)
 	lastMoveKey, lastMoveAt = key, os.clock()
 	-- frapper pendant la ruée : la ruée s'arrête, le coup garde l'élan (ou prend le sien)
 	if os.clock() < dashUntil or running then
+		-- le coup part sur la lancée : on continue d'avancer jusqu'à la fin de la frappe
+		local speed = os.clock() < dashUntil and Config.DASH_SPEED * 0.8 or Config.RUN_SPEED
+		carry = { dir = dashDir, speed = speed, untilTime = os.clock() + move.startup + move.active }
 		dashUntil, running = 0, false
 		lastDashTime = -10
 	end
@@ -433,25 +451,16 @@ local function aimDirection()
 	return "fwd"
 end
 
--- Ce que fera le bouton ✋ maintenant (pour son étiquette et pour l'action)
+-- Ce que fera le bouton ✋ maintenant (pour son étiquette et pour l'action) : il sert seulement à ramasser
+-- (Caisse Bizarre, objets) et à lancer l'objet tenu. Il n'y a pas de saisie d'adversaire.
 local function handAction()
-	if character:GetAttribute("Holding") then
-		return "throw"
-	end
-	local info = heldItem()
-	if info and info.kind == "throwable" then
+	if heldItem() then
 		return "throwItem"
-	end
-	if nearestEnemyInFront(Config.GRAB_RANGE) then
-		return "grab"
-	end
-	if info then
-		return "throwItem" -- on jette son arme (comme dans Brawlhalla)
 	end
 	if nearestPickup() then
 		return "pickup"
 	end
-	return "grab"
+	return "none"
 end
 
 local function doHand()
@@ -482,8 +491,6 @@ local function doHand()
 		ActionRemote:FireServer("THROW_ITEM", direction)
 	elseif action == "pickup" then
 		ActionRemote:FireServer("PICKUP")
-	else
-		performMove("GRAB")
 	end
 end
 
@@ -591,7 +598,11 @@ controls.Pressed:Connect(function(name)
 		return
 	end
 	if name == "CHARGE" then
-		if os.clock() >= busyUntil and isGrounded() and (character:GetAttribute("Energy") or 0) < Config.ENERGY_MAX then
+		if (character:GetAttribute("Energy") or 0) >= Config.ENERGY_MAX then
+			Fx.popText(root.Position + Vector3.new(0, 4, 1), "⚡ ÉNERGIE PLEINE", Color3.fromRGB(120, 200, 255), 0.8, 0.8)
+		elseif not isGrounded() then
+			Fx.popText(root.Position + Vector3.new(0, 4, 1), "⚡ AU SOL SEULEMENT", Color3.fromRGB(120, 200, 255), 0.8, 0.8)
+		elseif os.clock() >= busyUntil then
 			setCharging(true)
 		end
 		return
@@ -604,6 +615,11 @@ controls.Pressed:Connect(function(name)
 		doHand()
 	elseif name == "ESQUIVE" then
 		doDodge()
+	elseif string.sub(name, 1, 6) == "EMOTE_" then
+		-- emote : à part des attaques, seulement quand on ne fait rien d'autre
+		if os.clock() >= busyUntil and isGrounded() then
+			performMove(name)
+		end
 	elseif name == "SUPER" and tryFatal() then
 		return
 	else
@@ -749,8 +765,19 @@ RunService.Heartbeat:Connect(function(dt)
 	if dashing and not status.noMove then
 		moveX = dashDir
 		root.AssemblyLinearVelocity = Vector3.new(dashDir * Config.DASH_SPEED * speedMult, root.AssemblyLinearVelocity.Y, 0)
-	elseif acting and not charging and not status.noMove and (not busy or not grounded) and math.abs(v.X) > 0.2 then
+	elseif carry and now < carry.untilTime and not move_has_own_velocity() and not status.noMove then
+		-- coup lancé en ruée / en course : il garde son élan
+		moveX = carry.dir
+		humanoid.WalkSpeed = carry.speed * speedMult
+	elseif acting and not charging and not status.noMove and math.abs(v.X) > 0.2 then
+		-- on peut marcher pendant un coup (plus lentement au sol), et toujours se diriger en l'air
 		moveX = v.X
+		if busy and grounded then
+			humanoid.WalkSpeed = Config.WALK_SPEED * Config.ATTACK_MOVE_SPEED * speedMult
+		end
+	end
+	if carry and now >= carry.untilTime then
+		carry = nil
 	end
 	humanoid:Move(Vector3.new(moveX, 0, 0), false)
 
@@ -804,7 +831,7 @@ RunService.Heartbeat:Connect(function(dt)
 	elseif hand == "pickup" then
 		controls:setHandLabel("PRENDS", Color3.fromRGB(80, 190, 110))
 	else
-		controls:setHandLabel("✋", Color3.fromRGB(170, 90, 220))
+		controls:setHandLabel("✋", Color3.fromRGB(110, 100, 120)) -- rien à ramasser à portée
 	end
 
 	-- ⭐ visible si la jauge Super est pleine ou si un coup fatal est possible

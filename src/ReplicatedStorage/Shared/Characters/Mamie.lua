@@ -420,7 +420,8 @@ local data = {
 		-- Tricot express (S maintenu) : elle tricote à toute vitesse un pull-bouclier qui avale le prochain projectile
 		S_hold = {
 			label = "Tricot express", kind = "wall", energyCost = 30, startup = 0.3, active = 0.1, recovery = 0.3,
-			damage = 0,
+			hitbox = box(5, 4, 2.5, 0.5), kbBase = 30, kbGrowth = 45, kbAngle = 30,
+			damage = 7,
 			wall = { size = Vector3.new(2.5, 5, 6), offset = 2.2, lifetime = 4, max = 1, follow = true, absorbs = true, solid = false, color = WOOL,
 				visual = { shape = "block", size = 2.4, color = WOOL, trail = false, material = "Fabric", parts = {
 					{ "block", Vector3.new(0.8, 2.2, 1.2), Vector3.new(0, 0.2, 1.5), WOOL, "Fabric" },
@@ -487,6 +488,16 @@ local data = {
 			follow = { Root = { -10, 12, 0, 0, -0.25, -0.22 }, Waist = { -14, 14, 0 }, Neck = { 18, -10, 0 }, RS = { 100, 0, -8 }, RE = { 0, 0, 0 }, LS = { 30, 0, -22 }, LE = { 40, 0, 0 } },
 			hold = 0.2, windupFx = { { "screen", color = MINOU, alpha = 0.25 }, { "symbols", symbols = { "🐈", "🐾" }, count = 6, radius = 3, color = MINOU } },
 			fx = { { "shake", amount = 0.4 } }, text = "MES CHÉRIS, À L'ATTAQUE !", hitText = "MIAAAOU !",
+		},
+		-- Super ↑ : elle lève sac et canne : une colonne de pelotes de laine jaillit et emporte tout
+		SUPER_up = {
+			label = "Envolée de pelotes !", superCost = 100, startup = 0.4, active = 0.3, recovery = 0.6,
+			damage = 22, hitbox = box(8, 14, 4, 6), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
+			windup = { Root = { -12, 0, 0, 0, -0.8, 0.1 }, Waist = { -30, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 150, 0, 20 }, RE = { 40, 0, 0 }, LS = { 150, 0, -20 }, LE = { 40, 0, 0 } },
+			strike = { Root = { 6, 0, 0, 0, 0.1, -0.1 }, Waist = { 16, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 175, 0, 35 }, RE = { 0, 0, 0 }, LS = { 175, 0, -35 }, LE = { 0, 0, 0 }, FR = { 0, 0, 0, 0, 0.2, 0 }, FL = { 0, 0, 0, 0, 0.2, 0 } },
+			follow = { Root = { 8, 0, 0, 0, 0.15, -0.1 }, Waist = { 20, 0, 0 }, Neck = { 35, 0, 0 }, RS = { 180, 0, 45 }, RE = { 5, 0, 0 }, LS = { 180, 0, -45 }, LE = { 5, 0, 0 }, FR = { 0, 0, 0, 0, 0.25, 0 }, FL = { 0, 0, 0, 0, 0.25, 0 } },
+			hold = 0.45, shake = true,
+			windupFx = { "super" }, trail = "prop", status = { name = "rooted", duration = 1 }, fx = { { "pillar", color = Color3.fromRGB(230, 120, 170), height = 20, width = 4, at = "front" }, { "toss", shape = "ball", color = Color3.fromRGB(160, 90, 200), count = 6, speed = 10, lift = 40 } }, text = "DE MON TEMPS !", hitText = "EMBOBINÉ !",
 		},
 		-- « De mon temps… » : elle raconte sa jeunesse en agitant le doigt, tout le monde s'endort
 		SUPER_down = {
