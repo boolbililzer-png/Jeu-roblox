@@ -553,13 +553,13 @@ local data = {
 			id = "rebond_infini", label = "Rebond infini", sequence = { "up", "down", "down" },
 			-- il rebondit sur le ventre du Sumo, de plus en plus haut, jusqu'à quitter l'atmosphère
 			scene = {
-				{ "move", to = "above", offset = Vector3.new(0, -2, 0), time = 0.3 },
+				{ "move", to = "attacker", offset = Vector3.new(0, 3.5, 0), time = 0.3 },
 				{ "fxAttacker", { "text", text = "BOÏNG !", color = JELLY } },
 				{ "lift", 4, time = 0.3 },
-				{ "move", to = "above", offset = Vector3.new(0, -2, 0), time = 0.25 },
+				{ "move", to = "attacker", offset = Vector3.new(0, 3.5, 0), time = 0.25 },
 				{ "fxAttacker", { "text", text = "BOÏÏNG !", color = JELLY } },
 				{ "lift", 8, time = 0.35 },
-				{ "move", to = "above", offset = Vector3.new(0, -2, 0), time = 0.3 },
+				{ "move", to = "attacker", offset = Vector3.new(0, 3.5, 0), time = 0.3 },
 				{ "fxAttacker", { "text", text = "BOÏÏÏÏNG !!!", color = JELLY } },
 				{ "fxAttacker", { "ring", color = JELLY, radius = 6, at = "root" } },
 				{ "launch", Vector3.new(0, 160, 0), time = 1.2 },

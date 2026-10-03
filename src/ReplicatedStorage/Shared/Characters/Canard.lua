@@ -767,7 +767,7 @@ local LINKS = {
 	K_neutral = { K = "K_combo2", P = "KP_combo", up_K = "K_upK", S = "S_finish_jet" },
 	K_combo2 = { K = "K_combo3", P = "P_combo3", S = "S_finish_geyser" }, -- K K
 	K_combo3 = { K = "K_air_side", S = "S_air" }, -- K K K (il décolle)
-	KP_combo = { P = "P_combo2", K = "PK_combo", S = "S_finish_jet" }, -- K J
+	KP_combo = { P = "P_combo3", K = "K_side2", S = "S_finish_jet" }, -- K J
 	-- avec une flèche
 	P_side = { P = "P_side2", K = "K_side2", S = "S_finish_jet" }, -- → J
 	P_side2 = { K = "PK_combo", S = "S_finish_geyser" }, -- → J J
