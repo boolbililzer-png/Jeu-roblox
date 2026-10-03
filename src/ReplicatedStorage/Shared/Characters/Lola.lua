@@ -142,18 +142,19 @@ local data = {
 			trail = "prop", fx = { "dust" }, text = "PLACE !", hitText = "TCHAC !",
 		},
 
-		-- Suites d'enchaînement P : smartphone, flash éblouissant, selfie de groupe
+		-- P P : Flash éblouissant, le téléphone braqué sous le nez d'en face, flash en pleine figure
 		P_combo2 = {
 			label = "Flash éblouissant", startup = 0.07, active = 0.08, recovery = 0.16,
-			damage = 5, hitbox = box(5, 3, 3, 0.8), kbBase = 20, kbGrowth = 22, kbAngle = 30,
+			damage = 5, hitbox = box(5, 4, 3, 0.8), kbBase = 20, kbGrowth = 22, kbAngle = 30,
 			windup = { Root = { 2, 10, 0, 0, -0.2, 0.1 }, Waist = { 2, 10, 0 }, Neck = { 0, -10, 0 }, RS = { 70, 0, 20 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -20 }, LE = { 90, 0, 0 } },
 			strike = { Root = { -4, -6, 0, 0, -0.22, -0.18 }, Waist = { -4, -6, 0 }, Neck = { -6, 12, 0 }, RS = { 100, 0, 6 }, RE = { 15, 0, 0 }, RW = { 20, 0, 0 }, LS = { 140, 0, 30 }, LE = { 130, 0, 0 } },
 			follow = { Root = { -4, -8, 0, 0, -0.22, -0.2 }, Waist = { -4, -8, 0 }, Neck = { -8, 14, 0 }, RS = { 102, 0, 6 }, RE = { 15, 0, 0 }, RW = { 22, 0, 0 }, LS = { 142, 0, 30 }, LE = { 132, 0, 0 } },
 			trail = "prop", fx = { { "burst", color = FLASH, size = 3, at = "front" } }, text = "FLASH !", hitText = "AÏE MES YEUX !",
 		},
+		-- P P P P : Selfie de groupe, grand balayage de perche pour faire entrer tout le monde dans le cadre (finition)
 		P_combo3 = {
-			label = "Selfie de groupe", startup = 0.13, active = 0.1, recovery = 0.3,
-			damage = 9, hitbox = box(6, 4, 3, 1), kbBase = 30, kbGrowth = 60, kbAngle = 45,
+			label = "Selfie de groupe", startup = 0.1, active = 0.1, recovery = 0.3,
+			damage = 10, hitbox = box(6, 4.5, 3, 1), kbBase = 36, kbGrowth = 78, kbAngle = 45,
 			windup = { Root = { 6, -30, 0, 0, -0.15, 0.25 }, Waist = { 8, -30, 0 }, Neck = { 0, 20, 0 }, RS = { 160, 0, 80 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -30 }, LE = { 60, 0, 0 } },
 			strike = { Root = { -12, 24, 0, 0, -0.4, -0.4 }, Waist = { -14, 30, 0 }, Neck = { 0, -16, 0 }, RS = { 85, 0, -10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -20, 0, -40 }, LE = { 30, 0, 0 } },
 			follow = { Root = { -14, 32, 0, 0, -0.42, -0.45 }, Waist = { -16, 38, 0 }, Neck = { 0, -20, 0 }, RS = { 70, 0, -35 }, RE = { 5, 0, 0 }, RW = { -15, 0, 0 }, LS = { -25, 0, -45 }, LE = { 30, 0, 0 } },
@@ -161,23 +162,23 @@ local data = {
 		},
 		-- → P P : Swipe à gauche, la perche revient en revers comme un « suivant ! »
 		P_side2 = {
-			label = "Swipe à gauche", startup = 0.08, active = 0.08, recovery = 0.2,
-			damage = 6, hitbox = box(6, 3, 3.5, 0.8), kbBase = 22, kbGrowth = 35, kbAngle = 25,
+			label = "Swipe à gauche", startup = 0.08, active = 0.1, recovery = 0.2,
+			damage = 6, hitbox = box(6, 4, 3.5, 0.8), kbBase = 22, kbGrowth = 35, kbAngle = 25,
 			windup = { Root = { -6, 24, 0, 0, -0.35, -0.35 }, Waist = { -8, 30, 0 }, RS = { 85, 0, -40 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -40 }, LE = { 50, 0, 0 } },
 			strike = { Root = { -6, -16, 0, 0, -0.3, -0.4 }, Waist = { -8, -24, 0 }, RS = { 92, 0, 45 }, RE = { 5, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -30 }, LE = { 70, 0, 0 } },
 			follow = { Root = { -6, -22, 0, 0, -0.3, -0.42 }, Waist = { -8, -30, 0 }, RS = { 88, 0, 65 }, RE = { 10, 0, 0 }, RW = { -10, 0, 0 }, LS = { 45, 0, -30 }, LE = { 70, 0, 0 } },
 			trail = "prop", text = "SUIVANT !", hitText = "SWIPE !",
 		},
 
-		------------------------------------------------------------------ Attaques lourdes (K)
-		-- Talon compensé : genou monté, puis la semelle compensée part droit devant, main sur la hanche
+		-- Talon compensé : elle tourne le dos, prend la pose pour un selfie… et lâche une ruade en arrière sans regarder,
+		-- la semelle compensée en pleine figure (le téléphone n'a rien manqué)
 		K_neutral = {
 			label = "Talon compensé", startup = 0.18, active = 0.1, recovery = 0.3,
-			damage = 11, hitbox = box(5, 3, 3, 0.3), kbBase = 30, kbGrowth = 70, kbAngle = 35,
-			windup = { Root = { 6, -10, 0, 0, -0.12, 0.15 }, Waist = { 4, -8, 0 }, Neck = { 0, 8, 0 }, RS = { 50, 0, 30 }, RE = { 70, 0, 0 }, LS = { 10, 0, -40 }, LE = { 110, 0, 0 }, RH = { 85, 0, 0 }, RK = { -120, 0, 0 }, RA = { 10, 0, 0 } },
-			strike = { Root = { 12, -4, 0, 0, -0.1, 0.05 }, Waist = { 10, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 70, 0, 50 }, RE = { 20, 0, 0 }, LS = { 10, 0, -45 }, LE = { 115, 0, 0 }, RH = { 98, 0, 0 }, RK = { -4, 0, 0 }, RA = { 25, 0, 0 } },
-			follow = { Root = { 14, -2, 0, 0, -0.1, 0.08 }, Waist = { 12, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 72, 0, 55 }, RE = { 20, 0, 0 }, LS = { 10, 0, -45 }, LE = { 115, 0, 0 }, RH = { 104, 0, 0 }, RK = { 0, 0, 0 }, RA = { 25, 0, 0 } },
-			trail = "rightFoot", hitText = "CLAC !",
+			damage = 11, hitbox = box(5, 3.5, 3, 0.6), kbBase = 30, kbGrowth = 70, kbAngle = 35,
+			windup = { Root = { 0, 150, 0, 0, -0.2, 0.1 }, Waist = { 4, 20, 0 }, Neck = { 6, -30, 8 }, RS = { 140, 0, 10 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 10, 0, -40 }, LE = { 115, 0, 0 }, RH = { 20, 0, 0 }, RK = { -70, 0, 0 } },
+			strike = { Root = { -30, 176, 0, 0, -0.3, 0 }, Waist = { -16, 0, 0 }, Neck = { 20, -40, 8 }, RS = { 150, 0, 10 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 10, 0, -45 }, LE = { 115, 0, 0 }, RH = { -100, 0, 0 }, RK = { 0, 0, 0 }, RA = { 20, 0, 0 } },
+			follow = { Root = { -34, 178, 0, 0, -0.32, 0 }, Waist = { -18, 0, 0 }, Neck = { 22, -42, 8 }, RS = { 152, 0, 12 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 10, 0, -45 }, LE = { 115, 0, 0 }, RH = { -106, 0, 0 }, RK = { 0, 0, 0 }, RA = { 20, 0, 0 } },
+			trail = "rightFoot", fx = { { "burst", color = FLASH, size = 2, at = "hand" } }, text = "CHEESE !", hitText = "CLAC !",
 		},
 		-- Kick « pose photo » : coup de pied tendu et elle reste figée dans la pose, perche levée pour la photo
 		K_side = {
@@ -197,23 +198,25 @@ local data = {
 			follow = { Root = { -10, 0, 0, 0, -1.18, 0 }, Waist = { -16, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 25, 0, 66 }, RE = { 20, 0, 0 }, LS = { 35, 0, -66 }, LE = { 20, 0, 0 }, RH = { 74, 0, 18 }, RK = { -8, 0, 0 }, RA = { 20, 0, 0 } },
 			spin = { axis = "y", degrees = 360 }, trail = "rightFoot", text = "TENDANCE !", hitText = "ZOUIP !",
 		},
-		-- « Pas de photo ! » (anti-air, ex-←K) : main gauche devant l'objectif, la jambe droite monte droit au ciel
+		-- « Pas de photo ! » (anti-air, ex-←K) : main gauche devant l'objectif, elle se penche en avant et sa jambe droite
+		-- passe par-dessus son dos en coup du scorpion, le talon compensé pointé vers le ciel
 		K_up = {
 			label = "« Pas de photo ! »", startup = 0.2, active = 0.12, recovery = 0.3,
-			damage = 11, hitbox = box(4, 5, 1.5, 3.5), kbBase = 32, kbGrowth = 70, kbAngle = 85,
-			windup = { Root = { -4, 0, 0, 0, -0.3, 0.1 }, Waist = { -6, 0, 0 }, Neck = { -10, 20, 0 }, RS = { 20, 0, 30 }, RE = { 60, 0, 0 }, LS = { 100, 0, 20 }, LE = { 30, 0, 0 }, LW = { 0, 0, 0 }, RH = { 30, 0, 0 }, RK = { -70, 0, 0 } },
-			strike = { Root = { 18, 0, 0, 0, -0.05, 0.15 }, Waist = { 12, 0, 0 }, Neck = { 10, 20, 0 }, RS = { 60, 0, 60 }, RE = { 10, 0, 0 }, LS = { 100, 0, 10 }, LE = { 10, 0, 0 }, LW = { -60, 0, 0 }, RH = { 165, 0, 0 }, RK = { 0, 0, 0 }, RA = { 20, 0, 0 } },
-			follow = { Root = { 20, 0, 0, 0, -0.05, 0.18 }, Waist = { 14, 0, 0 }, Neck = { 12, 22, 0 }, RS = { 62, 0, 62 }, RE = { 10, 0, 0 }, LS = { 102, 0, 10 }, LE = { 10, 0, 0 }, LW = { -60, 0, 0 }, RH = { 172, 0, 0 }, RK = { 0, 0, 0 }, RA = { 20, 0, 0 } },
+			damage = 11, hitbox = box(4.5, 5.5, 1.5, 3.5), kbBase = 32, kbGrowth = 70, kbAngle = 85,
+			windup = { Root = { 8, 0, 0, 0, -0.2, 0.1 }, Waist = { 10, 0, 0 }, Neck = { -10, 20, 0 }, RS = { 30, 0, 30 }, RE = { 60, 0, 0 }, LS = { 100, 0, 20 }, LE = { 30, 0, 0 }, LW = { 0, 0, 0 }, RH = { -30, 0, 0 }, RK = { -60, 0, 0 } },
+			strike = { Root = { -34, 0, 0, 0, -0.3, -0.1 }, Waist = { -24, 0, 0 }, Neck = { 30, 20, 0 }, RS = { 40, 0, 60 }, RE = { 10, 0, 0 }, LS = { 120, 0, 10 }, LE = { 10, 0, 0 }, LW = { -60, 0, 0 }, RH = { 150, 0, 0 }, RK = { -70, 0, 0 }, RA = { 20, 0, 0 } },
+			follow = { Root = { -38, 0, 0, 0, -0.32, -0.12 }, Waist = { -26, 0, 0 }, Neck = { 34, 22, 0 }, RS = { 42, 0, 62 }, RE = { 10, 0, 0 }, LS = { 122, 0, 10 }, LE = { 10, 0, 0 }, LW = { -60, 0, 0 }, RH = { 160, 0, 0 }, RK = { -80, 0, 0 }, RA = { 20, 0, 0 } },
 			trail = "rightLeg", text = "PAS DE PHOTO !", hitText = "NON MAIS !",
 		},
-		-- Saut photogénique : en l'air, un genou relevé, l'autre jambe détendue devant, perche qui cadre la scène
+		-- Saut photogénique : en l'air, grand écart complet, une jambe devant, une derrière, la perche cadre la scène
+		-- et le flash part au sommet du saut
 		K_air = {
 			label = "Saut photogénique", startup = 0.16, active = 0.14, recovery = 0.25,
-			damage = 12, hitbox = box(5, 3.5, 2.8, 0), kbBase = 30, kbGrowth = 70, kbAngle = 40,
-			windup = { Root = { -8, 0, 0 }, Waist = { -10, 0, 0 }, RS = { 60, 0, 40 }, RE = { 80, 0, 0 }, LS = { 60, 0, -40 }, LE = { 80, 0, 0 }, RH = { 95, 0, 0 }, RK = { -130, 0, 0 }, LH = { 70, 0, 0 }, LK = { -120, 0, 0 } },
-			strike = { Root = { 12, 10, 0 }, Waist = { 10, 6, 0 }, Neck = { 10, -10, 0 }, RS = { 150, 0, 50 }, RE = { 20, 0, 0 }, LS = { 130, 0, 10 }, LE = { 130, 0, 0 }, RH = { 92, 0, 0 }, RK = { 0, 0, 0 }, RA = { 20, 0, 0 }, LH = { 70, 0, 0 }, LK = { -120, 0, 0 } },
-			follow = { Root = { 14, 12, 0 }, Waist = { 12, 6, 0 }, Neck = { 12, -12, 0 }, RS = { 155, 0, 52 }, RE = { 20, 0, 0 }, LS = { 132, 0, 10 }, LE = { 132, 0, 0 }, RH = { 98, 0, 0 }, RK = { 0, 0, 0 }, RA = { 20, 0, 0 }, LH = { 72, 0, 0 }, LK = { -122, 0, 0 } },
-			trail = "rightFoot", fx = { { "burst", color = FLASH, size = 2, at = "hand" } }, hitText = "PHOTOGÉNIQUE !",
+			damage = 12, hitbox = box(5.5, 3.5, 3, 0), kbBase = 30, kbGrowth = 70, kbAngle = 40,
+			windup = { Root = { -8, 0, 0 }, Waist = { -10, 0, 0 }, RS = { 60, 0, 40 }, RE = { 80, 0, 0 }, LS = { 60, 0, -40 }, LE = { 80, 0, 0 }, RH = { 60, 0, 0 }, RK = { -120, 0, 0 }, LH = { 40, 0, 0 }, LK = { -110, 0, 0 } },
+			strike = { Root = { 6, 10, 0 }, Waist = { 8, 6, 0 }, Neck = { 10, -10, 0 }, RS = { 150, 0, 50 }, RE = { 20, 0, 0 }, LS = { 130, 0, 10 }, LE = { 130, 0, 0 }, RH = { 95, 0, 0 }, RK = { 0, 0, 0 }, RA = { 20, 0, 0 }, LH = { -85, 0, 0 }, LK = { 0, 0, 0 }, LA = { -20, 0, 0 } },
+			follow = { Root = { 8, 12, 0 }, Waist = { 10, 6, 0 }, Neck = { 12, -12, 0 }, RS = { 155, 0, 52 }, RE = { 20, 0, 0 }, LS = { 132, 0, 10 }, LE = { 132, 0, 0 }, RH = { 98, 0, 0 }, RK = { 0, 0, 0 }, RA = { 20, 0, 0 }, LH = { -88, 0, 0 }, LK = { 0, 0, 0 }, LA = { -20, 0, 0 } },
+			trail = "bothFeet", fx = { { "burst", color = FLASH, size = 2, at = "hand" } }, hitText = "PHOTOGÉNIQUE !",
 		},
 		-- Coup de hanche défilé (dash puis K) : elle file en défilé et donne un grand coup de hanche
 		K_dash = {
@@ -225,18 +228,19 @@ local data = {
 			fx = { "dust" }, text = "DÉFILÉ !", hitText = "BOUM-HANCHE !",
 		},
 
-		-- Suites d'enchaînement K : talon, talon retourné, coup de pied vlog
+		-- K K : Talon retourné, un tour sur elle-même, le talon compensé tendu comme une aiguille
 		K_combo2 = {
-			label = "Talon retourné", startup = 0.14, active = 0.12, recovery = 0.25,
-			damage = 9, hitbox = box(5, 3, 2.8, 0.5), kbBase = 28, kbGrowth = 50, kbAngle = 30,
+			label = "Talon retourné", startup = 0.09, active = 0.12, recovery = 0.22,
+			damage = 8, hitbox = box(5.5, 4, 3, 0.5), kbBase = 24, kbGrowth = 40, kbAngle = 30,
 			windup = { Root = { 4, -40, 0, 0, -0.15, 0.1 }, Waist = { 4, -24, 0 }, Neck = { 0, 30, 0 }, RS = { 50, 0, 50 }, RE = { 40, 0, 0 }, LS = { 50, 0, -50 }, LE = { 50, 0, 0 }, RH = { 50, 0, 20 }, RK = { -100, 0, 0 } },
 			strike = { Root = { 14, 0, 0, 0, -0.1, 0 }, Waist = { 6, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 60, 0, 80 }, RE = { 10, 0, 0 }, LS = { 60, 0, -80 }, LE = { 10, 0, 0 }, RH = { 85, 0, 0 }, RK = { 0, 0, 0 }, RA = { 25, 0, 0 } },
 			follow = { Root = { 16, 0, 0, 0, -0.1, 0 }, Waist = { 8, 0, 0 }, Neck = { -12, 0, 0 }, RS = { 58, 0, 84 }, RE = { 10, 0, 0 }, LS = { 58, 0, -84 }, LE = { 10, 0, 0 }, RH = { 88, 0, 0 }, RK = { 0, 0, 0 }, RA = { 25, 0, 0 } },
 			spin = { axis = "y", degrees = 360 }, trail = "rightFoot", hitText = "VLAN !",
 		},
+		-- K K K K : Coup de pied vlog, elle saute et décoche un coup de pied face caméra, « abonnez-vous ! » (finition)
 		K_combo3 = {
-			label = "Coup de pied vlog", startup = 0.16, active = 0.12, recovery = 0.32,
-			damage = 12, hitbox = box(5, 4, 3, 1), kbBase = 32, kbGrowth = 80, kbAngle = 42, selfVelocity = Vector2.new(15, 42),
+			label = "Coup de pied vlog", startup = 0.1, active = 0.12, recovery = 0.32,
+			damage = 12, hitbox = box(5.5, 4.5, 3, 1), kbBase = 36, kbGrowth = 82, kbAngle = 42, selfVelocity = Vector2.new(15, 42),
 			windup = { Root = { -8, 0, 0, 0, -0.6, 0.1 }, Waist = { -14, 0, 0 }, RS = { 40, 0, 30 }, RE = { 60, 0, 0 }, LS = { -30, 0, -30 }, LE = { 30, 0, 0 } },
 			strike = { Root = { 16, 0, 0 }, Waist = { 10, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 150, 0, 30 }, RE = { 20, 0, 0 }, LS = { 70, 0, -70 }, LE = { 20, 0, 0 }, RH = { 100, 0, 0 }, RK = { 0, 0, 0 }, RA = { 20, 0, 0 }, LH = { 30, 0, 0 }, LK = { -110, 0, 0 } },
 			follow = { Root = { 20, 0, 0 }, Waist = { 12, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 155, 0, 32 }, RE = { 20, 0, 0 }, LS = { 72, 0, -72 }, LE = { 20, 0, 0 }, RH = { 108, 0, 0 }, RK = { 0, 0, 0 }, RA = { 20, 0, 0 }, LH = { 34, 0, 0 }, LK = { -114, 0, 0 } },
@@ -244,8 +248,8 @@ local data = {
 		},
 		-- P puis K : Petit coup de talon dans le tibia, en gardant la pose
 		PK_combo = {
-			label = "Coup de talon en douce", startup = 0.1, active = 0.08, recovery = 0.2,
-			damage = 7, hitbox = box(5, 2, 3, -1.5), kbBase = 22, kbGrowth = 30, kbAngle = 30,
+			label = "Coup de talon en douce", startup = 0.08, active = 0.1, recovery = 0.2,
+			damage = 7, hitbox = box(5, 4, 3, 0.5), kbBase = 22, kbGrowth = 30, kbAngle = 30,
 			windup = { Root = { 4, -10, 0, 0, -0.15, 0.1 }, Waist = { 4, -10, 0 }, RS = { 70, 0, 20 }, RE = { 60, 0, 0 }, LS = { 10, 0, -40 }, LE = { 115, 0, 0 }, RH = { -20, 0, 6 }, RK = { -70, 0, 0 } },
 			strike = { Root = { -4, 8, 0, 0, -0.22, -0.2 }, Waist = { -6, 8, 0 }, RS = { 75, 0, 25 }, RE = { 30, 0, 0 }, LS = { 10, 0, -40 }, LE = { 115, 0, 0 }, RH = { 60, 0, 4 }, RK = { -5, 0, 0 }, RA = { 20, 0, 0 } },
 			follow = { Root = { -6, 10, 0, 0, -0.24, -0.24 }, Waist = { -6, 10, 0 }, RS = { 76, 0, 26 }, RE = { 30, 0, 0 }, LS = { 10, 0, -40 }, LE = { 115, 0, 0 }, RH = { 64, 0, 0 }, RK = { -8, 0, 0 }, RA = { 20, 0, 0 } },
@@ -253,12 +257,85 @@ local data = {
 		},
 		-- K puis P : Revers de perche, en se remettant d'aplomb elle fouette de la perche en revers
 		KP_combo = {
-			label = "Revers de perche", startup = 0.09, active = 0.08, recovery = 0.22,
-			damage = 8, hitbox = box(6, 3, 3.5, 1), kbBase = 24, kbGrowth = 38, kbAngle = 40,
+			label = "Revers de perche", startup = 0.08, active = 0.1, recovery = 0.22,
+			damage = 8, hitbox = box(6, 4, 3.5, 1), kbBase = 24, kbGrowth = 38, kbAngle = 40,
 			windup = { Root = { 2, 26, 0, 0, -0.2, 0.1 }, Waist = { 2, 30, 0 }, Neck = { 0, -20, 0 }, RS = { 120, 0, -30 }, RE = { 50, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -40 }, LE = { 60, 0, 0 } },
 			strike = { Root = { -8, -16, 0, 0, -0.3, -0.3 }, Waist = { -10, -24, 0 }, Neck = { 0, 14, 0 }, RS = { 100, 0, 50 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -30 }, LE = { 70, 0, 0 } },
 			follow = { Root = { -8, -22, 0, 0, -0.3, -0.34 }, Waist = { -10, -30, 0 }, Neck = { 0, 18, 0 }, RS = { 95, 0, 70 }, RE = { 5, 0, 0 }, RW = { -10, 0, 0 }, LS = { 32, 0, -30 }, LE = { 70, 0, 0 } },
 			trail = "prop", hitText = "FLIP !",
+		},
+
+		-- P P P : Duckface, elle avance les lèvres en cœur et colle sa moue dans le nez d'en face
+		P_duckface = {
+			label = "Duckface", startup = 0.07, active = 0.1, recovery = 0.18,
+			damage = 6, hitbox = box(5, 4, 2.8, 1), kbBase = 20, kbGrowth = 26, kbAngle = 35,
+			windup = { Root = { 6, 10, 4, 0, -0.1, 0.1 }, Waist = { 8, 10, 6 }, Neck = { 12, -10, 8 }, RS = { 40, 0, 30 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 120, 0, -10 }, LE = { 130, 0, 0 } },
+			strike = { Root = { -14, 0, 0, 0, -0.3, -0.4 }, Waist = { -14, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 30, 0, 50 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -50 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+			follow = { Root = { -16, 0, 0, 0, -0.32, -0.45 }, Waist = { -16, 0, 0 }, Neck = { -24, 0, 6 }, RS = { 28, 0, 52 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 28, 0, -52 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+			trail = "head", fx = { { "symbols", symbols = { "💋", "😘" }, count = 3, radius = 2, at = "front", color = ROSE_VIF } }, text = "MWAH !", hitText = "SMACK !",
+		},
+		-- → P P P : Scroll infini, la perche monte et descend à toute vitesse comme un pouce qui scrolle, trois coups
+		P_scroll = {
+			label = "Scroll infini", startup = 0.06, active = 0.2, recovery = 0.18,
+			damage = 3, hits = 3, hitbox = box(5.5, 4.5, 3.2, 0.8), kbBase = 18, kbGrowth = 24, kbAngle = 45,
+			windup = { Root = { -4, 10, 0, 0, -0.2, 0.1 }, Waist = { -6, 10, 0 }, Neck = { -10, -10, 0 }, RS = { 130, 0, 10 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -30 }, LE = { 100, 0, 0 } },
+			strike = { Root = { -8, 6, 0, 0, -0.28, -0.3 }, Waist = { -10, 6, 0 }, Neck = { -14, -6, 0 }, RS = { 60, 0, 5 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -30 }, LE = { 100, 0, 0 } },
+			follow = { Root = { -8, 6, 0, 0, -0.28, -0.3 }, Waist = { -10, 6, 0 }, Neck = { -12, -6, 0 }, RS = { 125, 0, 5 }, RE = { 15, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -30 }, LE = { 100, 0, 0 } },
+			wobble = true, trail = "prop", fx = { { "symbols", symbols = { "👍", "💬", "❤️" }, count = 4, radius = 2.5, at = "front" } }, text = "SCROLL-SCROLL !", hitText = "TAP-TAP-TAP !",
+		},
+		-- → P P P P : Unfollow !, un revers de perche méprisant qui envoie l'adversaire tout au bout de l'arène (finition)
+		P_unfollow = {
+			label = "Unfollow !", startup = 0.1, active = 0.12, recovery = 0.32,
+			damage = 11, hitbox = box(6, 4.5, 3.5, 0.8), kbBase = 38, kbGrowth = 78, kbAngle = 22,
+			windup = { Root = { 2, 36, 0, 0, -0.2, 0.2 }, Waist = { 2, 40, 0 }, Neck = { 6, -30, 10 }, RS = { 100, 0, -45 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -40 }, LE = { 110, 0, 0 } },
+			strike = { Root = { -8, -30, 0, 0, -0.3, -0.4 }, Waist = { -10, -40, 0 }, Neck = { 6, 30, 10 }, RS = { 92, 0, 55 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -40 }, LE = { 110, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+			follow = { Root = { -8, -40, 0, 0, -0.3, -0.42 }, Waist = { -10, -50, 0 }, Neck = { 8, 36, 12 }, RS = { 86, 0, 80 }, RE = { 10, 0, 0 }, RW = { -10, 0, 0 }, LS = { 20, 0, -40 }, LE = { 110, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+			trail = "prop", fx = { { "text", text = "ABONNÉS : -1", color = ROSE_VIF, at = "above" }, { "burst", color = LILAS, size = 3, at = "front" } }, text = "UNFOLLOW !", hitText = "BLOQUÉ, SUPPRIMÉ !",
+		},
+		-- ↓ P P : Story en direct, de sa glissade elle se relève en filmant, la perche remonte dans le menton
+		P_story = {
+			label = "Story en direct", startup = 0.08, active = 0.1, recovery = 0.2,
+			damage = 7, hitbox = box(5, 5, 2.8, 1.5), kbBase = 22, kbGrowth = 30, kbAngle = 70,
+			windup = { Root = { 10, 0, 6, 0, -1.0, 0 }, Waist = { -10, 0, 0 }, Neck = { -6, 0, 10 }, RS = { 40, 0, 20 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 120, 0, -10 }, LE = { 130, 0, 0 }, RH = { 70, 0, 0 }, RK = { -40, 0, 0 }, LH = { 50, 0, 0 }, LK = { -80, 0, 0 } },
+			strike = { Root = { 6, 8, 4, 0, -0.1, -0.2 }, Waist = { 10, 8, 6 }, Neck = { 20, -6, 0 }, RS = { 165, 0, 10 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 130, 0, -10 }, LE = { 130, 0, 0 }, FR = { 0, 0, 0, 0, 0.15, 0 } },
+			follow = { Root = { 8, 10, 6, 0, -0.05, -0.22 }, Waist = { 12, 10, 8 }, Neck = { 24, -8, 0 }, RS = { 175, 0, 6 }, RE = { 10, 0, 0 }, RW = { -10, 0, 0 }, LS = { 132, 0, -10 }, LE = { 132, 0, 0 }, FR = { 0, 0, 0, 0, 0.2, 0 } },
+			trail = "prop", fx = { { "text", text = "🔴 EN DIRECT", color = Color3.fromRGB(255, 60, 60), at = "above" } }, text = "ON EST EN LIVE !", hitText = "DIS BONJOUR !",
+		},
+		-- ↓ P P P : Boomerang, la perche décrit un tour complet autour d'elle façon vidéo boomerang (finition)
+		P_boomerang = {
+			label = "Boomerang", startup = 0.1, active = 0.2, recovery = 0.3,
+			damage = 11, hitbox = box(7, 4, 2.5, 0.8), kbBase = 36, kbGrowth = 78, kbAngle = 40,
+			windup = { Root = { 0, -40, 0, 0, -0.25, 0 }, Waist = { 0, -30, 0 }, Neck = { 0, 25, 0 }, RS = { 90, 0, 70 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -40 }, LE = { 50, 0, 0 } },
+			strike = { Root = { -2, 0, 0, 0, -0.15, -0.1 }, Neck = { -6, 0, 0 }, RS = { 92, 0, 5 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, -85 }, LE = { 0, 0, 0 } },
+			follow = { Root = { -2, 0, 0, 0, -0.15, -0.1 }, Neck = { -6, 0, 0 }, RS = { 92, 0, 5 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, -85 }, LE = { 0, 0, 0 } },
+			spin = { axis = "y", degrees = 360 }, trail = "prop", fx = { { "symbols", symbols = { "🔁", "✨" }, count = 4, radius = 3, color = LILAS } }, text = "BOOMERANG !", hitText = "ET RETOUR !",
+		},
+		-- K K K : Pas de catwalk, deux pas de défilé croisés, chaque genou qui monte cogne au passage
+		K_catwalk = {
+			label = "Pas de catwalk", startup = 0.07, active = 0.16, recovery = 0.2,
+			damage = 4, hits = 2, hitbox = box(5, 4, 3, 0.8), kbBase = 18, kbGrowth = 26, kbAngle = 45, selfVelocity = Vector2.new(18, 0),
+			windup = { Root = { -2, 10, -4, 0, -0.1, 0.1 }, Waist = { 0, 10, -8 }, Neck = { 4, -8, 0 }, RS = { -30, 0, 15 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 10, 0, -40 }, LE = { 110, 0, 0 }, RH = { 40, 0, -10 }, RK = { -60, 0, 0 } },
+			strike = { Root = { -6, -10, 4, 0, -0.15, -0.25 }, Waist = { -4, -10, 8 }, Neck = { 4, 8, 0 }, RS = { -40, 0, 15 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 10, 0, -40 }, LE = { 110, 0, 0 }, RH = { 100, 0, -10 }, RK = { -100, 0, 0 }, RA = { -20, 0, 0 } },
+			follow = { Root = { -6, 10, -4, 0, -0.15, -0.3 }, Waist = { -4, 10, -8 }, Neck = { 4, -8, 0 }, RS = { 30, 0, 15 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 10, 0, -40 }, LE = { 110, 0, 0 }, LH = { 100, 0, 10 }, LK = { -100, 0, 0 }, LA = { -20, 0, 0 } },
+			wobble = true, trail = "bothFeet", fx = { { "symbols", symbols = { "📸", "✨" }, count = 3, radius = 3, color = FLASH } }, text = "CATWALK !", hitText = "GENOU-GENOU !",
+		},
+		-- → K K : Changement de pose, elle change de jambe d'appui et reprend la pose : la gauche part tendue, perche levée
+		K_side2 = {
+			label = "Changement de pose", startup = 0.08, active = 0.1, recovery = 0.2,
+			damage = 8, hitbox = box(5.5, 4, 3.2, 0.8), kbBase = 22, kbGrowth = 32, kbAngle = 30,
+			windup = { Root = { 4, 20, 0, 0, -0.15, 0.1 }, Waist = { 4, 16, 0 }, Neck = { 0, -16, 0 }, RS = { 150, 0, 40 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 10, 0, -50 }, LE = { 110, 0, 0 }, LH = { 60, 0, 0 }, LK = { -110, 0, 0 } },
+			strike = { Root = { 14, -10, 0, 0, -0.15, -0.25 }, Waist = { 10, -8, 0 }, Neck = { 6, -20, 0 }, RS = { 165, 0, 35 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 10, 0, -50 }, LE = { 110, 0, 0 }, LH = { 100, 0, 0 }, LK = { 0, 0, 0 }, LA = { 20, 0, 0 } },
+			follow = { Root = { 15, -12, 0, 0, -0.15, -0.28 }, Waist = { 11, -9, 0 }, Neck = { 8, -22, 0 }, RS = { 167, 0, 37 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 10, 0, -50 }, LE = { 112, 0, 0 }, LH = { 102, 0, 0 }, LK = { 0, 0, 0 }, LA = { 20, 0, 0 } },
+			hold = 0.08, trail = "leftFoot", fx = { { "burst", color = FLASH, size = 2, at = "hand" } }, text = "AUTRE POSE !", hitText = "CLIC !",
+		},
+		-- → K K K : Saut photo final, elle saute en ciseaux, perche braquée sur elle, flash au sommet (finition)
+		K_side3 = {
+			label = "Saut photo final", startup = 0.1, active = 0.14, recovery = 0.34,
+			damage = 12, hitbox = box(6, 5, 3, 1.2), kbBase = 36, kbGrowth = 80, kbAngle = 45, selfVelocity = Vector2.new(16, 36),
+			windup = { Root = { -8, 0, 0, 0, -0.55, 0.1 }, Waist = { -12, 0, 0 }, RS = { 40, 0, 30 }, RE = { 80, 0, 0 }, LS = { 30, 0, -30 }, LE = { 60, 0, 0 } },
+			strike = { Root = { 12, 10, 0 }, Waist = { 10, 6, 0 }, Neck = { 12, -12, 0 }, RS = { 170, 0, 30 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 130, 0, 10 }, LE = { 130, 0, 0 }, RH = { 100, 0, 0 }, RK = { 0, 0, 0 }, RA = { 20, 0, 0 }, LH = { -40, 0, 0 }, LK = { -20, 0, 0 } },
+			follow = { Root = { 14, 12, 0 }, Waist = { 12, 6, 0 }, Neck = { 14, -14, 0 }, RS = { 175, 0, 32 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 132, 0, 10 }, LE = { 132, 0, 0 }, RH = { 106, 0, 0 }, RK = { 0, 0, 0 }, RA = { 20, 0, 0 }, LH = { -44, 0, 0 }, LK = { -20, 0, 0 } },
+			hold = 0.1, trail = "rightFoot", fx = { { "burst", color = FLASH, size = 4, at = "above" }, { "screen", color = FLASH, alpha = 0.2 }, { "symbols", symbols = { "📸", "⭐" }, count = 4, radius = 3 } }, text = "ET… SAUTE !", hitText = "PHOTO DU SIÈCLE !",
 		},
 
 		------------------------------------------------------------------ En l'air avec une flèche (P / K)
@@ -372,27 +449,28 @@ local data = {
 			trail = "prop", fx = { { "rain", shape = "ball", color = ROSE_VIF, count = 10, radius = 5, size = 0.6 }, { "symbols", symbols = { "❤️", "💖" }, count = 6, radius = 4 } },
 			text = "LOVE !", hitText = "+100 ❤️",
 		},
-		-- Bloquer l'utilisateur (esquive puis S) : ring light levée en bouclier ; le prochain coup est bloqué et elle riposte
+		-- Bloquer l'utilisateur (esquive puis S) : ring light brandie en bouclier et poussée d'un coup sec dans la figure ;
+		-- le prochain coup reçu est bloqué et elle riposte
 		S_dodge = {
 			label = "Bloquer l'utilisateur", energyCost = 20, kind = "counter", startup = 0.04, active = 0.45, recovery = 0.3,
-			hitbox = box(5, 4, 2.5, 0.5),
-			damage = 7,
+			damage = 7, hitbox = box(5.5, 4.5, 3, 0.8),
 			counter = { window = 0.45, text = "BLOQUÉ !", riposte = { damage = 11, kbBase = 38, kbGrowth = 70, kbAngle = 35, hitText = "UTILISATEUR BLOQUÉ !" } },
-			windup = { Root = { 6, 0, 0, 0, -0.2, 0.15 }, Waist = { 6, 0, 0 }, Neck = { 6, 20, 0 }, RS = { 60, 0, 10 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -30 }, LE = { 60, 0, 0 } },
-			strike = { Root = { 8, 0, 0, 0, -0.25, 0.2 }, Waist = { 8, 0, 0 }, Neck = { 10, 30, 0 }, RS = { 95, 0, -10 }, RE = { 70, 0, 0 }, RW = { -70, 0, 0 }, LS = { 10, 0, -45 }, LE = { 110, 0, 0 } },
-			follow = { Root = { 8, 0, 0, 0, -0.25, 0.22 }, Waist = { 8, 0, 0 }, Neck = { 10, 32, 0 }, RS = { 96, 0, -10 }, RE = { 72, 0, 0 }, RW = { -72, 0, 0 }, LS = { 10, 0, -46 }, LE = { 112, 0, 0 } },
-			prop = "ringlight", hideProp = "perche", text = "BLOQUÉE !", hitText = "UTILISATEUR BLOQUÉ !",
+			windup = { Root = { 6, 0, 0, 0, -0.2, 0.15 }, Waist = { 6, 0, 0 }, Neck = { 6, 20, 0 }, RS = { 60, 0, 10 }, RE = { 110, 0, 0 }, RW = { -70, 0, 0 }, LS = { 30, 0, -30 }, LE = { 60, 0, 0 } },
+			strike = { Root = { -10, 0, 0, 0, -0.3, -0.35 }, Waist = { -8, 0, 0 }, Neck = { 6, 30, 0 }, RS = { 96, 0, -6 }, RE = { 0, 0, 0 }, RW = { -75, 0, 0 }, LS = { 10, 0, -45 }, LE = { 110, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+			follow = { Root = { -10, 0, 0, 0, -0.3, -0.35 }, Waist = { -8, 0, 0 }, Neck = { 8, 32, 0 }, RS = { 97, 0, -6 }, RE = { 0, 0, 0 }, RW = { -76, 0, 0 }, LS = { 10, 0, -46 }, LE = { 112, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+			prop = "ringlight", hideProp = "perche", trail = "prop", fx = { { "ring", color = FLASH, radius = 3, at = "front" } }, text = "BLOQUÉE !", hitText = "UTILISATEUR BLOQUÉ !",
 		},
-		-- Live (S maintenu) : perche levée, elle salue ses abonnés en direct ; les likes pleuvent (+300 likes)
+		-- Live (S maintenu) : elle lance le direct en plantant la perche dans le nez d'en face (« dis bonjour aux abonnés ! »),
+		-- puis salue ses abonnés, perche levée ; les likes pleuvent (+300 likes)
 		S_hold = {
-			label = "Live", energyCost = 30, startup = 0.25, active = 0, recovery = 0.45,
-			hitbox = box(6, 4, 2.5, 0.5), kbBase = 30, kbGrowth = 55, kbAngle = 35,
-			damage = 9, selfEffect = { meter = 300 },
-			windup = { Root = { 2, 10, 4, 0, -0.15, 0 }, Waist = { 4, 10, 6 }, Neck = { 16, -6, 0 }, RS = { 140, 0, 10 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -30 }, LE = { 60, 0, 0 } },
-			strike = { Root = { 4, 14, 6, 0, -0.1, 0 }, Waist = { 6, 12, 8 }, Neck = { 20, -10, 6 }, RS = { 145, 0, 10 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, -40 }, LE = { 30, 0, 0 } },
+			label = "Live", energyCost = 30, startup = 0.22, active = 0.12, recovery = 0.45,
+			damage = 9, hitbox = box(6, 4.5, 3.5, 1), kbBase = 30, kbGrowth = 55, kbAngle = 35,
+			selfEffect = { meter = 300 },
+			windup = { Root = { 4, -14, 4, 0, -0.15, 0.1 }, Waist = { 4, -14, 6 }, Neck = { 10, 10, 0 }, RS = { 60, 0, 10 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -30 }, LE = { 60, 0, 0 } },
+			strike = { Root = { -12, 10, 0, 0, -0.3, -0.4 }, Waist = { -10, 12, 0 }, Neck = { 0, -8, 0 }, RS = { 96, 0, -4 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -35 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
 			follow = { Root = { 4, 10, 6, 0, -0.1, 0 }, Waist = { 6, 8, 8 }, Neck = { 20, -6, 6 }, RS = { 145, 0, 10 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, -10 }, LE = { 40, 0, 0 } },
-			hold = 0.45, fx = { { "symbols", symbols = { "❤️", "👍", "💬" }, count = 8, radius = 4 }, { "text", text = "🔴 LIVE", color = Color3.fromRGB(255, 60, 60), at = "above" } },
-			text = "COUCOU LES LOLAS !",
+			hold = 0.45, trail = "prop", fx = { { "symbols", symbols = { "❤️", "👍", "💬" }, count = 8, radius = 4 }, { "text", text = "🔴 LIVE", color = Color3.fromRGB(255, 60, 60), at = "above" } },
+			text = "COUCOU LES LOLAS !", hitText = "DIS BONJOUR !",
 		},
 		-- Swipe (→→S) : grand geste de swipe de la main gauche et elle file de côté en un éclair
 		S_dash = {
@@ -450,15 +528,19 @@ local data = {
 			fx = { { "symbols", symbols = { "🔔", "❤️", "💬", "📈" }, count = 10, radius = 6 }, { "screen", color = ROSE, alpha = 0.25 } },
 			text = "JE SUIS VIRALE !", hitText = "DING DING DING !",
 		},
-		-- Super ↑ : un grand coup de perche vers le haut, flash aveuglant pour la photo
+		-- Super ↑ : accroupie, elle sort la ring light, se dresse sur les pointes et la brandit au-dessus de sa tête en
+		-- tournant sur elle-même : une auréole de lumière qui aspire tout vers le ciel (et aveugle)
 		SUPER_up = {
-			label = "Selfie en contre-plongée !", superCost = 100, startup = 0.3, active = 0.25, recovery = 0.55,
-			damage = 22, hitbox = box(7, 10, 2, 4), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
-			windup = { Root = { -4.8, 0, 0, 0, -0.3, 0.1 }, Waist = { -7.2, 0, 0 }, Neck = { -12, 24, 0 }, RS = { 24, 0, 36 }, RE = { 72, 0, 0 }, LS = { 120, 0, 24 }, LE = { 36, 0, 0 }, LW = { 0, 0, 0 }, RH = { 36, 0, 0 }, RK = { -84, 0, 0 } },
-			strike = { Root = { 21.6, 0, 0, 0, -0.05, 0.15 }, Waist = { 14.4, 0, 0 }, Neck = { 12, 24, 0 }, RS = { 72, 0, 72 }, RE = { 12, 0, 0 }, LS = { 120, 0, 12 }, LE = { 12, 0, 0 }, LW = { -72, 0, 0 }, RH = { 198, 0, 0 }, RK = { 0, 0, 0 }, RA = { 24, 0, 0 } },
-			follow = { Root = { 24, 0, 0, 0, -0.05, 0.18 }, Waist = { 16.8, 0, 0 }, Neck = { 14.4, 26.4, 0 }, RS = { 74.4, 0, 74.4 }, RE = { 12, 0, 0 }, LS = { 122.4, 0, 12 }, LE = { 12, 0, 0 }, LW = { -72, 0, 0 }, RH = { 206.4, 0, 0 }, RK = { 0, 0, 0 }, RA = { 24, 0, 0 } },
-			hold = 0.25, selfVelocity = Vector2.new(0, 45),
-			windupFx = { "super" }, trail = "prop", status = { name = "blinded", duration = 1.5 }, fx = { { "screen", color = Color3.fromRGB(255, 255, 255), alpha = 0.4 }, { "burst", color = Color3.fromRGB(255, 60, 150), size = 4, at = "above" } }, text = "CHEEEESE !", hitText = "FLASHÉ !",
+			label = "Auréole de ring light !", superCost = 100, startup = 0.32, active = 0.3, recovery = 0.55,
+			damage = 22, hitbox = box(7, 12, 1.5, 5), kbBase = 46, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
+			status = { name = "blinded", duration = 1.5 },
+			windup = { Root = { -8, 0, 0, 0, -0.7, 0.05 }, Waist = { -16, 0, 0 }, Neck = { -24, 0, 0 }, RS = { 40, 0, 10 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -10 }, LE = { 60, 0, 0 } },
+			strike = { Root = { 4, 0, 0, 0, 0.35, 0 }, Waist = { 8, 0, 0 }, Neck = { 34, 0, 0 }, RS = { 182, 0, 6 }, RE = { 0, 0, 0 }, RW = { 90, 0, 0 }, LS = { 182, 0, -6 }, LE = { 0, 0, 0 }, LW = { 90, 0, 0 }, FR = { 0, 0, 0, 0, 0.35, 0 }, FL = { 0, 0, 0, 0, 0.35, 0 } },
+			follow = { Root = { 6, 0, 0, 0, 0.4, 0 }, Waist = { 10, 0, 0 }, Neck = { 38, 0, 0 }, RS = { 185, 0, 8 }, RE = { 0, 0, 0 }, RW = { 90, 0, 0 }, LS = { 185, 0, -8 }, LE = { 0, 0, 0 }, LW = { 90, 0, 0 }, FR = { 0, 0, 0, 0, 0.4, 0 }, FL = { 0, 0, 0, 0, 0.4, 0 } },
+			hold = 0.35, spin = { axis = "y", degrees = 360 }, selfVelocity = Vector2.new(0, 40), prop = "ringlight", hideProp = "perche", trail = "prop",
+			windupFx = { "super", { "text", text = "LUMIÈRE…", color = FLASH, at = "above" } },
+			fx = { { "pillar", color = FLASH, height = 24, width = 5, at = "root" }, { "screen", color = FLASH, alpha = 0.45 }, { "burst", color = ROSE_VIF, size = 5, at = "above" }, { "symbols", symbols = { "✨", "📸", "😇" }, count = 8, radius = 4 } },
+			text = "AURÉOLE !", hitText = "SAINTE LOLA !",
 		},
 		-- Collab ! : elle lance un appel en live et un perso du roster débarque pour un coup (3 invités possibles)
 		SUPER_down = {
@@ -696,8 +778,10 @@ data.respawn = {
 	},
 }
 
--- Arbre d'enchaînements : P = smartphone, flash, selfie de groupe ; K = talon, talon retourné, coup de pied vlog ;
--- S finit presque toutes les chaînes (pose finale de près, ring light tournante tout autour).
+-- Arbre d'enchaînements : P P P P = smartphone, flash, duckface, selfie de groupe ; → P P P P = estoc, swipe, scroll,
+-- unfollow ; ↓ P P P = glissade, story en direct, boomerang ; K K K K = talon, talon retourné, catwalk, coup de pied
+-- vlog ; → K K K = pose photo, changement de pose, saut photo final. S finit presque toutes les chaînes (pose finale
+-- de près, ring light tournante tout autour).
 local function airAfterP()
 	return { K = "K_air", fwd_K = "K_air_side", up_K = "K_air_up", down_K = "K_air_down", down_S = "S_air_down", up_S = "S_up", S = "S_air" }
 end
@@ -706,25 +790,32 @@ local function airAfterK()
 end
 
 local LINKS = {
-	-- au sol, sans direction
-	P_neutral = { P = "P_combo2", K = "PK_combo", S = "S_finish_pose" }, -- P
-	P_combo2 = { P = "P_combo3", K = "PK_combo", S = "S_neutral" }, -- P P (le flash enchaîne sur le Flash)
-	P_combo3 = { S = "S_finish_ring" }, -- P P P (selfie de groupe)
-	PK_combo = { K = "K_combo3", P = "KP_combo", S = "S_finish_ring" }, -- P K
-	K_neutral = { K = "K_combo2", P = "KP_combo", S = "S_finish_ring" }, -- K
-	K_combo2 = { K = "K_combo3", P = "KP_combo", S = "S_finish_pose" }, -- K K
-	K_combo3 = { K = "K_air_side", S = "S_air" }, -- K K K (elle décolle)
-	KP_combo = { P = "P_combo3", S = "S_finish_pose" }, -- K P
-	-- avec une flèche
-	P_side = { P = "P_side2", K = "K_side", S = "S_finish_pose" }, -- → P
-	P_side2 = { K = "PK_combo", S = "S_finish_ring" }, -- → P P
-	P_down = { P = "P_combo2", K = "K_down", up_K = "K_up", S = "S_finish_ring" }, -- ↓ P
-	P_up = { K = "K_up", P = "P_combo2", S = "S_finish_pose" }, -- ↑ P
-	P_dash = { P = "P_side2", K = "PK_combo", S = "S_finish_pose" }, -- dash P
-	K_side = { P = "KP_combo", S = "S_finish_pose" }, -- → K (la pose photo enchaîne)
-	K_down = { up_K = "K_up", P = "KP_combo", S = "S_finish_ring" }, -- ↓ K
-	K_up = { S = "S_finish_pose" }, -- ↑ K
-	K_dash = { P = "KP_combo", S = "S_finish_ring" }, -- dash K
+	-- P P P P : smartphone, flash éblouissant, duckface, selfie de groupe (finition)
+	P_neutral = { P = "P_combo2", K = "PK_combo", S = "S_finish_pose" },
+	P_combo2 = { P = "P_duckface", K = "PK_combo", S = "S_neutral" }, -- le flash enchaîne sur le Flash
+	P_duckface = { P = "P_combo3", K = "K_catwalk", S = "S_finish_ring" },
+	PK_combo = { K = "K_catwalk", P = "KP_combo", S = "S_finish_ring" },
+	KP_combo = { P = "P_combo3", S = "S_finish_pose" },
+	-- K K K K : talon compensé, talon retourné, pas de catwalk, coup de pied vlog (finition)
+	K_neutral = { K = "K_combo2", P = "KP_combo", S = "S_finish_ring" },
+	K_combo2 = { K = "K_catwalk", P = "P_duckface", S = "S_finish_pose" },
+	K_catwalk = { K = "K_combo3", P = "P_unfollow", S = "S_finish_ring" },
+	-- → P P P P : estoc, swipe à gauche, scroll infini, unfollow (finition à l'horizontale)
+	P_side = { P = "P_side2", K = "K_side", S = "S_finish_pose" },
+	P_side2 = { P = "P_scroll", K = "K_side2", S = "S_finish_ring" },
+	P_scroll = { P = "P_unfollow", K = "K_catwalk", S = "S_finish_pose" },
+	-- ↓ P P P : glissade pose photo, story en direct, boomerang (finition)
+	P_down = { P = "P_story", K = "K_down", up_K = "K_up", S = "S_finish_ring" },
+	P_story = { P = "P_boomerang", K = "K_up", S = "S_finish_pose" },
+	-- → K K K : kick pose photo, changement de pose, saut photo final (finition)
+	K_side = { K = "K_side2", P = "KP_combo", S = "S_finish_pose" },
+	K_side2 = { K = "K_side3", P = "P_scroll", S = "S_finish_ring" },
+	-- autres départs
+	P_up = { K = "K_up", P = "P_duckface", S = "S_finish_pose" },
+	P_dash = { P = "P_scroll", K = "K_side2", S = "S_finish_pose" },
+	K_down = { up_K = "K_up", P = "P_story", S = "S_finish_ring" },
+	K_up = { S = "S_finish_pose" },
+	K_dash = { P = "KP_combo", K = "K_side2", S = "S_finish_ring" },
 	-- en l'air ; ↓ P et ↓ K (smash vers le sol) sont des finitions sans suite
 	P_air = airAfterP(),
 	P_air_side = airAfterP(),

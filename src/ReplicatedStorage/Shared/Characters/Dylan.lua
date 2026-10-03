@@ -130,7 +130,7 @@ local data = {
 		-- Uppercut casque (anti-air) : il se ramasse puis bondit genoux serrés, bras ballants en arrière, casque le premier
 		P_up = {
 			label = "Uppercut casque", startup = 0.08, active = 0.1, recovery = 0.2,
-			damage = 7, hitbox = box(4.5, 4.5, 1, 3.5), kbBase = 26, kbGrowth = 32, kbAngle = 85, selfVelocity = Vector2.new(0, 28),
+			damage = 7, hitbox = box(5, 5, 2.5, 3), kbBase = 26, kbGrowth = 32, kbAngle = 85, selfVelocity = Vector2.new(0, 28),
 			windup = { Root = { -8, 0, 0, 0, -0.8, 0 }, Waist = { -22, 0, 0 }, Neck = { -25, 0, 0 }, RS = { -30, 0, 25 }, RE = { 30, 0, 0 }, LS = { -30, 0, -25 }, LE = { 30, 0, 0 } },
 			strike = { Root = { 6, 0, 0, 0, 0.35, 0 }, Waist = { 12, 0, 0 }, Neck = { 42, 0, 0 }, RS = { -60, 0, 20 }, RE = { 10, 0, 0 }, LS = { -60, 0, -20 }, LE = { 10, 0, 0 }, RH = { 70, 0, 0 }, RK = { -120, 0, 0 }, LH = { 70, 0, 0 }, LK = { -120, 0, 0 } },
 			follow = { Root = { 8, 0, 0, 0, 0.45, 0 }, Waist = { 14, 0, 0 }, Neck = { 46, 0, 0 }, RS = { -65, 0, 22 }, RE = { 10, 0, 0 }, LS = { -65, 0, -22 }, LE = { 10, 0, 0 }, RH = { 75, 0, 0 }, RK = { -125, 0, 0 }, LH = { 75, 0, 0 }, LK = { -125, 0, 0 } },
@@ -185,14 +185,14 @@ local data = {
 			follow = { Root = { -12, 38, 0, 0, -0.35, -0.4 }, Waist = { -12, 46, 0 }, Neck = { 0, -30, 0 }, RS = { 88, 0, -45 }, RE = { 10, 0, 0 }, RW = { -10, 0, 0 }, LS = { 85, 0, -5 }, LE = { 45, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
 			trail = "prop", hitText = "BANG !",
 		},
-		-- Poussée de trottineur : le geste qui pousse la trottinette… mais droit dans le ventre de l'adversaire
+		-- Poussée de trottineur : pied sur le plateau, il pousse la trottinette d'un grand coup de jambe… droit dans le ventre de l'adversaire
 		K_side = {
 			label = "Poussée de trottineur", startup = 0.16, active = 0.12, recovery = 0.28,
-			damage = 11, hitbox = box(5, 3, 3, 0), kbBase = 32, kbGrowth = 72, kbAngle = 28, selfVelocity = Vector2.new(28, 0),
-			windup = { Root = { 8, -10, 0, 0, -0.2, 0.15 }, Waist = { 6, -8, 0 }, Neck = { -4, 0, 0 }, RS = { 40, 0, 40 }, RE = { 60, 0, 0 }, LS = { 50, 0, -40 }, LE = { 60, 0, 0 }, RH = { 95, 0, 0 }, RK = { -120, 0, 0 }, RA = { -10, 0, 0 } },
-			strike = { Root = { 16, 0, 0, 0, -0.15, -0.25 }, Waist = { 10, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 60, 0, 55 }, RE = { 30, 0, 0 }, LS = { 60, 0, -55 }, LE = { 30, 0, 0 }, RH = { 92, 0, 0 }, RK = { -4, 0, 0 }, RA = { 15, 0, 0 } },
-			follow = { Root = { 18, 0, 0, 0, -0.15, -0.3 }, Waist = { 12, 0, 0 }, Neck = { -12, 0, 0 }, RS = { 62, 0, 60 }, RE = { 30, 0, 0 }, LS = { 62, 0, -60 }, LE = { 30, 0, 0 }, RH = { 96, 0, 0 }, RK = { 0, 0, 0 }, RA = { 20, 0, 0 } },
-			trail = "rightFoot", text = "POUSSE-TOI !", hitText = "PFOUM !",
+			damage = 11, hitbox = box(6, 3.5, 3.5, 0), kbBase = 32, kbGrowth = 72, kbAngle = 28, selfVelocity = Vector2.new(28, 0),
+			windup = { Root = { 4, -10, 0, 0, -0.25, 0.15 }, Waist = { 2, -8, 0 }, Neck = { 4, 6, 0 }, RS = { 50, 0, 20 }, RE = { 70, 0, 0 }, RW = { 0, 0, 90 }, LS = { 40, 0, -30 }, LE = { 60, 0, 0 }, RH = { 40, 0, 0 }, RK = { -90, 0, 0 } },
+			strike = { Root = { -20, 0, 0, 0, -0.35, -0.35 }, Waist = { -12, 0, 0 }, Neck = { 8, 0, 0 }, RS = { 96, 0, 6 }, RE = { 0, 0, 0 }, RW = { 0, 0, 90 }, LS = { -40, 0, -40 }, LE = { 30, 0, 0 }, RH = { 55, 0, 0 }, RK = { -10, 0, 0 }, RA = { 30, 0, 0 } },
+			follow = { Root = { -22, 0, 0, 0, -0.38, -0.4 }, Waist = { -14, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 98, 0, 8 }, RE = { 0, 0, 0 }, RW = { 0, 0, 90 }, LS = { -45, 0, -42 }, LE = { 30, 0, 0 }, RH = { 60, 0, 0 }, RK = { -5, 0, 0 }, RA = { 32, 0, 0 } },
+			trail = "prop", fx = { { "particles", tex = "spark", color = ORANGE, dir = "front", at = "feet", time = 0.25, speed = 8 } }, text = "POUSSE-TOI !", hitText = "PFOUM !",
 		},
 		-- Roue avant dans le tibia : accroupi, il pique la roue avant de la trottinette au ras du sol
 		K_down = {
@@ -336,13 +336,13 @@ local data = {
 			follow = { Root = { -6, 0, 0 }, Waist = { -8, 0, 0 }, Neck = { 0, 0, 0 }, RS = { 48, 0, 65 }, RE = { 25, 0, 0 }, LS = { 48, 0, -65 }, LE = { 25, 0, 0 }, RH = { 35, 0, 0 }, RK = { -65, 0, 0 }, LH = { 25, 0, 0 }, LK = { -55, 0, 0 } },
 			spin = { axis = "y", degrees = 360 }, trail = "body", hitText = "BOUF !",
 		},
-		-- ↑ P en l'air : Guidon au ciel, la trottinette balaie l'air au-dessus de son casque
+		-- ↑ P en l'air : Guidon au ciel, la trottinette tenue à deux mains par le guidon est hissée en travers au-dessus du casque
 		P_air_up = {
 			label = "Guidon au ciel", startup = 0.09, active = 0.12, recovery = 0.18,
 			damage = 7, hitbox = box(5, 4, 0.5, 3.5), kbBase = 26, kbGrowth = 42, kbAngle = 85,
-			windup = { Root = { -12, 0, 0 }, Waist = { -18, 0, 0 }, Neck = { -6, 0, 0 }, RS = { -30, 0, 35 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -40 }, LE = { 70, 0, 0 }, RH = { 85, 0, 0 }, RK = { -115, 0, 0 }, LH = { 80, 0, 0 }, LK = { -115, 0, 0 } },
-			strike = { Root = { 12, 0, 0 }, Waist = { 14, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 165, 0, 15 }, RE = { 5, 0, 0 }, RW = { 0, 0, 0 }, LS = { -20, 0, -45 }, LE = { 20, 0, 0 }, RH = { -10, 0, 0 }, RK = { -30, 0, 0 }, LH = { 15, 0, 0 }, LK = { -55, 0, 0 } },
-			follow = { Root = { 16, 0, 0 }, Waist = { 18, 0, 0 }, Neck = { 36, 0, 0 }, RS = { 195, 0, 5 }, RE = { 5, 0, 0 }, RW = { -15, 0, 0 }, LS = { -28, 0, -50 }, LE = { 20, 0, 0 }, RH = { -15, 0, 0 }, RK = { -25, 0, 0 }, LH = { 10, 0, 0 }, LK = { -50, 0, 0 } },
+			windup = { Root = { -12, 0, 0 }, Waist = { -18, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 20, 0, 25 }, RE = { 90, 0, 0 }, RW = { 0, 0, 90 }, LS = { 20, 0, -25 }, LE = { 90, 0, 0 }, RH = { 85, 0, 0 }, RK = { -115, 0, 0 }, LH = { 80, 0, 0 }, LK = { -115, 0, 0 } },
+			strike = { Root = { 12, 0, 0 }, Waist = { 14, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 165, 0, 10 }, RE = { 5, 0, 0 }, RW = { 0, 0, 90 }, LS = { 160, 0, -10 }, LE = { 5, 0, 0 }, RH = { -10, 0, 0 }, RK = { -30, 0, 0 }, LH = { 15, 0, 0 }, LK = { -55, 0, 0 } },
+			follow = { Root = { 16, 0, 0 }, Waist = { 18, 0, 0 }, Neck = { 36, 0, 0 }, RS = { 192, 0, 8 }, RE = { 5, 0, 0 }, RW = { 0, 0, 90 }, LS = { 188, 0, -8 }, LE = { 5, 0, 0 }, RH = { -15, 0, 0 }, RK = { -25, 0, 0 }, LH = { 10, 0, 0 }, LK = { -50, 0, 0 } },
 			trail = "prop", hitText = "TCHING !",
 		},
 		-- ↓ P en l'air : Roue avant plongeante, trottinette brandie à deux mains puis roue plantée vers le bas
@@ -354,31 +354,31 @@ local data = {
 			follow = { Root = { -24, 0, 0 }, Waist = { -32, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 20, 0, -6 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 20, 0, 6 }, LE = { 5, 0, 0 }, RH = { 5, 0, 0 }, RK = { -85, 0, 0 }, LH = { 15, 0, 0 }, LK = { -95, 0, 0 } },
 			trail = "prop", text = "TERMINUS !", hitText = "KLONK !",
 		},
-		-- → K en l'air : Coup de pied du coursier, jambe droite détendue à l'horizontale, buste en arrière
+		-- → K en l'air : Coup de pied du coursier, jambe droite détendue à l'horizontale, trottinette brandie à deux mains au-dessus du casque
 		K_air_side = {
 			label = "Coup de pied du coursier", startup = 0.13, active = 0.12, recovery = 0.24,
 			damage = 11, hitbox = box(5, 3, 3.2, 0), kbBase = 30, kbGrowth = 68, kbAngle = 35,
 			windup = { Root = { -14, 20, 0 }, Waist = { -14, 10, 0 }, Neck = { 0, -10, 0 }, RS = { 50, 0, 45 }, RE = { 70, 0, 0 }, LS = { 70, 0, -30 }, LE = { 80, 0, 0 }, RH = { 105, 0, 0 }, RK = { -135, 0, 0 }, LH = { 40, 0, 0 }, LK = { -100, 0, 0 } },
-			strike = { Root = { 26, 25, 0 }, Waist = { 10, 5, 0 }, Neck = { -15, -10, 0 }, RS = { -30, 0, 60 }, RE = { 20, 0, 0 }, LS = { 40, 0, -70 }, LE = { 30, 0, 0 }, RH = { 68, 0, 0 }, RK = { 0, 0, 0 }, RA = { 20, 0, 0 }, LH = { 20, 0, 0 }, LK = { -110, 0, 0 } },
-			follow = { Root = { 30, 28, 0 }, Waist = { 12, 5, 0 }, Neck = { -18, -10, 0 }, RS = { -38, 0, 65 }, RE = { 20, 0, 0 }, LS = { 45, 0, -75 }, LE = { 30, 0, 0 }, RH = { 70, 0, 0 }, RK = { 0, 0, 0 }, RA = { 20, 0, 0 }, LH = { 15, 0, 0 }, LK = { -105, 0, 0 } },
+			strike = { Root = { 20, 25, 0 }, Waist = { 10, 5, 0 }, Neck = { -15, -10, 0 }, RS = { 170, 0, 20 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 160, 0, -20 }, LE = { 30, 0, 0 }, RH = { 68, 0, 0 }, RK = { 0, 0, 0 }, RA = { 20, 0, 0 }, LH = { 20, 0, 0 }, LK = { -110, 0, 0 } },
+			follow = { Root = { 30, 28, 0 }, Waist = { 12, 5, 0 }, Neck = { -18, -10, 0 }, RS = { 175, 0, 24 }, RE = { 30, 0, 0 }, RW = { -10, 0, 0 }, LS = { 165, 0, -24 }, LE = { 30, 0, 0 }, RH = { 70, 0, 0 }, RK = { 0, 0, 0 }, RA = { 20, 0, 0 }, LH = { 15, 0, 0 }, LK = { -105, 0, 0 } },
 			trail = "rightFoot", hitText = "SBLAF !",
 		},
-		-- ↑ K en l'air : Salto du coursier, salto arrière, les baskets passent au-dessus du casque
+		-- ↑ K en l'air : Salto du coursier, salto arrière debout sur la trottinette, guidon tenu devant, les deux baskets passent ensemble au-dessus du casque
 		K_air_up = {
 			label = "Salto du coursier", startup = 0.12, active = 0.2, recovery = 0.24,
 			damage = 10, hitbox = box(4, 5, 0.5, 3.5), kbBase = 30, kbGrowth = 64, kbAngle = 85,
 			windup = { Root = { -10, 0, 0 }, Waist = { -20, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 40, 0, 50 }, RE = { 40, 0, 0 }, LS = { 40, 0, -50 }, LE = { 40, 0, 0 }, RH = { 60, 0, 0 }, RK = { -120, 0, 0 }, LH = { 100, 0, 0 }, LK = { -130, 0, 0 } },
-			strike = { Root = { 30, 0, 0 }, Waist = { 10, 0, 0 }, Neck = { 20, 0, 0 }, RS = { -40, 0, 60 }, RE = { 20, 0, 0 }, LS = { -40, 0, -60 }, LE = { 20, 0, 0 }, RH = { 150, 0, 0 }, RK = { -5, 0, 0 }, RA = { 20, 0, 0 }, LH = { 40, 0, 0 }, LK = { -100, 0, 0 } },
-			follow = { Root = { 30, 0, 0 }, Waist = { 10, 0, 0 }, Neck = { 20, 0, 0 }, RS = { -45, 0, 65 }, RE = { 20, 0, 0 }, LS = { -45, 0, -65 }, LE = { 20, 0, 0 }, RH = { 100, 0, 0 }, RK = { -50, 0, 0 }, LH = { 150, 0, 0 }, LK = { -5, 0, 0 }, LA = { 20, 0, 0 } },
+			strike = { Root = { 30, 0, 0 }, Waist = { 10, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 60, 0, 30 }, RE = { 60, 0, 0 }, RW = { 0, 0, 90 }, LS = { 60, 0, -30 }, LE = { 60, 0, 0 }, RH = { 145, 0, 8 }, RK = { -5, 0, 0 }, RA = { 20, 0, 0 }, LH = { 135, 0, -8 }, LK = { -10, 0, 0 }, LA = { 20, 0, 0 } },
+			follow = { Root = { 30, 0, 0 }, Waist = { 10, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 62, 0, 32 }, RE = { 60, 0, 0 }, RW = { 0, 0, 90 }, LS = { 62, 0, -32 }, LE = { 60, 0, 0 }, RH = { 120, 0, 8 }, RK = { -20, 0, 0 }, LH = { 110, 0, -8 }, LK = { -20, 0, 0 }, LA = { 20, 0, 0 } },
 			spin = { axis = "x", degrees = -360 }, trail = "bothFeet", text = "SALTO !", hitText = "POC !",
 		},
-		-- ↓ K en l'air : Atterrissage sur colis, les deux pieds joints écrasent ce qui est dessous
+		-- ↓ K en l'air : Atterrissage sur colis, les deux pieds joints sur le plateau et le guidon serré, il écrase ce qui est dessous
 		K_air_down = {
 			label = "Atterrissage sur colis", startup = 0.16, active = 0.15, recovery = 0.28,
 			damage = 11, hitbox = box(4, 3, 0.5, -3), kbBase = 25, kbGrowth = 55, kbAngle = -80, selfVelocity = Vector2.new(0, -60),
-			windup = { Root = { -6, 0, 0 }, Waist = { -18, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 120, 0, 45 }, RE = { 30, 0, 0 }, LS = { 120, 0, -45 }, LE = { 30, 0, 0 }, RH = { 105, 0, 0 }, RK = { -135, 0, 0 }, LH = { 105, 0, 0 }, LK = { -135, 0, 0 } },
-			strike = { Root = { 4, 0, 0 }, Waist = { 8, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 160, 0, 40 }, RE = { 10, 0, 0 }, LS = { 160, 0, -40 }, LE = { 10, 0, 0 }, RH = { -4, 0, 4 }, RK = { 0, 0, 0 }, RA = { -10, 0, 0 }, LH = { -4, 0, -4 }, LK = { 0, 0, 0 }, LA = { -10, 0, 0 } },
-			follow = { Root = { 4, 0, 0 }, Waist = { 10, 0, 0 }, Neck = { -25, 0, 0 }, RS = { 170, 0, 50 }, RE = { 10, 0, 0 }, LS = { 170, 0, -50 }, LE = { 10, 0, 0 }, RH = { -4, 0, 6 }, RK = { -5, 0, 0 }, RA = { -10, 0, 0 }, LH = { -4, 0, -6 }, LK = { -5, 0, 0 }, LA = { -10, 0, 0 } },
+			windup = { Root = { -6, 0, 0 }, Waist = { -18, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 40, 0, 30 }, RE = { 70, 0, 0 }, RW = { 0, 0, 90 }, LS = { 40, 0, -30 }, LE = { 70, 0, 0 }, RH = { 105, 0, 0 }, RK = { -135, 0, 0 }, LH = { 105, 0, 0 }, LK = { -135, 0, 0 } },
+			strike = { Root = { 4, 0, 0 }, Waist = { 8, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 70, 0, 20 }, RE = { 20, 0, 0 }, RW = { 0, 0, 90 }, LS = { 70, 0, -20 }, LE = { 20, 0, 0 }, RH = { -4, 0, 4 }, RK = { 0, 0, 0 }, RA = { -10, 0, 0 }, LH = { -4, 0, -4 }, LK = { 0, 0, 0 }, LA = { -10, 0, 0 } },
+			follow = { Root = { 4, 0, 0 }, Waist = { 10, 0, 0 }, Neck = { -25, 0, 0 }, RS = { 65, 0, 22 }, RE = { 25, 0, 0 }, RW = { 0, 0, 90 }, LS = { 65, 0, -22 }, LE = { 25, 0, 0 }, RH = { -4, 0, 6 }, RK = { -5, 0, 0 }, RA = { -10, 0, 0 }, LH = { -4, 0, -6 }, LK = { -5, 0, 0 }, LA = { -10, 0, 0 } },
 			trail = "bothFeet", text = "COLIS ÉCRASÉ !", hitText = "CRONCH !",
 		},
 

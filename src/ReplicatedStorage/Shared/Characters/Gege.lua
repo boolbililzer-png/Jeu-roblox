@@ -368,7 +368,7 @@ local data = {
 		-- J J K : Balayette du pochtron, accroupi il tourne sur lui-même jambe tendue au ras du sol (fait décoller)
 		PPK_combo = {
 			label = "Balayette du pochtron", startup = 0.1, active = 0.14, recovery = 0.3,
-			damage = 10, hitbox = box(7, 3.5, 1.5, -0.8), kbBase = 30, kbGrowth = 55, kbAngle = 80,
+			damage = 10, hitbox = box(7, 3.5, 2.5, -0.8), kbBase = 30, kbGrowth = 55, kbAngle = 80,
 			windup = { Root = { -6, -20, 0, 0, -1.0, 0 }, Waist = { -18, -10, 0 }, RS = { 30, 0, 50 }, RE = { 30, 0, 0 }, LS = { 40, 0, -50 }, LE = { 30, 0, 0 } },
 			strike = { Root = { -10, 0, 0, 0, -1.25, 0 }, Waist = { -20, 0, 0 }, RS = { 10, 0, 60 }, RE = { 20, 0, 0 }, LS = { 20, 0, -60 }, LE = { 20, 0, 0 }, RH = { 75, 0, 15 }, RK = { -5, 0, 0 }, RA = { -20, 0, 0 } },
 			follow = { Root = { -10, 0, 0, 0, -1.2, 0 }, Waist = { -18, 0, 0 }, RS = { 15, 0, 62 }, RE = { 20, 0, 0 }, LS = { 25, 0, -62 }, LE = { 20, 0, 0 }, RH = { 72, 0, 18 }, RK = { -8, 0, 0 }, RA = { -20, 0, 0 } },
@@ -484,7 +484,7 @@ local data = {
 		},
 		-- J J J K : Savate de fin de tournée, il titube en moulinant des bras puis lance un grand coup de pied haut
 		PPPK_combo = {
-			label = "Savate de fin de tournée", startup = 0.18, active = 0.12, recovery = 0.35,
+			label = "Savate de fin de tournée", startup = 0.1, active = 0.12, recovery = 0.35,
 			damage = 11, hitbox = box(5, 3.5, 3, 0.5), kbBase = 34, kbGrowth = 85, kbAngle = 42, selfVelocity = Vector2.new(15, 0),
 			windup = { Root = { -12, -20, 8, 0, -0.35, 0.2 }, Waist = { -10, -15, 0 }, Neck = { 10, 0, 0 }, RS = { 120, 0, 60 }, RE = { 30, 0, 0 }, LS = { 30, 0, -70 }, LE = { 40, 0, 0 }, RH = { 95, 0, 0 }, RK = { -130, 0, 0 }, RA = { -20, 0, 0 } },
 			strike = { Root = { 24, 10, -6, 0, -0.05, -0.3 }, Waist = { 14, 5, 0 }, Neck = { -10, 0, 0 }, RS = { -30, 0, 75 }, RE = { 10, 0, 0 }, LS = { 70, 0, -80 }, LE = { 10, 0, 0 }, RH = { 105, 0, 0 }, RK = { -4, 0, 0 }, RA = { 15, 0, 0 } },
@@ -494,7 +494,7 @@ local data = {
 		-- ↑ J J : Gros hoquet, accroupi il gonfle… et un hoquet énorme le fait décoller, bras au ciel
 		P_up2 = {
 			label = "Gros hoquet", startup = 0.1, active = 0.12, recovery = 0.25,
-			damage = 8, hitbox = box(5, 6, 1, 4), kbBase = 30, kbGrowth = 40, kbAngle = 88, selfVelocity = Vector2.new(0, 40),
+			damage = 8, hitbox = box(5.5, 6, 2.5, 3.5), kbBase = 30, kbGrowth = 40, kbAngle = 88, selfVelocity = Vector2.new(0, 40),
 			windup = { Root = { -14, 0, 0, 0, -1.0, 0 }, Waist = { -30, 0, 0 }, Neck = { -25, 0, 0 }, RS = { 10, 0, 20 }, RE = { 100, 0, 0 }, LS = { 15, 0, -20 }, LE = { 100, 0, 0 } },
 			strike = { Root = { 10, 0, 0, 0, 0.6, 0 }, Waist = { 24, 0, 0 }, Neck = { 38, 0, 0 }, RS = { 172, 0, 25 }, RE = { 5, 0, 0 }, LS = { 168, 0, -25 }, LE = { 5, 0, 0 }, RH = { -10, 0, 0 }, RK = { -40, 0, 0 }, LH = { 10, 0, 0 }, LK = { -60, 0, 0 } },
 			follow = { Root = { 14, 0, 0, 0, 0.7, 0 }, Waist = { 28, 0, 0 }, Neck = { 44, 0, 0 }, RS = { 178, 0, 32 }, RE = { 10, 0, 0 }, LS = { 175, 0, -32 }, LE = { 10, 0, 0 }, RH = { -15, 0, 0 }, RK = { -50, 0, 0 }, LH = { 15, 0, 0 }, LK = { -70, 0, 0 } },

@@ -153,7 +153,7 @@ local data = {
 		-- Parapluie (anti-air) : elle ouvre son parapluie d'un coup sec au-dessus de sa tête
 		P_up = {
 			label = "Parapluie", startup = 0.1, active = 0.14, recovery = 0.22,
-			damage = 7, hitbox = box(5, 5, 1, 3.5), kbBase = 26, kbGrowth = 32, kbAngle = 85,
+			damage = 7, hitbox = box(5.5, 5, 2.5, 3), kbBase = 26, kbGrowth = 32, kbAngle = 85,
 			windup = { Root = { -8, 0, 0, 0, -0.45, 0 }, Waist = { -20, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 30, 0, 15 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -10 }, LE = { 40, 0, 0 } },
 			strike = { Root = { 2, 0, 0, 0, 0.1, 0 }, Waist = { 6, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 172, 0, 8 }, RE = { 5, 0, 0 }, RW = { 0, 0, 0 }, LS = { 15, 0, -20 }, LE = { 35, 0, 0 }, FR = { 0, 0, 0, 0, 0.15, 0 }, FL = { 0, 0, 0, 0, 0.15, 0 } },
 			follow = { Root = { 4, 8, 0, 0, 0.15, 0 }, Waist = { 8, 6, 0 }, Neck = { 34, 0, 0 }, RS = { 178, 0, 12 }, RE = { 8, 0, 0 }, RW = { -10, 0, 0 }, LS = { 15, 0, -22 }, LE = { 35, 0, 0 }, FR = { 0, 0, 0, 0, 0.2, 0 }, FL = { 0, 0, 0, 0, 0.2, 0 } },

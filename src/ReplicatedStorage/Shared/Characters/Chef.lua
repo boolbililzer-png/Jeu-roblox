@@ -138,7 +138,7 @@ local data = {
 		-- Couvercle anti-air : il brandit un couvercle au-dessus de la toque comme un bouclier et le relève d'un coup sec
 		P_up = {
 			label = "Couvercle", startup = 0.08, active = 0.12, recovery = 0.2,
-			damage = 7, hitbox = box(5, 4, 1, 3.8), kbBase = 26, kbGrowth = 32, kbAngle = 86,
+			damage = 7, hitbox = box(5.5, 5, 2.5, 3), kbBase = 26, kbGrowth = 32, kbAngle = 86,
 			windup = { Root = { -6, 0, 0, 0, -0.5, 0 }, Waist = { -10, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 60, 0, 30 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -30 }, LE = { 60, 0, 0 } },
 			strike = { Root = { 6, 0, 0, 0, 0.25, 0 }, Waist = { 14, 0, 0 }, Neck = { 22, 0, 0 }, RS = { 170, 0, 10 }, RE = { 20, 0, 0 }, RW = { 90, 0, 0 }, LS = { 20, 0, -45 }, LE = { 70, 0, 0 }, FR = { 0, 0, 0, 0, 0.25, 0 }, FL = { 0, 0, 0, 0, 0.25, 0 } },
 			follow = { Root = { 8, 0, 0, 0, 0.3, 0 }, Waist = { 16, 0, 0 }, Neck = { 26, 0, 0 }, RS = { 178, 0, 8 }, RE = { 15, 0, 0 }, RW = { 90, 0, 0 }, LS = { 15, 0, -48 }, LE = { 75, 0, 0 }, FR = { 0, 0, 0, 0, 0.3, 0 }, FL = { 0, 0, 0, 0, 0.3, 0 } },
@@ -217,6 +217,15 @@ local data = {
 			strike = { Root = { 6, 5, 0, 0, 0.35, -0.1 }, Waist = { 16, 5, 0 }, Neck = { 30, 0, 0 }, RS = { 150, 0, 15 }, RE = { 10, 0, 0 }, RW = { -90, 0, 0 }, LS = { 30, 0, -60 }, LE = { 40, 0, 0 }, FR = { 0, 0, 0, 0, 0.3, 0 }, FL = { 0, 0, 0, 0, 0.3, 0 } },
 			follow = { Root = { 8, 8, 0, 0, 0.4, -0.12 }, Waist = { 20, 8, 0 }, Neck = { 36, 0, 0 }, RS = { 172, 0, 10 }, RE = { 10, 0, 0 }, RW = { -60, 0, 0 }, LS = { 25, 0, -65 }, LE = { 40, 0, 0 }, FR = { 0, 0, 0, 0, 0.35, 0 }, FL = { 0, 0, 0, 0, 0.35, 0 } },
 			trail = "prop", text = "HOP LA CRÊPE !", hitText = "FLIP !",
+		},
+		-- Petit retourné (dans un enchaînement) : version éclair du retourné de crêpe, poêle glissée sous l'adversaire et coup de poignet qui l'envoie au plafond
+		K_flip = {
+			label = "Petit retourné", startup = 0.09, active = 0.12, recovery = 0.26,
+			damage = 9, hitbox = box(5.5, 5, 2.5, 2.5), kbBase = 30, kbGrowth = 55, kbAngle = 88,
+			windup = { Root = { -10, -10, 0, 0, -0.6, 0 }, Waist = { -20, -10, 0 }, Neck = { 10, 0, 0 }, RS = { 20, 0, 20 }, RE = { 20, 0, 0 }, RW = { -80, 0, 0 }, LS = { 40, 0, -40 }, LE = { 60, 0, 0 } },
+			strike = { Root = { 6, 5, 0, 0, 0.25, -0.1 }, Waist = { 16, 5, 0 }, Neck = { 30, 0, 0 }, RS = { 150, 0, 15 }, RE = { 10, 0, 0 }, RW = { -90, 0, 0 }, LS = { 30, 0, -60 }, LE = { 40, 0, 0 }, FR = { 0, 0, 0, 0, 0.2, 0 }, FL = { 0, 0, 0, 0, 0.2, 0 } },
+			follow = { Root = { 8, 8, 0, 0, 0.3, -0.12 }, Waist = { 20, 8, 0 }, Neck = { 36, 0, 0 }, RS = { 172, 0, 10 }, RE = { 10, 0, 0 }, RW = { -60, 0, 0 }, LS = { 25, 0, -65 }, LE = { 40, 0, 0 }, FR = { 0, 0, 0, 0, 0.25, 0 }, FL = { 0, 0, 0, 0, 0.25, 0 } },
+			trail = "prop", fx = { { "toss", shape = "flat", color = CREPE, size = 1, count = 1, speed = 10, lift = 30 } }, text = "HOP !", hitText = "FLIP !",
 		},
 		-- Coup de toque : en l'air, il rentre le menton et fonce toque en avant comme un bélier
 		K_air = {
@@ -368,13 +377,13 @@ local data = {
 			follow = { Root = { 8, -35, 0 }, Waist = { -6, -40, 0 }, Neck = { 0, 26, 0 }, RS = { 15, 0, 55 }, RE = { 60, 0, 0 }, LS = { 85, 0, 45 }, LE = { 10, 0, 0 }, RH = { 35, 0, 0 }, RK = { -65, 0, 0 }, LH = { 75, 0, 0 }, LK = { -90, 0, 0 } },
 			trail = "leftHand", hitText = "VLOUF !",
 		},
-		-- ↑ K en l'air : Ciseau de commis, salto arrière, les sabots passent au-dessus de la toque
+		-- ↑ K en l'air : Ciseau de commis, salto arrière en grand écart, bras ouverts façon « voilà », les sabots se croisent au-dessus de la toque
 		K_air_up = {
 			label = "Ciseau de commis", startup = 0.14, active = 0.2, recovery = 0.25,
 			damage = 10, hitbox = box(4, 5, 0.5, 3.5), kbBase = 30, kbGrowth = 65, kbAngle = 85,
 			windup = { Root = { -10, 0, 0 }, Waist = { -18, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 40, 0, 55 }, RE = { 40, 0, 0 }, LS = { 40, 0, -55 }, LE = { 40, 0, 0 }, RH = { 70, 0, 0 }, RK = { -120, 0, 0 }, LH = { 100, 0, 0 }, LK = { -130, 0, 0 } },
-			strike = { Root = { 30, 0, 0 }, Waist = { 10, 0, 0 }, Neck = { 20, 0, 0 }, RS = { -40, 0, 60 }, RE = { 20, 0, 0 }, LS = { -40, 0, -60 }, LE = { 20, 0, 0 }, RH = { 150, 0, 0 }, RK = { -5, 0, 0 }, RA = { 20, 0, 0 }, LH = { 40, 0, 0 }, LK = { -100, 0, 0 } },
-			follow = { Root = { 30, 0, 0 }, Waist = { 10, 0, 0 }, Neck = { 20, 0, 0 }, RS = { -45, 0, 65 }, RE = { 20, 0, 0 }, LS = { -45, 0, -65 }, LE = { 20, 0, 0 }, RH = { 100, 0, 0 }, RK = { -50, 0, 0 }, LH = { 150, 0, 0 }, LK = { -5, 0, 0 }, LA = { 20, 0, 0 } },
+			strike = { Root = { 30, 0, 0 }, Waist = { 10, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 100, 0, 80 }, RE = { 10, 0, 0 }, LS = { 100, 0, -80 }, LE = { 10, 0, 0 }, RH = { 150, 0, 0 }, RK = { -5, 0, 0 }, RA = { 20, 0, 0 }, LH = { -35, 0, 0 }, LK = { -10, 0, 0 } },
+			follow = { Root = { 30, 0, 0 }, Waist = { 10, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 105, 0, 85 }, RE = { 10, 0, 0 }, LS = { 105, 0, -85 }, LE = { 10, 0, 0 }, RH = { -35, 0, 0 }, RK = { -10, 0, 0 }, LH = { 150, 0, 0 }, LK = { -5, 0, 0 }, LA = { 20, 0, 0 } },
 			spin = { axis = "x", degrees = -360 }, trail = "bothFeet", hitText = "CLAC-CLAC !",
 		},
 		-- ↓ K en l'air : Rouleau-pilon, rouleau levé à deux mains au-dessus de la toque puis abattu (smash vers le sol)
@@ -781,27 +790,28 @@ end
 
 local LINKS = {
 	-- louche, fouet, poêle sur la tête
-	P_neutral = { P = "P_combo2", K = "PK_combo", up_K = "K_up", S = "S_finish_crepes" },
+	P_neutral = { P = "P_combo2", K = "PK_combo", up_K = "K_flip", S = "S_finish_crepes" },
 	P_combo2 = { P = "P_combo3", K = "K_combo2", S = "S_finish_flambe" },
 	P_combo3 = { K = "K_combo3", S = "S_finish_flambe" },
 	PK_combo = { P = "KP_combo", K = "K_combo3", S = "S_finish_crepes" },
 	-- sabot, revers de rouleau, sabot sauté
 	K_neutral = { K = "K_combo2", P = "KP_combo", S = "S_finish_flambe" },
-	K_combo2 = { K = "K_combo3", P = "P_combo3", up_K = "K_up", S = "S_finish_flambe" },
+	K_combo2 = { K = "K_combo3", P = "P_combo3", up_K = "K_flip", S = "S_finish_flambe" },
 	K_combo3 = { K = "K_air_side", P = "P_air_side", S = "S_air" }, -- il décolle : la suite se joue en l'air
 	KP_combo = { P = "P_combo3", K = "K_combo3", S = "S_finish_crepes" },
 	-- avec une flèche : → P P P (poêle, revers, gong), ↓ P P P (tablier, croche-louche, sel), → K K K (rouleau, rouleau qui roule, pâte étalée)
 	P_side = { P = "P_side2", K = "K_combo2", S = "S_finish_flambe" },
 	P_side2 = { P = "P_side3", K = "K_side2", S = "S_finish_flambe" },
-	P_down = { P = "P_down2", K = "K_up", S = "S_finish_crepes" },
+	P_down = { P = "P_down2", K = "K_flip", S = "S_finish_crepes" },
 	P_down2 = { P = "P_down3", K = "K_combo2", S = "S_finish_crepes" },
-	P_up = { K = "K_up", P = "P_combo3", S = "S_finish_flambe" },
+	P_up = { K = "K_flip", P = "P_combo3", S = "S_finish_flambe" },
 	K_side = { K = "K_side2", P = "KP_combo", S = "S_finish_flambe" },
 	K_side2 = { K = "K_side3", P = "P_combo3", S = "S_finish_flambe" },
-	K_down = { P = "P_up", K = "K_up", S = "S_finish_crepes" },
+	K_down = { P = "P_up", K = "K_flip", S = "S_finish_crepes" },
 	K_up = { S = "S_finish_crepes" },
-	P_dash = { P = "P_combo3", K = "K_side", S = "S_finish_flambe" },
-	K_dash = { P = "P_up", K = "K_up", S = "S_finish_crepes" },
+	K_flip = { S = "S_finish_crepes" }, -- petit retourné (suite) : la crêpe finit en l'air, trois crêpes pour l'accompagner
+	P_dash = { P = "P_combo3", K = "K_side2", S = "S_finish_flambe" },
+	K_dash = { P = "P_up", K = "K_flip", S = "S_finish_crepes" },
 	-- en l'air ; les smashs ↓ sont des finitions sans suite
 	P_air = airAfterP(),
 	P_air_side = airAfterP(),
