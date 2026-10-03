@@ -58,11 +58,15 @@ ToServer.OnServerEvent:Connect(function(player: Player, action: any, data: any)
 	if type(action) ~= "string" then
 		return
 	end
-	local t = os.clock()
-	if (lastAction[player] or 0) > t - 0.02 and action ~= "attack" then
-		return
+	-- anti-spam uniquement sur l'esquive et la saisie (les attaques sont filtrées par le combat,
+	-- et les actions du salon arrivent souvent par deux dans la même frame)
+	if action == "dodge" or action == "grab" then
+		local t = os.clock()
+		if (lastAction[player] or 0) > t - 0.02 then
+			return
+		end
+		lastAction[player] = t
 	end
-	lastAction[player] = t
 	if LOBBY_ACTIONS[action] then
 		Match.onLobbyAction(player, action, data)
 	elseif FIGHT_ACTIONS[action] then

@@ -45,6 +45,8 @@ end
 local function publishLobby()
 	local parts = {}
 	for plr, s in selections do
+		plr:SetAttribute("Ready", s.ready)
+		plr:SetAttribute("Pick", s.key)
 		table.insert(parts, ("%s:%s:%s"):format(plr.DisplayName, s.key or "-", if s.ready then "1" else "0"))
 	end
 	state:SetAttribute("Lobby", table.concat(parts, ";"))
@@ -56,8 +58,15 @@ function Match.onLobbyAction(player: Player, action: string, data)
 		selections[player].key = data
 	elseif action == "ready" then
 		selections[player] = selections[player] or { ready = false }
+		local wantReady = data == true
+		if type(data) == "table" then
+			wantReady = data.ready == true
+			if type(data.key) == "string" and Fighters.get(data.key) then
+				selections[player].key = data.key
+			end
+		end
 		if selections[player].key then
-			selections[player].ready = data == true
+			selections[player].ready = wantReady
 		end
 	elseif action == "settings" and type(data) == "table" and phase == "Lobby" then
 		if type(data.bots) == "number" then

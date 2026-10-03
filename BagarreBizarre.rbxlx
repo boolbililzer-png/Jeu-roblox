@@ -11544,11 +11544,15 @@ ToServer.OnServerEvent:Connect(function(player: Player, action: any, data: any)
 	if type(action) ~= "string" then
 		return
 	end
-	local t = os.clock()
-	if (lastAction[player] or 0) > t - 0.02 and action ~= "attack" then
-		return
+	-- anti-spam uniquement sur l'esquive et la saisie (les attaques sont filtrées par le combat,
+	-- et les actions du salon arrivent souvent par deux dans la même frame)
+	if action == "dodge" or action == "grab" then
+		local t = os.clock()
+		if (lastAction[player] or 0) > t - 0.02 then
+			return
+		end
+		lastAction[player] = t
 	end
-	lastAction[player] = t
 	if LOBBY_ACTIONS[action] then
 		Match.onLobbyAction(player, action, data)
 	elseif FIGHT_ACTIONS[action] then
@@ -13347,6 +13351,8 @@ end
 local function publishLobby()
 	local parts = {}
 	for plr, s in selections do
+		plr:SetAttribute("Ready", s.ready)
+		plr:SetAttribute("Pick", s.key)
 		table.insert(parts, ("%s:%s:%s"):format(plr.DisplayName, s.key or "-", if s.ready then "1" else "0"))
 	end
 	state:SetAttribute("Lobby", table.concat(parts, ";"))
@@ -13358,8 +13364,15 @@ function Match.onLobbyAction(player: Player, action: string, data)
 		selections[player].key = data
 	elseif action == "ready" then
 		selections[player] = selections[player] or { ready = false }
+		local wantReady = data == true
+		if type(data) == "table" then
+			wantReady = data.ready == true
+			if type(data.key) == "string" and Fighters.get(data.key) then
+				selections[player].key = data.key
+			end
+		end
 		if selections[player].key then
-			selections[player].ready = data == true
+			selections[player].ready = wantReady
 		end
 	elseif action == "settings" and type(data) == "table" and phase == "Lobby" then
 		if type(data.bots) == "number" then
@@ -15303,9 +15316,9 @@ function Menu.start()
 		ToServer:FireServer("settings", { traps = not state:GetAttribute("Traps") })
 	end)
 	readyBtn.Activated:Connect(function()
-		ready = not ready
-		ToServer:FireServer("select", selected)
-		ToServer:FireServer("ready", ready)
+		-- on envoie le perso et l'état « prêt » dans un seul message
+		ready = not (player:GetAttribute("Ready") == true)
+		ToServer:FireServer("ready", { key = selected, ready = ready })
 	end)
 
 	lobbyLbl = text(root, { Text = "", TextSize = 14, Position = UDim2.fromScale(0.02, 0.86), Size = UDim2.fromScale(0.44, 0.12), TextColor3 = Color3.fromRGB(200, 202, 240) })
@@ -15329,7 +15342,8 @@ function Menu.start()
 		end
 		botsLbl.Text = tostring(state:GetAttribute("BotsToFill") or 1)
 		trapsBtn.Text = if state:GetAttribute("Traps") then "Pièges : ON" else "Pièges : OFF"
-		readyBtn.Text = if ready then "EN ATTENTE…" else "PRÊT !"
+		ready = player:GetAttribute("Ready") == true -- état confirmé par le serveur
+		readyBtn.Text = if ready then "EN ATTENTE… (annuler)" else "PRÊT !"
 		readyBtn.BackgroundColor3 = if ready then Color3.fromRGB(16, 185, 129) else AMBER
 		local lines = {}
 		for entry in string.gmatch(state:GetAttribute("Lobby") or "", "[^;]+") do

@@ -274,9 +274,9 @@ function Menu.start()
 		ToServer:FireServer("settings", { traps = not state:GetAttribute("Traps") })
 	end)
 	readyBtn.Activated:Connect(function()
-		ready = not ready
-		ToServer:FireServer("select", selected)
-		ToServer:FireServer("ready", ready)
+		-- on envoie le perso et l'état « prêt » dans un seul message
+		ready = not (player:GetAttribute("Ready") == true)
+		ToServer:FireServer("ready", { key = selected, ready = ready })
 	end)
 
 	lobbyLbl = text(root, { Text = "", TextSize = 14, Position = UDim2.fromScale(0.02, 0.86), Size = UDim2.fromScale(0.44, 0.12), TextColor3 = Color3.fromRGB(200, 202, 240) })
@@ -300,7 +300,8 @@ function Menu.start()
 		end
 		botsLbl.Text = tostring(state:GetAttribute("BotsToFill") or 1)
 		trapsBtn.Text = if state:GetAttribute("Traps") then "Pièges : ON" else "Pièges : OFF"
-		readyBtn.Text = if ready then "EN ATTENTE…" else "PRÊT !"
+		ready = player:GetAttribute("Ready") == true -- état confirmé par le serveur
+		readyBtn.Text = if ready then "EN ATTENTE… (annuler)" else "PRÊT !"
 		readyBtn.BackgroundColor3 = if ready then Color3.fromRGB(16, 185, 129) else AMBER
 		local lines = {}
 		for entry in string.gmatch(state:GetAttribute("Lobby") or "", "[^;]+") do
