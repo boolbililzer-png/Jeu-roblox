@@ -608,7 +608,8 @@ local data = {
 	},
 
 	-- Mécanique : paperasse. Chaque touche colle un formulaire ; au 3e, l'adversaire est « en attente » 2 s
-	passive = { kind = "forms", name = "Paperasse", icon = "📋", max = 3, duration = 2 },
+	-- icons : annonce du prochain résultat du Cerfa 12-B (variantes, affiché par le HUD comme pour Gaston)
+	passive = { kind = "forms", name = "Paperasse", icon = "📋", max = 3, duration = 2, icons = { "✍️", "📑", "❌" } },
 
 	-- Recharge ⚡ : il tamponne une pile de formulaires à la chaîne (CHTONK CHTONK) puis sirote son mug
 	charge = {

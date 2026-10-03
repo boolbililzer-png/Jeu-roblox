@@ -234,7 +234,9 @@ function Mechanics.onHit(attacker, target, move, damage, direction)
 			end
 			lastLanded[attacker] = now
 			Mechanics.updateSpeed(attacker)
-		elseif kind == "forms" and not move.noForm then
+		elseif kind == "forms" and not move.noForm and os.clock() - (target:GetAttribute("FormAt") or -10) >= 0.4 then
+			-- un formulaire par coup (un coup qui touche 3 fois n'en colle qu'un)
+			target:SetAttribute("FormAt", os.clock())
 			local forms = (target:GetAttribute("Forms") or 0) + 1
 			if forms >= p.max then
 				target:SetAttribute("Forms", 0)
