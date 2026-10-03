@@ -536,7 +536,9 @@ local function launchProjectile(attacker, move, angleDegrees, multiplier, origin
 		end
 		if touched and not lingering then
 			hitsLeft -= 1
-			if spec.pierce or hitsLeft > 0 then
+			-- un projectile perforant traverse : chaque cible n'est touchée qu'une fois (sinon, avec la tête
+			-- chercheuse, il refrapperait en boucle) ; seul un projectile à plusieurs touches (hits = n) revient
+			if not spec.pierce and hitsLeft > 0 then
 				-- encore des touches : on oublie les victimes après un court instant
 				task.delay(0.18, function()
 					for model in pairs(alreadyHit) do

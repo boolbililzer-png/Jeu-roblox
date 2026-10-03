@@ -4,6 +4,8 @@
 --
 -- Même format que Gege.lua (voir l'en-tête de ce fichier et docs/fiche-perso.md).
 -- Garde de sumo : jambes écartées (FR / FL décalés vers l'extérieur), bassin bas, paumes ouvertes.
+-- Signatures (L) et Supers (Y) « sûrs de toucher » : couloirs de 16 studs, projectiles qui visent l'adversaire,
+-- ↑L = envol en diagonale ; plus aucun coût (voir docs/fiche-perso.md).
 
 local function box(width, height, forward, up)
 	return { size = Vector3.new(width, height, 6), offset = Vector2.new(forward, up) }
@@ -459,10 +461,10 @@ local data = {
 			fx = { { "ring", color = JELLY, radius = 8, at = "front" }, { "burst", color = JELLY, size = 4, at = "front" }, { "symbols", symbols = { "💪", "🍮" }, color = JELLY, count = 4, radius = 3 } },
 			text = "INÉBRANLABLE !", hitText = "BLOUMP !",
 		},
-		-- Roulade gluante (→→L) : il se met en boule et roule d'un bout à l'autre du couloir en laissant une traînée de gelée
+		-- Roulade gluante (→→L) : il se met en boule et roule d'un bout à l'autre du couloir (deux tours, deux touches) en laissant une traînée de gelée
 		S_dash = {
-			label = "Roulade gluante", startup = 0.15, active = 0.34, recovery = 0.45,
-			damage = 14, hitbox = box(14, 5, 7, 0.5), kbBase = 30, kbGrowth = 60, kbAngle = 40, selfVelocity = Vector2.new(60, 0), invuln = 0.12,
+			label = "Roulade gluante", startup = 0.15, active = 0.34, recovery = 0.45, hits = 2,
+			damage = 7, hitbox = box(14, 5, 7, 0.5), kbBase = 30, kbGrowth = 60, kbAngle = 40, selfVelocity = Vector2.new(60, 0), invuln = 0.12,
 			windup = { Root = { -16, 0, 0, 0, -0.7, 0 }, Waist = { -30, 0, 0 }, Neck = { -25, 0, 0 }, RS = { 70, 0, 20 }, RE = { 110, 0, 0 }, LS = { 70, 0, -20 }, LE = { 110, 0, 0 } },
 			strike = { Root = { -30, 0, 0, 0, -1.0, 0 }, Waist = { -40, 0, 0 }, Neck = { -30, 0, 0 }, RS = { 60, 0, -10 }, RE = { 120, 0, 0 }, LS = { 60, 0, 10 }, LE = { 120, 0, 0 }, RH = { 120, 0, 5 }, RK = { -140, 0, 0 }, LH = { 120, 0, -5 }, LK = { -140, 0, 0 } },
 			follow = { Root = { -30, 0, 0, 0, -1.0, 0 }, Waist = { -40, 0, 0 }, Neck = { -30, 0, 0 }, RS = { 60, 0, -10 }, RE = { 120, 0, 0 }, LS = { 60, 0, 10 }, LE = { 120, 0, 0 }, RH = { 120, 0, 5 }, RK = { -140, 0, 0 }, LH = { 120, 0, -5 }, LK = { -140, 0, 0 } },

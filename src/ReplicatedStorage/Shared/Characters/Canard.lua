@@ -3,7 +3,9 @@
 -- Pistolet à eau (la bouée est toujours autour de sa taille, le pistolet n'apparaît qu'une fois la caisse ouverte).
 --
 -- Mécanique « float » (Flottaison) : triple saut (2 sauts en l'air), plané en tenant SAUT, et jauge de Pression
--- d'eau 💧 qui remonte toute seule : ses tirs d'eau (meterCost) la vident.
+-- d'eau 💧 qui remonte toute seule (sans limite : elle ne bloque plus aucun tir).
+-- Signatures (L) et Supers (Y) « sûrs de toucher » : couloirs de 16 studs, projectiles qui visent l'adversaire,
+-- ↑L = envol en diagonale très puissant (il vole : flying = true), voir docs/fiche-perso.md.
 -- Format des coups, poses et effets : voir Gege.lua et docs/fiche-perso.md.
 
 local function box(width, height, forward, up)
@@ -169,9 +171,9 @@ local data = {
 			follow = { Root = { 10, 0, 0, 0, 0.55, 0 }, Waist = { 20, 0, 0 }, Neck = { 36, 0, 0 }, RS = { 178, 0, 26 }, RE = { 10, 0, 0 }, RW = { -10, 0, 0 }, LS = { 178, 0, -26 }, LE = { 10, 0, 0 }, FR = { 0, 0, 0, 0, 0.45, 0 }, FL = { 0, 0, 0, 0, 0.45, 0 } },
 			hitText = "POUÊT !",
 		},
-		-- Jet d'eau court en l'air : il vise devant lui et tire une giclée (vide un peu la Pression)
+		-- Jet d'eau court en l'air : il vise devant lui et tire une giclée
 		P_air = {
-			label = "Jet d'eau court", kind = "projectile", meterCost = 10, startup = 0.08, active = 0, recovery = 0.18,
+			label = "Jet d'eau court", kind = "projectile", startup = 0.08, active = 0, recovery = 0.18,
 			damage = 6, kbBase = 18, kbGrowth = 25, kbAngle = 20,
 			projectile = { speed = 85, angle = 0, gravity = 0, lifetime = 0.25, size = 1.4, color = WATER },
 			windup = { Root = { 6, -10, 0 }, Waist = { 6, -10, 0 }, RS = { 75, 0, 15 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -40 }, LE = { 50, 0, 0 }, RH = { 60, 0, 0 }, RK = { -90, 0, 0 }, LH = { 40, 0, 0 }, LK = { -80, 0, 0 } },

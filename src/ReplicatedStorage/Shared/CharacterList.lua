@@ -59,15 +59,23 @@ local function widenSpecial(move, key, scale, flying)
 			move.lane = length
 		end
 	end
-	if move.projectile then
-		local projectile = table.clone(move.projectile)
-		if projectile.lifetime then
-			projectile.lifetime *= Config.S_PROJECTILE_RANGE
+	local function aimProjectile(holder)
+		if holder.projectile and not holder.projectile._aimedDone then
+			local projectile = table.clone(holder.projectile)
+			if projectile.lifetime then
+				projectile.lifetime *= Config.S_PROJECTILE_RANGE
+			end
+			if projectile.aim ~= false then
+				projectile.aimed = true
+			end
+			projectile._aimedDone = true
+			holder.projectile = projectile
 		end
-		if projectile.aim ~= false then
-			projectile.aimed = true
-		end
-		move.projectile = projectile
+	end
+	aimProjectile(move)
+	-- variantes (Gaston) : chacune peut remplacer le projectile, elles visent aussi
+	for _, variant in ipairs(move.variants or {}) do
+		aimProjectile(variant)
 	end
 	-- plus de jauges : rien ne coûte plus rien
 	if Config.INFINITE_SPECIALS then

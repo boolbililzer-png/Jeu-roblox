@@ -29,7 +29,7 @@ local BLACK = Color3.fromRGB(20, 20, 25)
 local SNOWBALL = { shape = "ball", size = 2.2, color = SNOW, spin = 6, parts = {
 	{ "ball", Vector3.new(0.7, 0.7, 0.7), Vector3.new(0.6, 0.5, 0), ICE },
 } }
-local ICE_CUBE = { shape = "block", size = 0.9, color = ICE, material = "Ice", spin = 10 }
+local _ICE_CUBE = { shape = "block", size = 0.9, color = ICE, material = "Ice", spin = 10 }
 
 local data = {
 	id = "Bob",

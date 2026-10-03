@@ -6,6 +6,9 @@
 -- l'ordre des icônes du passif : 🕊️ colombe, 💥 confettis explosifs, 🐇 lapin agressif. Le prochain résultat est
 -- affiché au-dessus de lui (NextTrick) pour garder de la stratégie. L'animation reste la même, seul l'effet change.
 -- Format des coups, poses et effets : voir Gege.lua et docs/fiche-perso.md.
+-- Signatures (L) et Supers (Y) « sûrs de toucher » : couloirs de 16 studs, projectiles qui visent l'adversaire
+-- (les projectiles des variants portent eux-mêmes aimed = true), ↑L = envol en diagonale très puissant (il vole :
+-- flying = true) ; plus aucun coût.
 
 local function box(width, height, forward, up)
 	return { size = Vector3.new(width, height, 6), offset = Vector2.new(forward, up) }
@@ -378,153 +381,161 @@ local data = {
 		},
 
 		------------------------------------------------------------------ Spéciaux (S) : 3 résultats possibles (🕊️ / 💥 / 🐇)
-		-- Tour aléatoire : baguette pointée, formule magique… et il en sort colombe, confettis ou lapin (courte portée)
+		-- Tour aléatoire : baguette pointée, formule magique… et un rayon de magie traverse tout le couloir ; il en sort colombe, confettis ou lapin
 		S_neutral = {
-			label = "Tour aléatoire", energyCost = 25, startup = 0.16, active = 0.12, recovery = 0.3,
-			damage = 10, hitbox = box(4.5, 3.5, 3, 0.8), kbBase = 28, kbGrowth = 55, kbAngle = 40,
+			label = "Tour aléatoire", startup = 0.2, active = 0.16, recovery = 0.45,
+			damage = 13, hitbox = box(14, 6, 7, 1), kbBase = 28, kbGrowth = 55, kbAngle = 40,
 			variants = {
-				{ label = "Tour aléatoire : colombe !", damage = 8, kbBase = 22, kbGrowth = 35, kbAngle = 60, status = { name = "blinded", duration = 1.5 }, hitText = "ROUCOULE !" },
-				{ label = "Tour aléatoire : confettis explosifs !", damage = 14, kbBase = 34, kbGrowth = 75, kbAngle = 40, hitText = "BOUM !" },
-				{ label = "Tour aléatoire : lapin agressif !", damage = 4, hits = 3, kbBase = 22, kbGrowth = 40, kbAngle = 30, hitText = "CROC CROC CROC !" },
+				{ label = "Tour aléatoire : colombe !", damage = 12, kbBase = 22, kbGrowth = 35, kbAngle = 60, status = { name = "blinded", duration = 1.5 }, hitText = "ROUCOULE !" },
+				{ label = "Tour aléatoire : confettis explosifs !", damage = 17, kbBase = 34, kbGrowth = 75, kbAngle = 40, hitText = "BOUM !" },
+				{ label = "Tour aléatoire : lapin agressif !", damage = 5, hits = 3, kbBase = 22, kbGrowth = 40, kbAngle = 30, hitText = "CROC CROC CROC !" },
 			},
 			windup = { Root = { 4, -14, 0, 0, -0.15, 0.1 }, Waist = { 10, -16, 0 }, Neck = { 14, 12, 0 }, RS = { 160, 0, 30 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 100, 0, -70 }, LE = { 20, 0, 0 } },
-			strike = { Root = { -8, 10, 0, 0, -0.25, -0.3 }, Waist = { -10, 12, 0 }, Neck = { -6, -8, 0 }, RS = { 95, 0, -5 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, -80 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
-			follow = { Root = { -8, 12, 0, 0, -0.25, -0.32 }, Waist = { -10, 14, 0 }, Neck = { -8, -10, 0 }, RS = { 98, 0, -8 }, RE = { 0, 0, 0 }, RW = { 10, 0, 0 }, LS = { 75, 0, -85 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.32 } },
-			hold = 0.1, shake = true, windupFx = { { "particles", tex = "spark", color = MAGIC, at = "hand", dir = "all", time = 0.2, speed = 5 } },
-			fx = { { "burst", color = MAGIC, size = 2.5 }, { "symbols", symbols = { "🕊️", "💥", "🐇" }, count = 3, radius = 3, at = "front" } },
+			strike = { Root = { -10, 10, 0, 0, -0.25, -0.35 }, Waist = { -12, 12, 0 }, Neck = { -6, -8, 0 }, RS = { 96, 0, -5 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, -80 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+			follow = { Root = { -10, 12, 0, 0, -0.25, -0.38 }, Waist = { -12, 14, 0 }, Neck = { -8, -10, 0 }, RS = { 100, 0, -8 }, RE = { 0, 0, 0 }, RW = { 10, 0, 0 }, LS = { 75, 0, -85 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+			hold = 0.1, shake = true, trail = "prop", windupFx = { { "particles", tex = "spark", color = MAGIC, at = "hand", dir = "all", time = 0.2, speed = 5 } },
+			fx = { { "beam", color = MAGIC, length = 14, width = 1.4, at = "hand" }, { "burst", color = MAGIC, size = 2.5 }, { "symbols", symbols = { "🕊️", "💥", "🐇" }, count = 3, radius = 3, at = "front" } },
 			text = "ABRACADABRA !", hitText = "TA-DA !",
 		},
-		-- Passe-passe (→S) : cape rabattue devant le visage, il se téléporte un peu plus loin ; qui est sur le chemin est sonné
+		-- Passe-passe (→L) : cape rabattue devant le visage, il se téléporte à l'autre bout du couloir ; tout ce qui est sur le chemin est sonné
 		S_side = {
-			label = "Passe-passe", energyCost = 25, startup = 0.12, active = 0.12, recovery = 0.3,
-			damage = 8, hitbox = box(9, 4, 4.5, 0.5), kbBase = 20, kbGrowth = 30, kbAngle = 35, teleport = 9, invuln = 0.25,
+			label = "Passe-passe", startup = 0.16, active = 0.14, recovery = 0.42,
+			damage = 13, hitbox = box(14, 6, 7, 1), kbBase = 22, kbGrowth = 32, kbAngle = 35, teleport = 12, invuln = 0.25,
 			variants = {
-				{ label = "Passe-passe : nuée de colombes", teleport = 9, status = { name = "stunned", duration = 0.8 }, hitText = "ROUCOULE !" },
-				{ label = "Passe-passe : sortie explosive", teleport = 9, damage = 12, kbBase = 30, kbGrowth = 60, hitText = "BOUM !" },
-				{ label = "Passe-passe : le lapin s'accroche", teleport = 5, damage = 6, status = { name = "rooted", duration = 1.2 }, hitText = "GRRR !" },
+				{ label = "Passe-passe : nuée de colombes", teleport = 12, damage = 12, status = { name = "stunned", duration = 0.8 }, hitText = "ROUCOULE !" },
+				{ label = "Passe-passe : sortie explosive", teleport = 12, damage = 16, kbBase = 30, kbGrowth = 60, hitText = "BOUM !" },
+				{ label = "Passe-passe : le lapin s'accroche", teleport = 6, damage = 12, status = { name = "rooted", duration = 1.2 }, hitText = "GRRR !" },
 			},
 			windup = { Root = { 4, 0, 0, 0, -0.2, 0.1 }, Waist = { 8, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 120, 0, -50 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 110, 0, 40 }, LE = { 100, 0, 0 } },
-			strike = { Root = { -14, 0, 0, 0, -0.35, -0.3 }, Waist = { -14, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 60, 0, 80 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -80 }, LE = { 10, 0, 0 } },
+			strike = { Root = { -16, 0, 0, 0, -0.35, -0.35 }, Waist = { -14, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 70, 0, 85 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, -85 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
 			follow = { Root = { 6, 0, 0, 0, -0.2, 0 }, Waist = { 10, 0, 0 }, Neck = { 15, 0, 0 }, RS = { 150, 0, 40 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -50 }, LE = { 30, 0, 0 } },
-			windupFx = { { "particles", tex = "smoke", color = SMOKE, at = "root", dir = "all", time = 0.2, speed = 6, size = 1.4 } },
-			fx = { { "burst", color = SMOKE, size = 3, at = "root" }, { "beam", color = MAGIC, length = 9, width = 0.6, at = "root" } }, text = "PASSE-PASSE !", hitText = "OÙ IL EST ?!",
+			trail = "body", windupFx = { { "particles", tex = "smoke", color = SMOKE, at = "root", dir = "all", time = 0.2, speed = 6, size = 1.4 } },
+			fx = { { "burst", color = SMOKE, size = 3, at = "root" }, { "beam", color = MAGIC, length = 14, width = 1.2, at = "root" }, { "burst", color = SMOKE, size = 3, at = "front" } }, text = "PASSE-PASSE !", hitText = "OÙ IL EST ?!",
 		},
-		-- Trappe (↓S) : coup de baguette au sol, une trappe s'ouvre devant lui ; qui marche dessus tombe… et ressort par le haut
+		-- Trappe (↓L) : coup de baguette au sol, une trappe s'ouvre sur toute la longueur du couloir ; qui est dessus tombe… et ressort par le haut
 		S_down = {
-			label = "Trappe", kind = "trap", energyCost = 25, startup = 0.18, active = 0.1, recovery = 0.32,
-			damage = 10, kbBase = 46, kbGrowth = 60, kbAngle = 90,
-			trap = { size = Vector3.new(4, 1, 6), offset = 4, lifetime = 9, max = 1, color = MAGIC,
+			label = "Trappe", kind = "trap", startup = 0.2, active = 0.12, recovery = 0.45,
+			damage = 13, kbBase = 46, kbGrowth = 60, kbAngle = 90,
+			trap = { size = Vector3.new(16, 1, 6), offset = 8, lifetime = 8, max = 1, color = MAGIC,
 				visual = { shape = "ball", size = 0.2, color = TUX, trail = false, parts = {
-					{ "block", Vector3.new(3.6, 0.15, 2.6), Vector3.new(0, -0.35, 0), Color3.fromRGB(10, 10, 15) },
-					{ "block", Vector3.new(4, 0.12, 0.3), Vector3.new(0, -0.3, 1.4), GOLD },
-					{ "block", Vector3.new(4, 0.12, 0.3), Vector3.new(0, -0.3, -1.4), GOLD },
-					{ "block", Vector3.new(1.8, 0.1, 2.6), Vector3.new(-1.2, 0.3, 0), Color3.fromRGB(120, 80, 50), "Wood" },
+					{ "block", Vector3.new(15, 0.15, 2.6), Vector3.new(0, -0.35, 0), Color3.fromRGB(10, 10, 15) },
+					{ "block", Vector3.new(15.6, 0.12, 0.3), Vector3.new(0, -0.3, 1.4), GOLD },
+					{ "block", Vector3.new(15.6, 0.12, 0.3), Vector3.new(0, -0.3, -1.4), GOLD },
+					{ "block", Vector3.new(0.3, 0.12, 2.8), Vector3.new(7.8, -0.3, 0), GOLD },
+					{ "block", Vector3.new(0.3, 0.12, 2.8), Vector3.new(-7.8, -0.3, 0), GOLD },
+					{ "block", Vector3.new(3, 0.1, 2.6), Vector3.new(-6, 0.3, 0), Color3.fromRGB(120, 80, 50), "Wood" },
+					{ "block", Vector3.new(3, 0.1, 2.6), Vector3.new(6, 0.3, 0), Color3.fromRGB(120, 80, 50), "Wood" },
 				} } },
 			variants = {
-				{ label = "Trappe aux colombes", damage = 8, status = { name = "blinded", duration = 1.5 }, hitText = "ROUCOULE !" },
-				{ label = "Trappe piégée", damage = 13, kbBase = 50, kbGrowth = 70, hitText = "KABOUM !" },
-				{ label = "Trappe du lapin", damage = 7, kbBase = 30, kbGrowth = 40, status = { name = "rooted", duration = 1.5 }, hitText = "GRRR !" },
+				{ label = "Trappe aux colombes", damage = 12, status = { name = "blinded", duration = 1.5 }, hitText = "ROUCOULE !" },
+				{ label = "Trappe piégée", damage = 16, kbBase = 50, kbGrowth = 70, hitText = "KABOUM !" },
+				{ label = "Trappe du lapin", damage = 12, kbBase = 30, kbGrowth = 40, status = { name = "rooted", duration = 1.5 }, hitText = "GRRR !" },
 			},
 			windup = { Root = { 6, 0, 0, 0, -0.1, 0.1 }, Waist = { 10, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 170, 0, 20 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -50 }, LE = { 30, 0, 0 } },
-			strike = { Root = { -14, 0, 0, 0, -0.5, -0.2 }, Waist = { -30, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 40, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -60 }, LE = { 30, 0, 0 } },
-			follow = { Root = { -16, 0, 0, 0, -0.55, -0.25 }, Waist = { -32, 0, 0 }, Neck = { -12, 0, 0 }, RS = { 30, 0, 10 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 25, 0, -62 }, LE = { 30, 0, 0 } },
-			fx = { { "ring", color = MAGIC, radius = 3, at = "front" } }, text = "SÉSAME…", hitText = "AAAAAH !",
+			strike = { Root = { -16, 0, 0, 0, -0.5, -0.25 }, Waist = { -30, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 40, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -60 }, LE = { 30, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.35 } },
+			follow = { Root = { -18, 0, 0, 0, -0.55, -0.3 }, Waist = { -32, 0, 0 }, Neck = { -12, 0, 0 }, RS = { 30, 0, 10 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 25, 0, -62 }, LE = { 30, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.35 } },
+			trail = "prop", fx = { { "ring", color = MAGIC, radius = 4, at = "front" }, { "beam", color = MAGIC, length = 14, width = 0.8, at = "hand" }, { "symbols", symbols = { "✨", "🎩" }, color = MAGIC, count = 4, radius = 3, at = "front" } },
+			text = "SÉSAME…", hitText = "AAAAAH !",
 		},
-		-- Lévitation ratée (remontée, gratuite) : le lapin sort du chapeau et le tire violemment vers le ciel par les oreilles
+		-- Envol du lapin (remontée) : le lapin jaillit du chapeau, l'attrape par le col et le tire en diagonale vers le ciel ; la cape claque et fauche tout sur le passage
 		S_up = {
-			label = "Lévitation ratée", energyCost = 0, startup = 0.06, active = 0.3, recovery = 0.3,
-			damage = 6, hitbox = box(5, 6, 0.5, 2), kbBase = 28, kbGrowth = 40, kbAngle = 82, selfVelocity = Vector2.new(8, 95),
+			label = "Envol du lapin", startup = 0.15, active = 0.32, recovery = 0.45,
+			damage = 17, hitbox = box(10, 11, 3, 4), kbBase = 32, kbGrowth = 56, kbAngle = 80, selfVelocity = Vector2.new(46, 88),
 			variants = {
-				{ label = "Lévitation : colombes porteuses", selfVelocity = Vector2.new(14, 90), damage = 5, status = { name = "blinded", duration = 1 } },
-				{ label = "Lévitation : décollage explosif", selfVelocity = Vector2.new(0, 102), damage = 8, kbAngle = 78 },
-				{ label = "Lévitation ratée : le lapin tire !", selfVelocity = Vector2.new(6, 98), damage = 6, kbBase = 32 },
+				{ label = "Envol du lapin : colombes porteuses", status = { name = "blinded", duration = 1 }, hitText = "ROUCOULE !" },
+				{ label = "Envol du lapin : décollage explosif", kbAngle = 78, kbGrowth = 64, hitText = "KABOUM !" },
+				{ label = "Envol du lapin : le lapin tire !", kbBase = 36, hitText = "ZWIIING !" },
 			},
-			windup = { Root = { 0, 0, 0, 0, -0.6, 0 }, Waist = { -10, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 40, 0, 50 }, RE = { 30, 0, 0 }, LS = { 170, 0, -10 }, LE = { 20, 0, 0 } },
-			strike = { Root = { 0, 0, 0, 0, 0.4, 0 }, Waist = { 6, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 120, 0, 60 }, RE = { 10, 0, 0 }, LS = { 178, 0, -5 }, LE = { 5, 0, 0 }, RH = { -10, 0, 8 }, RK = { -40, 0, 0 }, RA = { -30, 0, 0 }, LH = { 10, 0, -8 }, LK = { -60, 0, 0 }, LA = { -30, 0, 0 } },
-			follow = { Root = { 0, 0, 0, 0, 0.4, 0 }, Waist = { 8, 0, 0 }, Neck = { 34, 0, 0 }, RS = { 130, 0, 65 }, RE = { 10, 0, 0 }, LS = { 180, 0, -2 }, LE = { 5, 0, 0 }, RH = { -15, 0, 10 }, RK = { -50, 0, 0 }, RA = { -30, 0, 0 }, LH = { 15, 0, -10 }, LK = { -70, 0, 0 }, LA = { -30, 0, 0 } },
-			prop = "lapin", wobble = true, fx = { { "particles", tex = "spark", color = MAGIC, at = "feet", dir = "down", time = 0.3, speed = 10 } }, text = "AÏE, MES OREILLES… ENFIN, SES OREILLES !", hitText = "ZWIIING !",
+			windup = { Root = { 0, 0, 0, 0, -0.7, 0 }, Waist = { -12, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 40, 0, 50 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 170, 0, -10 }, LE = { 20, 0, 0 } },
+			strike = { Root = { -44, 0, 0, 0, 0.3, -0.1 }, Waist = { -4, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 150, 0, 24 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 176, 0, -8 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 }, RH = { -26, 0, 5 }, RK = { -34, 0, 0 }, RA = { -30, 0, 0 }, LH = { -32, 0, -5 }, LK = { -44, 0, 0 }, LA = { -30, 0, 0 } },
+			follow = { Root = { -48, 0, 0, 0, 0.35, -0.15 }, Waist = { -6, 0, 0 }, Neck = { 34, 0, 0 }, RS = { 156, 0, 28 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 180, 0, -6 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 }, RH = { -30, 0, 5 }, RK = { -40, 0, 0 }, RA = { -30, 0, 0 }, LH = { -36, 0, -5 }, LK = { -50, 0, 0 }, LA = { -30, 0, 0 } },
+			prop = "lapin", wobble = true, trail = "body", shake = true,
+			fx = { { "pillar", color = MAGIC, height = 12, width = 3, at = "root", time = 0.4 }, { "burst", color = SPARK, size = 4.5, at = "feet" }, { "ring", color = MAGIC, radius = 7, at = "feet" },
+				{ "particles", tex = "spark", color = MAGIC, at = "feet", dir = "down", time = 0.4, speed = 16, rate = 120, size = 0.4 }, { "symbols", symbols = { "🐇", "✨", "★" }, color = SPARK, count = 6, radius = 4, at = "above" }, { "shake", amount = 0.4 } },
+			text = "AÏE, MES OREILLES… ENFIN, SES OREILLES !", hitText = "ZWIIING !",
 		},
-		-- Abracadabra (S maintenu) : il agite la baguette en grands cercles en psalmodiant, puis la pique en avant : un des trois tours lui profite
+		-- Abracadabra (L maintenu) : il agite la baguette en grands cercles en psalmodiant, puis la pique en avant : un rayon de magie traverse le couloir et un des trois tours lui profite
 		-- (le moteur ne sait pas « garantir le prochain tour » : chaque résultat donne un bonus différent)
 		S_hold = {
-			label = "Abracadabra", energyCost = 30, startup = 0.3, active = 0.12, recovery = 0.4,
-			damage = 9, hitbox = box(5.5, 4, 3, 0.6), kbBase = 30, kbGrowth = 55, kbAngle = 35,
+			label = "Abracadabra", startup = 0.3, active = 0.16, recovery = 0.5,
+			damage = 13, hitbox = box(14, 6, 7, 1), kbBase = 30, kbGrowth = 55, kbAngle = 35,
 			selfEffect = { heal = 4 },
 			variants = {
-				{ label = "Abracadabra : colombe guérisseuse", selfEffect = { heal = 7 } },
-				{ label = "Abracadabra : feu d'artifice !", selfEffect = { buff = { "turbo", 4 } } },
-				{ label = "Abracadabra : lapin garde du corps", selfEffect = { armor = 2 } },
+				{ label = "Abracadabra : colombe guérisseuse", selfEffect = { heal = 7 }, hitText = "ROUCOULE !" },
+				{ label = "Abracadabra : feu d'artifice !", damage = 16, selfEffect = { buff = { "turbo", 4 } }, hitText = "BOUM !" },
+				{ label = "Abracadabra : lapin garde du corps", selfEffect = { armor = 2 }, hitText = "CROC !" },
 			},
 			windup = { Root = { 4, 0, 0, 0, -0.1, 0 }, Waist = { 8, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 160, 0, 40 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 120, 0, -60 }, LE = { 30, 0, 0 } },
-			strike = { Root = { -10, 14, 0, 0, -0.3, -0.3 }, Waist = { -12, 16, 0 }, Neck = { -6, -8, 0 }, RS = { 96, 0, -4 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -80 }, LE = { 20, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
-			follow = { Root = { -10, 16, 0, 0, -0.3, -0.32 }, Waist = { -12, 18, 0 }, Neck = { -8, -10, 0 }, RS = { 98, 0, -6 }, RE = { 0, 0, 0 }, RW = { 10, 0, 0 }, LS = { 62, 0, -82 }, LE = { 20, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.32 } },
+			strike = { Root = { -12, 14, 0, 0, -0.3, -0.35 }, Waist = { -14, 16, 0 }, Neck = { -6, -8, 0 }, RS = { 96, 0, -4 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -80 }, LE = { 20, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+			follow = { Root = { -12, 16, 0, 0, -0.3, -0.38 }, Waist = { -14, 18, 0 }, Neck = { -8, -10, 0 }, RS = { 98, 0, -6 }, RE = { 0, 0, 0 }, RW = { 10, 0, 0 }, LS = { 62, 0, -82 }, LE = { 20, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
 			hold = 0.3, shake = true, trail = "prop", windupFx = { { "symbols", symbols = { "✨", "★", "✦" }, color = MAGIC, count = 6, radius = 3, at = "above" } },
-			fx = { { "burst", color = SPARK, size = 3, at = "front" }, { "symbols", symbols = { "🕊️", "💥", "🐇" }, count = 3, radius = 2, at = "above" } }, text = "ABRACADABRAAA !", hitText = "BZZAP !",
+			fx = { { "beam", color = SPARK, length = 14, width = 1.6, at = "hand" }, { "burst", color = SPARK, size = 3, at = "front" }, { "symbols", symbols = { "🕊️", "💥", "🐇" }, count = 3, radius = 2, at = "above" } }, text = "ABRACADABRAAA !", hitText = "BZZAP !",
 		},
-		-- Téléportation (→→S) : il s'enroule dans la cape et disparaît… réussi, en l'air, ou raté (il réapparaît derrière) ; à l'arrivée la cape s'ouvre d'un grand coup
+		-- Téléportation (→→L) : il s'enroule dans la cape et disparaît… réussi, en l'air, ou raté (il réapparaît derrière) ; la cape s'ouvre d'un grand coup qui balaie tout le couloir
 		S_dash = {
-			label = "Téléportation", energyCost = 20, startup = 0.14, active = 0.12, recovery = 0.25,
-			damage = 9, hitbox = box(6, 4, 2.5, 0.5), kbBase = 30, kbGrowth = 55, kbAngle = 35,
+			label = "Téléportation", startup = 0.16, active = 0.14, recovery = 0.42,
+			damage = 14, hitbox = box(14, 6, 7, 1), kbBase = 30, kbGrowth = 55, kbAngle = 35,
 			teleport = 14, invuln = 0.25,
 			variants = {
-				{ label = "Téléportation réussie !", teleport = 14 },
-				{ label = "Téléportation… en l'air !", teleport = 9, teleportUp = 7 },
-				{ label = "Téléportation ratée !", teleport = -6 },
+				{ label = "Téléportation réussie !", teleport = 14, hitText = "SURPRISE !" },
+				{ label = "Téléportation… en l'air !", teleport = 9, teleportUp = 7, hitText = "OUPS !" },
+				{ label = "Téléportation ratée !", teleport = -6, damage = 16, hitText = "BOUM !" },
 			},
 			windup = { Root = { 0, -60, 0, 0, -0.2, 0 }, Waist = { 0, -20, 0 }, Neck = { -10, 0, 0 }, RS = { 100, 0, -70 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, 30 }, LE = { 110, 0, 0 } },
-			strike = { Root = { -8, 0, 0, 0, -0.2, -0.2 }, Waist = { -8, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 85, 0, 85 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 85, 0, -85 }, LE = { 0, 0, 0 } },
-			follow = { Root = { -10, 0, 0, 0, -0.2, -0.25 }, Waist = { -10, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 90, 0, 90 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, -90 }, LE = { 0, 0, 0 } },
+			strike = { Root = { -10, 0, 0, 0, -0.2, -0.25 }, Waist = { -10, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 88, 0, 85 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 88, 0, -85 }, LE = { 0, 0, 0 } },
+			follow = { Root = { -12, 0, 0, 0, -0.2, -0.3 }, Waist = { -12, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 92, 0, 90 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 92, 0, -90 }, LE = { 0, 0, 0 } },
 			spin = { axis = "y", degrees = 360 }, trail = "body", windupFx = { { "particles", tex = "smoke", color = SMOKE, at = "root", dir = "all", time = 0.25, speed = 6, size = 1.5 } },
-			fx = { { "burst", color = SMOKE, size = 4, at = "root" }, { "burst", color = MAGIC, size = 3, at = "front" } }, text = "ET HOP !", hitText = "SURPRISE !",
+			fx = { { "burst", color = SMOKE, size = 4, at = "root" }, { "ring", color = MAGIC, radius = 6, at = "front" }, { "burst", color = MAGIC, size = 3, at = "front" } }, text = "ET HOP !", hitText = "SURPRISE !",
 		},
-		-- Cartes lancées (ESQUIVE puis S, ex-←S) : il lance une grosse carte qui file au loin… et qui change en route
+		-- Cartes lancées (esquive puis L) : il lance une grosse carte qui vole droit vers la tête de l'adversaire… et qui change en route
 		S_dodge = {
-			label = "Cartes lancées", kind = "projectile", energyCost = 20, startup = 0.14, active = 0, recovery = 0.3,
-			damage = 9, kbBase = 22, kbGrowth = 45, kbAngle = 25,
-			projectile = { speed = 75, angle = 0, gravity = 0, lifetime = 0.6, size = 1.5, color = WHITE, visual = CARD },
+			label = "Cartes lancées", kind = "projectile", startup = 0.16, active = 0, recovery = 0.42,
+			damage = 13, kbBase = 22, kbGrowth = 45, kbAngle = 25,
+			projectile = { speed = 75, angle = 0, gravity = 0, lifetime = 0.6, size = 1.6, color = WHITE, visual = CARD },
 			variants = {
-				{ label = "Cartes lancées : la carte devient colombe", damage = 7, status = { name = "blinded", duration = 1.5 },
-					projectile = { speed = 55, angle = 0, gravity = 0, lifetime = 1, size = 1.5, color = WHITE, visual = DOVE, homing = 0.4 } },
-				{ label = "Cartes lancées : carte explosive", damage = 12, kbBase = 30, kbGrowth = 60,
-					projectile = { speed = 75, angle = 0, gravity = 0, lifetime = 0.6, size = 1.8, color = MAGIC, visual = CONFETTI_BOMB } },
-				{ label = "Cartes lancées : le lapin la rapporte", damage = 6, hits = 2,
-					projectile = { speed = 70, angle = 0, gravity = 0, lifetime = 1.1, size = 1.5, color = RABBIT, visual = CARD, returns = true, hits = 2 } },
+				{ label = "Cartes lancées : la carte devient colombe", damage = 12, status = { name = "blinded", duration = 1.5 }, hitText = "ROUCOULE !",
+					projectile = { speed = 55, angle = 0, gravity = 0, lifetime = 1.4, size = 1.6, color = WHITE, visual = DOVE, aimed = true, homing = 0.9 } },
+				{ label = "Cartes lancées : carte explosive", damage = 16, kbBase = 30, kbGrowth = 60, hitText = "BOUM !",
+					projectile = { speed = 75, angle = 0, gravity = 0, lifetime = 0.85, size = 1.9, color = MAGIC, visual = CONFETTI_BOMB, aimed = true } },
+				{ label = "Cartes lancées : le lapin la rapporte", damage = 7, hits = 2, hitText = "CROC !",
+					projectile = { speed = 70, angle = 0, gravity = 0, lifetime = 1.5, size = 1.6, color = RABBIT, visual = CARD, returns = true, hits = 2, aimed = true } },
 			},
 			windup = { Root = { 0, 30, 0, 0, -0.2, 0.15 }, Waist = { 2, 34, 0 }, Neck = { 0, -24, 0 }, RS = { 40, 0, 40 }, RE = { 60, 0, 0 }, LS = { 50, 0, 70 }, LE = { 130, 0, 0 }, LW = { 0, 0, 0 } },
-			strike = { Root = { -6, -22, 0, 0, -0.25, -0.25 }, Waist = { -6, -26, 0 }, Neck = { 0, 18, 0 }, RS = { 35, 0, 45 }, RE = { 50, 0, 0 }, LS = { 92, 0, -30 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 } },
-			follow = { Root = { -6, -28, 0, 0, -0.25, -0.3 }, Waist = { -6, -32, 0 }, Neck = { 0, 22, 0 }, RS = { 30, 0, 50 }, RE = { 50, 0, 0 }, LS = { 88, 0, -55 }, LE = { 5, 0, 0 }, LW = { -20, 0, 0 } },
-			prop = "cartes", text = "VOTRE CARTE ?", hitText = "TCHAK !",
+			strike = { Root = { -8, -22, 0, 0, -0.25, -0.3 }, Waist = { -8, -26, 0 }, Neck = { 0, 18, 0 }, RS = { 35, 0, 45 }, RE = { 50, 0, 0 }, LS = { 94, 0, -30 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+			follow = { Root = { -8, -28, 0, 0, -0.25, -0.35 }, Waist = { -8, -32, 0 }, Neck = { 0, 22, 0 }, RS = { 30, 0, 50 }, RE = { 50, 0, 0 }, LS = { 90, 0, -55 }, LE = { 5, 0, 0 }, LW = { -20, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+			prop = "cartes", trail = "leftHand", fx = { { "symbols", symbols = { "♠", "♥", "♣", "♦" }, color = WHITE, count = 4, radius = 2, at = "lhand" } }, text = "VOTRE CARTE ?", hitText = "TCHAK !",
 		},
-		-- Pluie de colombes (S en l'air) : il ouvre sa cape en grand, il en tombe quelque chose sur la zone devant lui
+		-- Pluie de colombes (L en l'air) : il ouvre sa cape en grand, et il en tombe quelque chose… droit sur la tête de l'adversaire
 		S_air = {
-			label = "Pluie de colombes", kind = "projectile", energyCost = 25, startup = 0.18, active = 0, recovery = 0.32,
-			damage = 4, kbBase = 18, kbGrowth = 25, kbAngle = -30,
-			projectile = { speed = 50, gravity = 0, lifetime = 1, size = 1.4, color = WHITE, visual = DOVE, rain = { count = 4, spread = 6, ahead = 8, height = 16 } },
+			label = "Pluie de colombes", kind = "projectile", startup = 0.2, active = 0, recovery = 0.45,
+			damage = 12, kbBase = 18, kbGrowth = 25, kbAngle = -30,
+			projectile = { speed = 50, gravity = 0, lifetime = 1, size = 1.6, color = WHITE, visual = DOVE, rain = { count = 4, spread = 4, ahead = 8, height = 16 } },
 			variants = {
-				{ label = "Pluie de colombes", damage = 3, status = { name = "blinded", duration = 1.5 } },
-				{ label = "Pluie de confettis explosifs", damage = 5, kbBase = 22, kbGrowth = 35,
-					projectile = { speed = 50, gravity = 0, lifetime = 1, size = 1.6, color = MAGIC, visual = CONFETTI_BOMB, rain = { count = 3, spread = 6, ahead = 8, height = 16 } } },
-				{ label = "Pluie de… un lapin ?!", damage = 12, kbBase = 28, kbGrowth = 55, kbAngle = -50,
-					projectile = { speed = 45, gravity = 0, lifetime = 1.1, size = 2.4, color = RABBIT, visual = BUNNY, rain = { count = 1, spread = 2, ahead = 8, height = 16 } } },
+				{ label = "Pluie de colombes", damage = 3, status = { name = "blinded", duration = 1.5 }, hitText = "ROUCOULE !",
+					projectile = { speed = 50, gravity = 0, lifetime = 1.4, size = 1.6, color = WHITE, visual = DOVE, aimed = true, rain = { count = 4, spread = 4, ahead = 8, height = 16 } } },
+				{ label = "Pluie de confettis explosifs", damage = 6, kbBase = 22, kbGrowth = 35, hitText = "BOUM !",
+					projectile = { speed = 50, gravity = 0, lifetime = 1.4, size = 1.8, color = MAGIC, visual = CONFETTI_BOMB, aimed = true, rain = { count = 3, spread = 3, ahead = 8, height = 16 } } },
+				{ label = "Pluie de… un lapin ?!", damage = 14, kbBase = 28, kbGrowth = 55, kbAngle = -50, hitText = "CROC !",
+					projectile = { speed = 45, gravity = 0, lifetime = 1.5, size = 2.6, color = RABBIT, visual = BUNNY, aimed = true, rain = { count = 1, spread = 1, ahead = 8, height = 16 } } },
 			},
 			windup = { Root = { 6, 0, 0 }, Waist = { 8, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 60, 0, -30 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, 30 }, LE = { 100, 0, 0 }, RH = { 50, 0, 0 }, RK = { -90, 0, 0 }, LH = { 40, 0, 0 }, LK = { -80, 0, 0 } },
 			strike = { Root = { -6, 0, 0 }, Waist = { -4, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 140, 0, 80 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 140, 0, -80 }, LE = { 10, 0, 0 }, RH = { 20, 0, 10 }, RK = { -40, 0, 0 }, LH = { 20, 0, -10 }, LK = { -40, 0, 0 } },
 			follow = { Root = { -8, 0, 0 }, Waist = { -6, 0, 0 }, Neck = { 22, 0, 0 }, RS = { 150, 0, 85 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, -85 }, LE = { 10, 0, 0 }, RH = { 15, 0, 12 }, RK = { -35, 0, 0 }, LH = { 15, 0, -12 }, LK = { -35, 0, 0 } },
-			hold = 0.15, fx = { { "symbols", symbols = { "🕊️", "✨" }, color = WHITE, count = 5, radius = 4, at = "above" } }, text = "ENVOLEZ-VOUS !", hitText = "ROUCOULE !",
+			hold = 0.15, fx = { { "symbols", symbols = { "🕊️", "✨" }, color = WHITE, count = 5, radius = 4, at = "above" }, { "burst", color = WHITE, size = 3, at = "above" } }, text = "ENVOLEZ-VOUS !", hitText = "ROUCOULE !",
 		},
-		-- Pluie de colombes (↓S en l'air, plongeon) : il pique vers le sol, cape grande ouverte, en lâchant des colombes
+		-- Piqué des colombes (↓L en l'air, plongeon) : il pique vers le sol, cape grande ouverte, et écrase tout ce qui est en dessous en lâchant des colombes
 		S_air_down = {
-			label = "Piqué des colombes", energyCost = 25, startup = 0.12, active = 0.35, recovery = 0.32,
-			damage = 11, hitbox = box(6, 4, 1, -1.5), kbBase = 25, kbGrowth = 55, kbAngle = -50, selfVelocity = Vector2.new(15, -75),
+			label = "Piqué des colombes", startup = 0.16, active = 0.36, recovery = 0.45,
+			damage = 14, hitbox = box(8, 5, 1, -2), kbBase = 26, kbGrowth = 56, kbAngle = -50, selfVelocity = Vector2.new(15, -80),
 			variants = {
-				{ label = "Piqué des colombes", damage = 9, status = { name = "blinded", duration = 2 }, hitText = "ROUCOULE !" },
-				{ label = "Piqué aux confettis", damage = 13, kbBase = 30, kbGrowth = 65, hitText = "BADABOUM !" },
-				{ label = "Piqué du lapin", damage = 10, status = { name = "stunned", duration = 0.6 }, hitText = "CROC !" },
+				{ label = "Piqué des colombes", damage = 12, status = { name = "blinded", duration = 2 }, hitText = "ROUCOULE !" },
+				{ label = "Piqué aux confettis", damage = 16, kbBase = 30, kbGrowth = 65, hitText = "BADABOUM !" },
+				{ label = "Piqué du lapin", damage = 13, status = { name = "stunned", duration = 0.6 }, hitText = "CROC !" },
 			},
 			windup = { Root = { 20, 0, 0 }, Waist = { 10, 0, 0 }, RS = { 150, 0, 40 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, -40 }, LE = { 10, 0, 0 }, RH = { 60, 0, 0 }, RK = { -90, 0, 0 }, LH = { 60, 0, 0 }, LK = { -90, 0, 0 } },
 			strike = { Root = { -65, 0, 0 }, Waist = { -8, 0, 0 }, Neck = { 25, 0, 0 }, RS = { 120, 0, 80 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 120, 0, -80 }, LE = { 0, 0, 0 }, RH = { -10, 0, 5 }, RK = { -15, 0, 0 }, RA = { -25, 0, 0 }, LH = { -10, 0, -5 }, LK = { -25, 0, 0 }, LA = { -25, 0, 0 } },
 			follow = { Root = { -70, 0, 0 }, Waist = { -10, 0, 0 }, Neck = { 28, 0, 0 }, RS = { 125, 0, 85 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 125, 0, -85 }, LE = { 0, 0, 0 }, RH = { -15, 0, 5 }, RK = { -25, 0, 0 }, RA = { -25, 0, 0 }, LH = { -5, 0, -5 }, LK = { -15, 0, 0 }, LA = { -25, 0, 0 } },
-			trail = "body", fx = { { "toss", shape = "ball", color = WHITE, count = 4, size = 0.8, speed = 16 }, { "burst", color = WHITE, size = 3, at = "feet" } }, text = "EN PIQUÉ !", hitText = "FLAP-FLAP !",
+			trail = "body", fx = { { "toss", shape = "ball", color = WHITE, count = 4, size = 0.8, speed = 16 }, { "burst", color = WHITE, size = 3.5, at = "feet" }, { "shake", amount = 0.3 } }, text = "EN PIQUÉ !", hitText = "FLAP-FLAP !",
 		},
 
 		------------------------------------------------------------------ Suites d'enchaînement
@@ -588,73 +599,79 @@ local data = {
 		},
 
 		------------------------------------------------------------------ Finitions avec S (dans un enchaînement), elles aussi à 3 résultats
-		-- Pouf magique : baguette tendue à bout portant, gros nuage magique qui éclate sur l'adversaire
+		-- Pouf magique : baguette tendue, un gros nuage magique traverse le couloir et éclate sur l'adversaire
 		S_finish_poof = {
-			label = "Pouf magique", energyCost = 20, startup = 0.14, active = 0.12, recovery = 0.3,
-			damage = 9, hitbox = box(5, 4, 3, 0.8), kbBase = 30, kbGrowth = 55, kbAngle = 40,
+			label = "Pouf magique", startup = 0.15, active = 0.14, recovery = 0.4,
+			damage = 12, hitbox = box(14, 6, 7, 1), kbBase = 30, kbGrowth = 55, kbAngle = 40,
 			variants = {
-				{ label = "Pouf magique : envol de colombes", damage = 8, kbAngle = 70, status = { name = "blinded", duration = 1.2 } },
-				{ label = "Pouf magique : confettis !", damage = 12, kbBase = 34, kbGrowth = 68 },
-				{ label = "Pouf magique : lapin teigneux", damage = 4, hits = 3, kbBase = 24 },
+				{ label = "Pouf magique : envol de colombes", damage = 12, kbAngle = 70, status = { name = "blinded", duration = 1.2 }, hitText = "ROUCOULE !" },
+				{ label = "Pouf magique : confettis !", damage = 15, kbBase = 34, kbGrowth = 68, hitText = "BOUM !" },
+				{ label = "Pouf magique : lapin teigneux", damage = 5, hits = 3, kbBase = 24, hitText = "CROC CROC CROC !" },
 			},
 			windup = { Root = { 0, -14, 0, 0, -0.2, 0.15 }, Waist = { 0, -16, 0 }, RS = { 70, 0, 30 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -60 }, LE = { 30, 0, 0 } },
 			strike = { Root = { -8, 10, 0, 0, -0.28, -0.3 }, Waist = { -8, 12, 0 }, RS = { 95, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -80 }, LE = { 20, 0, 0 } },
 			follow = { Root = { -10, 12, 0, 0, -0.3, -0.32 }, Waist = { -10, 14, 0 }, RS = { 98, 0, -5 }, RE = { 0, 0, 0 }, RW = { 10, 0, 0 }, LS = { 25, 0, -82 }, LE = { 20, 0, 0 } },
-			shake = true, fx = { { "burst", color = MAGIC, size = 3.5 }, { "particles", tex = "smoke", color = MAGIC, at = "front", dir = "all", time = 0.3, speed = 8, size = 1 } }, text = "POUF !", hitText = "PAF-POUF !",
+			shake = true, trail = "prop", fx = { { "burst", color = MAGIC, size = 3.5 }, { "particles", tex = "smoke", color = MAGIC, at = "front", dir = "front", time = 0.3, speed = 16, size = 1 } }, text = "POUF !", hitText = "PAF-POUF !",
 		},
-		-- Chapeau boomerang : il lance son haut-de-forme qui tournoie et revient (le lapin s'y cramponne)
+		-- Chapeau boomerang : il lance son haut-de-forme qui tournoie droit sur l'adversaire et revient (le lapin s'y cramponne)
 		S_finish_hat = {
-			label = "Chapeau boomerang", kind = "projectile", energyCost = 20, startup = 0.14, active = 0, recovery = 0.3,
-			damage = 8, kbBase = 26, kbGrowth = 50, kbAngle = 35,
+			label = "Chapeau boomerang", kind = "projectile", startup = 0.15, active = 0, recovery = 0.4,
+			damage = 12, kbBase = 26, kbGrowth = 50, kbAngle = 35,
 			projectile = { speed = 70, angle = 0, gravity = 0, lifetime = 1, size = 1.8, color = TUX, visual = HAT, returns = true },
 			variants = {
-				{ label = "Chapeau boomerang : une colombe en sort", damage = 7, status = { name = "blinded", duration = 1.2 } },
-				{ label = "Chapeau boomerang : il explose !", damage = 11, kbBase = 32, kbGrowth = 62 },
-				{ label = "Chapeau boomerang : le lapin mord au passage", damage = 5,
-					projectile = { speed = 70, angle = 0, gravity = 0, lifetime = 1, size = 1.8, color = TUX, visual = HAT, returns = true, hits = 2 } },
+				{ label = "Chapeau boomerang : une colombe en sort", damage = 12, status = { name = "blinded", duration = 1.2 }, hitText = "ROUCOULE !" },
+				{ label = "Chapeau boomerang : il explose !", damage = 15, kbBase = 32, kbGrowth = 62, hitText = "BOUM !" },
+				{ label = "Chapeau boomerang : le lapin mord au passage", damage = 7, hitText = "CROC !",
+					projectile = { speed = 70, angle = 0, gravity = 0, lifetime = 1.4, size = 1.8, color = TUX, visual = HAT, returns = true, hits = 2, aimed = true } },
 			},
 			windup = { Root = { 6, -24, 0, 0, -0.2, 0.2 }, Waist = { 8, -28, 0 }, Neck = { 0, 18, 0 }, RS = { 40, 0, 40 }, RE = { 60, 0, 0 }, LS = { 175, 0, 10 }, LE = { 60, 0, 0 } },
 			strike = { Root = { -8, 20, 0, 0, -0.3, -0.25 }, Waist = { -10, 26, 0 }, Neck = { 0, -16, 0 }, RS = { 30, 0, 50 }, RE = { 50, 0, 0 }, LS = { 90, 0, -30 }, LE = { 0, 0, 0 } },
 			follow = { Root = { -10, 26, 0, 0, -0.3, -0.3 }, Waist = { -12, 32, 0 }, Neck = { 0, -20, 0 }, RS = { 28, 0, 52 }, RE = { 50, 0, 0 }, LS = { 85, 0, -55 }, LE = { 5, 0, 0 } },
-			text = "ET HOP, LE CHAPEAU !", hitText = "TCHONK !",
+			trail = "leftHand", text = "ET HOP, LE CHAPEAU !", hitText = "TCHONK !",
 		},
 
 		------------------------------------------------------------------ Supers
-		-- Le Grand Final : il tire un rideau de scène devant l'adversaire… qui disparaît et réapparaît sonné
+		-- Le Grand Final : il tire un immense rideau de scène sur tout le couloir… l'adversaire disparaît derrière et réapparaît sonné (ou pire)
 		SUPER = {
-			label = "Le Grand Final !", superCost = 100, startup = 0.35, active = 0.2, recovery = 0.55,
-			damage = 22, hitbox = box(9, 7, 3.5, 1), kbBase = 22, kbGrowth = 35, kbAngle = 70,
+			label = "Le Grand Final !", startup = 0.4, active = 0.2, recovery = 0.7,
+			damage = 24, hitbox = box(14, 7, 7, 1), kbBase = 22, kbGrowth = 35, kbAngle = 70,
 			status = { name = "stunned", duration = 2 },
+			variants = {
+				{ label = "Le Grand Final : disparu dans un nuage de colombes !", status = { name = "stunned", duration = 2 }, hitText = "OÙ SUIS-JE ?" },
+				{ label = "Le Grand Final : feu d'artifice !", damage = 28, kbBase = 30, kbGrowth = 50, hitText = "KABOUM !" },
+				{ label = "Le Grand Final : il ressort en lapin !", status = { name = "dog", duration = 2 }, hitText = "COUIC ?!" },
+			},
 			windup = { Root = { 6, -20, 0, 0, -0.1, 0.2 }, Waist = { 10, -20, 0 }, Neck = { 15, 10, 0 }, RS = { 170, 0, 50 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 170, 0, -50 }, LE = { 20, 0, 0 } },
-			strike = { Root = { -10, 20, 0, 0, -0.3, -0.3 }, Waist = { -12, 20, 0 }, Neck = { 0, -10, 0 }, RS = { 100, 0, -30 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 100, 0, 30 }, LE = { 10, 0, 0 } },
+			strike = { Root = { -12, 20, 0, 0, -0.3, -0.35 }, Waist = { -14, 20, 0 }, Neck = { 0, -10, 0 }, RS = { 100, 0, -30 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 100, 0, 30 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
 			follow = { Root = { 10, 0, 0, 0, -0.5, 0 }, Waist = { -40, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 60, 0, 80 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -80 }, LE = { 10, 0, 0 } },
 			hold = 0.5, windupFx = { "super" },
-			fx = { { "screen", color = VELVET, alpha = 0.45 }, { "pillar", color = VELVET, height = 10, width = 5, at = "front", neon = false, transparency = 0, time = 0.6 }, { "symbols", symbols = { "✨", "🎩", "★" }, color = SPARK, count = 8, radius = 5, at = "front" } },
+			fx = { { "screen", color = VELVET, alpha = 0.45 }, { "pillar", color = VELVET, height = 10, width = 5, at = "front", neon = false, transparency = 0, time = 0.6 }, { "beam", color = VELVET, length = 14, width = 7, at = "root", time = 0.5 }, { "symbols", symbols = { "✨", "🎩", "★" }, color = SPARK, count = 8, radius = 5, at = "front" } },
 			text = "MESDAMES ET MESSIEURS… TA-DAAAA !", hitText = "OÙ SUIS-JE ?",
 		},
-		-- Super ↑ : Lévitation ratée, assis en lotus il psalmodie… et décolle pour de bon en toupie, dans un tourbillon d'étincelles
+		-- Super ↑ : Lévitation ratée, assis en lotus il psalmodie… et décolle pour de bon en toupie, dans un tourbillon d'étincelles qui fauche tout le couloir
 		SUPER_up = {
-			label = "Lévitation ratée !", superCost = 100, startup = 0.25, active = 0.45, recovery = 0.55,
-			damage = 22, hitbox = box(9, 10, 0, 3), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
+			label = "Lévitation ratée !", startup = 0.3, active = 0.45, recovery = 0.7,
+			damage = 24, hitbox = box(14, 12, 7, 4), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
 			windup = { Root = { -6, 0, 0, 0, -0.7, 0 }, Waist = { -16, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 170, 0, 30 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 120, 0, -60 }, LE = { 110, 0, 0 } },
 			strike = { Root = { 6, 0, 0, 0, 0.5, 0 }, Waist = { 6, 0, 0 }, Neck = { 25, 0, 0 }, RS = { 60, 0, 70 }, RE = { 110, 0, 0 }, RW = { -40, 0, 0 }, LS = { 60, 0, -70 }, LE = { 110, 0, 0 }, LW = { -40, 0, 0 }, RH = { 95, 0, 55 }, RK = { -125, 0, 0 }, LH = { 95, 0, -55 }, LK = { -125, 0, 0 } },
 			follow = { Root = { 8, 0, 0, 0, 0.6, 0 }, Waist = { 8, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 65, 0, 75 }, RE = { 110, 0, 0 }, RW = { -40, 0, 0 }, LS = { 65, 0, -75 }, LE = { 110, 0, 0 }, LW = { -40, 0, 0 }, RH = { 98, 0, 58 }, RK = { -128, 0, 0 }, LH = { 98, 0, -58 }, LK = { -128, 0, 0 } },
 			hold = 0.2, spin = { axis = "y", degrees = 720 }, selfVelocity = Vector2.new(0, 70), wobble = true,
 			windupFx = { "super", { "symbols", symbols = { "✨", "★", "✦" }, color = MAGIC, count = 6, radius = 3, at = "above" } }, trail = "prop",
-			variants = { { label = "Lévitation ratée : colombes !", hitText = "ROUCOU !" }, { label = "Lévitation ratée : BOUM !", damage = 26, hitText = "KABOUM !" }, { label = "Lévitation ratée : lapin !", status = { name = "dog", duration = 2 }, hitText = "COUIC !" } },
-			fx = { { "particles", tex = "spark", color = MAGIC, dir = "all", at = "root", time = 0.7 }, { "ring", color = MAGIC, radius = 6, at = "feet" }, { "burst", color = SPARK, size = 4, at = "above" } },
+			variants = { { label = "Lévitation ratée : colombes !", hitText = "ROUCOU !" }, { label = "Lévitation ratée : BOUM !", damage = 28, hitText = "KABOUM !" }, { label = "Lévitation ratée : lapin !", status = { name = "dog", duration = 2 }, hitText = "COUIC !" } },
+			fx = { { "particles", tex = "spark", color = MAGIC, dir = "all", at = "root", time = 0.7 }, { "ring", color = MAGIC, radius = 8, at = "feet" }, { "burst", color = SPARK, size = 4, at = "above" }, { "shake", amount = 0.4 } },
 			text = "OMMMM… ABRACADA… OUPS !", hitText = "TA-DAAA !",
 		},
-		-- Vol à la tire : il serre la main de l'adversaire, lui fait les poches… et le laisse muet de stupeur
-		-- (le moteur ne sait pas voler la jauge Super : il vole de l'énergie et rend l'adversaire muet)
+		-- Vol à la tire : son bras s'allonge comme un télescope à travers tout le couloir, serre la main de l'adversaire, lui fait les poches… et le laisse muet de stupeur
+		-- (le moteur ne sait pas voler la jauge Super : il lui chipe un peu de santé et le rend muet)
 		SUPER_down = {
-			label = "Vol à la tire !", superCost = 100, startup = 0.3, active = 0.15, recovery = 0.5,
-			damage = 18, hitbox = box(5, 4, 2.5, 0.5), kbBase = 20, kbGrowth = 30, kbAngle = 30,
-			status = { name = "muted", duration = 3 }, selfEffect = { energy = 50 },
+			label = "Vol à la tire !", startup = 0.35, active = 0.18, recovery = 0.65,
+			damage = 22, hitbox = box(14, 6, 7, 1), kbBase = 20, kbGrowth = 30, kbAngle = 30,
+			status = { name = "muted", duration = 3 }, selfEffect = { heal = 6 },
 			windup = { Root = { 6, 0, 0, 0, -0.1, 0.1 }, Waist = { 12, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 60, 0, 30 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 80, 0, -10 }, LE = { 30, 0, 0 } },
-			strike = { Root = { -14, 0, 0, 0, -0.35, -0.4 }, Waist = { -16, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 20, 0, 30 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 92, 0, 10 }, LE = { 10, 0, 0 } },
+			strike = { Root = { -16, 0, 0, 0, -0.35, -0.45 }, Waist = { -18, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 20, 0, 30 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 96, 0, 6 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
 			follow = { Root = { 6, 30, 0, 0, -0.2, 0.2 }, Waist = { 8, 30, 0 }, Neck = { 20, -20, 0 }, RS = { 150, 0, 40 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -40 }, LE = { 120, 0, 0 } },
-			hold = 0.3, windupFx = { "super" }, fx = { { "symbols", symbols = { "💰", "⭐", "✨" }, color = SPARK, count = 6, radius = 3, at = "front" } },
+			hold = 0.3, trail = "leftHand", windupFx = { "super" },
+			fx = { { "beam", color = WHITE, length = 14, width = 1, at = "lhand", time = 0.3 }, { "symbols", symbols = { "💰", "⭐", "✨" }, color = SPARK, count = 6, radius = 3, at = "front" } },
 			text = "MERCI POUR LE POURBOIRE !", hitText = "HÉ ! MON PORTEFEUILLE !",
 		},
 

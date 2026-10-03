@@ -4,6 +4,8 @@
 -- Même format que Gege.lua (voir l'en-tête de ce fichier et docs/fiche-perso.md).
 -- Le bras droit tient la fraise ; la main gauche sort les petits instruments (miroir, fil, seringue, pince…)
 -- le temps d'un coup (accessoires cachés, champ prop).
+-- Signatures (L) et Supers (Y) « sûrs de toucher » : couloirs de 16 studs, projectiles qui visent l'adversaire,
+-- ↑L = envol en diagonale ; plus aucun coût (voir docs/fiche-perso.md).
 
 local function box(width, height, forward, up)
 	return { size = Vector3.new(width, height, 6), offset = Vector2.new(forward, up) }
@@ -438,10 +440,10 @@ local data = {
 			fx = { { "burst", color = GAS, size = 3, at = "lhand" }, { "symbols", symbols = { "HA", "HI", "HO" }, color = GAS, count = 5, radius = 3, at = "front" } },
 			text = "PSSSHH…", hitText = "HAHAHA !",
 		},
-		-- Fraise perforante : fraise à deux mains, il fonce d'un bout à l'autre du couloir et la roulette géante perfore tout sur son passage
+		-- Fraise perforante : fraise à deux mains, il fonce d'un bout à l'autre du couloir et la roulette géante grignote quatre fois tout ce qui est sur son passage
 		S_side = {
-			label = "Fraise perforante", startup = 0.2, active = 0.3, recovery = 0.45,
-			damage = 15, hitbox = box(14, 6, 7, 1), kbBase = 32, kbGrowth = 70, kbAngle = 30, selfVelocity = Vector2.new(60, 0),
+			label = "Fraise perforante", startup = 0.2, active = 0.3, recovery = 0.45, hits = 4,
+			damage = 4, hitbox = box(14, 6, 7, 1), kbBase = 32, kbGrowth = 70, kbAngle = 30, selfVelocity = Vector2.new(60, 0),
 			windup = { Root = { 6, -16, 0, 0, -0.3, 0.35 }, Waist = { 8, -18, 0 }, Neck = { 0, 10, 0 }, RS = { 40, 0, 20 }, RE = { 100, 0, 0 }, RW = { 80, 0, 0 }, LS = { 50, 0, 10 }, LE = { 110, 0, 0 } },
 			strike = { Root = { -20, 0, 0, 0, -0.4, -0.45 }, Waist = { -12, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 92, 0, -4 }, RE = { 0, 0, 0 }, RW = { 88, 0, 0 }, LS = { 86, 0, 20 }, LE = { 18, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.55 } },
 			follow = { Root = { -22, 0, 0, 0, -0.42, -0.5 }, Waist = { -14, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 95, 0, -4 }, RE = { 0, 0, 0 }, RW = { 90, 0, 0 }, LS = { 88, 0, 18 }, LE = { 16, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.6 } },

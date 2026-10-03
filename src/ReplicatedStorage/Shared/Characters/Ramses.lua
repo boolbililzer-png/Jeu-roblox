@@ -5,6 +5,8 @@
 -- Même format que Gege.lua (voir l'en-tête de ce fichier et docs/fiche-perso.md).
 -- Le bras droit tient le thermomètre géant ; la main gauche sort la bandelette, le mouchoir, la bouillotte,
 -- le couvercle de sarcophage ou la fiole de sirop le temps d'un coup (accessoires cachés, champ prop).
+-- Signatures (L) et Supers (Y) « sûrs de toucher » : couloirs de 16 studs, projectiles qui visent l'adversaire,
+-- ↑L = envol en diagonale ; plus aucun coût (voir docs/fiche-perso.md).
 
 local function box(width, height, forward, up)
 	return { size = Vector3.new(width, height, 6), offset = Vector2.new(forward, up) }
@@ -499,10 +501,10 @@ local data = {
 			hold = 0.4, trail = "body", fx = { "dust", { "shake", amount = 0.3 }, { "text", text = "ARRÊT MALADIE", color = Color3.fromRGB(255, 255, 255), at = "above" }, { "symbols", symbols = { "📄", "🤒" }, color = TISSUE, count = 3, radius = 2 } },
 			text = "JE SUIS EN ARRÊT !", hitText = "ÉCRASÉ !",
 		},
-		-- Fièvre (L maintenu) : il tremble de tout son corps, la fièvre monte… et une bouffée de chaleur brûlante balaie tout le couloir
+		-- Fièvre (L maintenu) : il tremble de tout son corps, la fièvre monte… et trois bouffées de chaleur brûlante balaient tout le couloir
 		S_hold = {
-			label = "Fièvre", startup = 0.3, active = 0.2, recovery = 0.5,
-			damage = 13, hitbox = box(14, 6, 7, 1), kbBase = 26, kbGrowth = 50, kbAngle = 40, burn = true, burnTime = 2,
+			label = "Fièvre", startup = 0.3, active = 0.3, recovery = 0.5, hits = 3,
+			damage = 5, hitbox = box(14, 6, 7, 1), kbBase = 26, kbGrowth = 50, kbAngle = 40, burn = true, burnTime = 2,
 			windup = { Root = { -10, 0, 0, 0, -0.45, 0 }, Waist = { -16, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 40, 0, -20 }, RE = { 120, 0, 0 }, LS = { 40, 0, 20 }, LE = { 120, 0, 0 } },
 			strike = { Root = { -8, 0, 0, 0, -0.15, -0.3 }, Waist = { -6, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 92, 0, 30 }, RE = { 0, 0, 0 }, LS = { 92, 0, -30 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
 			follow = { Root = { -10, 0, 0, 0, -0.15, -0.35 }, Waist = { -8, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 96, 0, 34 }, RE = { 0, 0, 0 }, LS = { 96, 0, -34 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
@@ -545,10 +547,10 @@ local data = {
 		},
 
 		------------------------------------------------------------------ Finition avec S (dans un enchaînement)
-		-- Quinte de toux : plié en deux, il tousse un grand coup en direction de l'adversaire (enrhume)
+		-- Quinte de toux : plié en deux, il tousse trois fois en direction de l'adversaire, chaque quinte traverse le couloir (enrhume)
 		S_finish_cough = {
-			label = "Quinte de toux", startup = 0.15, active = 0.2, recovery = 0.4,
-			damage = 12, hitbox = box(14, 5, 7, 1), kbBase = 28, kbGrowth = 50, kbAngle = 30,
+			label = "Quinte de toux", startup = 0.15, active = 0.3, recovery = 0.4, hits = 3,
+			damage = 4, hitbox = box(14, 5, 7, 1), kbBase = 28, kbGrowth = 50, kbAngle = 30,
 			status = { name = "sneezy", duration = 2.5 },
 			windup = { Root = { 6, 0, 0, 0, -0.15, 0.15 }, Waist = { 10, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 25, 0, 30 }, RE = { 70, 0, 0 }, LS = { 90, 0, 20 }, LE = { 120, 0, 0 } },
 			strike = { Root = { -16, 0, 0, 0, -0.35, -0.2 }, Waist = { -26, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 20, 0, 35 }, RE = { 70, 0, 0 }, LS = { 40, 0, 10 }, LE = { 110, 0, 0 } },
