@@ -199,6 +199,10 @@ end
 -- Multiplicateur de dégâts de l'attaquant : gorgées de Gégé, bonus en cours, tempo de Gloria
 function Mechanics.damageMultiplier(attacker)
 	local mult = 1 + 0.1 * (attacker:GetAttribute("Bulles") or 0)
+	-- sans la Caisse Bizarre, le perso frappe sans son arme : moins fort (les bots et le mannequin aussi)
+	if attacker:GetAttribute("Armed") ~= true then
+		mult *= Config.UNARMED_DAMAGE
+	end
 	mult *= Statuses.flags(attacker).damage or 1
 	local p = Mechanics.passive(attacker)
 	if p and p.kind == "tempo" then

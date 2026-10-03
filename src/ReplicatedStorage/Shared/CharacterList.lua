@@ -29,6 +29,36 @@ local function widenSpecial(move)
 	end
 end
 
+-- Attaques P / K : zone un peu plus large (les combos touchent plus souvent)
+local function widenLight(move)
+	if move._widened or (move.kind or "melee") ~= "melee" or not move.hitbox then
+		return
+	end
+	move._widened = true
+	local size, offset = move.hitbox.size, move.hitbox.offset
+	move.hitbox = {
+		size = Vector3.new(size.X * Config.LIGHT_RANGE, size.Y * Config.LIGHT_RANGE, size.Z),
+		offset = Vector2.new(offset.X * Config.LIGHT_RANGE, offset.Y),
+	}
+end
+
+-- Signatures (L) : toujours plus fortes que les attaques P / K du perso
+local function strengthenSpecials(data)
+	local strongest = 0
+	for key, move in pairs(data.moves) do
+		local prefix = string.sub(key, 1, 2)
+		if (prefix == "P_" or prefix == "K_") and not string.find(key, ".", 1, true) then
+			strongest = math.max(strongest, move.damage or 0)
+		end
+	end
+	for key, move in pairs(data.moves) do
+		if string.sub(key, 1, 2) == "S_" and not string.find(key, ".", 1, true) and (move.damage or 0) > 0 and not move._strengthened then
+			move._strengthened = true
+			move.damage = math.max(math.floor(move.damage * Config.S_DAMAGE + 0.5), strongest + Config.S_DAMAGE_OVER_LIGHT)
+		end
+	end
+end
+
 local list = {}
 for _, id in ipairs(Roster.ORDER) do
 	local module = Characters:FindFirstChild(id)
@@ -49,10 +79,14 @@ for _, data in pairs(list) do
 		end
 	end
 	MoveSets.install(data, { bare = BareMoves })
+	strengthenSpecials(data)
 	for key, move in pairs(data.moves) do
 		local _, base = MoveSets.split(key)
-		if string.sub(base, 1, 2) == "S_" then
+		local prefix = string.sub(base, 1, 2)
+		if prefix == "S_" then
 			widenSpecial(move)
+		elseif prefix == "P_" or prefix == "K_" then
+			widenLight(move)
 		end
 	end
 end

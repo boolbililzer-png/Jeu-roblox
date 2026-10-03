@@ -86,8 +86,16 @@ function MoveSets.armed(model)
 	return model ~= nil and model:GetAttribute("Armed") == true
 end
 
+-- Sans la caisse, chaque perso utilise quand même SES coups (tous différents) mais sans son arme, avec des
+-- dégâts réduits (Config.UNARMED_DAMAGE, voir server/Mechanics.lua). Les coups communs à mains nues
+-- (« bare. », shared/BareMoves.lua) ne servent plus que si MoveSets.SHARED_BARE_HANDS vaut true.
+MoveSets.SHARED_BARE_HANDS = false
+
 -- Ce coup est-il utilisable, armé ou à mains nues ?
 function MoveSets.allowed(key, move, armed)
+	if not MoveSets.SHARED_BARE_HANDS then
+		return not (move and move.weapon == MoveSets.BARE)
+	end
 	if move and move.weapon == MoveSets.BARE then
 		return not armed
 	elseif MoveSets.needsCrate(key) then
@@ -99,7 +107,7 @@ end
 -- Premier coup utilisable parmi les candidats : armé, le moveset du perso (sinon à mains nues) ;
 -- à mains nues, les coups communs (et ceux qui ne demandent pas la caisse : Supers, saisie…)
 function MoveSets.pick(moves, candidates, armed)
-	local order = armed and { "", MoveSets.BARE .. "." } or { MoveSets.BARE .. ".", "" }
+	local order = (armed or not MoveSets.SHARED_BARE_HANDS) and { "" } or { MoveSets.BARE .. ".", "" }
 	for _, prefix in ipairs(order) do
 		for _, key in ipairs(candidates) do
 			local full = prefix .. key

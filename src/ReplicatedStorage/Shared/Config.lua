@@ -16,7 +16,7 @@ Config.DEFAULT_CHARACTER = "Gege"
 -- Déplacements
 Config.WALK_SPEED = 24
 Config.JUMP_POWER = 62
-Config.AIR_JUMPS = 1 -- double saut
+Config.AIR_JUMPS = 2 -- comme Brawlhalla : 1 saut au sol + 2 sauts en l'air, puis la remontée (↑L)
 Config.AIR_JUMP_VELOCITY = 62
 Config.DASH_SPEED = 62 -- double tap gauche ou droite : ruée rapide…
 Config.DASH_TIME = 0.22 -- …pendant ce temps…
@@ -29,6 +29,14 @@ Config.DODGE_SPEED = 70
 Config.DODGE_DURATION = 0.3
 Config.DODGE_INVULN = 0.35
 Config.DODGE_COOLDOWN = 0.9
+-- Esquive de poursuite (Brawlhalla « chase dodge ») : après avoir touché quelqu'un, l'esquive revient très vite
+-- pour le suivre et continuer le combo
+Config.CHASE_DODGE_COOLDOWN = 0.25
+Config.CHASE_DODGE_WINDOW = 0.8 -- l'esquive de poursuite est possible ce temps après la touche
+-- Gravity cancel : esquive en l'air puis P / K = coup « au sol » en plein vol (pendant ce temps après l'esquive)
+Config.GRAVITY_CANCEL_WINDOW = 0.35
+-- Chute rapide : ↓ maintenu en l'air (sans attaquer) = on tombe beaucoup plus vite
+Config.FAST_FALL_SPEED = 95
 
 -- Fenêtres d'entrée (secondes)
 Config.DOUBLE_TAP_WINDOW = 0.3
@@ -41,8 +49,8 @@ Config.GRAB_RANGE = 5
 Config.GRAB_HOLD = 1.2 -- temps max pour choisir la direction de la projection (sinon projection vers l'avant)
 
 -- Enchaînements (voir links dans Characters/Gege.lua)
-Config.COMBO_GRACE = 0.3 -- on peut encore enchaîner ce temps après le retour en garde du coup
-Config.COMBO_BUFFER = 0.3 -- un appui un peu trop tôt est gardé en mémoire et part dès que la fenêtre s'ouvre
+Config.COMBO_GRACE = 0.45 -- on peut encore enchaîner ce temps après le retour en garde du coup
+Config.COMBO_BUFFER = 0.4 -- un appui un peu trop tôt est gardé en mémoire et part dès que la fenêtre s'ouvre
 
 -- Frappes chargées (maintenir J ou K au sol), comme les smashs : plus on charge, plus ça tape fort
 Config.SMASH_HOLD = 0.18 -- maintenu au-delà = la charge commence (en dessous : coup normal au relâchement)
@@ -58,7 +66,12 @@ Config.ENERGY_S_COST = 25 -- coût par défaut d'un spécial (chaque coup peut p
 Config.ENERGY_CHARGE_RATE = 45 -- énergie gagnée par seconde de recharge
 -- Portée des spéciaux (L / S) : zones de frappe plus larges et projectiles qui vont plus loin (appliqué au chargement
 -- des persos dans CharacterList, pour tous les spéciaux, avec ou sans Caisse Bizarre)
-Config.S_RANGE = 1.5 -- largeur et allonge des zones de frappe
+Config.S_RANGE = 1.8 -- largeur et allonge des zones de frappe au corps à corps
+Config.S_DAMAGE = 1.35 -- les signatures (L) frappent plus fort que les autres coups…
+Config.S_DAMAGE_OVER_LIGHT = 3 -- …et toujours au moins 3 de plus que la plus forte attaque P / K du perso
+Config.LIGHT_RANGE = 1.15 -- attaques P / K un peu plus larges : les combos touchent plus souvent
+-- Sans Caisse Bizarre, chaque perso garde ses propres coups (tous différents) mais sans son arme : dégâts réduits
+Config.UNARMED_DAMAGE = 0.8
 Config.S_PROJECTILE_RANGE = 1.4 -- durée de vol des projectiles (donc leur distance)
 
 -- Éjection façon Smash : plus la jauge de % est haute, plus on vole loin
@@ -67,8 +80,9 @@ Config.KB_SCALE = 1 -- réglage global de la distance d'éjection
 Config.KB_BASE_SCALE = 0.5 -- part fixe (à 0 %, on recule à peine)
 Config.KB_GROWTH_SCALE = 1 -- part qui grandit avec les %
 Config.KB_RAMP = 250 -- au-delà de 100 %, l'éjection s'emballe
-Config.COMBO_KB_SCALE = 0.5 -- les coups qui ont une suite (combo) repoussent deux fois moins
-Config.COMBO_HITSTUN = 0.4 -- et sonnent assez longtemps pour que la suite touche
+Config.COMBO_KB_SCALE = 0.35 -- les coups qui ont une suite (combo) repoussent beaucoup moins…
+Config.COMBO_HITSTUN = 0.55 -- …et sonnent assez longtemps pour que la suite touche (vrais combos à la Brawlhalla)
+Config.COMBO_POP = 0.6 -- un coup de combo soulève un peu l'adversaire (il reste à portée, en l'air, pour la suite)
 Config.KB_DRAG = 1.8 -- freinage de l'éjection pendant qu'on est sonné (par seconde)
 Config.HITSTUN_PER_KB = 0.004
 Config.HITSTUN_MIN = 0.12

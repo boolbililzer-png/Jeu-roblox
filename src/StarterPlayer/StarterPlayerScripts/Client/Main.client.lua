@@ -51,6 +51,7 @@ local facing = 1
 local airJumpsLeft = Config.AIR_JUMPS
 local upSpecialUsed = false
 local busyUntil, stunnedUntil, dodgeReadyAt = 0, 0, 0
+local airDodgeAt = -10 -- dernière esquive en l'air (gravity cancel)
 local lastDashTime, lastDodgeTime = -10, -10
 local knockbackToken = 0
 local lastTapSign, lastTapTime, wasNeutralX = 0, -10, true
@@ -230,7 +231,8 @@ local function resolveMove(button)
 	if dir == "side" and os.clock() >= busyUntil then
 		facing = v.X > 0 and 1 or -1
 	end
-	local air = not isGrounded()
+	-- gravity cancel (Brawlhalla) : juste après une esquive en l'air, P / K / L sortent les coups « au sol »
+	local air = not isGrounded() and os.clock() - airDodgeAt > Config.GRAVITY_CANCEL_WINDOW
 	local now = os.clock()
 	if button == "P" or button == "K" then
 		if air then
@@ -520,10 +522,15 @@ end
 local function doDodge()
 	local v = moveInput()
 	local now = os.clock()
-	if now < dodgeReadyAt or now < busyUntil or flags().noDodge then
+	local chaseReady = (character:GetAttribute("ChaseUntil") or 0) > workspace:GetServerTimeNow()
+		and now - lastDodgeTime >= Config.CHASE_DODGE_COOLDOWN
+	if (now < dodgeReadyAt and not chaseReady) or now < busyUntil or flags().noDodge then
 		return
 	end
-	dodgeReadyAt = now + Config.DODGE_COOLDOWN
+	-- esquive de poursuite (juste après avoir touché) : elle revient presque tout de suite
+	local chasing = (character:GetAttribute("ChaseUntil") or 0) > workspace:GetServerTimeNow()
+	dodgeReadyAt = now + (chasing and Config.CHASE_DODGE_COOLDOWN or Config.DODGE_COOLDOWN)
+	airDodgeAt = isGrounded() and -10 or now -- pour le gravity cancel
 	lastDodgeTime = now
 	busyUntil = now + Config.DODGE_DURATION
 	ActionRemote:FireServer("DODGE")
@@ -813,6 +820,14 @@ RunService.Heartbeat:Connect(function(dt)
 	if grounded and (workspace:GetAttribute("ConveyorUntil") or 0) > workspace:GetServerTimeNow() and math.abs(root.Position.X) < 45 and root.Position.Y < 8 then
 		local velocity = root.AssemblyLinearVelocity
 		root.AssemblyLinearVelocity = Vector3.new(velocity.X + (workspace:GetAttribute("ConveyorSpeed") or 0) * dt * 6, velocity.Y, 0)
+	end
+
+	-- Chute rapide : ↓ maintenu en l'air, on tombe beaucoup plus vite (pas pendant un coup ni sonné)
+	if not grounded and acting and not busy and v.Y < -0.6 and root.AssemblyLinearVelocity.Y < 5 then
+		local velocity = root.AssemblyLinearVelocity
+		if velocity.Y > -Config.FAST_FALL_SPEED then
+			root.AssemblyLinearVelocity = Vector3.new(velocity.X, -Config.FAST_FALL_SPEED, 0)
+		end
 	end
 
 	-- Plateformes fines : on les traverse en montant, et ↓ maintenu (sans attaquer) pour redescendre

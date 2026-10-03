@@ -341,7 +341,12 @@ function Fighters.hit(attacker, target, move, damageMultiplier, direction)
 		target:SetAttribute("FragileUntil", 0)
 	end
 	speed *= Config.KB_SCALE
-	local angle = math.rad(move.kbAngle or 30)
+	local angleDeg = move.kbAngle or 30
+	if comboPiece and angleDeg >= 0 and angleDeg < 75 then
+		-- coup de combo : l'adversaire décolle un peu et reste à portée pour la suite (vrais combos)
+		angleDeg += (75 - angleDeg) * Config.COMBO_POP
+	end
+	local angle = math.rad(angleDeg)
 	local velocity = Vector3.new(math.cos(angle) * speed * direction, math.sin(angle) * speed, 0)
 	local hitstun = math.clamp(speed * Config.HITSTUN_PER_KB, Config.HITSTUN_MIN, Config.HITSTUN_MAX)
 	if comboPiece then
@@ -373,6 +378,10 @@ function Fighters.hit(attacker, target, move, damageMultiplier, direction)
 	end
 	if attacker and state[attacker] then
 		Fighters.addSuper(attacker, damage * 0.8)
+		-- esquive de poursuite : juste après une touche, l'esquive revient presque tout de suite
+		attacker:SetAttribute("ChaseUntil", workspace:GetServerTimeNow() + Config.CHASE_DODGE_WINDOW)
+		local as = state[attacker]
+		as.dodgeReadyAt = math.min(as.dodgeReadyAt, os.clock() + Config.CHASE_DODGE_COOLDOWN)
 	end
 	Fighters.addSuper(target, damage * 0.4)
 	Fighters.updateFinishable(target)

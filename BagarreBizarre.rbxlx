@@ -1338,6 +1338,36 @@ local function widenSpecial(move)
 	end
 end
 
+-- Attaques P / K : zone un peu plus large (les combos touchent plus souvent)
+local function widenLight(move)
+	if move._widened or (move.kind or "melee") ~= "melee" or not move.hitbox then
+		return
+	end
+	move._widened = true
+	local size, offset = move.hitbox.size, move.hitbox.offset
+	move.hitbox = {
+		size = Vector3.new(size.X * Config.LIGHT_RANGE, size.Y * Config.LIGHT_RANGE, size.Z),
+		offset = Vector2.new(offset.X * Config.LIGHT_RANGE, offset.Y),
+	}
+end
+
+-- Signatures (L) : toujours plus fortes que les attaques P / K du perso
+local function strengthenSpecials(data)
+	local strongest = 0
+	for key, move in pairs(data.moves) do
+		local prefix = string.sub(key, 1, 2)
+		if (prefix == "P_" or prefix == "K_") and not string.find(key, ".", 1, true) then
+			strongest = math.max(strongest, move.damage or 0)
+		end
+	end
+	for key, move in pairs(data.moves) do
+		if string.sub(key, 1, 2) == "S_" and not string.find(key, ".", 1, true) and (move.damage or 0) > 0 and not move._strengthened then
+			move._strengthened = true
+			move.damage = math.max(math.floor(move.damage * Config.S_DAMAGE + 0.5), strongest + Config.S_DAMAGE_OVER_LIGHT)
+		end
+	end
+end
+
 local list = {}
 for _, id in ipairs(Roster.ORDER) do
 	local module = Characters:FindFirstChild(id)
@@ -1358,10 +1388,14 @@ for _, data in pairs(list) do
 		end
 	end
 	MoveSets.install(data, { bare = BareMoves })
+	strengthenSpecials(data)
 	for key, move in pairs(data.moves) do
 		local _, base = MoveSets.split(key)
-		if string.sub(base, 1, 2) == "S_" then
+		local prefix = string.sub(base, 1, 2)
+		if prefix == "S_" then
 			widenSpecial(move)
+		elseif prefix == "P_" or prefix == "K_" then
+			widenLight(move)
 		end
 	end
 end
@@ -16940,7 +16974,7 @@ Config.DEFAULT_CHARACTER = "Gege"
 -- Déplacements
 Config.WALK_SPEED = 24
 Config.JUMP_POWER = 62
-Config.AIR_JUMPS = 1 -- double saut
+Config.AIR_JUMPS = 2 -- comme Brawlhalla : 1 saut au sol + 2 sauts en l'air, puis la remontée (↑L)
 Config.AIR_JUMP_VELOCITY = 62
 Config.DASH_SPEED = 62 -- double tap gauche ou droite : ruée rapide…
 Config.DASH_TIME = 0.22 -- …pendant ce temps…
@@ -16953,6 +16987,14 @@ Config.DODGE_SPEED = 70
 Config.DODGE_DURATION = 0.3
 Config.DODGE_INVULN = 0.35
 Config.DODGE_COOLDOWN = 0.9
+-- Esquive de poursuite (Brawlhalla « chase dodge ») : après avoir touché quelqu'un, l'esquive revient très vite
+-- pour le suivre et continuer le combo
+Config.CHASE_DODGE_COOLDOWN = 0.25
+Config.CHASE_DODGE_WINDOW = 0.8 -- l'esquive de poursuite est possible ce temps après la touche
+-- Gravity cancel : esquive en l'air puis P / K = coup « au sol » en plein vol (pendant ce temps après l'esquive)
+Config.GRAVITY_CANCEL_WINDOW = 0.35
+-- Chute rapide : ↓ maintenu en l'air (sans attaquer) = on tombe beaucoup plus vite
+Config.FAST_FALL_SPEED = 95
 
 -- Fenêtres d'entrée (secondes)
 Config.DOUBLE_TAP_WINDOW = 0.3
@@ -16965,8 +17007,8 @@ Config.GRAB_RANGE = 5
 Config.GRAB_HOLD = 1.2 -- temps max pour choisir la direction de la projection (sinon projection vers l'avant)
 
 -- Enchaînements (voir links dans Characters/Gege.lua)
-Config.COMBO_GRACE = 0.3 -- on peut encore enchaîner ce temps après le retour en garde du coup
-Config.COMBO_BUFFER = 0.3 -- un appui un peu trop tôt est gardé en mémoire et part dès que la fenêtre s'ouvre
+Config.COMBO_GRACE = 0.45 -- on peut encore enchaîner ce temps après le retour en garde du coup
+Config.COMBO_BUFFER = 0.4 -- un appui un peu trop tôt est gardé en mémoire et part dès que la fenêtre s'ouvre
 
 -- Frappes chargées (maintenir J ou K au sol), comme les smashs : plus on charge, plus ça tape fort
 Config.SMASH_HOLD = 0.18 -- maintenu au-delà = la charge commence (en dessous : coup normal au relâchement)
@@ -16982,7 +17024,12 @@ Config.ENERGY_S_COST = 25 -- coût par défaut d'un spécial (chaque coup peut p
 Config.ENERGY_CHARGE_RATE = 45 -- énergie gagnée par seconde de recharge
 -- Portée des spéciaux (L / S) : zones de frappe plus larges et projectiles qui vont plus loin (appliqué au chargement
 -- des persos dans CharacterList, pour tous les spéciaux, avec ou sans Caisse Bizarre)
-Config.S_RANGE = 1.5 -- largeur et allonge des zones de frappe
+Config.S_RANGE = 1.8 -- largeur et allonge des zones de frappe au corps à corps
+Config.S_DAMAGE = 1.35 -- les signatures (L) frappent plus fort que les autres coups…
+Config.S_DAMAGE_OVER_LIGHT = 3 -- …et toujours au moins 3 de plus que la plus forte attaque P / K du perso
+Config.LIGHT_RANGE = 1.15 -- attaques P / K un peu plus larges : les combos touchent plus souvent
+-- Sans Caisse Bizarre, chaque perso garde ses propres coups (tous différents) mais sans son arme : dégâts réduits
+Config.UNARMED_DAMAGE = 0.8
 Config.S_PROJECTILE_RANGE = 1.4 -- durée de vol des projectiles (donc leur distance)
 
 -- Éjection façon Smash : plus la jauge de % est haute, plus on vole loin
@@ -16991,8 +17038,9 @@ Config.KB_SCALE = 1 -- réglage global de la distance d'éjection
 Config.KB_BASE_SCALE = 0.5 -- part fixe (à 0 %, on recule à peine)
 Config.KB_GROWTH_SCALE = 1 -- part qui grandit avec les %
 Config.KB_RAMP = 250 -- au-delà de 100 %, l'éjection s'emballe
-Config.COMBO_KB_SCALE = 0.5 -- les coups qui ont une suite (combo) repoussent deux fois moins
-Config.COMBO_HITSTUN = 0.4 -- et sonnent assez longtemps pour que la suite touche
+Config.COMBO_KB_SCALE = 0.35 -- les coups qui ont une suite (combo) repoussent beaucoup moins…
+Config.COMBO_HITSTUN = 0.55 -- …et sonnent assez longtemps pour que la suite touche (vrais combos à la Brawlhalla)
+Config.COMBO_POP = 0.6 -- un coup de combo soulève un peu l'adversaire (il reste à portée, en l'air, pour la suite)
 Config.KB_DRAG = 1.8 -- freinage de l'éjection pendant qu'on est sonné (par seconde)
 Config.HITSTUN_PER_KB = 0.004
 Config.HITSTUN_MIN = 0.12
@@ -17315,8 +17363,16 @@ function MoveSets.armed(model)
 	return model ~= nil and model:GetAttribute("Armed") == true
 end
 
+-- Sans la caisse, chaque perso utilise quand même SES coups (tous différents) mais sans son arme, avec des
+-- dégâts réduits (Config.UNARMED_DAMAGE, voir server/Mechanics.lua). Les coups communs à mains nues
+-- (« bare. », shared/BareMoves.lua) ne servent plus que si MoveSets.SHARED_BARE_HANDS vaut true.
+MoveSets.SHARED_BARE_HANDS = false
+
 -- Ce coup est-il utilisable, armé ou à mains nues ?
 function MoveSets.allowed(key, move, armed)
+	if not MoveSets.SHARED_BARE_HANDS then
+		return not (move and move.weapon == MoveSets.BARE)
+	end
 	if move and move.weapon == MoveSets.BARE then
 		return not armed
 	elseif MoveSets.needsCrate(key) then
@@ -17328,7 +17384,7 @@ end
 -- Premier coup utilisable parmi les candidats : armé, le moveset du perso (sinon à mains nues) ;
 -- à mains nues, les coups communs (et ceux qui ne demandent pas la caisse : Supers, saisie…)
 function MoveSets.pick(moves, candidates, armed)
-	local order = armed and { "", MoveSets.BARE .. "." } or { MoveSets.BARE .. ".", "" }
+	local order = (armed or not MoveSets.SHARED_BARE_HANDS) and { "" } or { MoveSets.BARE .. ".", "" }
 	for _, prefix in ipairs(order) do
 		for _, key in ipairs(candidates) do
 			local full = prefix .. key
@@ -20599,7 +20655,12 @@ function Fighters.hit(attacker, target, move, damageMultiplier, direction)
 		target:SetAttribute("FragileUntil", 0)
 	end
 	speed *= Config.KB_SCALE
-	local angle = math.rad(move.kbAngle or 30)
+	local angleDeg = move.kbAngle or 30
+	if comboPiece and angleDeg >= 0 and angleDeg < 75 then
+		-- coup de combo : l'adversaire décolle un peu et reste à portée pour la suite (vrais combos)
+		angleDeg += (75 - angleDeg) * Config.COMBO_POP
+	end
+	local angle = math.rad(angleDeg)
 	local velocity = Vector3.new(math.cos(angle) * speed * direction, math.sin(angle) * speed, 0)
 	local hitstun = math.clamp(speed * Config.HITSTUN_PER_KB, Config.HITSTUN_MIN, Config.HITSTUN_MAX)
 	if comboPiece then
@@ -20631,6 +20692,10 @@ function Fighters.hit(attacker, target, move, damageMultiplier, direction)
 	end
 	if attacker and state[attacker] then
 		Fighters.addSuper(attacker, damage * 0.8)
+		-- esquive de poursuite : juste après une touche, l'esquive revient presque tout de suite
+		attacker:SetAttribute("ChaseUntil", workspace:GetServerTimeNow() + Config.CHASE_DODGE_WINDOW)
+		local as = state[attacker]
+		as.dodgeReadyAt = math.min(as.dodgeReadyAt, os.clock() + Config.CHASE_DODGE_COOLDOWN)
 	end
 	Fighters.addSuper(target, damage * 0.4)
 	Fighters.updateFinishable(target)
@@ -22467,6 +22532,10 @@ end
 -- Multiplicateur de dégâts de l'attaquant : gorgées de Gégé, bonus en cours, tempo de Gloria
 function Mechanics.damageMultiplier(attacker)
 	local mult = 1 + 0.1 * (attacker:GetAttribute("Bulles") or 0)
+	-- sans la Caisse Bizarre, le perso frappe sans son arme : moins fort (les bots et le mannequin aussi)
+	if attacker:GetAttribute("Armed") ~= true then
+		mult *= Config.UNARMED_DAMAGE
+	end
 	mult *= Statuses.flags(attacker).damage or 1
 	local p = Mechanics.passive(attacker)
 	if p and p.kind == "tempo" then
@@ -27112,6 +27181,7 @@ local facing = 1
 local airJumpsLeft = Config.AIR_JUMPS
 local upSpecialUsed = false
 local busyUntil, stunnedUntil, dodgeReadyAt = 0, 0, 0
+local airDodgeAt = -10 -- dernière esquive en l'air (gravity cancel)
 local lastDashTime, lastDodgeTime = -10, -10
 local knockbackToken = 0
 local lastTapSign, lastTapTime, wasNeutralX = 0, -10, true
@@ -27291,7 +27361,8 @@ local function resolveMove(button)
 	if dir == "side" and os.clock() >= busyUntil then
 		facing = v.X > 0 and 1 or -1
 	end
-	local air = not isGrounded()
+	-- gravity cancel (Brawlhalla) : juste après une esquive en l'air, P / K / L sortent les coups « au sol »
+	local air = not isGrounded() and os.clock() - airDodgeAt > Config.GRAVITY_CANCEL_WINDOW
 	local now = os.clock()
 	if button == "P" or button == "K" then
 		if air then
@@ -27581,10 +27652,15 @@ end
 local function doDodge()
 	local v = moveInput()
 	local now = os.clock()
-	if now < dodgeReadyAt or now < busyUntil or flags().noDodge then
+	local chaseReady = (character:GetAttribute("ChaseUntil") or 0) > workspace:GetServerTimeNow()
+		and now - lastDodgeTime >= Config.CHASE_DODGE_COOLDOWN
+	if (now < dodgeReadyAt and not chaseReady) or now < busyUntil or flags().noDodge then
 		return
 	end
-	dodgeReadyAt = now + Config.DODGE_COOLDOWN
+	-- esquive de poursuite (juste après avoir touché) : elle revient presque tout de suite
+	local chasing = (character:GetAttribute("ChaseUntil") or 0) > workspace:GetServerTimeNow()
+	dodgeReadyAt = now + (chasing and Config.CHASE_DODGE_COOLDOWN or Config.DODGE_COOLDOWN)
+	airDodgeAt = isGrounded() and -10 or now -- pour le gravity cancel
 	lastDodgeTime = now
 	busyUntil = now + Config.DODGE_DURATION
 	ActionRemote:FireServer("DODGE")
@@ -27874,6 +27950,14 @@ RunService.Heartbeat:Connect(function(dt)
 	if grounded and (workspace:GetAttribute("ConveyorUntil") or 0) > workspace:GetServerTimeNow() and math.abs(root.Position.X) < 45 and root.Position.Y < 8 then
 		local velocity = root.AssemblyLinearVelocity
 		root.AssemblyLinearVelocity = Vector3.new(velocity.X + (workspace:GetAttribute("ConveyorSpeed") or 0) * dt * 6, velocity.Y, 0)
+	end
+
+	-- Chute rapide : ↓ maintenu en l'air, on tombe beaucoup plus vite (pas pendant un coup ni sonné)
+	if not grounded and acting and not busy and v.Y < -0.6 and root.AssemblyLinearVelocity.Y < 5 then
+		local velocity = root.AssemblyLinearVelocity
+		if velocity.Y > -Config.FAST_FALL_SPEED then
+			root.AssemblyLinearVelocity = Vector3.new(velocity.X, -Config.FAST_FALL_SPEED, 0)
+		end
 	end
 
 	-- Plateformes fines : on les traverse en montant, et ↓ maintenu (sans attaquer) pour redescendre
