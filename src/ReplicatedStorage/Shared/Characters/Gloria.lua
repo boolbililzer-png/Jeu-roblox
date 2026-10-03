@@ -157,7 +157,7 @@ local data = {
 		-- → P P : Tour de salsa, elle tourne sur elle-même, enceinte à bout de bras
 		P_side2 = {
 			label = "Tour de salsa", startup = 0.08, active = 0.14, recovery = 0.22,
-			damage = 7, hitbox = box(6.5, 4, 1.5, 0.5), kbBase = 24, kbGrowth = 38, kbAngle = 30,
+			damage = 7, hitbox = box(6.5, 4, 2.5, 0.5), kbBase = 24, kbGrowth = 38, kbAngle = 30,
 			windup = { Root = { 0, -30, 0, 0, -0.25, 0 }, Waist = { 0, -20, 0 }, RS = { 70, 0, 30 }, RE = { 60, 0, 0 }, LS = { 150, 0, -20 }, LE = { 40, 0, 0 } },
 			strike = { Root = { 0, 0, 0, 0, -0.05, 0 }, Neck = { 10, 0, 0 }, RS = { 90, 0, 85 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 170, 0, -10 }, LE = { 30, 0, 0 }, RH = { 40, 0, 10 }, RK = { -90, 0, 0 } },
 			follow = { Root = { 0, 0, 0, 0, -0.05, 0 }, Neck = { 12, 0, 0 }, RS = { 90, 0, 88 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 172, 0, -8 }, LE = { 30, 0, 0 }, RH = { 40, 0, 10 }, RK = { -90, 0, 0 } },
