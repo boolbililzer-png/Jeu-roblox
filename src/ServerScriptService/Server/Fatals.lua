@@ -87,7 +87,7 @@ end
 --   { "text", "LE PULL DE NOËL !" }                 bulle au-dessus de la victime
 --   { "wait", 0.5 }
 --   { "shrink", 0.3, time = 0.6 } / { "grow", 2 }   la victime rapetisse / grossit (échelle finale)
---   { "spawn", pieces = { … }, at = "target", offset = Vector3, life = 4 }
+--   { "spawn", pieces = { … }, at = "target", offset = Vector3 (X compté vers la victime), life = 4 }
 --        décor construit en pièces (même format que look.parts) ; at = "target", "attacker", "between", "above"
 --   { "move", to = "attacker" / "between" / "above", offset = Vector3, time = 0.5 }  la victime glisse jusque-là
 --   { "lift", 6, time = 0.6 }                       la victime monte de n studs
@@ -161,12 +161,14 @@ STEPS.grow = STEPS.shrink
 STEPS.spawn = function(step, attacker, target, props)
 	local model = Instance.new("Model")
 	model.Name = step.name or "DecorFatal"
-	local base = anchorPoint(step.at or "target", attacker, target) + (step.offset or Vector3.zero)
+	-- les décalages en X sont comptés vers la victime (le décor se retourne avec le perso)
 	local dir = 1
 	local a, t = attacker:FindFirstChild("HumanoidRootPart"), target:FindFirstChild("HumanoidRootPart")
 	if a and t and t.Position.X < a.Position.X then
 		dir = -1
 	end
+	local offset = step.offset or Vector3.zero
+	local base = anchorPoint(step.at or "target", attacker, target) + Vector3.new(offset.X * dir, offset.Y, offset.Z)
 	for _, piece in ipairs(step.pieces or {}) do
 		local part, offset = Costumes.buildPiece(piece)
 		part.Anchored = true
@@ -184,7 +186,10 @@ end
 STEPS.move = function(step, attacker, target)
 	local root = target:FindFirstChild("HumanoidRootPart")
 	if root then
-		local to = anchorPoint(step.to or "between", attacker, target) + (step.offset or Vector3.zero)
+		local a = attacker:FindFirstChild("HumanoidRootPart")
+		local dir = (a and root.Position.X < a.Position.X) and -1 or 1
+		local offset = step.offset or Vector3.zero
+		local to = anchorPoint(step.to or "between", attacker, target) + Vector3.new(offset.X * dir, offset.Y, offset.Z)
 		tweenRoot(root, CFrame.new(to) * (root.CFrame - root.Position), step.time or 0.5)
 	end
 end
