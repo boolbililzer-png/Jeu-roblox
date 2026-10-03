@@ -8391,7 +8391,8 @@ return data
 --              "back_K" (à l'opposé). Sans suite pour cette direction, on prend celle du bouton seul.
 --              La fenêtre s'ouvre à l'impact du coup et se ferme peu après son retour en garde.
 --
--- Signatures (S_, bouton L) et Supers (SUPER…, bouton Y) : sans limite, plus d'energyCost ni de superCost. Le moteur
+-- Signatures (S_, bouton L) et Supers (SUPER…, bouton Y) : sans limite, plus d'energyCost ni de superCost (seule
+--   limite : Config.SUPER_COOLDOWN secondes de recharge entre deux Supers, gérées par le moteur). Le moteur
 --   en fait des coups sûrs de toucher (couloir de 16 studs devant lui, projectiles qui visent l'adversaire, ↑L en
 --   diagonale, voir docs/fiche-perso.md) : on écrit ici des gestes qui balaient tout le couloir.
 --   charge     : animation du perso pendant la recharge (boucle de poses, voir plus bas)
@@ -18561,6 +18562,8 @@ Config.S_UP_FLYER_DAMAGE = 1.6
 -- Plus de jauge : les L et les Y se font à l'infini (l'énergie, la jauge Super et les compteurs des persos ne
 -- bloquent plus rien et ne sont plus affichés)
 Config.INFINITE_SPECIALS = true
+-- Seule limite des Supers (Y) : un temps de recharge entre deux Supers, en secondes (le coup fatal n'attend pas)
+Config.SUPER_COOLDOWN = 6
 Config.S_DAMAGE = 1.35 -- les signatures (L) frappent plus fort que les autres coups…
 Config.S_DAMAGE_OVER_LIGHT = 3 -- …et toujours au moins 3 de plus que la plus forte attaque P / K du perso
 Config.LIGHT_RANGE = 1.15 -- attaques P / K un peu plus larges : les combos touchent plus souvent
@@ -20067,7 +20070,10 @@ local function think(brain, now)
 	if busy then
 		return
 	end
-	local super = Config.INFINITE_SPECIALS and rng:NextNumber() < 0.04 * d or (model:GetAttribute("Super") or 0) >= Config.MAX_SUPER
+	-- Super : seulement une fois la recharge finie (Config.SUPER_COOLDOWN)
+	local superReady = workspace:GetServerTimeNow() >= (model:GetAttribute("SuperReadyAt") or 0)
+	local super = superReady
+		and (Config.INFINITE_SPECIALS and rng:NextNumber() < 0.04 * d or (model:GetAttribute("Super") or 0) >= Config.MAX_SUPER)
 	local roll = rng:NextNumber()
 	local key
 	if super and (Config.INFINITE_SPECIALS or rng:NextNumber() < 0.5) then
@@ -21046,6 +21052,14 @@ function Combat.handleModelAction(model, action, extra)
 		end
 		model:SetAttribute("Super", 0)
 	end
+	-- Supers (Y) : un temps de recharge entre deux, lu sur l'horloge serveur (le client affiche le compte à rebours)
+	local isSuper = string.sub(action, 1, 5) == "SUPER"
+	if isSuper and workspace:GetServerTimeNow() < (model:GetAttribute("SuperReadyAt") or 0) then
+		return
+	end
+	if isSuper then
+		model:SetAttribute("SuperReadyAt", workspace:GetServerTimeNow() + Config.SUPER_COOLDOWN)
+	end
 
 	s.busyUntil = now + move.startup + move.active + (move.hold or 0) + move.recovery
 	s.lastMoveKey, s.lastMoveAt = action, now
@@ -21940,6 +21954,7 @@ function Fighters.resetAttributes(model)
 	model:SetAttribute("Damage", 0)
 	model:SetAttribute("Stocks", Config.STOCKS)
 	model:SetAttribute("Super", 0)
+	model:SetAttribute("SuperReadyAt", 0) -- recharge des Supers (Y) : prête
 	model:SetAttribute("Bulles", 0)
 	model:SetAttribute("Status", "")
 	model:SetAttribute("StatusUntil", 0)
@@ -26200,7 +26215,7 @@ local HELP_ROWS = {
 	{ "Esquive", "Maj gauche", "Left Shift" },
 	{ "Main ✋ : ramasser / lancer", "U (+ flèche pour viser)", "U (+ arrow to aim)" },
 	{ "Passer sous une plateforme", "maintenir bas", "hold down" },
-	{ "3 Supers / fatal, sans limite", "↑Y, →Y (ou Y), ↓Y", "↑Y, →Y (or Y), ↓Y" },
+	{ "3 Supers / fatal (recharge 6 s)", "↑Y, →Y (ou Y), ↓Y", "↑Y, →Y (or Y), ↓Y" },
 	{ "Dash", "2× gauche ou droite", "2× left or right" },
 	{ "Combos J / K", "J J J, J K J, K J K, K K J…", "J J J, J K J, K J K, K K J…" },
 	{ "Combos fléchés", "flèche + J ou K, puis J / K", "arrow + J or K, then J / K" },
@@ -26294,10 +26309,24 @@ function Controls:setHandLabel(text, color)
 	end
 end
 
--- Le bouton ⭐ n'apparaît que lorsque la jauge Super est pleine
-function Controls:setSuperReady(ready)
-	if self.buttons.SUPER then
-		self.buttons.SUPER.Visible = ready
+-- Le bouton ⭐ n'apparaît que lorsque la jauge Super est pleine. Pendant la recharge entre deux Supers
+-- (cooldown > 0, en secondes), il se grise et affiche les secondes qui restent ; le coup fatal reste possible.
+function Controls:setSuperReady(ready, cooldown)
+	local button = self.buttons.SUPER
+	if not button then
+		return
+	end
+	button.Visible = ready
+	local recharging = cooldown ~= nil and cooldown > 0
+	local label = recharging and tostring(math.ceil(cooldown)) or "⭐"
+	if button:GetAttribute("Label") ~= label then
+		button:SetAttribute("Label", label)
+		button.Text = label
+		button.TextTransparency = recharging and 0.25 or 0
+		button.BackgroundColor3 = recharging and Color3.fromRGB(140, 110, 50) or Color3.fromRGB(255, 170, 0)
+	end
+	if not button:GetAttribute("Held") then
+		button.BackgroundTransparency = recharging and 0.5 or 0.2
 	end
 end
 
@@ -28862,12 +28891,10 @@ local function createCard(parent)
 	refs.super = gauge(0.61, Color3.fromRGB(255, 170, 0), "⭐")
 	refs.energy = gauge(0.73, ENERGY_COLOR, "⚡")
 	if Config.INFINITE_SPECIALS then
-		-- plus de jauges : les L et les Y se font à l'infini
-		for _, fill in ipairs({ refs.super, refs.energy }) do
-			fill.Parent.Visible = false
-		end
+		-- plus de jauge d'énergie : les L se font à l'infini. La jauge ⭐ sert de barre de recharge des Supers
+		refs.energy.Parent.Visible = false
 		for _, child in ipairs(card:GetChildren()) do
-			if child:IsA("TextLabel") and (child.Text == "⭐" or child.Text == "⚡") then
+			if child:IsA("TextLabel") and child.Text == "⚡" then
 				child.Visible = false
 			end
 		end
@@ -28985,7 +29012,15 @@ function Hud.start()
 			if team then
 				refs.stroke.Color = team
 			end
-			refs.super.Size = UDim2.fromScale((model:GetAttribute("Super") or 0) / Config.MAX_SUPER, 1)
+			if Config.INFINITE_SPECIALS then
+				-- recharge des Supers : la barre ⭐ se remplit pendant les Config.SUPER_COOLDOWN secondes
+				local left = (model:GetAttribute("SuperReadyAt") or 0) - workspace:GetServerTimeNow()
+				local ready = left <= 0
+				refs.super.Size = UDim2.fromScale(ready and 1 or 1 - math.clamp(left / Config.SUPER_COOLDOWN, 0, 1), 1)
+				refs.super.BackgroundColor3 = ready and Color3.fromRGB(255, 170, 0) or Color3.fromRGB(150, 120, 60)
+			else
+				refs.super.Size = UDim2.fromScale((model:GetAttribute("Super") or 0) / Config.MAX_SUPER, 1)
+			end
 			-- énergie : grisée quand elle ne suffit plus pour un spécial, elle clignote pendant la recharge
 			local energy = model:GetAttribute("Energy") or 0
 			refs.energy.Size = UDim2.fromScale(energy / Config.ENERGY_MAX, 1)
@@ -29371,6 +29406,14 @@ local function performMove(key, chaining, power)
 	if move.superCost and (character:GetAttribute("Super") or 0) < move.superCost then
 		Fx.popText(root.Position + Vector3.new(0, 4, 1), "⭐ SUPER PAS ENCORE PRÊT", Color3.fromRGB(255, 190, 60), 0.8, 0.8)
 		return false
+	end
+	-- temps de recharge entre deux Supers (horloge serveur, voir Combat.handleModelAction)
+	if string.sub(key, 1, 5) == "SUPER" then
+		local left = (character:GetAttribute("SuperReadyAt") or 0) - workspace:GetServerTimeNow()
+		if left > 0 then
+			Fx.popText(root.Position + Vector3.new(0, 4, 1), string.format("⭐ DANS %d s", math.ceil(left)), Color3.fromRGB(255, 190, 60), 0.8, 0.8)
+			return false
+		end
 	end
 	local cost = energyCost(move, key)
 	if cost > (character:GetAttribute("Energy") or 0) then
@@ -29950,8 +29993,12 @@ RunService.Heartbeat:Connect(function(dt)
 		controls:setHandLabel("✋", Color3.fromRGB(110, 100, 120)) -- rien à ramasser à portée
 	end
 
-	-- ⭐ visible si la jauge Super est pleine ou si un coup fatal est possible
-	controls:setSuperReady(Config.INFINITE_SPECIALS or (character:GetAttribute("Super") or 0) >= Config.MAX_SUPER or Hud.findFinishable(character) ~= nil)
+	-- ⭐ visible si la jauge Super est pleine ou si un coup fatal est possible ; en recharge, il affiche le compte à rebours
+	local superLeft = (character:GetAttribute("SuperReadyAt") or 0) - workspace:GetServerTimeNow()
+	controls:setSuperReady(
+		Config.INFINITE_SPECIALS or (character:GetAttribute("Super") or 0) >= Config.MAX_SUPER or Hud.findFinishable(character) ~= nil,
+		superLeft
+	)
 	-- bouton S grisé quand l'énergie ne suffit plus pour un spécial, ⚡ qui pulse pendant la recharge
 	if Config.INFINITE_SPECIALS then
 		controls:setEnergy(1, true, false)

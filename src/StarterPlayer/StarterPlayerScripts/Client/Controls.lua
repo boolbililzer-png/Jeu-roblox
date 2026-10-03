@@ -349,7 +349,7 @@ local HELP_ROWS = {
 	{ "Esquive", "Maj gauche", "Left Shift" },
 	{ "Main ✋ : ramasser / lancer", "U (+ flèche pour viser)", "U (+ arrow to aim)" },
 	{ "Passer sous une plateforme", "maintenir bas", "hold down" },
-	{ "3 Supers / fatal, sans limite", "↑Y, →Y (ou Y), ↓Y", "↑Y, →Y (or Y), ↓Y" },
+	{ "3 Supers / fatal (recharge 6 s)", "↑Y, →Y (ou Y), ↓Y", "↑Y, →Y (or Y), ↓Y" },
 	{ "Dash", "2× gauche ou droite", "2× left or right" },
 	{ "Combos J / K", "J J J, J K J, K J K, K K J…", "J J J, J K J, K J K, K K J…" },
 	{ "Combos fléchés", "flèche + J ou K, puis J / K", "arrow + J or K, then J / K" },
@@ -443,10 +443,24 @@ function Controls:setHandLabel(text, color)
 	end
 end
 
--- Le bouton ⭐ n'apparaît que lorsque la jauge Super est pleine
-function Controls:setSuperReady(ready)
-	if self.buttons.SUPER then
-		self.buttons.SUPER.Visible = ready
+-- Le bouton ⭐ n'apparaît que lorsque la jauge Super est pleine. Pendant la recharge entre deux Supers
+-- (cooldown > 0, en secondes), il se grise et affiche les secondes qui restent ; le coup fatal reste possible.
+function Controls:setSuperReady(ready, cooldown)
+	local button = self.buttons.SUPER
+	if not button then
+		return
+	end
+	button.Visible = ready
+	local recharging = cooldown ~= nil and cooldown > 0
+	local label = recharging and tostring(math.ceil(cooldown)) or "⭐"
+	if button:GetAttribute("Label") ~= label then
+		button:SetAttribute("Label", label)
+		button.Text = label
+		button.TextTransparency = recharging and 0.25 or 0
+		button.BackgroundColor3 = recharging and Color3.fromRGB(140, 110, 50) or Color3.fromRGB(255, 170, 0)
+	end
+	if not button:GetAttribute("Held") then
+		button.BackgroundTransparency = recharging and 0.5 or 0.2
 	end
 end
 

@@ -26,6 +26,7 @@ function Fighters.resetAttributes(model)
 	model:SetAttribute("Damage", 0)
 	model:SetAttribute("Stocks", Config.STOCKS)
 	model:SetAttribute("Super", 0)
+	model:SetAttribute("SuperReadyAt", 0) -- recharge des Supers (Y) : prête
 	model:SetAttribute("Bulles", 0)
 	model:SetAttribute("Status", "")
 	model:SetAttribute("StatusUntil", 0)

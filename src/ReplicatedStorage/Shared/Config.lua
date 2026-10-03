@@ -84,6 +84,8 @@ Config.S_UP_FLYER_DAMAGE = 1.6
 -- Plus de jauge : les L et les Y se font à l'infini (l'énergie, la jauge Super et les compteurs des persos ne
 -- bloquent plus rien et ne sont plus affichés)
 Config.INFINITE_SPECIALS = true
+-- Seule limite des Supers (Y) : un temps de recharge entre deux Supers, en secondes (le coup fatal n'attend pas)
+Config.SUPER_COOLDOWN = 6
 Config.S_DAMAGE = 1.35 -- les signatures (L) frappent plus fort que les autres coups…
 Config.S_DAMAGE_OVER_LIGHT = 3 -- …et toujours au moins 3 de plus que la plus forte attaque P / K du perso
 Config.LIGHT_RANGE = 1.15 -- attaques P / K un peu plus larges : les combos touchent plus souvent

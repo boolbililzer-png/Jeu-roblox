@@ -12,7 +12,8 @@
 --              "back_K" (à l'opposé). Sans suite pour cette direction, on prend celle du bouton seul.
 --              La fenêtre s'ouvre à l'impact du coup et se ferme peu après son retour en garde.
 --
--- Signatures (S_, bouton L) et Supers (SUPER…, bouton Y) : sans limite, plus d'energyCost ni de superCost. Le moteur
+-- Signatures (S_, bouton L) et Supers (SUPER…, bouton Y) : sans limite, plus d'energyCost ni de superCost (seule
+--   limite : Config.SUPER_COOLDOWN secondes de recharge entre deux Supers, gérées par le moteur). Le moteur
 --   en fait des coups sûrs de toucher (couloir de 16 studs devant lui, projectiles qui visent l'adversaire, ↑L en
 --   diagonale, voir docs/fiche-perso.md) : on écrit ici des gestes qui balaient tout le couloir.
 --   charge     : animation du perso pendant la recharge (boucle de poses, voir plus bas)

@@ -115,6 +115,8 @@ Le moteur transforme lui-même ces coups au chargement (`CharacterList.lua`), la
 - **Y (Supers)** : même chose avec un couloir 1,3 fois plus grand. Ils sont plus farfelus que les L.
 - **Sans limite** : plus de jauge d'énergie ni de jauge Super, plus de `energyCost` / `superCost` / `meterCost`
   (ignorés). L'équilibrage se fait par `startup` (0,2 à 0,45 s) et `recovery` (0,4 à 0,9 s), plus longs que les P / K.
+  Seule limite : les Supers (Y) ont un temps de recharge commun de `Config.SUPER_COOLDOWN` secondes (6 s) entre
+  deux, géré par le moteur (attribut `SuperReadyAt` sur l'horloge serveur). La fiche n'a rien à écrire.
 - Les dégâts des L sont relevés automatiquement au-dessus des P / K ; écrire 12 à 18 pour un L, 20 à 28 pour un Y.
 
 ## Un coup

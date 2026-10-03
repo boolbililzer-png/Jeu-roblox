@@ -289,6 +289,14 @@ local function performMove(key, chaining, power)
 		Fx.popText(root.Position + Vector3.new(0, 4, 1), "⭐ SUPER PAS ENCORE PRÊT", Color3.fromRGB(255, 190, 60), 0.8, 0.8)
 		return false
 	end
+	-- temps de recharge entre deux Supers (horloge serveur, voir Combat.handleModelAction)
+	if string.sub(key, 1, 5) == "SUPER" then
+		local left = (character:GetAttribute("SuperReadyAt") or 0) - workspace:GetServerTimeNow()
+		if left > 0 then
+			Fx.popText(root.Position + Vector3.new(0, 4, 1), string.format("⭐ DANS %d s", math.ceil(left)), Color3.fromRGB(255, 190, 60), 0.8, 0.8)
+			return false
+		end
+	end
 	local cost = energyCost(move, key)
 	if cost > (character:GetAttribute("Energy") or 0) then
 		Fx.noEnergy(character)
@@ -867,8 +875,12 @@ RunService.Heartbeat:Connect(function(dt)
 		controls:setHandLabel("✋", Color3.fromRGB(110, 100, 120)) -- rien à ramasser à portée
 	end
 
-	-- ⭐ visible si la jauge Super est pleine ou si un coup fatal est possible
-	controls:setSuperReady(Config.INFINITE_SPECIALS or (character:GetAttribute("Super") or 0) >= Config.MAX_SUPER or Hud.findFinishable(character) ~= nil)
+	-- ⭐ visible si la jauge Super est pleine ou si un coup fatal est possible ; en recharge, il affiche le compte à rebours
+	local superLeft = (character:GetAttribute("SuperReadyAt") or 0) - workspace:GetServerTimeNow()
+	controls:setSuperReady(
+		Config.INFINITE_SPECIALS or (character:GetAttribute("Super") or 0) >= Config.MAX_SUPER or Hud.findFinishable(character) ~= nil,
+		superLeft
+	)
 	-- bouton S grisé quand l'énergie ne suffit plus pour un spécial, ⚡ qui pulse pendant la recharge
 	if Config.INFINITE_SPECIALS then
 		controls:setEnergy(1, true, false)

@@ -292,7 +292,10 @@ local function think(brain, now)
 	if busy then
 		return
 	end
-	local super = Config.INFINITE_SPECIALS and rng:NextNumber() < 0.04 * d or (model:GetAttribute("Super") or 0) >= Config.MAX_SUPER
+	-- Super : seulement une fois la recharge finie (Config.SUPER_COOLDOWN)
+	local superReady = workspace:GetServerTimeNow() >= (model:GetAttribute("SuperReadyAt") or 0)
+	local super = superReady
+		and (Config.INFINITE_SPECIALS and rng:NextNumber() < 0.04 * d or (model:GetAttribute("Super") or 0) >= Config.MAX_SUPER)
 	local roll = rng:NextNumber()
 	local key
 	if super and (Config.INFINITE_SPECIALS or rng:NextNumber() < 0.5) then

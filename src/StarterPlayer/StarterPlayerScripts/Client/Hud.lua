@@ -113,12 +113,10 @@ local function createCard(parent)
 	refs.super = gauge(0.61, Color3.fromRGB(255, 170, 0), "⭐")
 	refs.energy = gauge(0.73, ENERGY_COLOR, "⚡")
 	if Config.INFINITE_SPECIALS then
-		-- plus de jauges : les L et les Y se font à l'infini
-		for _, fill in ipairs({ refs.super, refs.energy }) do
-			fill.Parent.Visible = false
-		end
+		-- plus de jauge d'énergie : les L se font à l'infini. La jauge ⭐ sert de barre de recharge des Supers
+		refs.energy.Parent.Visible = false
 		for _, child in ipairs(card:GetChildren()) do
-			if child:IsA("TextLabel") and (child.Text == "⭐" or child.Text == "⚡") then
+			if child:IsA("TextLabel") and child.Text == "⚡" then
 				child.Visible = false
 			end
 		end
@@ -236,7 +234,15 @@ function Hud.start()
 			if team then
 				refs.stroke.Color = team
 			end
-			refs.super.Size = UDim2.fromScale((model:GetAttribute("Super") or 0) / Config.MAX_SUPER, 1)
+			if Config.INFINITE_SPECIALS then
+				-- recharge des Supers : la barre ⭐ se remplit pendant les Config.SUPER_COOLDOWN secondes
+				local left = (model:GetAttribute("SuperReadyAt") or 0) - workspace:GetServerTimeNow()
+				local ready = left <= 0
+				refs.super.Size = UDim2.fromScale(ready and 1 or 1 - math.clamp(left / Config.SUPER_COOLDOWN, 0, 1), 1)
+				refs.super.BackgroundColor3 = ready and Color3.fromRGB(255, 170, 0) or Color3.fromRGB(150, 120, 60)
+			else
+				refs.super.Size = UDim2.fromScale((model:GetAttribute("Super") or 0) / Config.MAX_SUPER, 1)
+			end
 			-- énergie : grisée quand elle ne suffit plus pour un spécial, elle clignote pendant la recharge
 			local energy = model:GetAttribute("Energy") or 0
 			refs.energy.Size = UDim2.fromScale(energy / Config.ENERGY_MAX, 1)

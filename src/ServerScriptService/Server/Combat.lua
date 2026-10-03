@@ -891,6 +891,14 @@ function Combat.handleModelAction(model, action, extra)
 		end
 		model:SetAttribute("Super", 0)
 	end
+	-- Supers (Y) : un temps de recharge entre deux, lu sur l'horloge serveur (le client affiche le compte à rebours)
+	local isSuper = string.sub(action, 1, 5) == "SUPER"
+	if isSuper and workspace:GetServerTimeNow() < (model:GetAttribute("SuperReadyAt") or 0) then
+		return
+	end
+	if isSuper then
+		model:SetAttribute("SuperReadyAt", workspace:GetServerTimeNow() + Config.SUPER_COOLDOWN)
+	end
 
 	s.busyUntil = now + move.startup + move.active + (move.hold or 0) + move.recovery
 	s.lastMoveKey, s.lastMoveAt = action, now
