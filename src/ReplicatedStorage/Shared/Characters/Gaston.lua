@@ -137,7 +137,7 @@ local data = {
 		-- Foulard sans fin (J J) : il tire de sa manche gauche une guirlande de foulards et la fouette devant lui
 		P_combo2 = {
 			label = "Foulard sans fin", startup = 0.08, active = 0.12, recovery = 0.18,
-			damage = 5, hitbox = box(6, 2.5, 3.5, 0.6), kbBase = 18, kbGrowth = 22, kbAngle = 25,
+			damage = 5, hitbox = box(6, 3.5, 3.5, 0.6), kbBase = 18, kbGrowth = 22, kbAngle = 25,
 			windup = { Root = { 2, 20, 0, 0, -0.2, 0.15 }, Waist = { 4, 22, 0 }, Neck = { 0, -14, 0 }, RS = { 50, 0, 20 }, RE = { 60, 0, 0 }, LS = { 60, 0, 40 }, LE = { 130, 0, 0 }, LW = { 0, 0, 0 } },
 			strike = { Root = { -6, -16, 0, 0, -0.22, -0.25 }, Waist = { -6, -20, 0 }, Neck = { 0, 12, 0 }, RS = { 40, 0, 40 }, RE = { 50, 0, 0 }, LS = { 92, 0, -20 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 } },
 			follow = { Root = { -6, -22, 0, 0, -0.22, -0.3 }, Waist = { -6, -26, 0 }, Neck = { 0, 16, 0 }, RS = { 35, 0, 45 }, RE = { 50, 0, 0 }, LS = { 90, 0, -45 }, LE = { 5, 0, 0 }, LW = { -10, 0, 0 } },
@@ -145,7 +145,7 @@ local data = {
 		},
 		-- Tour de passe-passe final (J J J) : il fait tournoyer la baguette au-dessus de sa tête puis l'abat, gerbe d'étincelles
 		P_combo3 = {
-			label = "Final étincelant", startup = 0.14, active = 0.1, recovery = 0.3,
+			label = "Final étincelant", startup = 0.1, active = 0.1, recovery = 0.3,
 			damage = 8, hitbox = box(5, 4, 2.6, 1), kbBase = 30, kbGrowth = 60, kbAngle = 48,
 			windup = { Root = { 8, -8, 0, 0, -0.05, 0.2 }, Waist = { 14, -10, 0 }, Neck = { 18, 0, 0 }, RS = { 190, 0, 20 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 80, 0, -60 }, LE = { 20, 0, 0 } },
 			strike = { Root = { -12, 10, 0, 0, -0.45, -0.4 }, Waist = { -26, 12, 0 }, Neck = { -8, 0, 0 }, RS = { 75, 0, 5 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -80 }, LE = { 10, 0, 0 } },
@@ -166,7 +166,7 @@ local data = {
 		-- → J J : Pichenette magique, il s'avance et pique du bout de la baguette
 		P_side2 = {
 			label = "Pichenette magique", startup = 0.08, active = 0.08, recovery = 0.2,
-			damage = 7, hitbox = box(5, 2.5, 3.2, 0.8), kbBase = 22, kbGrowth = 35, kbAngle = 25, selfVelocity = Vector2.new(18, 0),
+			damage = 7, hitbox = box(5, 3.5, 3.2, 0.6), kbBase = 22, kbGrowth = 35, kbAngle = 25, selfVelocity = Vector2.new(18, 0),
 			windup = { Root = { 4, -24, 0, 0, -0.25, 0.25 }, Waist = { 4, -26, 0 }, RS = { 60, 0, 30 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -60 }, LE = { 30, 0, 0 } },
 			strike = { Root = { -12, 16, 0, 0, -0.35, -0.45 }, Waist = { -10, 20, 0 }, RS = { 98, 0, -2 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -75 }, LE = { 20, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
 			follow = { Root = { -14, 20, 0, 0, -0.36, -0.5 }, Waist = { -12, 24, 0 }, RS = { 96, 0, -6 }, RE = { 5, 0, 0 }, RW = { -10, 0, 0 }, LS = { 15, 0, -80 }, LE = { 20, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
@@ -184,7 +184,7 @@ local data = {
 		-- ↓ J J : Révérence remontante, du fond de sa révérence il remonte la baguette jusqu'au ciel
 		P_down2 = {
 			label = "Révérence remontante", startup = 0.1, active = 0.1, recovery = 0.25,
-			damage = 8, hitbox = box(4, 5, 2, 2), kbBase = 30, kbGrowth = 45, kbAngle = 82,
+			damage = 8, hitbox = box(5, 5, 2.5, 2), kbBase = 30, kbGrowth = 45, kbAngle = 82,
 			windup = { Root = { -14, 0, 0, 0, -0.6, 0.1 }, Waist = { -30, 0, 0 }, Neck = { -20, 0, 0 }, RS = { -20, 0, 30 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -10 }, LE = { 100, 0, 0 } },
 			strike = { Root = { 8, 10, 0, 0, 0.15, -0.2 }, Waist = { 16, 12, 0 }, Neck = { 25, 0, 0 }, RS = { 165, 0, 10 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -70 }, LE = { 20, 0, 0 } },
 			follow = { Root = { 10, 12, 0, 0, 0.2, -0.25 }, Waist = { 18, 14, 0 }, Neck = { 30, 0, 0 }, RS = { 178, 0, 5 }, RE = { 8, 0, 0 }, RW = { -15, 0, 0 }, LS = { 25, 0, -75 }, LE = { 20, 0, 0 } },
@@ -219,19 +219,19 @@ local data = {
 		},
 
 		------------------------------------------------------------------ Attaques lourdes (K)
-		-- Chaussure vernie : grand coup de pied de danseur de cabaret, pointe tendue, la chaussure brille
+		-- Chaussure vernie : coup de pied de cancan, il relève les pans de sa cape des deux mains et lance la jambe tout en haut, pointe brillante
 		K_neutral = {
 			label = "Chaussure vernie", startup = 0.18, active = 0.1, recovery = 0.3,
-			damage = 11, hitbox = box(5, 3, 3.2, 0.5), kbBase = 30, kbGrowth = 70, kbAngle = 38,
-			windup = { Root = { 10, -14, 0, 0, -0.1, 0.15 }, Waist = { 10, -10, 0 }, Neck = { 6, 10, 0 }, RS = { 60, 0, 60 }, RE = { 40, 0, 0 }, LS = { 120, 0, -40 }, LE = { 30, 0, 0 }, RH = { 90, 0, 0 }, RK = { -120, 0, 0 }, RA = { -20, 0, 0 } },
-			strike = { Root = { 22, -4, 0, 0, -0.05, 0.05 }, Waist = { 16, 0, 0 }, Neck = { -15, 0, 0 }, RS = { 40, 0, 85 }, RE = { 10, 0, 0 }, LS = { 160, 0, -30 }, LE = { 10, 0, 0 }, RH = { 110, 0, 0 }, RK = { -2, 0, 0 }, RA = { -25, 0, 0 } },
-			follow = { Root = { 26, -2, 0, 0, -0.05, 0.1 }, Waist = { 18, 0, 0 }, Neck = { -18, 0, 0 }, RS = { 38, 0, 88 }, RE = { 10, 0, 0 }, LS = { 165, 0, -28 }, LE = { 10, 0, 0 }, RH = { 118, 0, 0 }, RK = { 0, 0, 0 }, RA = { -25, 0, 0 } },
-			trail = "rightFoot", fx = { { "burst", color = SPARK, size = 1.5 } }, hitText = "BLING !",
+			damage = 11, hitbox = box(5, 4.5, 3, 1.2), kbBase = 30, kbGrowth = 70, kbAngle = 45,
+			windup = { Root = { 6, 0, 0, 0, -0.25, 0.15 }, Waist = { 8, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 30, 0, 70 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -70 }, LE = { 90, 0, 0 }, RH = { 40, 0, 0 }, RK = { -110, 0, 0 }, RA = { -20, 0, 0 } },
+			strike = { Root = { 16, 0, 0, 0, 0.1, 0.05 }, Waist = { 10, 0, 0 }, Neck = { -12, 0, 0 }, RS = { 35, 0, 80 }, RE = { 95, 0, 0 }, RW = { 0, 0, 0 }, LS = { 35, 0, -80 }, LE = { 95, 0, 0 }, RH = { 128, 0, 0 }, RK = { -2, 0, 0 }, RA = { -25, 0, 0 } },
+			follow = { Root = { 20, 0, 0, 0, 0.12, 0.08 }, Waist = { 12, 0, 0 }, Neck = { -15, 0, 0 }, RS = { 38, 0, 84 }, RE = { 95, 0, 0 }, RW = { 0, 0, 0 }, LS = { 38, 0, -84 }, LE = { 95, 0, 0 }, RH = { 136, 0, 0 }, RK = { 0, 0, 0 }, RA = { -25, 0, 0 } },
+			trail = "rightFoot", fx = { { "burst", color = SPARK, size = 1.5 }, { "symbols", symbols = { "♪", "✦" }, color = SPARK, count = 3, radius = 2, at = "front" } }, text = "CANCAN !", hitText = "BLING !",
 		},
 		-- K K : Talon vernis, il pivote et fouette du talon gauche, cape qui vole
 		K_combo2 = {
-			label = "Talon vernis", startup = 0.14, active = 0.1, recovery = 0.25,
-			damage = 9, hitbox = box(5, 3, 3, 0.5), kbBase = 28, kbGrowth = 50, kbAngle = 32,
+			label = "Talon vernis", startup = 0.1, active = 0.1, recovery = 0.25,
+			damage = 9, hitbox = box(5, 3.5, 3, 0.5), kbBase = 28, kbGrowth = 50, kbAngle = 32,
 			windup = { Root = { 4, 40, 0, 0, -0.15, 0.1 }, Waist = { 4, 30, 0 }, Neck = { 0, -25, 0 }, RS = { 60, 0, 50 }, RE = { 50, 0, 0 }, LS = { 40, 0, -55 }, LE = { 40, 0, 0 }, LH = { 55, 0, -40 }, LK = { -105, 0, 0 } },
 			strike = { Root = { 12, -50, 0, 0, -0.1, 0 }, Waist = { 10, -30, 0 }, Neck = { 0, 20, 0 }, RS = { 70, 0, 60 }, RE = { 40, 0, 0 }, LS = { 30, 0, -70 }, LE = { 30, 0, 0 }, LH = { 85, 0, -55 }, LK = { -5, 0, 0 }, LA = { -15, 0, 0 } },
 			follow = { Root = { 14, -70, 0, 0, -0.1, 0 }, Waist = { 12, -38, 0 }, Neck = { 0, 26, 0 }, RS = { 72, 0, 62 }, RE = { 40, 0, 0 }, LS = { 25, 0, -75 }, LE = { 30, 0, 0 }, LH = { 80, 0, -40 }, LK = { -8, 0, 0 }, LA = { -15, 0, 0 } },
@@ -239,7 +239,7 @@ local data = {
 		},
 		-- K K K : Coup de pied théâtral, il saute, salue de la baguette et lance une ruade en l'air
 		K_combo3 = {
-			label = "Coup de pied théâtral", startup = 0.16, active = 0.12, recovery = 0.32,
+			label = "Coup de pied théâtral", startup = 0.1, active = 0.12, recovery = 0.32,
 			damage = 12, hitbox = box(5, 4, 3, 1), kbBase = 32, kbGrowth = 80, kbAngle = 40, selfVelocity = Vector2.new(15, 42),
 			windup = { Root = { -8, 0, 0, 0, -0.6, 0.1 }, Waist = { -14, 0, 0 }, RS = { 170, 0, 30 }, RE = { 20, 0, 0 }, LS = { -30, 0, -30 }, LE = { 30, 0, 0 } },
 			strike = { Root = { 16, 0, 0 }, Waist = { 12, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 170, 0, 40 }, RE = { 10, 0, 0 }, LS = { 60, 0, -70 }, LE = { 20, 0, 0 }, RH = { 100, 0, 0 }, RK = { 0, 0, 0 }, RA = { -20, 0, 0 }, LH = { 30, 0, 0 }, LK = { -110, 0, 0 } },
@@ -257,8 +257,8 @@ local data = {
 		},
 		-- → K K : Crochet de canne, il accroche l'adversaire par le cou avec la canne et le ramène vers lui
 		K_side2 = {
-			label = "Crochet de canne", startup = 0.16, active = 0.12, recovery = 0.3,
-			damage = 9, hitbox = box(6, 3, 4, 0.8), kbBase = 26, kbGrowth = 30, kbAngle = 20, pull = true,
+			label = "Crochet de canne", startup = 0.1, active = 0.12, recovery = 0.3,
+			damage = 9, hitbox = box(6, 3.5, 4, 0.8), kbBase = 26, kbGrowth = 30, kbAngle = 20, pull = true,
 			windup = { Root = { -6, -20, 0, 0, -0.3, -0.2 }, Waist = { -8, -24, 0 }, RS = { 30, 0, 40 }, RE = { 50, 0, 0 }, LS = { 120, 0, 10 }, LE = { 10, 0, 0 }, LW = { 90, 0, 0 } },
 			strike = { Root = { 10, 20, 0, 0, -0.3, 0.3 }, Waist = { 14, 26, 0 }, Neck = { 0, -16, 0 }, RS = { 40, 0, 50 }, RE = { 60, 0, 0 }, LS = { 60, 0, 30 }, LE = { 110, 0, 0 }, LW = { 90, 0, 0 } },
 			follow = { Root = { 12, 26, 0, 0, -0.3, 0.4 }, Waist = { 16, 30, 0 }, Neck = { 0, -20, 0 }, RS = { 40, 0, 52 }, RE = { 60, 0, 0 }, LS = { 40, 0, 30 }, LE = { 125, 0, 0 }, LW = { 90, 0, 0 } },
@@ -275,8 +275,8 @@ local data = {
 		},
 		-- ↓ K K : Sortie de trappe, il jaillit de la trappe comme un diable de sa boîte, pieds en avant
 		K_downK = {
-			label = "Sortie de trappe", startup = 0.12, active = 0.14, recovery = 0.3,
-			damage = 9, hitbox = box(4, 5, 1.5, 2.5), kbBase = 30, kbGrowth = 52, kbAngle = 84,
+			label = "Sortie de trappe", startup = 0.1, active = 0.14, recovery = 0.3,
+			damage = 9, hitbox = box(5, 5, 2.5, 2.5), kbBase = 30, kbGrowth = 52, kbAngle = 84,
 			windup = { Root = { 0, 0, 0, 0, -1.6, 0 }, Waist = { -20, 0, 0 }, Neck = { -15, 0, 0 }, RS = { 30, 0, 20 }, RE = { 90, 0, 0 }, LS = { 30, 0, -20 }, LE = { 90, 0, 0 } },
 			strike = { Root = { -20, 0, 0, 0, 0.6, 0 }, Waist = { 10, 0, 0 }, Neck = { 25, 0, 0 }, RS = { 175, 0, 20 }, RE = { 0, 0, 0 }, LS = { 175, 0, -20 }, LE = { 0, 0, 0 }, RH = { -10, 0, 5 }, RK = { -20, 0, 0 }, LH = { -10, 0, -5 }, LK = { -20, 0, 0 } },
 			follow = { Root = { -22, 0, 0, 0, 0.7, 0 }, Waist = { 12, 0, 0 }, Neck = { 28, 0, 0 }, RS = { 180, 0, 25 }, RE = { 0, 0, 0 }, LS = { 180, 0, -25 }, LE = { 0, 0, 0 }, RH = { -12, 0, 8 }, RK = { -30, 0, 0 }, LH = { -12, 0, -8 }, LK = { -30, 0, 0 } },
@@ -293,8 +293,8 @@ local data = {
 		},
 		-- ↑ K K : Chandelle de cabaret, coup de pied tendu à la verticale, l'autre jambe pliée, bras en V
 		K_upK = {
-			label = "Chandelle de cabaret", startup = 0.14, active = 0.12, recovery = 0.3,
-			damage = 10, hitbox = box(4, 5, 1.5, 3), kbBase = 30, kbGrowth = 55, kbAngle = 85,
+			label = "Chandelle de cabaret", startup = 0.1, active = 0.12, recovery = 0.3,
+			damage = 10, hitbox = box(4.5, 5, 2.5, 3), kbBase = 30, kbGrowth = 55, kbAngle = 85,
 			windup = { Root = { 8, 0, 0, 0, 0.1, 0 }, Waist = { 8, 0, 0 }, RS = { 40, 0, 50 }, RE = { 40, 0, 0 }, LS = { 40, 0, -50 }, LE = { 40, 0, 0 }, RH = { 60, 0, 0 }, RK = { -110, 0, 0 } },
 			strike = { Root = { 22, 0, 0, 0, 0.3, 0 }, Waist = { 10, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 150, 0, 40 }, RE = { 10, 0, 0 }, LS = { 150, 0, -40 }, LE = { 10, 0, 0 }, RH = { 160, 0, 0 }, RK = { 0, 0, 0 }, RA = { -25, 0, 0 } },
 			follow = { Root = { 26, 0, 0, 0, 0.35, 0 }, Waist = { 12, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 155, 0, 45 }, RE = { 10, 0, 0 }, LS = { 155, 0, -45 }, LE = { 10, 0, 0 }, RH = { 168, 0, 0 }, RK = { 0, 0, 0 }, RA = { -25, 0, 0 } },
@@ -443,38 +443,38 @@ local data = {
 			follow = { Root = { 0, 0, 0, 0, 0.4, 0 }, Waist = { 8, 0, 0 }, Neck = { 34, 0, 0 }, RS = { 130, 0, 65 }, RE = { 10, 0, 0 }, LS = { 180, 0, -2 }, LE = { 5, 0, 0 }, RH = { -15, 0, 10 }, RK = { -50, 0, 0 }, RA = { -30, 0, 0 }, LH = { 15, 0, -10 }, LK = { -70, 0, 0 }, LA = { -30, 0, 0 } },
 			prop = "lapin", wobble = true, fx = { { "particles", tex = "spark", color = MAGIC, at = "feet", dir = "down", time = 0.3, speed = 10 } }, text = "AÏE, MES OREILLES… ENFIN, SES OREILLES !", hitText = "ZWIIING !",
 		},
-		-- Abracadabra (S maintenu) : il agite la baguette en grands cercles en psalmodiant ; un des trois tours lui profite
+		-- Abracadabra (S maintenu) : il agite la baguette en grands cercles en psalmodiant, puis la pique en avant : un des trois tours lui profite
 		-- (le moteur ne sait pas « garantir le prochain tour » : chaque résultat donne un bonus différent)
 		S_hold = {
-			label = "Abracadabra", energyCost = 30, startup = 0.3, active = 0, recovery = 0.4,
-			hitbox = box(6, 4, 2.5, 0.5), kbBase = 30, kbGrowth = 55, kbAngle = 35,
-			damage = 9, selfEffect = { heal = 4 },
+			label = "Abracadabra", energyCost = 30, startup = 0.3, active = 0.12, recovery = 0.4,
+			damage = 9, hitbox = box(5.5, 4, 3, 0.6), kbBase = 30, kbGrowth = 55, kbAngle = 35,
+			selfEffect = { heal = 4 },
 			variants = {
 				{ label = "Abracadabra : colombe guérisseuse", selfEffect = { heal = 7 } },
 				{ label = "Abracadabra : feu d'artifice !", selfEffect = { buff = { "turbo", 4 } } },
 				{ label = "Abracadabra : lapin garde du corps", selfEffect = { armor = 2 } },
 			},
 			windup = { Root = { 4, 0, 0, 0, -0.1, 0 }, Waist = { 8, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 160, 0, 40 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 120, 0, -60 }, LE = { 30, 0, 0 } },
-			strike = { Root = { 8, 0, 0, 0, 0, 0 }, Waist = { 14, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 175, 0, -20 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 140, 0, -70 }, LE = { 20, 0, 0 } },
-			follow = { Root = { 8, 0, 0, 0, 0, 0 }, Waist = { 14, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 160, 0, 50 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 145, 0, -72 }, LE = { 20, 0, 0 } },
-			hold = 0.3, shake = true, windupFx = { { "symbols", symbols = { "✨", "★", "✦" }, color = MAGIC, count = 6, radius = 3, at = "above" } },
-			fx = { { "burst", color = SPARK, size = 3, at = "above" }, { "symbols", symbols = { "🕊️", "💥", "🐇" }, count = 3, radius = 2, at = "above" } }, text = "ABRACADABRAAA !",
+			strike = { Root = { -10, 14, 0, 0, -0.3, -0.3 }, Waist = { -12, 16, 0 }, Neck = { -6, -8, 0 }, RS = { 96, 0, -4 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -80 }, LE = { 20, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+			follow = { Root = { -10, 16, 0, 0, -0.3, -0.32 }, Waist = { -12, 18, 0 }, Neck = { -8, -10, 0 }, RS = { 98, 0, -6 }, RE = { 0, 0, 0 }, RW = { 10, 0, 0 }, LS = { 62, 0, -82 }, LE = { 20, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.32 } },
+			hold = 0.3, shake = true, trail = "prop", windupFx = { { "symbols", symbols = { "✨", "★", "✦" }, color = MAGIC, count = 6, radius = 3, at = "above" } },
+			fx = { { "burst", color = SPARK, size = 3, at = "front" }, { "symbols", symbols = { "🕊️", "💥", "🐇" }, count = 3, radius = 2, at = "above" } }, text = "ABRACADABRAAA !", hitText = "BZZAP !",
 		},
-		-- Téléportation (→→S) : il s'enroule dans la cape et disparaît… réussi, en l'air, ou raté (il réapparaît derrière)
+		-- Téléportation (→→S) : il s'enroule dans la cape et disparaît… réussi, en l'air, ou raté (il réapparaît derrière) ; à l'arrivée la cape s'ouvre d'un grand coup
 		S_dash = {
-			label = "Téléportation", energyCost = 20, startup = 0.14, active = 0, recovery = 0.25,
-			hitbox = box(6, 4, 2.5, 0.5), kbBase = 30, kbGrowth = 55, kbAngle = 35,
-			damage = 9, teleport = 14, invuln = 0.25,
+			label = "Téléportation", energyCost = 20, startup = 0.14, active = 0.12, recovery = 0.25,
+			damage = 9, hitbox = box(6, 4, 2.5, 0.5), kbBase = 30, kbGrowth = 55, kbAngle = 35,
+			teleport = 14, invuln = 0.25,
 			variants = {
 				{ label = "Téléportation réussie !", teleport = 14 },
 				{ label = "Téléportation… en l'air !", teleport = 9, teleportUp = 7 },
 				{ label = "Téléportation ratée !", teleport = -6 },
 			},
 			windup = { Root = { 0, -60, 0, 0, -0.2, 0 }, Waist = { 0, -20, 0 }, Neck = { -10, 0, 0 }, RS = { 100, 0, -70 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, 30 }, LE = { 110, 0, 0 } },
-			strike = { Root = { 0, 0, 0, 0, -0.1, 0 }, Waist = { 6, 0, 0 }, Neck = { 15, 0, 0 }, RS = { 150, 0, 60 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, -60 }, LE = { 10, 0, 0 } },
-			follow = { Root = { 0, 0, 0, 0, -0.1, 0 }, Waist = { 6, 0, 0 }, Neck = { 15, 0, 0 }, RS = { 160, 0, 65 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 160, 0, -65 }, LE = { 10, 0, 0 } },
-			spin = { axis = "y", degrees = 360 }, windupFx = { { "particles", tex = "smoke", color = SMOKE, at = "root", dir = "all", time = 0.25, speed = 6, size = 1.5 } },
-			fx = { { "burst", color = SMOKE, size = 4, at = "root" } }, text = "ET HOP !",
+			strike = { Root = { -8, 0, 0, 0, -0.2, -0.2 }, Waist = { -8, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 85, 0, 85 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 85, 0, -85 }, LE = { 0, 0, 0 } },
+			follow = { Root = { -10, 0, 0, 0, -0.2, -0.25 }, Waist = { -10, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 90, 0, 90 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, -90 }, LE = { 0, 0, 0 } },
+			spin = { axis = "y", degrees = 360 }, trail = "body", windupFx = { { "particles", tex = "smoke", color = SMOKE, at = "root", dir = "all", time = 0.25, speed = 6, size = 1.5 } },
+			fx = { { "burst", color = SMOKE, size = 4, at = "root" }, { "burst", color = MAGIC, size = 3, at = "front" } }, text = "ET HOP !", hitText = "SURPRISE !",
 		},
 		-- Cartes lancées (ESQUIVE puis S, ex-←S) : il lance une grosse carte qui file au loin… et qui change en route
 		S_dodge = {
@@ -530,7 +530,7 @@ local data = {
 		-- J puis K : Croc-en-jambe de scène, petit coup de pied sec dans le tibia en saluant
 		PK_combo = {
 			label = "Croc-en-jambe de scène", startup = 0.1, active = 0.08, recovery = 0.2,
-			damage = 7, hitbox = box(5, 2, 3, -1.5), kbBase = 22, kbGrowth = 30, kbAngle = 35,
+			damage = 7, hitbox = box(5, 3.5, 3, -1), kbBase = 22, kbGrowth = 30, kbAngle = 35,
 			windup = { Root = { 4, -10, 0, 0, -0.2, 0.15 }, Waist = { 6, -12, 0 }, Neck = { 10, 0, 0 }, RS = { 120, 0, 50 }, RE = { 30, 0, 0 }, LS = { 50, 0, -30 }, LE = { 70, 0, 0 }, RH = { -20, 0, 8 }, RK = { -70, 0, 0 }, RA = { 0, 0, 0 } },
 			strike = { Root = { -6, 10, 0, 0, -0.3, -0.2 }, Waist = { -8, 8, 0 }, Neck = { 0, 0, 0 }, RS = { 130, 0, 60 }, RE = { 20, 0, 0 }, LS = { 70, 0, -35 }, LE = { 60, 0, 0 }, RH = { 62, 0, 6 }, RK = { -5, 0, 0 }, RA = { -25, 0, 0 } },
 			follow = { Root = { -8, 14, 0, 0, -0.32, -0.25 }, Waist = { -10, 10, 0 }, Neck = { 0, 0, 0 }, RS = { 135, 0, 62 }, RE = { 20, 0, 0 }, LS = { 72, 0, -35 }, LE = { 60, 0, 0 }, RH = { 66, 0, 0 }, RK = { -8, 0, 0 }, RA = { -25, 0, 0 } },
@@ -539,11 +539,51 @@ local data = {
 		-- K puis J : Revers de baguette, il pivote et fouette du revers de la baguette
 		KP_combo = {
 			label = "Revers de baguette", startup = 0.09, active = 0.08, recovery = 0.2,
-			damage = 7, hitbox = box(4.5, 3, 2.6, 0.8), kbBase = 22, kbGrowth = 35, kbAngle = 30,
+			damage = 7, hitbox = box(4.5, 3.5, 2.6, 0.6), kbBase = 22, kbGrowth = 35, kbAngle = 30,
 			windup = { Root = { -6, 24, 0, 0, -0.25, -0.2 }, Waist = { -8, 34, 0 }, RS = { 70, 0, -40 }, RE = { 80, 0, 0 }, RW = { 0, 0, 0 }, LS = { 0, 0, -30 }, LE = { 60, 0, 0 } },
 			strike = { Root = { -8, -14, 0, 0, -0.28, -0.35 }, Waist = { -10, -24, 0 }, RS = { 95, 0, 35 }, RE = { 8, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -40 }, LE = { 60, 0, 0 } },
 			follow = { Root = { -8, -22, 0, 0, -0.28, -0.38 }, Waist = { -10, -34, 0 }, RS = { 85, 0, 55 }, RE = { 15, 0, 0 }, RW = { -15, 0, 0 }, LS = { 45, 0, -45 }, LE = { 60, 0, 0 } },
 			trail = "prop", hitText = "FWIP !",
+		},
+		-- J J J J : Lapin catapulté, il sort le lapin grognon du chapeau et le lance à bout de bras sur l'adversaire, qui mord
+		P_combo4 = {
+			label = "Lapin catapulté", startup = 0.1, active = 0.12, recovery = 0.32,
+			damage = 12, hitbox = box(5.5, 4, 3, 0.8), kbBase = 34, kbGrowth = 80, kbAngle = 42,
+			windup = { Root = { 6, 16, 0, 0, -0.1, 0.2 }, Waist = { 10, 18, 0 }, Neck = { 14, -10, 0 }, LS = { 175, 0, -20 }, LE = { 40, 0, 0 }, LW = { 0, 0, 0 }, RS = { 40, 0, 40 }, RE = { 60, 0, 0 } },
+			strike = { Root = { -14, -14, 0, 0, -0.3, -0.4 }, Waist = { -16, -16, 0 }, Neck = { -4, 10, 0 }, LS = { 95, 0, 4 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 }, RS = { 20, 0, 50 }, RE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+			follow = { Root = { -16, -16, 0, 0, -0.32, -0.45 }, Waist = { -18, -18, 0 }, Neck = { -6, 12, 0 }, LS = { 98, 0, 0 }, LE = { 0, 0, 0 }, LW = { -10, 0, 0 }, RS = { 18, 0, 52 }, RE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+			prop = "lapin", trail = "leftHand", fx = { { "burst", color = RABBIT, size = 3, at = "front" }, { "symbols", symbols = { "🐇", "💢", "GRRR" }, color = RABBIT, count = 4, radius = 3, at = "front" } },
+			text = "ET MERCI, LE LAPIN !", hitText = "CROC !",
+		},
+		-- → J J J : Foulard géant, la guirlande de foulards n'en finit plus : il tourne sur lui-même et fouette tout le tour
+		P_side3 = {
+			label = "Foulard géant", startup = 0.1, active = 0.16, recovery = 0.3,
+			damage = 11, hitbox = box(6.5, 4, 2.5, 0.5), kbBase = 34, kbGrowth = 76, kbAngle = 45,
+			windup = { Root = { 2, 30, 0, 0, -0.2, 0.1 }, Waist = { 4, 30, 0 }, Neck = { 0, -20, 0 }, LS = { 60, 0, 50 }, LE = { 130, 0, 0 }, LW = { 0, 0, 0 }, RS = { 50, 0, 30 }, RE = { 60, 0, 0 } },
+			strike = { Root = { -6, 0, 0, 0, -0.25, -0.2 }, Waist = { -6, 0, 0 }, Neck = { -6, 0, 0 }, LS = { 92, 0, -85 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 }, RS = { 70, 0, 80 }, RE = { 10, 0, 0 } },
+			follow = { Root = { -6, 0, 0, 0, -0.25, -0.2 }, Waist = { -6, 0, 0 }, Neck = { -8, 0, 0 }, LS = { 92, 0, -88 }, LE = { 0, 0, 0 }, LW = { -10, 0, 0 }, RS = { 72, 0, 82 }, RE = { 10, 0, 0 } },
+			spin = { axis = "y", degrees = 360 }, prop = "foulard", trail = "leftHand", fx = { { "ring", color = VELVET, radius = 5, at = "root" }, { "symbols", symbols = { "🧣", "✨" }, color = PINK, count = 5, radius = 3.5 } },
+			text = "ET ENCORE, ET ENCORE !", hitText = "FLOUF-FLOUF !",
+		},
+		-- → K K K : Swing de canne, l'adversaire ramené contre lui, il prend la canne à deux mains et swingue de bas en haut : envolez-vous !
+		K_side3 = {
+			label = "Swing de canne", startup = 0.1, active = 0.12, recovery = 0.34,
+			damage = 13, hitbox = box(5.5, 5, 2.8, 1), kbBase = 36, kbGrowth = 84, kbAngle = 75,
+			windup = { Root = { -8, 24, 0, 0, -0.45, 0.1 }, Waist = { -16, 26, 0 }, Neck = { 6, -16, 0 }, LS = { -20, 0, 10 }, LE = { 10, 0, 0 }, LW = { 90, 0, 0 }, RS = { -10, 0, -10 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 } },
+			strike = { Root = { 8, -20, 0, 0, 0.05, -0.2 }, Waist = { 14, -24, 0 }, Neck = { 24, 10, 0 }, LS = { 150, 0, -10 }, LE = { 10, 0, 0 }, LW = { 90, 0, 0 }, RS = { 140, 0, 10 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, FR = { 0, 0, 0, 0, 0.15, 0 }, FL = { 0, 0, 0, 0, 0.15, 0 } },
+			follow = { Root = { 10, -26, 0, 0, 0.08, -0.25 }, Waist = { 16, -30, 0 }, Neck = { 28, 12, 0 }, LS = { 165, 0, -14 }, LE = { 10, 0, 0 }, LW = { 90, 0, 0 }, RS = { 150, 0, 8 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, FR = { 0, 0, 0, 0, 0.2, 0 }, FL = { 0, 0, 0, 0, 0.2, 0 } },
+			prop = "canne", trail = "leftHand", fx = { { "burst", color = GOLD, size = 3, at = "front" }, { "symbols", symbols = { "⛳", "✨", "★" }, color = GOLD, count = 4, radius = 3, at = "above" } },
+			text = "ET HOP, EN L'AIR !", hitText = "TCHONK !",
+		},
+		-- K J K : Claquettes, numéro de claquettes à toute vitesse dans les tibias, mains en jazz, chaussures qui étincellent
+		KPK_combo = {
+			label = "Claquettes", startup = 0.08, active = 0.24, recovery = 0.3, hits = 3,
+			damage = 4, hitbox = box(5, 3.5, 2.8, -0.5), kbBase = 30, kbGrowth = 68, kbAngle = 40,
+			windup = { Root = { 4, 0, 0, 0, -0.15, 0.1 }, Waist = { 4, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 40, 0, 80 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -80 }, LE = { 40, 0, 0 }, RH = { -10, 0, 0 }, RK = { -60, 0, 0 }, LH = { 0, 0, 0 }, LK = { 0, 0, 0 } },
+			strike = { Root = { -6, 10, 0, 0, -0.05, -0.2 }, Waist = { -6, 8, 0 }, Neck = { -6, 0, 0 }, RS = { 60, 0, 85 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -85 }, LE = { 20, 0, 0 }, RH = { 60, 0, 6 }, RK = { -10, 0, 0 }, RA = { -20, 0, 0 }, LH = { 0, 0, 0 }, LK = { 0, 0, 0 } },
+			follow = { Root = { -6, -10, 0, 0, -0.05, -0.2 }, Waist = { -6, -8, 0 }, Neck = { -6, 0, 0 }, RS = { 60, 0, 85 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -85 }, LE = { 20, 0, 0 }, RH = { 0, 0, 0 }, RK = { 0, 0, 0 }, LH = { 60, 0, -6 }, LK = { -10, 0, 0 }, LA = { -20, 0, 0 } },
+			wobble = true, trail = "bothFeet", fx = { { "symbols", symbols = { "♪", "♫", "✦" }, color = SPARK, count = 5, radius = 3, at = "feet" }, { "particles", tex = "spark", color = SPARK, at = "feet", dir = "all", time = 0.25, speed = 6, size = 0.3 } },
+			text = "SHUFFLE !", hitText = "CLAC CLAC CLAC !",
 		},
 
 		------------------------------------------------------------------ Finitions avec S (dans un enchaînement), elles aussi à 3 résultats
@@ -591,17 +631,20 @@ local data = {
 			fx = { { "screen", color = VELVET, alpha = 0.45 }, { "pillar", color = VELVET, height = 10, width = 5, at = "front", neon = false, transparency = 0, time = 0.6 }, { "symbols", symbols = { "✨", "🎩", "★" }, color = SPARK, count = 8, radius = 5, at = "front" } },
 			text = "MESDAMES ET MESSIEURS… TA-DAAAA !", hitText = "OÙ SUIS-JE ?",
 		},
-		-- Vol à la tire : il serre la main de l'adversaire, lui fait les poches… et le laisse muet de stupeur
-		-- Super ↑ : il tente une lévitation, tourne sur lui-même et emporte tout dans un tourbillon d'étincelles
+		-- Super ↑ : Lévitation ratée, assis en lotus il psalmodie… et décolle pour de bon en toupie, dans un tourbillon d'étincelles
 		SUPER_up = {
 			label = "Lévitation ratée !", superCost = 100, startup = 0.25, active = 0.45, recovery = 0.55,
 			damage = 22, hitbox = box(9, 10, 0, 3), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
-			windup = { Root = { -7.2, 0, 0, 0, -0.5, 0 }, Waist = { -16.8, 0, 0 }, Neck = { 0, 0, 0 }, RS = { 192, 0, -24 }, RE = { 120, 0, 0 }, LS = { 192, 0, 24 }, LE = { 120, 0, 0 } },
-			strike = { Root = { 33.6, 0, 0, 0, -0.15, 0.35 }, Waist = { 14.4, 0, 0 }, Neck = { 24, 0, 0 }, RS = { -36, 0, 72 }, RE = { 24, 0, 0 }, LS = { -36, 0, -72 }, LE = { 24, 0, 0 }, RH = { 180, 0, 0 }, RK = { 0, 0, 0 }, RA = { -24, 0, 0 } },
-			follow = { Root = { 38.4, 0, 0, 0, -0.15, 0.45 }, Waist = { 16.8, 0, 0 }, Neck = { 28.8, 0, 0 }, RS = { -42, 0, 78 }, RE = { 24, 0, 0 }, LS = { -42, 0, -78 }, LE = { 24, 0, 0 }, RH = { 192, 0, 0 }, RK = { 0, 0, 0 }, RA = { -24, 0, 0 } },
-			spin = { axis = "y", degrees = 720 }, selfVelocity = Vector2.new(0, 70),
-			windupFx = { "super" }, trail = "prop", variants = { { label = "Lévitation ratée : colombes !", hitText = "ROUCOU !" }, { label = "Lévitation ratée : BOUM !", damage = 26, hitText = "KABOUM !" }, { label = "Lévitation ratée : lapin !", status = { name = "dog", duration = 2 }, hitText = "COUIC !" } }, fx = { { "particles", tex = "spark", color = Color3.fromRGB(190, 110, 255), dir = "all", at = "root", time = 0.7 } }, text = "ABRACADA… OUPS !", hitText = "TA-DAAA !",
+			windup = { Root = { -6, 0, 0, 0, -0.7, 0 }, Waist = { -16, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 170, 0, 30 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 120, 0, -60 }, LE = { 110, 0, 0 } },
+			strike = { Root = { 6, 0, 0, 0, 0.5, 0 }, Waist = { 6, 0, 0 }, Neck = { 25, 0, 0 }, RS = { 60, 0, 70 }, RE = { 110, 0, 0 }, RW = { -40, 0, 0 }, LS = { 60, 0, -70 }, LE = { 110, 0, 0 }, LW = { -40, 0, 0 }, RH = { 95, 0, 55 }, RK = { -125, 0, 0 }, LH = { 95, 0, -55 }, LK = { -125, 0, 0 } },
+			follow = { Root = { 8, 0, 0, 0, 0.6, 0 }, Waist = { 8, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 65, 0, 75 }, RE = { 110, 0, 0 }, RW = { -40, 0, 0 }, LS = { 65, 0, -75 }, LE = { 110, 0, 0 }, LW = { -40, 0, 0 }, RH = { 98, 0, 58 }, RK = { -128, 0, 0 }, LH = { 98, 0, -58 }, LK = { -128, 0, 0 } },
+			hold = 0.2, spin = { axis = "y", degrees = 720 }, selfVelocity = Vector2.new(0, 70), wobble = true,
+			windupFx = { "super", { "symbols", symbols = { "✨", "★", "✦" }, color = MAGIC, count = 6, radius = 3, at = "above" } }, trail = "prop",
+			variants = { { label = "Lévitation ratée : colombes !", hitText = "ROUCOU !" }, { label = "Lévitation ratée : BOUM !", damage = 26, hitText = "KABOUM !" }, { label = "Lévitation ratée : lapin !", status = { name = "dog", duration = 2 }, hitText = "COUIC !" } },
+			fx = { { "particles", tex = "spark", color = MAGIC, dir = "all", at = "root", time = 0.7 }, { "ring", color = MAGIC, radius = 6, at = "feet" }, { "burst", color = SPARK, size = 4, at = "above" } },
+			text = "OMMMM… ABRACADA… OUPS !", hitText = "TA-DAAA !",
 		},
+		-- Vol à la tire : il serre la main de l'adversaire, lui fait les poches… et le laisse muet de stupeur
 		-- (le moteur ne sait pas voler la jauge Super : il vole de l'énergie et rend l'adversaire muet)
 		SUPER_down = {
 			label = "Vol à la tire !", superCost = 100, startup = 0.3, active = 0.15, recovery = 0.5,
@@ -859,21 +902,21 @@ local LINKS = {
 	-- au sol : J…
 	P_neutral = { P = "P_combo2", K = "PK_combo", fwd_P = "P_side2", down_K = "P_down", S = "S_finish_poof" },
 	P_combo2 = { P = "P_combo3", K = "K_combo2", up_K = "K_upK", S = "S_finish_hat" }, -- J J (foulard)
-	P_combo3 = { K = "K_combo3", S = "S_finish_poof" }, -- J J J
+	P_combo3 = { P = "P_combo4", K = "K_combo3", S = "S_finish_poof" }, -- J J J (J J J J : lapin catapulté, finition)
 	PK_combo = { P = "KP_combo", K = "K_side", S = "S_finish_poof" }, -- J K
 	-- au sol : K…
 	K_neutral = { K = "K_combo2", P = "KP_combo", up_K = "K_upK", S = "S_finish_hat" },
 	K_combo2 = { K = "K_combo3", P = "P_combo3", S = "S_finish_poof" }, -- K K
 	K_combo3 = { K = "K_air_side", S = "S_air" }, -- K K K (il décolle)
-	KP_combo = { P = "P_combo3", K = "K_downK", S = "S_finish_hat" }, -- K J
+	KP_combo = { P = "P_combo3", K = "KPK_combo", S = "S_finish_hat" }, -- K J (K J K : claquettes, finition)
 	-- avec une flèche
 	P_side = { P = "P_side2", K = "K_side", S = "S_finish_hat" }, -- → J (cartes)
-	P_side2 = { K = "K_side2", P = "P_combo3", S = "S_finish_poof" }, -- → J J
+	P_side2 = { P = "P_side3", K = "K_side2", S = "S_finish_poof" }, -- → J J (→ J J J : foulard géant, finition)
 	P_down = { P = "P_down2", K = "K_downK", S = "S_finish_poof" }, -- ↓ J
 	P_down2 = { P = "P_air_up", K = "K_air_up", S = "S_finish_hat" }, -- ↓ J J (fait décoller)
 	P_up = { K = "K_upK", P = "P_down2", S = "S_finish_poof" }, -- ↑ J
 	K_side = { K = "K_side2", P = "KP_combo", S = "S_finish_hat" }, -- → K (canne)
-	K_side2 = { P = "P_combo3", K = "K_combo3", S = "S_finish_poof" }, -- → K K (il ramène l'adversaire contre lui)
+	K_side2 = { K = "K_side3", P = "P_combo3", S = "S_finish_poof" }, -- → K K (il ramène l'adversaire contre lui ; → K K K : swing de canne, finition)
 	K_down = { K = "K_downK", P = "P_down2", S = "S_finish_poof" }, -- ↓ K
 	K_downK = { K = "K_air_up", S = "S_finish_hat" }, -- ↓ K K
 	K_up = { K = "K_upK", S = "S_finish_hat" }, -- ↑ K

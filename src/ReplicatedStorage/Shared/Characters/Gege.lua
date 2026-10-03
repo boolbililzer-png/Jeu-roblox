@@ -113,14 +113,14 @@ local data = {
 		-- Suites d'enchaînement (voir links) : J J, J J J…
 		P_combo2 = {
 			label = "Revers du goulot", startup = 0.07, active = 0.08, recovery = 0.16,
-			damage = 5, hitbox = box(4, 3, 2.5, 0.5), kbBase = 18, kbGrowth = 22, kbAngle = 30,
+			damage = 5, hitbox = box(5, 3.5, 2.5, 0.6), kbBase = 18, kbGrowth = 22, kbAngle = 30,
 			windup = { Root = { -6, 24, 0, 0, -0.25, -0.3 }, Waist = { -8, 34, 0 }, RS = { 70, 0, -35 }, RE = { 70, 0, 0 }, RW = { 0, 0, 0 }, LS = { -5, 0, -20 }, LE = { 100, 0, 0 } },
 			strike = { Root = { -8, -14, 0, 0, -0.28, -0.35 }, Waist = { -10, -24, 0 }, RS = { 95, 0, 32 }, RE = { 8, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -25 }, LE = { 95, 0, 0 } },
 			follow = { Root = { -8, -22, 0, 0, -0.28, -0.38 }, Waist = { -10, -34, 0 }, RS = { 85, 0, 50 }, RE = { 15, 0, 0 }, RW = { -15, 0, 0 }, LS = { 35, 0, -25 }, LE = { 95, 0, 0 } },
 			trail = "bottle", hitText = "PIF !",
 		},
 		P_combo3 = {
-			label = "Coup de bouteille final", startup = 0.14, active = 0.1, recovery = 0.3,
+			label = "Coup de bouteille final", startup = 0.1, active = 0.1, recovery = 0.3,
 			damage = 9, hitbox = box(5, 4, 2.5, 1), kbBase = 30, kbGrowth = 60, kbAngle = 50,
 			windup = { Root = { 8, -10, 0, 0, -0.05, 0.25 }, Waist = { 14, -12, 0 }, RS = { 195, 0, 15 }, RE = { 70, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, -30 }, LE = { 30, 0, 0 } },
 			strike = { Root = { -14, 10, 0, 0, -0.5, -0.4 }, Waist = { -30, 12, 0 }, RS = { 70, 0, 5 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -20, 0, -35 }, LE = { 60, 0, 0 } },
@@ -186,15 +186,15 @@ local data = {
 
 		-- Suites d'enchaînement : K K, K K K…
 		K_combo2 = {
-			label = "Talon pivotant", startup = 0.14, active = 0.1, recovery = 0.25,
-			damage = 9, hitbox = box(5, 3, 3, 0.5), kbBase = 28, kbGrowth = 50, kbAngle = 30,
+			label = "Talon pivotant", startup = 0.1, active = 0.1, recovery = 0.25,
+			damage = 9, hitbox = box(5, 3.5, 3, 0.5), kbBase = 28, kbGrowth = 50, kbAngle = 30,
 			windup = { Root = { 4, -40, 0, 0, -0.15, 0.1 }, Waist = { 4, -30, 0 }, RS = { 40, 0, 55 }, RE = { 40, 0, 0 }, LS = { 60, 0, -50 }, LE = { 50, 0, 0 }, RH = { 55, 0, 40 }, RK = { -105, 0, 0 } },
 			strike = { Root = { 12, 50, 0, 0, -0.1, 0 }, Waist = { 10, 30, 0 }, RS = { 30, 0, 70 }, RE = { 30, 0, 0 }, LS = { 70, 0, -60 }, LE = { 40, 0, 0 }, RH = { 85, 0, 55 }, RK = { -5, 0, 0 }, RA = { 10, 0, 0 } },
 			follow = { Root = { 14, 70, 0, 0, -0.1, 0 }, Waist = { 12, 38, 0 }, RS = { 25, 0, 75 }, RE = { 30, 0, 0 }, LS = { 72, 0, -62 }, LE = { 40, 0, 0 }, RH = { 80, 0, 40 }, RK = { -8, 0, 0 }, RA = { 10, 0, 0 } },
 			trail = "rightFoot", hitText = "VLAN !",
 		},
 		K_combo3 = {
-			label = "Coup de pied sauté", startup = 0.16, active = 0.12, recovery = 0.3,
+			label = "Coup de pied sauté", startup = 0.1, active = 0.12, recovery = 0.3,
 			damage = 12, hitbox = box(5, 4, 3, 1), kbBase = 32, kbGrowth = 80, kbAngle = 40, selfVelocity = Vector2.new(15, 45),
 			windup = { Root = { -8, 0, 0, 0, -0.65, 0.1 }, Waist = { -15, 0, 0 }, RS = { -40, 0, 30 }, RE = { 30, 0, 0 }, LS = { -40, 0, -30 }, LE = { 30, 0, 0 } },
 			strike = { Root = { 15, 0, 0 }, Waist = { 12, 0, 0 }, RS = { 60, 0, 60 }, RE = { 20, 0, 0 }, LS = { 70, 0, -60 }, LE = { 20, 0, 0 }, RH = { 95, 0, 0 }, RK = { 0, 0, 0 }, RA = { 10, 0, 0 }, LH = { 30, 0, 0 }, LK = { -110, 0, 0 } },
@@ -289,24 +289,24 @@ local data = {
 			follow = { Root = { -16, 32, 0, 0, -0.42, -0.45 }, Waist = { -32, 46, 0 }, RS = { 20, 0, -18 }, RE = { 20, 0, 0 }, RW = { -10, 0, 0 }, LS = { -35, 0, -35 }, LE = { 85, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
 			hideProp = "bottle", text = "HOP !", hitText = "CLONK !",
 		},
-		-- Rot sonique : il gonfle le ventre, puis le rot le fait basculer en arrière, bras écartés
+		-- Rot sonique : il gonfle le ventre… et le rot part droit dans la figure de l'adversaire, tête en avant, bras rejetés en arrière
 		S_dodge = {
 			label = "Rot sonique", energyCost = 20, startup = 0.12, active = 0.15, recovery = 0.3,
-			damage = 6, hitbox = box(7, 5, 3, 1), kbBase = 40, kbGrowth = 30, kbAngle = 15,
-			windup = { Root = { -4, 0, 0, 0, -0.35, 0.15 }, Waist = { -30, 0, 0 }, Neck = { -28, 0, 0 }, RS = { 30, 0, -22 }, RE = { 105, 0, 0 }, LS = { 30, 0, 22 }, LE = { 105, 0, 0 } },
-			strike = { Root = { 12, 0, 0, 0, -0.15, 0.35 }, Waist = { 24, 0, 0 }, Neck = { 34, 0, 0 }, RS = { 60, 0, 70 }, RE = { 15, 0, 0 }, LS = { 60, 0, -70 }, LE = { 15, 0, 0 } },
-			follow = { Root = { 15, 0, 0, 0, -0.15, 0.45 }, Waist = { 30, 0, 0 }, Neck = { 40, 0, 0 }, RS = { 65, 0, 78 }, RE = { 15, 0, 0 }, LS = { 65, 0, -78 }, LE = { 15, 0, 0 } },
-			fx = { "burp" }, text = "BUUURP !", hitText = "BEURK !",
+			damage = 6, hitbox = box(7, 5, 3.5, 1), kbBase = 40, kbGrowth = 30, kbAngle = 15,
+			windup = { Root = { 8, 0, 0, 0, -0.3, 0.2 }, Waist = { 22, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 30, 0, -22 }, RE = { 105, 0, 0 }, LS = { 30, 0, 22 }, LE = { 105, 0, 0 } },
+			strike = { Root = { -14, 0, 0, 0, -0.3, -0.4 }, Waist = { -26, 0, 0 }, Neck = { -20, 0, 0 }, RS = { -50, 0, 50 }, RE = { 15, 0, 0 }, LS = { -50, 0, -50 }, LE = { 15, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+			follow = { Root = { -16, 0, 0, 0, -0.32, -0.45 }, Waist = { -30, 0, 0 }, Neck = { -24, 0, 0 }, RS = { -58, 0, 55 }, RE = { 15, 0, 0 }, LS = { -58, 0, -55 }, LE = { 15, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+			shake = true, fx = { "burp", { "ring", color = SODA, radius = 4, at = "front" } }, text = "BUUURP !", hitText = "BEURK !",
 		},
-		-- Gorgée et crachat : il boit au goulot (+1 bulle) et recrache une flaque pétillante qui fait glisser (gratuit)
+		-- Gorgée et crachat : il boit au goulot (+1 bulle), gonfle les joues et recrache une giclée pétillante droit devant, qui laisse une flaque glissante (gratuit)
 		S_down = {
 			label = "Gorgée et crachat", energyCost = 0, effect = "sip", startup = 0.1, active = 0.15, recovery = 0.5,
-			hitbox = box(6, 3, 2.5, -1), kbBase = 25, kbGrowth = 45, kbAngle = 40,
+			hitbox = box(6.5, 3.5, 3.5, 0.5), kbBase = 25, kbGrowth = 45, kbAngle = 40,
 			damage = 8, status = { name = "slippery", duration = 2 }, hitText = "PTOU ! ÇA GLISSE !",
-			windup = { Neck = { 8, 0, 0 }, RS = { 115, 0, -20 }, RE = { 125, 0, 0 }, RW = { -95, 0, 0 } },
-			strike = { Root = { 6, 0, 0 }, Waist = { 12, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 140, 0, -22 }, RE = { 115, 0, 0 }, RW = { -115, 0, 0 }, LS = { 10, 0, -30 }, LE = { 30, 0, 0 } },
-			follow = { Root = { 8, 0, 0 }, Waist = { 16, 0, 0 }, Neck = { 38, 0, 0 }, RS = { 150, 0, -22 }, RE = { 110, 0, 0 }, RW = { -125, 0, 0 }, LS = { 5, 0, -32 }, LE = { 30, 0, 0 } },
-			hold = 0.35, fx = { "sip", "puddle" }, text = "GLOU… PTOU !",
+			windup = { Root = { 6, 0, 0, 0, -0.1, 0.1 }, Waist = { 14, 0, 0 }, Neck = { 32, 0, 0 }, RS = { 140, 0, -22 }, RE = { 118, 0, 0 }, RW = { -118, 0, 0 }, LS = { 10, 0, -30 }, LE = { 30, 0, 0 } },
+			strike = { Root = { -12, 0, 0, 0, -0.3, -0.4 }, Waist = { -22, 0, 0 }, Neck = { -16, 0, 0 }, RS = { 30, 0, 40 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, -10 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+			follow = { Root = { -14, 0, 0, 0, -0.32, -0.45 }, Waist = { -26, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 25, 0, 42 }, RE = { 40, 0, 0 }, RW = { -10, 0, 0 }, LS = { 95, 0, -12 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+			hold = 0.15, windupFx = { "sip" }, fx = { "puddle", { "particles", tex = "spark", color = SODA, dir = "front", at = "head", time = 0.25, speed = 16, size = 0.5, rate = 80 } }, text = "GLOU… PTOU !",
 		},
 		-- Lampadaire : accroupi, il bondit en s'accrochant au lampadaire qui sort du sol et tourne autour
 		-- (gratuit : c'est la remontée, on ne doit jamais tomber faute d'énergie)
@@ -350,7 +350,7 @@ local data = {
 		-- J puis K : Savate en traître, petit coup de pied sec dans le tibia
 		PK_combo = {
 			label = "Savate en traître", startup = 0.1, active = 0.08, recovery = 0.2,
-			damage = 7, hitbox = box(5, 2, 3, -1.5), kbBase = 22, kbGrowth = 30, kbAngle = 30,
+			damage = 7, hitbox = box(5, 3.5, 3, -0.5), kbBase = 22, kbGrowth = 30, kbAngle = 30,
 			windup = { Root = { 4, -10, 0, 0, -0.2, 0.15 }, Waist = { 6, -12, 0 }, RS = { 40, 0, 30 }, RE = { 60, 0, 0 }, LS = { 50, 0, -30 }, LE = { 70, 0, 0 }, RH = { -20, 0, 8 }, RK = { -70, 0, 0 }, RA = { 0, 0, 0 } },
 			strike = { Root = { -6, 10, 0, 0, -0.3, -0.2 }, Waist = { -8, 8, 0 }, RS = { 20, 0, 45 }, RE = { 40, 0, 0 }, LS = { 70, 0, -35 }, LE = { 60, 0, 0 }, RH = { 62, 0, 6 }, RK = { -5, 0, 0 }, RA = { -25, 0, 0 } },
 			follow = { Root = { -8, 14, 0, 0, -0.32, -0.25 }, Waist = { -10, 10, 0 }, RS = { 15, 0, 48 }, RE = { 40, 0, 0 }, LS = { 72, 0, -35 }, LE = { 60, 0, 0 }, RH = { 66, 0, 0 }, RK = { -8, 0, 0 }, RA = { -25, 0, 0 } },
@@ -359,7 +359,7 @@ local data = {
 		-- J K J : Crochet de comptoir, crochet du gauche (la droite tient la bouteille)
 		PKP_combo = {
 			label = "Crochet de comptoir", startup = 0.1, active = 0.08, recovery = 0.22,
-			damage = 8, hitbox = box(4, 3, 2.5, 0.8), kbBase = 25, kbGrowth = 40, kbAngle = 35,
+			damage = 8, hitbox = box(5, 3.5, 2.5, 0.8), kbBase = 25, kbGrowth = 40, kbAngle = 35,
 			windup = { Root = { 2, 22, 0, 0, -0.2, 0.1 }, Waist = { 4, 28, 0 }, RS = { 30, 0, 20 }, RE = { 80, 0, 0 }, LS = { 80, 0, -75 }, LE = { 100, 0, 0 }, LW = { 0, 0, 0 } },
 			strike = { Root = { -8, -20, 0, 0, -0.3, -0.3 }, Waist = { -10, -34, 0 }, RS = { 20, 0, 25 }, RE = { 90, 0, 0 }, LS = { 95, 0, -15 }, LE = { 75, 0, 0 } },
 			follow = { Root = { -10, -28, 0, 0, -0.32, -0.35 }, Waist = { -12, -44, 0 }, RS = { 18, 0, 28 }, RE = { 90, 0, 0 }, LS = { 90, 0, 10 }, LE = { 80, 0, 0 } },
@@ -367,8 +367,8 @@ local data = {
 		},
 		-- J J K : Balayette du pochtron, accroupi il tourne sur lui-même jambe tendue au ras du sol (fait décoller)
 		PPK_combo = {
-			label = "Balayette du pochtron", startup = 0.14, active = 0.14, recovery = 0.3,
-			damage = 10, hitbox = box(7, 2, 0.5, -2), kbBase = 30, kbGrowth = 55, kbAngle = 80,
+			label = "Balayette du pochtron", startup = 0.1, active = 0.14, recovery = 0.3,
+			damage = 10, hitbox = box(7, 3.5, 1.5, -0.8), kbBase = 30, kbGrowth = 55, kbAngle = 80,
 			windup = { Root = { -6, -20, 0, 0, -1.0, 0 }, Waist = { -18, -10, 0 }, RS = { 30, 0, 50 }, RE = { 30, 0, 0 }, LS = { 40, 0, -50 }, LE = { 30, 0, 0 } },
 			strike = { Root = { -10, 0, 0, 0, -1.25, 0 }, Waist = { -20, 0, 0 }, RS = { 10, 0, 60 }, RE = { 20, 0, 0 }, LS = { 20, 0, -60 }, LE = { 20, 0, 0 }, RH = { 75, 0, 15 }, RK = { -5, 0, 0 }, RA = { -20, 0, 0 } },
 			follow = { Root = { -10, 0, 0, 0, -1.2, 0 }, Waist = { -18, 0, 0 }, RS = { 15, 0, 62 }, RE = { 20, 0, 0 }, LS = { 25, 0, -62 }, LE = { 20, 0, 0 }, RH = { 72, 0, 18 }, RK = { -8, 0, 0 }, RA = { -20, 0, 0 } },
@@ -377,7 +377,7 @@ local data = {
 		-- K puis J : Coup de coude, il pivote et enfonce le coude droit
 		KP_combo = {
 			label = "Coup de coude", startup = 0.09, active = 0.08, recovery = 0.2,
-			damage = 7, hitbox = box(4, 3, 2, 0.8), kbBase = 22, kbGrowth = 35, kbAngle = 30,
+			damage = 7, hitbox = box(5, 3.5, 2.5, 0.8), kbBase = 22, kbGrowth = 35, kbAngle = 30,
 			windup = { Root = { 2, -25, 0, 0, -0.15, 0.15 }, Waist = { 4, -30, 0 }, RS = { 40, 0, 60 }, RE = { 140, 0, 0 }, LS = { 60, 0, -20 }, LE = { 90, 0, 0 } },
 			strike = { Root = { -8, 22, 0, 0, -0.3, -0.35 }, Waist = { -12, 30, 0 }, RS = { 90, 0, -10 }, RE = { 145, 0, 0 }, LS = { 30, 0, -30 }, LE = { 100, 0, 0 } },
 			follow = { Root = { -10, 28, 0, 0, -0.32, -0.4 }, Waist = { -14, 36, 0 }, RS = { 92, 0, -18 }, RE = { 145, 0, 0 }, LS = { 25, 0, -32 }, LE = { 100, 0, 0 } },
@@ -385,8 +385,8 @@ local data = {
 		},
 		-- K J K : Ruade arrière, il se retourne et rue des deux… enfin d'une jambe, comme un âne
 		KPK_combo = {
-			label = "Ruade arrière", startup = 0.16, active = 0.1, recovery = 0.32,
-			damage = 11, hitbox = box(5, 3, 3, 0), kbBase = 32, kbGrowth = 75, kbAngle = 30,
+			label = "Ruade arrière", startup = 0.1, active = 0.1, recovery = 0.32,
+			damage = 11, hitbox = box(5, 3.5, 3, 0.5), kbBase = 32, kbGrowth = 75, kbAngle = 30,
 			windup = { Root = { 0, 90, 0, 0, -0.3, 0 }, Waist = { -10, 20, 0 }, Neck = { 0, -60, 0 }, RS = { 40, 0, 40 }, RE = { 60, 0, 0 }, LS = { 40, 0, -40 }, LE = { 60, 0, 0 } },
 			strike = { Root = { 35, 170, 0, 0, -0.35, 0 }, Waist = { 10, 0, 0 }, Neck = { -30, 0, 0 }, RS = { 70, 0, 30 }, RE = { 30, 0, 0 }, LS = { 70, 0, -30 }, LE = { 30, 0, 0 }, RH = { -80, 0, 0 }, RK = { -5, 0, 0 }, RA = { -30, 0, 0 }, LH = { 30, 0, 0 }, LK = { -35, 0, 0 } },
 			follow = { Root = { 40, 172, 0, 0, -0.35, 0 }, Waist = { 12, 0, 0 }, Neck = { -34, 0, 0 }, RS = { 75, 0, 32 }, RE = { 30, 0, 0 }, LS = { 75, 0, -32 }, LE = { 30, 0, 0 }, RH = { -88, 0, 0 }, RK = { -5, 0, 0 }, RA = { -30, 0, 0 }, LH = { 35, 0, 0 }, LK = { -38, 0, 0 } },
@@ -394,8 +394,8 @@ local data = {
 		},
 		-- K K J : Uppercut à la bouteille, de l'accroupi jusqu'au ciel (fait décoller)
 		KKP_combo = {
-			label = "Uppercut à la bouteille", startup = 0.14, active = 0.1, recovery = 0.3,
-			damage = 10, hitbox = box(4, 5, 2, 2.5), kbBase = 34, kbGrowth = 60, kbAngle = 85,
+			label = "Uppercut à la bouteille", startup = 0.1, active = 0.1, recovery = 0.3,
+			damage = 10, hitbox = box(5, 5, 2.5, 2.5), kbBase = 34, kbGrowth = 60, kbAngle = 85,
 			windup = { Root = { -6, -15, 0, 0, -0.7, 0.1 }, Waist = { -20, -15, 0 }, RS = { -30, 0, 25 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -30 }, LE = { 80, 0, 0 } },
 			strike = { Root = { 8, 15, 0, 0, 0.2, -0.2 }, Waist = { 15, 20, 0 }, RS = { 170, 0, 10 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { -10, 0, -30 }, LE = { 40, 0, 0 }, FR = { 0, 0, 0, 0, 0.25, 0 }, FL = { 0, 0, 0, 0, 0.2, 0 } },
 			follow = { Root = { 10, 18, 0, 0, 0.25, -0.25 }, Waist = { 18, 22, 0 }, RS = { 178, 0, 5 }, RE = { 10, 0, 0 }, RW = { -10, 0, 0 }, LS = { -15, 0, -32 }, LE = { 40, 0, 0 }, FR = { 0, 0, 0, 0, 0.3, 0 }, FL = { 0, 0, 0, 0, 0.25, 0 } },
@@ -404,7 +404,7 @@ local data = {
 		-- → J J : Double revers, la bouteille revient dans l'autre sens
 		P_side2 = {
 			label = "Double revers", startup = 0.08, active = 0.08, recovery = 0.2,
-			damage = 7, hitbox = box(5, 3, 3, 0.5), kbBase = 22, kbGrowth = 35, kbAngle = 25, selfVelocity = Vector2.new(15, 0),
+			damage = 7, hitbox = box(5, 3.5, 3, 0.5), kbBase = 22, kbGrowth = 35, kbAngle = 25, selfVelocity = Vector2.new(15, 0),
 			windup = { Root = { -10, 40, 0, 0, -0.4, -0.4 }, Waist = { -14, 50, 0 }, RS = { 90, 0, -45 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { -30, 0, -40 }, LE = { 40, 0, 0 } },
 			strike = { Root = { -6, -20, 0, 0, -0.35, -0.45 }, Waist = { -10, -34, 0 }, RS = { 95, 0, 55 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -30 }, LE = { 70, 0, 0 } },
 			follow = { Root = { -6, -28, 0, 0, -0.35, -0.5 }, Waist = { -10, -44, 0 }, RS = { 85, 0, 75 }, RE = { 20, 0, 0 }, RW = { -15, 0, 0 }, LS = { 45, 0, -30 }, LE = { 70, 0, 0 } },
@@ -413,7 +413,7 @@ local data = {
 		-- → J K : Genou dans la foulée
 		P_sideK = {
 			label = "Genou dans la foulée", startup = 0.1, active = 0.1, recovery = 0.22,
-			damage = 8, hitbox = box(4, 3, 2.5, 0.5), kbBase = 26, kbGrowth = 45, kbAngle = 45, selfVelocity = Vector2.new(22, 0),
+			damage = 8, hitbox = box(5, 3.5, 2.5, 0.5), kbBase = 26, kbGrowth = 45, kbAngle = 45, selfVelocity = Vector2.new(22, 0),
 			windup = { Root = { 4, -6, 0, 0, -0.2, 0.1 }, RS = { 30, 0, 40 }, LS = { 40, 0, -35 }, RH = { -20, 0, 0 }, RK = { -60, 0, 0 } },
 			strike = { Root = { -14, 6, 0, 0, 0.05, -0.4 }, Waist = { -12, 4, 0 }, RS = { -20, 0, 45 }, RE = { 50, 0, 0 }, LS = { -20, 0, -45 }, LE = { 50, 0, 0 }, RH = { 105, 0, 0 }, RK = { -125, 0, 0 }, RA = { -30, 0, 0 } },
 			follow = { Root = { -16, 8, 0, 0, 0.08, -0.45 }, Waist = { -14, 4, 0 }, RS = { -25, 0, 48 }, RE = { 50, 0, 0 }, LS = { -25, 0, -48 }, LE = { 50, 0, 0 }, RH = { 112, 0, 0 }, RK = { -128, 0, 0 }, RA = { -30, 0, 0 } },
@@ -422,7 +422,7 @@ local data = {
 		-- ↓ J J : Remontée du goulot, uppercut qui part de l'accroupi
 		P_down2 = {
 			label = "Remontée du goulot", startup = 0.1, active = 0.1, recovery = 0.25,
-			damage = 8, hitbox = box(4, 5, 2, 2), kbBase = 30, kbGrowth = 45, kbAngle = 80,
+			damage = 8, hitbox = box(5, 5, 2.5, 2), kbBase = 30, kbGrowth = 45, kbAngle = 80,
 			windup = { Root = { -10, -10, 0, 0, -0.9, 0.1 }, Waist = { -24, -10, 0 }, RS = { -20, 0, 20 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -30 }, LE = { 80, 0, 0 } },
 			strike = { Root = { 6, 12, 0, 0, 0.15, -0.2 }, Waist = { 14, 16, 0 }, RS = { 160, 0, 5 }, RE = { 15, 0, 0 }, RW = { 0, 0, 0 }, LS = { 0, 0, -30 }, LE = { 60, 0, 0 } },
 			follow = { Root = { 8, 14, 0, 0, 0.2, -0.25 }, Waist = { 16, 18, 0 }, RS = { 175, 0, 0 }, RE = { 8, 0, 0 }, RW = { -20, 0, 0 }, LS = { -5, 0, -32 }, LE = { 60, 0, 0 } },
@@ -431,7 +431,7 @@ local data = {
 		-- ↓ J K : Double croche-patte, cette fois avec la jambe gauche
 		P_downK = {
 			label = "Double croche-patte", startup = 0.1, active = 0.08, recovery = 0.22,
-			damage = 7, hitbox = box(5, 2, 2.5, -2), kbBase = 28, kbGrowth = 30, kbAngle = 75,
+			damage = 7, hitbox = box(5, 3.5, 2.5, -0.6), kbBase = 28, kbGrowth = 30, kbAngle = 75,
 			windup = { Root = { -8, 18, 0, 0, -0.75, 0.2 }, Waist = { -16, 10, 0 }, RS = { 50, 0, 30 }, RE = { 55, 0, 0 }, LS = { 30, 0, -38 }, LE = { 45, 0, 0 }, LH = { -15, 0, -18 }, LK = { -60, 0, 0 }, LA = { 0, 0, 0 } },
 			strike = { Root = { -12, -22, 0, 0, -0.9, -0.1 }, Waist = { -22, -16, 0 }, RS = { 75, 0, 30 }, RE = { 40, 0, 0 }, LS = { 10, 0, -48 }, LE = { 30, 0, 0 }, LH = { 62, 0, -10 }, LK = { -6, 0, 0 }, LA = { -20, 0, 0 } },
 			follow = { Root = { -12, -32, 0, 0, -0.9, -0.15 }, Waist = { -22, -26, 0 }, RS = { 80, 0, 28 }, RE = { 40, 0, 0 }, LS = { 5, 0, -50 }, LE = { 30, 0, 0 }, LH = { 58, 0, 12 }, LK = { -8, 0, 0 }, LA = { -20, 0, 0 } },
@@ -439,8 +439,8 @@ local data = {
 		},
 		-- ↑ J K : Coup de pied du hoquet, un hoquet lui envoie la jambe tout en haut
 		P_upK = {
-			label = "Coup de pied du hoquet", startup = 0.14, active = 0.1, recovery = 0.3,
-			damage = 9, hitbox = box(4, 5, 2, 3), kbBase = 30, kbGrowth = 55, kbAngle = 85,
+			label = "Coup de pied du hoquet", startup = 0.1, active = 0.1, recovery = 0.3,
+			damage = 9, hitbox = box(5, 5, 2.5, 2.5), kbBase = 30, kbGrowth = 55, kbAngle = 85,
 			windup = { Root = { 6, 0, 0, 0, -0.3, 0.1 }, Waist = { 8, 0, 0 }, RS = { 40, 0, 50 }, LS = { 40, 0, -50 }, RH = { 60, 0, 0 }, RK = { -110, 0, 0 } },
 			strike = { Root = { 20, 0, 0, 0, -0.1, 0 }, Waist = { 20, 0, 0 }, Neck = { 10, 0, 0 }, RS = { -20, 0, 70 }, RE = { 20, 0, 0 }, LS = { -20, 0, -70 }, LE = { 20, 0, 0 }, RH = { 150, 0, 0 }, RK = { -5, 0, 0 }, RA = { 20, 0, 0 } },
 			follow = { Root = { 24, 0, 0, 0, -0.1, 0.05 }, Waist = { 22, 0, 0 }, Neck = { 12, 0, 0 }, RS = { -25, 0, 72 }, RE = { 20, 0, 0 }, LS = { -25, 0, -72 }, LE = { 20, 0, 0 }, RH = { 160, 0, 0 }, RK = { -5, 0, 0 }, RA = { 20, 0, 0 } },
@@ -449,7 +449,7 @@ local data = {
 		-- → K J : Coup de tête après le genou
 		K_sideP = {
 			label = "Coup de tête", startup = 0.1, active = 0.1, recovery = 0.25,
-			damage = 9, hitbox = box(4, 3, 2, 1.2), kbBase = 28, kbGrowth = 55, kbAngle = 40,
+			damage = 9, hitbox = box(5, 3.5, 2.5, 1), kbBase = 28, kbGrowth = 55, kbAngle = 40,
 			windup = { Root = { 12, 0, 0, 0, -0.1, 0.2 }, Waist = { 18, 0, 0 }, Neck = { 25, 0, 0 }, RS = { 60, 0, 30 }, RE = { 90, 0, 0 }, LS = { 60, 0, -30 }, LE = { 90, 0, 0 } },
 			strike = { Root = { -15, 0, 0, 0, -0.25, -0.45 }, Waist = { -30, 0, 0 }, Neck = { -30, 0, 0 }, RS = { 20, 0, 40 }, RE = { 60, 0, 0 }, LS = { 20, 0, -40 }, LE = { 60, 0, 0 } },
 			follow = { Root = { -18, 0, 0, 0, -0.28, -0.5 }, Waist = { -34, 0, 0 }, Neck = { -34, 0, 0 }, RS = { 15, 0, 42 }, RE = { 60, 0, 0 }, LS = { 15, 0, -42 }, LE = { 60, 0, 0 } },
@@ -457,8 +457,8 @@ local data = {
 		},
 		-- ↑ K J : Bouteille sur le crâne
 		K_upP = {
-			label = "Bouteille sur le crâne", startup = 0.12, active = 0.1, recovery = 0.28,
-			damage = 9, hitbox = box(4, 4, 2.5, 1.5), kbBase = 28, kbGrowth = 50, kbAngle = 60,
+			label = "Bouteille sur le crâne", startup = 0.1, active = 0.1, recovery = 0.28,
+			damage = 9, hitbox = box(5, 4, 2.5, 1.2), kbBase = 28, kbGrowth = 50, kbAngle = 60,
 			windup = { Root = { 8, -6, 0, 0, 0.05, 0.15 }, Waist = { 14, -8, 0 }, RS = { 190, 0, 10 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -30 }, LE = { 40, 0, 0 } },
 			strike = { Root = { -12, 8, 0, 0, -0.35, -0.3 }, Waist = { -28, 10, 0 }, RS = { 80, 0, 5 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -10, 0, -30 }, LE = { 50, 0, 0 } },
 			follow = { Root = { -14, 10, 0, 0, -0.4, -0.35 }, Waist = { -32, 12, 0 }, RS = { 55, 0, 5 }, RE = { 5, 0, 0 }, RW = { -25, 0, 0 }, LS = { -15, 0, -32 }, LE = { 50, 0, 0 } },
@@ -466,8 +466,8 @@ local data = {
 		},
 		-- J →J : Coup de bedaine, il rentre le ventre puis le projette en avant, bras rejetés en arrière
 		P_belly = {
-			label = "Coup de bedaine", startup = 0.12, active = 0.1, recovery = 0.25,
-			damage = 8, hitbox = box(4, 4, 2, 0.3), kbBase = 34, kbGrowth = 40, kbAngle = 20, selfVelocity = Vector2.new(20, 0),
+			label = "Coup de bedaine", startup = 0.1, active = 0.1, recovery = 0.25,
+			damage = 8, hitbox = box(5, 4, 2.5, 0.5), kbBase = 34, kbGrowth = 40, kbAngle = 20, selfVelocity = Vector2.new(20, 0),
 			windup = { Root = { -10, 0, 0, 0, -0.3, 0.3 }, Waist = { -25, 0, 0 }, Neck = { -15, 0, 0 }, RS = { 60, 0, 30 }, RE = { 60, 0, 0 }, LS = { 60, 0, -30 }, LE = { 60, 0, 0 } },
 			strike = { Root = { 18, 0, 0, 0, -0.2, -0.6 }, Waist = { 25, 0, 0 }, Neck = { -20, 0, 0 }, RS = { -50, 0, 35 }, RE = { 20, 0, 0 }, LS = { -50, 0, -35 }, LE = { 20, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
 			follow = { Root = { 22, 0, 0, 0, -0.2, -0.7 }, Waist = { 30, 0, 0 }, Neck = { -24, 0, 0 }, RS = { -60, 0, 40 }, RE = { 25, 0, 0 }, LS = { -60, 0, -40 }, LE = { 25, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
@@ -476,7 +476,7 @@ local data = {
 		-- J J ←J : Repli du pochtron, petit saut en arrière en balayant devant lui avec la bouteille
 		P_retreat = {
 			label = "Repli du pochtron", startup = 0.08, active = 0.08, recovery = 0.2,
-			damage = 6, hitbox = box(4, 3, 2.5, 0.5), kbBase = 22, kbGrowth = 30, kbAngle = 30, selfVelocity = Vector2.new(-28, 0),
+			damage = 6, hitbox = box(5, 3.5, 2.5, 0.5), kbBase = 22, kbGrowth = 30, kbAngle = 30, selfVelocity = Vector2.new(-28, 0),
 			windup = { Root = { 6, -10, 0, 0, -0.3, 0 }, Waist = { 10, -10, 0 }, RS = { 140, 0, 30 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -40 }, LE = { 60, 0, 0 } },
 			strike = { Root = { 14, 10, 0, 0, 0.1, 0.5 }, Waist = { 8, 10, 0 }, Neck = { -10, 0, 0 }, RS = { 75, 0, 5 }, RE = { 5, 0, 0 }, RW = { 0, 0, 0 }, LS = { -40, 0, -40 }, LE = { 30, 0, 0 }, FR = { 0, 0, 0, 0, 0.3, 0.4 }, FL = { 0, 0, 0, 0, 0.4, 0.3 } },
 			follow = { Root = { 16, 12, 0, 0, 0, 0.6 }, Waist = { 10, 12, 0 }, Neck = { -12, 0, 0 }, RS = { 55, 0, 0 }, RE = { 10, 0, 0 }, RW = { -20, 0, 0 }, LS = { -45, 0, -42 }, LE = { 30, 0, 0 }, FR = { 0, 0, 0, 0, 0, 0.5 }, FL = { 0, 0, 0, 0, 0, 0.5 } },
@@ -493,7 +493,7 @@ local data = {
 		},
 		-- ↑ J J : Gros hoquet, accroupi il gonfle… et un hoquet énorme le fait décoller, bras au ciel
 		P_up2 = {
-			label = "Gros hoquet", startup = 0.12, active = 0.12, recovery = 0.25,
+			label = "Gros hoquet", startup = 0.1, active = 0.12, recovery = 0.25,
 			damage = 8, hitbox = box(5, 6, 1, 4), kbBase = 30, kbGrowth = 40, kbAngle = 88, selfVelocity = Vector2.new(0, 40),
 			windup = { Root = { -14, 0, 0, 0, -1.0, 0 }, Waist = { -30, 0, 0 }, Neck = { -25, 0, 0 }, RS = { 10, 0, 20 }, RE = { 100, 0, 0 }, LS = { 15, 0, -20 }, LE = { 100, 0, 0 } },
 			strike = { Root = { 10, 0, 0, 0, 0.6, 0 }, Waist = { 24, 0, 0 }, Neck = { 38, 0, 0 }, RS = { 172, 0, 25 }, RE = { 5, 0, 0 }, LS = { 168, 0, -25 }, LE = { 5, 0, 0 }, RH = { -10, 0, 0 }, RK = { -40, 0, 0 }, LH = { 10, 0, 0 }, LK = { -60, 0, 0 } },
@@ -502,8 +502,8 @@ local data = {
 		},
 		-- ↑ K K : Ciseaux vers le ciel, petit saut : la jambe gauche monte, puis la droite la croise tout en haut
 		K_upK = {
-			label = "Ciseaux vers le ciel", startup = 0.15, active = 0.12, recovery = 0.3,
-			damage = 10, hitbox = box(4, 5, 1.5, 3), kbBase = 30, kbGrowth = 55, kbAngle = 85,
+			label = "Ciseaux vers le ciel", startup = 0.1, active = 0.12, recovery = 0.3,
+			damage = 10, hitbox = box(5, 5, 2.5, 2.5), kbBase = 30, kbGrowth = 55, kbAngle = 85,
 			windup = { Root = { 10, 0, 0, 0, 0.2, 0 }, Waist = { 10, 0, 0 }, RS = { 40, 0, 50 }, RE = { 40, 0, 0 }, LS = { 40, 0, -50 }, LE = { 40, 0, 0 }, LH = { 130, 0, 0 }, LK = { -20, 0, 0 }, RH = { -10, 0, 0 }, RK = { -40, 0, 0 } },
 			strike = { Root = { 25, 0, 0, 0, 0.5, 0 }, Waist = { 10, 0, 0 }, Neck = { 15, 0, 0 }, RS = { -35, 0, 65 }, RE = { 20, 0, 0 }, LS = { -35, 0, -65 }, LE = { 20, 0, 0 }, RH = { 155, 0, 0 }, RK = { 0, 0, 0 }, RA = { 20, 0, 0 }, LH = { -20, 0, 0 }, LK = { -30, 0, 0 } },
 			follow = { Root = { 30, 0, 0, 0, 0.55, 0 }, Waist = { 12, 0, 0 }, Neck = { 18, 0, 0 }, RS = { -40, 0, 70 }, RE = { 20, 0, 0 }, LS = { -40, 0, -70 }, LE = { 20, 0, 0 }, RH = { 165, 0, 0 }, RK = { 0, 0, 0 }, RA = { 20, 0, 0 }, LH = { -25, 0, 0 }, LK = { -35, 0, 0 } },
@@ -511,8 +511,8 @@ local data = {
 		},
 		-- → K K : Talon retourné, il tourne sur le pied gauche, jambe droite tendue comme une aiguille de montre
 		K_side2 = {
-			label = "Talon retourné", startup = 0.16, active = 0.16, recovery = 0.32,
-			damage = 12, hitbox = box(6, 3, 2, 0.5), kbBase = 32, kbGrowth = 75, kbAngle = 35,
+			label = "Talon retourné", startup = 0.1, active = 0.16, recovery = 0.32,
+			damage = 12, hitbox = box(6, 3.5, 2.5, 0.5), kbBase = 32, kbGrowth = 75, kbAngle = 35,
 			windup = { Root = { 4, -40, 0, 0, -0.25, 0.1 }, Waist = { 4, -20, 0 }, Neck = { 0, 30, 0 }, RS = { 50, 0, 40 }, RE = { 60, 0, 0 }, LS = { 60, 0, -40 }, LE = { 60, 0, 0 }, RH = { 40, 0, 0 }, RK = { -100, 0, 0 } },
 			strike = { Root = { 25, 0, 0, 0, -0.1, 0 }, Waist = { 5, 0, 0 }, Neck = { -15, 0, 0 }, RS = { 40, 0, 80 }, RE = { 10, 0, 0 }, LS = { 50, 0, -80 }, LE = { 10, 0, 0 }, RH = { 75, 0, 0 }, RK = { 0, 0, 0 }, RA = { 15, 0, 0 } },
 			follow = { Root = { 28, 0, 0, 0, -0.1, 0 }, Waist = { 6, 0, 0 }, Neck = { -18, 0, 0 }, RS = { 35, 0, 85 }, RE = { 10, 0, 0 }, LS = { 45, 0, -85 }, LE = { 10, 0, 0 }, RH = { 80, 0, 0 }, RK = { -5, 0, 0 }, RA = { 15, 0, 0 } },
@@ -520,8 +520,8 @@ local data = {
 		},
 		-- ↓ K K : Roulé-boulé de la flaque, sorti de la glissade il roule en boule et repart les deux pieds devant
 		K_downK = {
-			label = "Roulé-boulé de la flaque", startup = 0.12, active = 0.22, recovery = 0.3,
-			damage = 9, hitbox = box(6, 2.5, 2.5, -1.5), kbBase = 30, kbGrowth = 50, kbAngle = 70, selfVelocity = Vector2.new(30, 0),
+			label = "Roulé-boulé de la flaque", startup = 0.1, active = 0.22, recovery = 0.3,
+			damage = 9, hitbox = box(6, 3.5, 2.5, -0.5), kbBase = 30, kbGrowth = 50, kbAngle = 70, selfVelocity = Vector2.new(30, 0),
 			windup = { Root = { -15, 0, 0, 0, -0.9, 0.1 }, Waist = { -30, 0, 0 }, Neck = { -25, 0, 0 }, RS = { 70, 0, 20 }, RE = { 90, 0, 0 }, LS = { 70, 0, -20 }, LE = { 90, 0, 0 } },
 			strike = { Root = { -30, 0, 0, 0, -0.6, -0.3 }, Waist = { -40, 0, 0 }, Neck = { -30, 0, 0 }, RS = { 60, 0, 20 }, RE = { 110, 0, 0 }, LS = { 60, 0, -20 }, LE = { 110, 0, 0 }, RH = { 120, 0, 0 }, RK = { -140, 0, 0 }, LH = { 120, 0, 0 }, LK = { -140, 0, 0 } },
 			follow = { Root = { 20, 0, 0, 0, -1.0, -0.6 }, Waist = { -10, 0, 0 }, Neck = { -15, 0, 0 }, RS = { -30, 0, 40 }, RE = { 20, 0, 0 }, LS = { -30, 0, -40 }, LE = { 20, 0, 0 }, RH = { 80, 0, 0 }, RK = { 0, 0, 0 }, RA = { 15, 0, 0 }, LH = { 70, 0, 0 }, LK = { -10, 0, 0 }, LA = { 15, 0, 0 } },
@@ -529,8 +529,8 @@ local data = {
 		},
 		-- ↓ K J : Coup de boule remontant, du sol il se redresse d'un bond, tête la première
 		K_downP = {
-			label = "Coup de boule remontant", startup = 0.12, active = 0.1, recovery = 0.28,
-			damage = 9, hitbox = box(4, 4, 2, 1.5), kbBase = 30, kbGrowth = 50, kbAngle = 70, selfVelocity = Vector2.new(20, 0),
+			label = "Coup de boule remontant", startup = 0.1, active = 0.1, recovery = 0.28,
+			damage = 9, hitbox = box(5, 4, 2.5, 1.2), kbBase = 30, kbGrowth = 50, kbAngle = 70, selfVelocity = Vector2.new(20, 0),
 			windup = { Root = { -20, 0, 0, 0, -1.2, 0.2 }, Waist = { -35, 0, 0 }, Neck = { -30, 0, 0 }, RS = { -20, 0, 30 }, RE = { 60, 0, 0 }, LS = { -20, 0, -30 }, LE = { 60, 0, 0 } },
 			strike = { Root = { -28, 0, 0, 0, 0.1, -0.6 }, Waist = { -20, 0, 0 }, Neck = { -25, 0, 0 }, RS = { -60, 0, 30 }, RE = { 10, 0, 0 }, LS = { -60, 0, -30 }, LE = { 10, 0, 0 }, FR = { 0, 0, 0, 0, 0.3, 0 }, FL = { 0, 0, 0, 0, 0.2, -0.3 } },
 			follow = { Root = { -30, 0, 0, 0, 0.25, -0.7 }, Waist = { -22, 0, 0 }, Neck = { -28, 0, 0 }, RS = { -65, 0, 32 }, RE = { 10, 0, 0 }, LS = { -65, 0, -32 }, LE = { 10, 0, 0 }, FR = { 0, 0, 0, 0, 0.4, 0 }, FL = { 0, 0, 0, 0, 0.3, -0.3 } },
@@ -539,7 +539,7 @@ local data = {
 		-- dash J J : Plateau du serveur, après l'épaule il ramène la bouteille en grand arc comme un plateau
 		P_dash2 = {
 			label = "Plateau du serveur", startup = 0.1, active = 0.1, recovery = 0.22,
-			damage = 8, hitbox = box(5, 3, 2.5, 0.8), kbBase = 26, kbGrowth = 45, kbAngle = 30, selfVelocity = Vector2.new(15, 0),
+			damage = 8, hitbox = box(5, 3.5, 2.5, 0.8), kbBase = 26, kbGrowth = 45, kbAngle = 30, selfVelocity = Vector2.new(15, 0),
 			windup = { Root = { -6, -40, 0, 0, -0.3, 0.1 }, Waist = { -6, -30, 0 }, Neck = { 0, 25, 0 }, RS = { 100, 0, 70 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -30 }, LE = { 80, 0, 0 } },
 			strike = { Root = { -10, 30, 0, 0, -0.35, -0.3 }, Waist = { -10, 30, 0 }, Neck = { 0, -20, 0 }, RS = { 95, 0, -20 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { -20, 0, -40 }, LE = { 40, 0, 0 } },
 			follow = { Root = { -10, 42, 0, 0, -0.35, -0.35 }, Waist = { -10, 40, 0 }, Neck = { 0, -26, 0 }, RS = { 90, 0, -45 }, RE = { 15, 0, 0 }, RW = { -15, 0, 0 }, LS = { -25, 0, -45 }, LE = { 40, 0, 0 } },
@@ -598,15 +598,15 @@ local data = {
 			follow = { Root = { 4, 0, 0, 0, 0.2, 0 }, Waist = { 24, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 160, 0, 80 }, RE = { 5, 0, 0 }, LS = { 160, 0, -80 }, LE = { 5, 0, 0 } },
 			windupFx = { "super" }, text = "TOURNÉE GÉNÉRALE !", hitText = "GLOUPS !",
 		},
-		-- Super ↑ : il secoue la bouteille, le bouchon part vers le ciel avec tout ce qui est au-dessus
+		-- Super ↑ : accroupi, il secoue la bouteille entre ses genoux, puis la pointe au ciel : le bouchon saute et le jet le propulse en vrille
 		SUPER_up = {
-			label = "Bouchon de champagne !", superCost = 100, startup = 0.3, active = 0.25, recovery = 0.55,
-			damage = 22, hitbox = box(7, 10, 2, 4), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
-			windup = { Root = { -7.2, 0, 0, 0, -0.95, 0 }, Waist = { -42, 0, 0 }, Neck = { -36, 0, 0 }, RS = { -36, 0, 26.4 }, RE = { 48, 0, 0 }, LS = { -36, 0, -26.4 }, LE = { 48, 0, 0 } },
-			strike = { Root = { 2.4, 0, 0, 0, 0.45, 0 }, Waist = { 14.4, 0, 0 }, Neck = { 57.6, 0, 0 }, RS = { -66, 0, 36 }, RE = { 12, 0, 0 }, LS = { -66, 0, -36 }, LE = { 12, 0, 0 }, FR = { 0, 0, 0, 0, 0.3, 0 }, FL = { 0, 0, 0, 0, 0.3, 0 } },
-			follow = { Root = { 4.8, 0, 0, 0, 0.55, 0 }, Waist = { 19.2, 0, 0 }, Neck = { 66, 0, 0 }, RS = { -74.4, 0, 42 }, RE = { 12, 0, 0 }, LS = { -74.4, 0, -42 }, LE = { 12, 0, 0 }, FR = { 0, 0, 0, 0, 0.45, 0 }, FL = { 0, 0, 0, 0, 0.4, 0 } },
-			hold = 0.25, selfVelocity = Vector2.new(0, 45),
-			windupFx = { "super" }, trail = "bottle", fx = { { "pillar", color = Color3.fromRGB(170, 220, 60), height = 22, width = 3, at = "front" }, { "burst", color = Color3.fromRGB(255, 240, 150), size = 4, at = "above" } }, text = "SANTÉ !", hitText = "PLOP !",
+			label = "Bouchon de champagne !", superCost = 100, startup = 0.3, active = 0.3, recovery = 0.55,
+			damage = 22, hitbox = box(7, 12, 1.5, 4), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
+			windup = { Root = { -10, 0, 0, 0, -0.95, 0 }, Waist = { -32, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 40, 0, -20 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, 20 }, LE = { 110, 0, 0 } },
+			strike = { Root = { 6, 0, 0, 0, 0.5, 0 }, Waist = { 18, 0, 0 }, Neck = { 50, 0, 0 }, RS = { 186, 0, 6 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -80 }, LE = { 10, 0, 0 }, RH = { 40, 0, 10 }, RK = { -90, 0, 0 }, LH = { 20, 0, -15 }, LK = { -60, 0, 0 } },
+			follow = { Root = { 10, 0, 0, 0, 0.55, 0 }, Waist = { 24, 0, 0 }, Neck = { 56, 0, 0 }, RS = { 188, 0, 10 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 70, 0, -88 }, LE = { 10, 0, 0 }, RH = { 60, 0, 20 }, RK = { -110, 0, 0 }, LH = { 10, 0, -25 }, LK = { -40, 0, 0 } },
+			hold = 0.2, shake = true, spin = { axis = "y", degrees = 360 }, selfVelocity = Vector2.new(0, 55),
+			windupFx = { "super", "sodaShake" }, trail = "bottle", fx = { { "pillar", color = SODA, height = 22, width = 3, at = "front" }, { "burst", color = Color3.fromRGB(255, 240, 150), size = 4, at = "above" }, { "particles", tex = "spark", color = SODA, dir = "down", at = "feet", time = 0.5, speed = 14 }, { "ring", color = SODA, radius = 5, at = "feet" } }, text = "SANTÉ !", hitText = "PLOP !",
 		},
 		-- Karaoké : micro à la main gauche, bras droit tendu vers le ciel, il se balance en chantant
 		SUPER_down = {

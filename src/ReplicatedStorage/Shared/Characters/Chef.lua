@@ -156,7 +156,7 @@ local data = {
 		-- Coup de fouet : ventre en avant, il fouette l'air en petits moulinets (suite de la louche)
 		P_combo2 = {
 			label = "Coup de fouet", startup = 0.06, active = 0.12, recovery = 0.16,
-			damage = 3, hitbox = box(4, 3, 2.5, 0.6), kbBase = 18, kbGrowth = 22, kbAngle = 35, hits = 2,
+			damage = 3, hitbox = box(5, 3.5, 2.5, 0.6), kbBase = 18, kbGrowth = 22, kbAngle = 35, hits = 2,
 			windup = { Root = { 4, 14, 0, 0, -0.15, 0.05 }, Waist = { 6, 18, 0 }, RS = { 70, 0, -20 }, RE = { 100, 0, 0 }, RW = { -30, 0, 0 }, LS = { 10, 0, -40 }, LE = { 85, 0, 0 } },
 			strike = { Root = { -6, -10, 0, 0, -0.2, -0.2 }, Waist = { -8, -14, 0 }, RS = { 90, 0, 20 }, RE = { 40, 0, 0 }, RW = { 40, 0, 0 }, LS = { 8, 0, -42 }, LE = { 88, 0, 0 } },
 			follow = { Root = { -6, -14, 0, 0, -0.2, -0.22 }, Waist = { -8, -18, 0 }, RS = { 85, 0, 30 }, RE = { 60, 0, 0 }, RW = { -40, 0, 0 }, LS = { 8, 0, -42 }, LE = { 88, 0, 0 } },
@@ -164,7 +164,7 @@ local data = {
 		},
 		-- Poêle sur la tête : la poêle revient, levée à deux mains, et s'abat sur le crâne (fin de la série)
 		P_combo3 = {
-			label = "Poêle sur la tête", startup = 0.13, active = 0.1, recovery = 0.3,
+			label = "Poêle sur la tête", startup = 0.1, active = 0.1, recovery = 0.3,
 			damage = 9, hitbox = box(5, 4, 2.5, 1), kbBase = 30, kbGrowth = 60, kbAngle = 50,
 			windup = { Root = { 10, -8, 0, 0, 0, 0.25 }, Waist = { 16, -10, 0 }, Neck = { 14, 0, 0 }, RS = { 195, 0, 10 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 175, 0, -15 }, LE = { 70, 0, 0 } },
 			strike = { Root = { -14, 8, 0, 0, -0.45, -0.4 }, Waist = { -28, 10, 0 }, Neck = { -10, 0, 0 }, RS = { 80, 0, 0 }, RE = { 0, 0, 0 }, RW = { -60, 0, 0 }, LS = { 70, 0, -10 }, LE = { 30, 0, 0 } },
@@ -229,35 +229,35 @@ local data = {
 		},
 		-- Revers de rouleau : le rouleau revient dans l'autre sens, en coup droit (suite de K)
 		K_combo2 = {
-			label = "Revers de rouleau", startup = 0.14, active = 0.1, recovery = 0.25,
+			label = "Revers de rouleau", startup = 0.1, active = 0.1, recovery = 0.25,
 			damage = 9, hitbox = box(5, 3.5, 3, 0.8), kbBase = 28, kbGrowth = 50, kbAngle = 30,
 			windup = { Root = { 4, -30, 0, 0, -0.2, 0.1 }, Waist = { 6, -30, 0 }, Neck = { 0, 25, 0 }, RS = { 20, 0, 40 }, RE = { 80, 0, 0 }, LS = { 95, 0, 30 }, LE = { 20, 0, 0 }, LW = { 0, 0, 0 } },
 			strike = { Root = { -8, 25, 0, 0, -0.3, -0.3 }, Waist = { -10, 30, 0 }, Neck = { 0, -20, 0 }, RS = { 25, 0, 40 }, RE = { 80, 0, 0 }, LS = { 92, 0, -60 }, LE = { 5, 0, 0 }, LW = { 0, 0, 0 } },
 			follow = { Root = { -10, 32, 0, 0, -0.32, -0.35 }, Waist = { -12, 38, 0 }, Neck = { 0, -24, 0 }, RS = { 25, 0, 42 }, RE = { 80, 0, 0 }, LS = { 85, 0, -85 }, LE = { 10, 0, 0 }, LW = { -15, 0, 0 } },
 			trail = "leftHand", hitText = "VLAM !",
 		},
-		-- Sabot sauté : petit bond de commis, le sabot droit part en avant, bras écartés pour la frime
+		-- K K K : Pirouette du chef étoilé, il tourne sur un sabot bras en « voilà » et le talon fouette en passant (il décolle un peu)
 		K_combo3 = {
-			label = "Sabot sauté", startup = 0.16, active = 0.12, recovery = 0.3,
-			damage = 12, hitbox = box(5, 4, 3, 1), kbBase = 32, kbGrowth = 80, kbAngle = 40, selfVelocity = Vector2.new(15, 42),
-			windup = { Root = { -8, 0, 0, 0, -0.6, 0.1 }, Waist = { -12, 0, 0 }, RS = { -30, 0, 35 }, RE = { 40, 0, 0 }, LS = { -30, 0, -35 }, LE = { 40, 0, 0 } },
-			strike = { Root = { 16, 0, 0 }, Waist = { 14, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 80, 0, 80 }, RE = { 10, 0, 0 }, LS = { 80, 0, -80 }, LE = { 10, 0, 0 }, RH = { 95, 0, 0 }, RK = { 0, 0, 0 }, RA = { 15, 0, 0 }, LH = { 20, 0, 0 }, LK = { -110, 0, 0 } },
-			follow = { Root = { 20, 0, 0 }, Waist = { 16, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 85, 0, 85 }, RE = { 10, 0, 0 }, LS = { 85, 0, -85 }, LE = { 10, 0, 0 }, RH = { 104, 0, 0 }, RK = { 0, 0, 0 }, RA = { 18, 0, 0 }, LH = { 25, 0, 0 }, LK = { -115, 0, 0 } },
-			trail = "rightFoot", text = "VOILÀÀÀ !", hitText = "BAM !",
+			label = "Pirouette du chef étoilé", startup = 0.1, active = 0.16, recovery = 0.3,
+			damage = 12, hitbox = box(6, 4, 2.5, 1), kbBase = 32, kbGrowth = 80, kbAngle = 40, selfVelocity = Vector2.new(12, 36),
+			windup = { Root = { -6, -40, 0, 0, -0.45, 0.1 }, Waist = { -10, -30, 0 }, Neck = { 6, 30, 0 }, RS = { 40, 0, 40 }, RE = { 60, 0, 0 }, LS = { 40, 0, -40 }, LE = { 60, 0, 0 } },
+			strike = { Root = { 10, 0, 0 }, Waist = { 8, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 150, 0, 70 }, RE = { 10, 0, 0 }, LS = { 150, 0, -70 }, LE = { 10, 0, 0 }, RH = { 85, 0, 40 }, RK = { 0, 0, 0 }, RA = { 15, 0, 0 }, LH = { 10, 0, -10 }, LK = { -60, 0, 0 } },
+			follow = { Root = { 12, 0, 0 }, Waist = { 10, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 160, 0, 75 }, RE = { 10, 0, 0 }, LS = { 160, 0, -75 }, LE = { 10, 0, 0 }, RH = { 90, 0, 45 }, RK = { -5, 0, 0 }, RA = { 18, 0, 0 }, LH = { 15, 0, -10 }, LK = { -65, 0, 0 } },
+			spin = { axis = "y", degrees = 360 }, trail = "rightFoot", fx = { { "symbols", symbols = { "⭐", "✨" }, count = 4, radius = 3, at = "head", color = FLAME } }, text = "VOILÀÀÀ !", hitText = "BAM !",
 		},
-		-- Glissade de commis (dash puis K) : il glisse sur le carrelage gras, sabots en avant
+		-- Patinage sur l'huile (dash puis K) : il glisse debout sur un sabot comme sur une flaque d'huile, l'autre sabot tendu devant, bras en balancier
 		K_dash = {
-			label = "Glissade de commis", startup = 0.1, active = 0.25, recovery = 0.3,
-			damage = 11, hitbox = box(6, 2.5, 3, -1.5), kbBase = 30, kbGrowth = 62, kbAngle = 50, selfVelocity = Vector2.new(52, 0),
-			windup = { Root = { -10, 0, 0, 0, -0.5, 0 }, Waist = { -14, 0, 0 }, RS = { 40, 0, 35 }, LS = { 40, 0, -35 } },
-			strike = { Root = { 40, 0, 0, 0, -1.5, 0 }, Waist = { -20, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 120, 0, 55 }, RE = { 10, 0, 0 }, LS = { 120, 0, -55 }, LE = { 10, 0, 0 }, RH = { 80, 0, 0 }, RK = { 0, 0, 0 }, RA = { 15, 0, 0 }, LH = { 70, 0, 0 }, LK = { -25, 0, 0 } },
-			follow = { Root = { 45, 0, 0, 0, -1.55, 0 }, Waist = { -22, 0, 0 }, Neck = { -22, 0, 0 }, RS = { 130, 0, 60 }, RE = { 15, 0, 0 }, LS = { 130, 0, -60 }, LE = { 15, 0, 0 }, RH = { 84, 0, 0 }, RK = { 0, 0, 0 }, RA = { 18, 0, 0 }, LH = { 74, 0, 0 }, LK = { -20, 0, 0 } },
-			trail = "bothFeet", fx = { { "puddle", color = OIL, width = 6 } }, hitText = "SCHLIIIP !",
+			label = "Patinage sur l'huile", startup = 0.1, active = 0.25, recovery = 0.3,
+			damage = 11, hitbox = box(6, 3.5, 3.5, -0.3), kbBase = 30, kbGrowth = 62, kbAngle = 50, selfVelocity = Vector2.new(52, 0),
+			windup = { Root = { -8, 0, 0, 0, -0.4, 0 }, Waist = { -12, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 60, 0, 60 }, RE = { 30, 0, 0 }, LS = { 60, 0, -60 }, LE = { 30, 0, 0 }, RH = { -15, 0, 0 }, RK = { -60, 0, 0 } },
+			strike = { Root = { 8, 0, 6, 0, -0.5, -0.2 }, Waist = { 6, 0, -6 }, Neck = { 0, 0, 0 }, RS = { 90, 0, 85 }, RE = { 10, 0, 0 }, LS = { 90, 0, -85 }, LE = { 10, 0, 0 }, RH = { 80, 0, 0 }, RK = { -5, 0, 0 }, RA = { 20, 0, 0 } },
+			follow = { Root = { 10, 0, 8, 0, -0.5, -0.25 }, Waist = { 8, 0, -8 }, Neck = { 0, 0, 0 }, RS = { 92, 0, 88 }, RE = { 10, 0, 0 }, LS = { 92, 0, -88 }, LE = { 10, 0, 0 }, RH = { 86, 0, 0 }, RK = { 0, 0, 0 }, RA = { 22, 0, 0 } },
+			wobble = true, trail = "rightFoot", fx = { { "puddle", color = OIL, width = 6 } }, text = "OUH LÀ LÀ !", hitText = "PATINÉ !",
 		},
 		-- P puis K : Coup de sabot dans le tibia, sec et vexant
 		PK_combo = {
 			label = "Sabot dans le tibia", startup = 0.1, active = 0.08, recovery = 0.2,
-			damage = 7, hitbox = box(5, 2, 3, -1.5), kbBase = 22, kbGrowth = 30, kbAngle = 35,
+			damage = 7, hitbox = box(5, 3.5, 3, -0.5), kbBase = 22, kbGrowth = 30, kbAngle = 35,
 			windup = { Root = { 6, -10, 0, 0, -0.18, 0.15 }, Waist = { 8, -10, 0 }, Neck = { 6, 10, 0 }, RS = { 20, 0, 40 }, RE = { 90, 0, 0 }, LS = { 10, 0, -40 }, LE = { 85, 0, 0 }, RH = { -20, 0, 6 }, RK = { -70, 0, 0 } },
 			strike = { Root = { -6, 10, 0, 0, -0.28, -0.2 }, Waist = { -6, 8, 0 }, Neck = { 0, -6, 0 }, RS = { 25, 0, 45 }, RE = { 85, 0, 0 }, LS = { 15, 0, -45 }, LE = { 85, 0, 0 }, RH = { 60, 0, 4 }, RK = { -5, 0, 0 }, RA = { -20, 0, 0 } },
 			follow = { Root = { -8, 14, 0, 0, -0.3, -0.25 }, Waist = { -8, 10, 0 }, Neck = { 0, -8, 0 }, RS = { 25, 0, 45 }, RE = { 85, 0, 0 }, LS = { 15, 0, -45 }, LE = { 85, 0, 0 }, RH = { 64, 0, 0 }, RK = { -8, 0, 0 }, RA = { -22, 0, 0 } },
@@ -266,11 +266,69 @@ local data = {
 		-- K puis P : Coup de manche, il retourne la poêle et enfonce le manche dans l'estomac
 		KP_combo = {
 			label = "Coup de manche", startup = 0.09, active = 0.08, recovery = 0.2,
-			damage = 7, hitbox = box(4, 3, 2.2, 0.5), kbBase = 22, kbGrowth = 35, kbAngle = 30,
+			damage = 7, hitbox = box(5, 3.5, 2.5, 0.5), kbBase = 22, kbGrowth = 35, kbAngle = 30,
 			windup = { Root = { 2, -20, 0, 0, -0.18, 0.15 }, Waist = { 4, -24, 0 }, RS = { 30, 0, 50 }, RE = { 120, 0, 0 }, RW = { 80, 0, 0 }, LS = { 30, 0, -30 }, LE = { 80, 0, 0 } },
 			strike = { Root = { -8, 18, 0, 0, -0.28, -0.35 }, Waist = { -12, 24, 0 }, RS = { 85, 0, -5 }, RE = { 30, 0, 0 }, RW = { 100, 0, 0 }, LS = { 20, 0, -40 }, LE = { 90, 0, 0 } },
 			follow = { Root = { -10, 22, 0, 0, -0.3, -0.4 }, Waist = { -14, 28, 0 }, RS = { 88, 0, -10 }, RE = { 25, 0, 0 }, RW = { 100, 0, 0 }, LS = { 18, 0, -42 }, LE = { 90, 0, 0 } },
 			hitText = "OUF !",
+		},
+
+		-- → P P : Revers de poêle, la poêle revient à plat dans l'autre sens, comme pour retourner une omelette
+		P_side2 = {
+			label = "Revers de poêle", startup = 0.07, active = 0.1, recovery = 0.18,
+			damage = 7, hitbox = box(5.5, 3.5, 3, 0.8), kbBase = 20, kbGrowth = 30, kbAngle = 22, selfVelocity = Vector2.new(12, 0),
+			windup = { Root = { -8, 30, 0, 0, -0.3, -0.25 }, Waist = { -10, 34, 0 }, Neck = { -4, -22, 0 }, RS = { 85, 0, -45 }, RE = { 60, 0, 0 }, RW = { -70, 0, 0 }, LS = { -20, 0, -40 }, LE = { 50, 0, 0 } },
+			strike = { Root = { -12, -18, 0, 0, -0.34, -0.45 }, Waist = { -14, -26, 0 }, Neck = { -6, 14, 0 }, RS = { 95, 0, 35 }, RE = { 5, 0, 0 }, RW = { -80, 0, 0 }, LS = { 30, 0, -30 }, LE = { 70, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+			follow = { Root = { -12, -26, 0, 0, -0.34, -0.5 }, Waist = { -14, -34, 0 }, Neck = { -6, 18, 0 }, RS = { 88, 0, 55 }, RE = { 10, 0, 0 }, RW = { -85, 0, 0 }, LS = { 35, 0, -30 }, LE = { 70, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+			trail = "prop", hitText = "BLANG !",
+		},
+		-- → P P P : Gong de cuisine, la poêle frappée à deux mains comme un gong, l'onde de choc fait trembler la toque (finition)
+		P_side3 = {
+			label = "Gong de cuisine", startup = 0.1, active = 0.12, recovery = 0.34,
+			damage = 11, hitbox = box(6.5, 4, 3, 0.8), kbBase = 34, kbGrowth = 78, kbAngle = 36, selfVelocity = Vector2.new(12, 0),
+			windup = { Root = { 8, -20, 0, 0, -0.15, 0.25 }, Waist = { 12, -24, 0 }, Neck = { 6, 16, 0 }, RS = { 130, 0, 60 }, RE = { 70, 0, 0 }, RW = { -40, 0, 0 }, LS = { 110, 0, -60 }, LE = { 70, 0, 0 }, LW = { 0, 0, 0 } },
+			strike = { Root = { -12, 10, 0, 0, -0.35, -0.45 }, Waist = { -16, 12, 0 }, Neck = { -6, -6, 0 }, RS = { 95, 0, -8 }, RE = { 0, 0, 0 }, RW = { -85, 0, 0 }, LS = { 95, 0, 10 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+			follow = { Root = { -14, 12, 0, 0, -0.38, -0.5 }, Waist = { -18, 14, 0 }, Neck = { -8, -8, 0 }, RS = { 92, 0, -14 }, RE = { 5, 0, 0 }, RW = { -90, 0, 0 }, LS = { 92, 0, 16 }, LE = { 5, 0, 0 }, LW = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+			shake = true, trail = "prop", fx = { { "ring", color = SILVER, radius = 6, at = "front" }, { "ring", color = SILVER, radius = 3, at = "front" }, { "shake", amount = 0.4 }, { "symbols", symbols = { "♪", "GONNNG" }, count = 3, radius = 3, at = "front", color = SILVER } },
+			text = "À TAAABLE !", hitText = "GONNNNG !",
+		},
+		-- ↓ P P : Croche-louche, la louche accroche la cheville et ramène l'adversaire vers le fourneau
+		P_down2 = {
+			label = "Croche-louche", startup = 0.08, active = 0.1, recovery = 0.2,
+			damage = 6, hitbox = box(6.5, 3.5, 3.4, -0.6), kbBase = 20, kbGrowth = 28, kbAngle = 20, pull = true,
+			windup = { Root = { -12, -20, 0, 0, -0.7, 0.1 }, Waist = { -22, -20, 0 }, Neck = { 12, 14, 0 }, RS = { 40, 0, 30 }, RE = { 70, 0, 0 }, RW = { -30, 0, 0 }, LS = { 30, 0, -45 }, LE = { 40, 0, 0 } },
+			strike = { Root = { -16, 15, 0, 0, -0.8, -0.3 }, Waist = { -28, 15, 0 }, Neck = { 16, -10, 0 }, RS = { 70, 0, 5 }, RE = { 0, 0, 0 }, RW = { 60, 0, 0 }, LS = { 25, 0, -45 }, LE = { 40, 0, 0 } },
+			follow = { Root = { -8, -5, 0, 0, -0.65, 0.1 }, Waist = { -18, -5, 0 }, Neck = { 12, 4, 0 }, RS = { 30, 0, 20 }, RE = { 60, 0, 0 }, RW = { 60, 0, 0 }, LS = { 25, 0, -45 }, LE = { 40, 0, 0 } },
+			prop = "louche", hideProp = "poele", trail = "rightHand", text = "PAR ICI !", hitText = "ACCROCHÉ !",
+		},
+		-- ↓ P P P : Une pincée de sel, la salière vidée dans les yeux de l'adversaire, qui éternue à s'en décoller (finition)
+		P_down3 = {
+			label = "Une pincée de sel", startup = 0.1, active = 0.12, recovery = 0.3,
+			damage = 9, hitbox = box(6.5, 4, 3.2, 0.8), kbBase = 34, kbGrowth = 70, kbAngle = 55, status = { name = "sneezy", duration = 2 },
+			windup = { Root = { 2, 25, 0, 0, -0.25, 0.1 }, Waist = { 4, 30, 0 }, Neck = { 6, -20, 0 }, RS = { 30, 0, 40 }, RE = { 70, 0, 0 }, LS = { 120, 0, -20 }, LE = { 110, 0, 0 }, LW = { 0, 0, 0 } },
+			strike = { Root = { -10, -15, 0, 0, -0.3, -0.4 }, Waist = { -12, -20, 0 }, Neck = { 0, 12, 0 }, RS = { 25, 0, 45 }, RE = { 70, 0, 0 }, LS = { 100, 0, 0 }, LE = { 10, 0, 0 }, LW = { -60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+			follow = { Root = { -10, -20, 0, 0, -0.3, -0.45 }, Waist = { -12, -26, 0 }, Neck = { 0, 16, 0 }, RS = { 25, 0, 45 }, RE = { 70, 0, 0 }, LS = { 102, 0, -6 }, LE = { 10, 0, 0 }, LW = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+			wobble = true, prop = "saliere", trail = "leftHand", fx = { { "particles", tex = "spark", color = WHITE, dir = "front", at = "lhand", time = 0.3, speed = 10, size = 0.3, rate = 90 }, { "symbols", symbols = { "🧂", "ATCHOUM" }, count = 3, radius = 2.5, at = "front", color = WHITE } },
+			text = "UNE PINCÉE DE SEL !", hitText = "ATCHOUM !",
+		},
+		-- → K K : Rouleau qui roule, il fait rouler le rouleau à pâtisserie sur l'adversaire comme sur une pâte (deux passages)
+		K_side2 = {
+			label = "Rouleau qui roule", startup = 0.08, active = 0.18, recovery = 0.22,
+			damage = 4, hits = 2, hitbox = box(6, 4, 3, 0.8), kbBase = 20, kbGrowth = 32, kbAngle = 25, selfVelocity = Vector2.new(14, 0),
+			windup = { Root = { -6, 0, 0, 0, -0.25, 0.1 }, Waist = { -10, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 70, 0, -20 }, RE = { 70, 0, 0 }, LS = { 70, 0, 20 }, LE = { 70, 0, 0 }, LW = { 0, 0, 90 } },
+			strike = { Root = { -14, 0, 0, 0, -0.38, -0.4 }, Waist = { -18, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 96, 0, -14 }, RE = { 5, 0, 0 }, LS = { 96, 0, 14 }, LE = { 5, 0, 0 }, LW = { 0, 0, 90 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+			follow = { Root = { -12, 0, 0, 0, -0.3, -0.3 }, Waist = { -14, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 80, 0, -16 }, RE = { 40, 0, 0 }, LS = { 80, 0, 16 }, LE = { 40, 0, 0 }, LW = { 0, 0, 90 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+			wobble = true, trail = "leftHand", fx = { { "particles", tex = "smoke", color = CREAM, dir = "all", at = "front", time = 0.25, speed = 5, size = 0.5 } }, text = "ON ÉTALE !", hitText = "ROULÉ ROULÉ !",
+		},
+		-- → K K K : Pâte étalée, le rouleau levé à deux mains s'abat de tout son poids : l'adversaire part comme une pizza au four (finition)
+		K_side3 = {
+			label = "Pâte étalée", startup = 0.1, active = 0.12, recovery = 0.36,
+			damage = 13, hitbox = box(6.5, 4.5, 3, 0.8), kbBase = 36, kbGrowth = 86, kbAngle = 34, selfVelocity = Vector2.new(14, 0),
+			windup = { Root = { 10, 0, 0, 0, -0.05, 0.25 }, Waist = { 18, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 190, 0, 15 }, RE = { 50, 0, 0 }, LS = { 190, 0, -15 }, LE = { 50, 0, 0 }, LW = { 0, 0, 90 } },
+			strike = { Root = { -16, 0, 0, 0, -0.5, -0.45 }, Waist = { -30, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 80, 0, 10 }, RE = { 0, 0, 0 }, LS = { 80, 0, -10 }, LE = { 0, 0, 0 }, LW = { 0, 0, 90 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+			follow = { Root = { -20, 0, 0, 0, -0.6, -0.5 }, Waist = { -36, 0, 0 }, Neck = { -12, 0, 0 }, RS = { 55, 0, 12 }, RE = { 0, 0, 0 }, LS = { 55, 0, -12 }, LE = { 0, 0, 0 }, LW = { 0, 0, 90 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+			trail = "leftHand", fx = { { "burst", color = WOOD, size = 3.5, at = "front" }, { "particles", tex = "smoke", color = CREAM, dir = "all", at = "front", time = 0.3, speed = 8, size = 0.7 }, { "shake", amount = 0.4 }, { "symbols", symbols = { "🍕", "🥖" }, count = 3, radius = 2.5, at = "front", color = CREPE } },
+			text = "AU FOUR !", hitText = "ÉTALÉ !",
 		},
 
 		------------------------------------------------------------------ En l'air avec une flèche (P / K)
@@ -466,15 +524,17 @@ local data = {
 			fx = { { "pillar", color = FIRE, height = 24, width = 5, at = "front" }, { "particles", tex = "fire", color = FLAME, dir = "up", at = "front", time = 0.7, speed = 30, size = 2.2, rate = 120 }, { "screen", color = FIRE, alpha = 0.3 }, { "shake", amount = 0.7 } },
 			text = "FLAMBÉE IMPÉRIALE !", hitText = "BIEN CUIT !",
 		},
-		-- Super ↑ : il lève poêle et rouleau : une colonne de flammes cartoon jaillit devant lui
+		-- Super ↑ : poêle glissée sous l'adversaire, il la retourne d'un coup de reins : crêpe suzette flambée jusqu'au plafond
 		SUPER_up = {
-			label = "Flambée verticale !", superCost = 100, startup = 0.4, active = 0.3, recovery = 0.6,
-			damage = 22, hitbox = box(8, 14, 4, 6), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
-			windup = { Root = { -14.4, -12, 0, 0, -0.85, 0 }, Waist = { -31.2, -12, 0 }, Neck = { 14.4, 0, 0 }, RS = { 24, 0, 24 }, RE = { 24, 0, 0 }, RW = { -96, 0, 0 }, LS = { 48, 0, -48 }, LE = { 72, 0, 0 } },
-			strike = { Root = { 7.2, 6, 0, 0, 0.35, -0.1 }, Waist = { 19.2, 6, 0 }, Neck = { 36, 0, 0 }, RS = { 180, 0, 18 }, RE = { 12, 0, 0 }, RW = { -108, 0, 0 }, LS = { 36, 0, -72 }, LE = { 48, 0, 0 }, FR = { 0, 0, 0, 0, 0.3, 0 }, FL = { 0, 0, 0, 0, 0.3, 0 } },
-			follow = { Root = { 9.6, 9.6, 0, 0, 0.4, -0.12 }, Waist = { 24, 9.6, 0 }, Neck = { 43.2, 0, 0 }, RS = { 206.4, 0, 12 }, RE = { 12, 0, 0 }, RW = { -72, 0, 0 }, LS = { 30, 0, -78 }, LE = { 48, 0, 0 }, FR = { 0, 0, 0, 0, 0.35, 0 }, FL = { 0, 0, 0, 0, 0.35, 0 } },
-			hold = 0.45, shake = true,
-			windupFx = { "super" }, burn = true, burnTime = 3, fx = { { "pillar", color = Color3.fromRGB(255, 120, 30), height = 24, width = 4, at = "front" }, { "particles", tex = "fire", color = Color3.fromRGB(255, 200, 60), dir = "up", at = "front", time = 0.7, speed = 16 } }, text = "FLAMBÉ MINUTE !", hitText = "BIEN CUIT !",
+			label = "Crêpe suzette en orbite !", superCost = 100, startup = 0.35, active = 0.3, recovery = 0.6,
+			damage = 22, hitbox = box(8, 14, 3, 6), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
+			windup = { Root = { -14, -8, 0, 0, -0.9, 0.1 }, Waist = { -30, -8, 0 }, Neck = { 16, 6, 0 }, RS = { 25, 0, 15 }, RE = { 15, 0, 0 }, RW = { -85, 0, 0 }, LS = { 25, 0, -15 }, LE = { 20, 0, 0 }, LW = { 0, 0, 0 } },
+			strike = { Root = { 10, 6, 0, 0, 0.45, -0.1 }, Waist = { 22, 6, 0 }, Neck = { 42, 0, 0 }, RS = { 182, 0, 12 }, RE = { 8, 0, 0 }, RW = { -95, 0, 0 }, LS = { 176, 0, -18 }, LE = { 10, 0, 0 }, LW = { 0, 0, 0 }, FR = { 0, 0, 0, 0, 0.35, 0 }, FL = { 0, 0, 0, 0, 0.35, 0 } },
+			follow = { Root = { 12, 8, 0, 0, 0.5, -0.12 }, Waist = { 26, 8, 0 }, Neck = { 46, 0, 0 }, RS = { 170, 0, 45 }, RE = { 10, 0, 0 }, RW = { -60, 0, 0 }, LS = { 165, 0, -50 }, LE = { 10, 0, 0 }, LW = { 0, 0, 0 }, FR = { 0, 0, 0, 0, 0.4, 0 }, FL = { 0, 0, 0, 0, 0.4, 0 } },
+			hold = 0.35, shake = true, trail = "prop", burn = true, burnTime = 3,
+			windupFx = { "super", { "particles", tex = "fire", color = FIRE, dir = "up", at = "hand", time = 0.3, speed = 6, size = 0.9 } },
+			fx = { { "pillar", color = FIRE, height = 24, width = 4, at = "front" }, { "particles", tex = "fire", color = FLAME, dir = "up", at = "front", time = 0.7, speed = 20, size = 1.8, rate = 110 }, { "toss", shape = "flat", color = CREPE, size = 1.4, count = 5, speed = 14, lift = 40 }, { "burst", color = FLAME, size = 4, at = "above" } },
+			text = "CRÊPE SUZETTE !", hitText = "FLAMBÉE AU PLAFOND !",
 		},
 		-- Menu Dégustation : plateau en main, il sert sept plats d'affilée au visage de l'adversaire
 		SUPER_down = {
@@ -730,11 +790,14 @@ local LINKS = {
 	K_combo2 = { K = "K_combo3", P = "P_combo3", up_K = "K_up", S = "S_finish_flambe" },
 	K_combo3 = { K = "K_air_side", P = "P_air_side", S = "S_air" }, -- il décolle : la suite se joue en l'air
 	KP_combo = { P = "P_combo3", K = "K_combo3", S = "S_finish_crepes" },
-	-- avec une flèche
-	P_side = { P = "P_combo3", K = "K_combo2", S = "S_finish_flambe" },
-	P_down = { P = "P_combo2", K = "K_up", S = "S_finish_crepes" },
+	-- avec une flèche : → P P P (poêle, revers, gong), ↓ P P P (tablier, croche-louche, sel), → K K K (rouleau, rouleau qui roule, pâte étalée)
+	P_side = { P = "P_side2", K = "K_combo2", S = "S_finish_flambe" },
+	P_side2 = { P = "P_side3", K = "K_side2", S = "S_finish_flambe" },
+	P_down = { P = "P_down2", K = "K_up", S = "S_finish_crepes" },
+	P_down2 = { P = "P_down3", K = "K_combo2", S = "S_finish_crepes" },
 	P_up = { K = "K_up", P = "P_combo3", S = "S_finish_flambe" },
-	K_side = { P = "KP_combo", S = "S_finish_flambe" },
+	K_side = { K = "K_side2", P = "KP_combo", S = "S_finish_flambe" },
+	K_side2 = { K = "K_side3", P = "P_combo3", S = "S_finish_flambe" },
 	K_down = { P = "P_up", K = "K_up", S = "S_finish_crepes" },
 	K_up = { S = "S_finish_crepes" },
 	P_dash = { P = "P_combo3", K = "K_side", S = "S_finish_flambe" },

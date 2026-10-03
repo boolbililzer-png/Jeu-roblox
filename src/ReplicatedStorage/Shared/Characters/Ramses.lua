@@ -102,13 +102,13 @@ local data = {
 
 	moves = {
 		------------------------------------------------------------------ Attaques légères (P)
-		-- Coup de thermomètre : voûté, il lève mollement le thermomètre et l'abat sur le crâne (« aïe mon dos »)
+		-- Coup de thermomètre : voûté, une main sur les reins (« aïe mon dos »), il pique mollement le thermomètre en avant comme une canne à pêche
 		P_neutral = {
 			label = "Coup de thermomètre", startup = 0.08, active = 0.08, recovery = 0.15,
-			damage = 6, hitbox = box(4.5, 3, 2.8, 0.8), kbBase = 20, kbGrowth = 25, kbAngle = 30,
-			windup = { Root = { -6, -12, 0, 0, -0.15, 0.15 }, Waist = { -6, -14, 0 }, Neck = { 10, 8, 0 }, RS = { 150, 0, 20 }, RE = { 60, 0, 0 }, RW = { 10, 0, 0 }, LS = { 35, 0, 15 }, LE = { 80, 0, 0 } },
-			strike = { Root = { -14, 10, 0, 0, -0.25, -0.25 }, Waist = { -16, 12, 0 }, Neck = { 0, 0, 0 }, RS = { 75, 0, 5 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 35, 0, 15 }, LE = { 80, 0, 0 } },
-			follow = { Root = { -16, 12, 0, 0, -0.27, -0.3 }, Waist = { -18, 14, 0 }, Neck = { -4, 0, 0 }, RS = { 60, 0, 5 }, RE = { 12, 0, 0 }, RW = { -20, 0, 0 }, LS = { 35, 0, 15 }, LE = { 80, 0, 0 } },
+			damage = 6, hitbox = box(5, 3, 3, 0.8), kbBase = 20, kbGrowth = 25, kbAngle = 30,
+			windup = { Root = { -8, -14, 0, 0, -0.2, 0.15 }, Waist = { -12, -16, 0 }, Neck = { 12, 10, 0 }, RS = { 50, 0, 20 }, RE = { 110, 0, 0 }, RW = { 10, 0, 0 }, LS = { -30, 0, -20 }, LE = { 70, 0, 0 }, LW = { 40, 0, 0 } },
+			strike = { Root = { -14, 12, 0, 0, -0.28, -0.3 }, Waist = { -16, 14, 0 }, Neck = { 4, 0, 0 }, RS = { 96, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -30, 0, -20 }, LE = { 70, 0, 0 }, LW = { 40, 0, 0 } },
+			follow = { Root = { -15, 14, 0, 0, -0.3, -0.33 }, Waist = { -17, 16, 0 }, Neck = { 2, 0, 0 }, RS = { 98, 0, -4 }, RE = { 4, 0, 0 }, RW = { -8, 0, 0 }, LS = { -30, 0, -20 }, LE = { 70, 0, 0 }, LW = { 40, 0, 0 } },
 			trail = "prop", hitText = "TOC !",
 		},
 		-- Mouchoir-fouet : il fait claquer son mouchoir usagé à mi-distance comme une serviette (enrhume)
@@ -167,7 +167,7 @@ local data = {
 		-- P P : revers de thermomètre, il ramène le thermomètre dans l'autre sens en grimaçant
 		P_combo2 = {
 			label = "Revers de thermomètre", startup = 0.08, active = 0.08, recovery = 0.17,
-			damage = 5, hitbox = box(4.5, 3, 2.6, 0.8), kbBase = 18, kbGrowth = 22, kbAngle = 30,
+			damage = 5, hitbox = box(5, 3.5, 2.8, 0.6), kbBase = 18, kbGrowth = 22, kbAngle = 30,
 			windup = { Root = { -12, 22, 0, 0, -0.25, -0.2 }, Waist = { -12, 28, 0 }, RS = { 80, 0, -40 }, RE = { 70, 0, 0 }, RW = { 0, 0, 0 }, LS = { 35, 0, 15 }, LE = { 80, 0, 0 } },
 			strike = { Root = { -10, -14, 0, 0, -0.25, -0.3 }, Waist = { -10, -18, 0 }, Neck = { 0, 8, 0 }, RS = { 92, 0, 35 }, RE = { 5, 0, 0 }, RW = { 0, 0, 0 }, LS = { 35, 0, 15 }, LE = { 80, 0, 0 } },
 			follow = { Root = { -10, -20, 0, 0, -0.25, -0.32 }, Waist = { -10, -24, 0 }, Neck = { 0, 10, 0 }, RS = { 86, 0, 55 }, RE = { 12, 0, 0 }, RW = { -15, 0, 0 }, LS = { 35, 0, 15 }, LE = { 80, 0, 0 } },
@@ -175,8 +175,8 @@ local data = {
 		},
 		-- P P P : Prise de température, il plante le thermomètre en avant… et constate de la fièvre (enrhume)
 		P_combo3 = {
-			label = "Prise de température", startup = 0.14, active = 0.1, recovery = 0.3,
-			damage = 9, hitbox = box(5, 3, 3.2, 0.6), kbBase = 30, kbGrowth = 58, kbAngle = 30,
+			label = "Prise de température", startup = 0.1, active = 0.1, recovery = 0.3,
+			damage = 9, hitbox = box(5, 3.5, 3.2, 0.6), kbBase = 30, kbGrowth = 58, kbAngle = 30,
 			status = { name = "sneezy", duration = 2 },
 			windup = { Root = { 0, -20, 0, 0, -0.15, 0.3 }, Waist = { 0, -22, 0 }, Neck = { 8, 14, 0 }, RS = { 60, 0, 35 }, RE = { 120, 0, 0 }, RW = { 80, 0, 0 }, LS = { 50, 0, -10 }, LE = { 90, 0, 0 } },
 			strike = { Root = { -14, 10, 0, 0, -0.3, -0.45 }, Waist = { -12, 12, 0 }, Neck = { 0, 0, 0 }, RS = { 92, 0, 0 }, RE = { 0, 0, 0 }, RW = { 88, 0, 0 }, LS = { 30, 0, -30 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
@@ -186,8 +186,8 @@ local data = {
 		},
 		-- P puis K : pied plâtré traînant, il balance sa jambe raide au ras du sol
 		PK_combo = {
-			label = "Plâtre traînant", startup = 0.11, active = 0.1, recovery = 0.24,
-			damage = 7, hitbox = box(5, 2, 2.8, -1.6), kbBase = 24, kbGrowth = 34, kbAngle = 40,
+			label = "Plâtre traînant", startup = 0.1, active = 0.1, recovery = 0.24,
+			damage = 7, hitbox = box(5.5, 3.5, 2.8, -1), kbBase = 24, kbGrowth = 34, kbAngle = 40,
 			windup = { Root = { -8, -12, 0, 0, -0.3, 0.15 }, Waist = { -10, -10, 0 }, RS = { 30, 0, 40 }, RE = { 50, 0, 0 }, LS = { 40, 0, -30 }, LE = { 80, 0, 0 }, RH = { -30, 0, 15 }, RK = { 0, 0, 0 } },
 			strike = { Root = { 0, 14, 0, 0, -0.35, -0.2 }, Waist = { -6, 10, 0 }, RS = { 20, 0, 45 }, RE = { 40, 0, 0 }, LS = { 50, 0, -40 }, LE = { 70, 0, 0 }, RH = { 50, 0, -5 }, RK = { 0, 0, 0 }, RA = { -10, 0, 0 } },
 			follow = { Root = { 0, 18, 0, 0, -0.35, -0.22 }, Waist = { -6, 12, 0 }, RS = { 18, 0, 46 }, RE = { 40, 0, 0 }, LS = { 52, 0, -42 }, LE = { 70, 0, 0 }, RH = { 52, 0, -12 }, RK = { 0, 0, 0 }, RA = { -10, 0, 0 } },
@@ -201,6 +201,49 @@ local data = {
 			strike = { Root = { 4, -6, 0, 0, 0.05, 0.1 }, Waist = { 10, -8, 0 }, Neck = { 20, 0, 0 }, LS = { 172, 0, -10 }, LE = { 10, 0, 0 }, RS = { 30, 0, 30 }, RE = { 60, 0, 0 }, FR = { 0, 0, 0, 0, 0.15, 0 }, FL = { 0, 0, 0, 0, 0.15, 0 } },
 			follow = { Root = { 6, -8, 0, 0, 0.1, 0.15 }, Waist = { 12, -10, 0 }, Neck = { 24, 0, 0 }, LS = { 182, 0, -15 }, LE = { 10, 0, 0 }, RS = { 30, 0, 32 }, RE = { 60, 0, 0 }, FR = { 0, 0, 0, 0, 0.2, 0 }, FL = { 0, 0, 0, 0, 0.2, 0 } },
 			prop = "bandelette", trail = "leftHand", hitText = "ZIOUP !",
+		},
+		-- P P P P : Thermomètre qui explose, 42° !, le mercure monte, monte… et le thermomètre éclate au nez de l'adversaire
+		P_combo4 = {
+			label = "Thermomètre qui explose", startup = 0.1, active = 0.12, recovery = 0.34,
+			damage = 12, hitbox = box(5.5, 4.5, 3, 0.8), kbBase = 34, kbGrowth = 80, kbAngle = 45,
+			status = { name = "sneezy", duration = 2 },
+			windup = { Root = { -6, 0, 0, 0, -0.2, 0.2 }, Waist = { -8, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 70, 0, 10 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, 10 }, LE = { 60, 0, 0 }, LW = { 0, 0, 0 } },
+			strike = { Root = { -12, 0, 0, 0, -0.3, -0.4 }, Waist = { -14, 0, 0 }, Neck = { 0, 0, 0 }, RS = { 96, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, 15 }, LE = { 10, 0, 0 }, LW = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+			follow = { Root = { 14, 0, 0, 0, -0.15, 0.3 }, Waist = { 18, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 60, 0, 60 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -60 }, LE = { 90, 0, 0 }, LW = { 0, 0, 0 } },
+			shake = true, trail = "prop", windupFx = { { "symbols", symbols = { "40°", "41°", "42°" }, color = FEVER, count = 3, radius = 2, at = "hand" } },
+			fx = { { "burst", color = MERCURY, size = 4, at = "front" }, { "symbols", symbols = { "🌡️", "💥" }, color = MERCURY, count = 4, radius = 3, at = "front" }, { "shake", amount = 0.4 } },
+			text = "TROP DE FIÈVRE !", hitText = "KABOUM !",
+		},
+		-- → P P : Mouchoir essoré, il l'essore d'un coup de poignet et le fait claquer dans l'autre sens (enrhume)
+		P_side2 = {
+			label = "Mouchoir essoré", startup = 0.07, active = 0.1, recovery = 0.18,
+			damage = 6, hitbox = box(6, 3.5, 3.5, 0.6), kbBase = 18, kbGrowth = 26, kbAngle = 25,
+			status = { name = "sneezy", duration = 1 },
+			windup = { Root = { -8, -24, 0, 0, -0.22, -0.2 }, Waist = { -8, -28, 0 }, Neck = { 0, 18, 0 }, LS = { 80, 0, 40 }, LE = { 70, 0, 0 }, LW = { 30, 0, 0 }, RS = { 20, 0, 30 }, RE = { 60, 0, 0 } },
+			strike = { Root = { -10, 20, 0, 0, -0.26, -0.32 }, Waist = { -10, 24, 0 }, Neck = { 0, -14, 0 }, LS = { 92, 0, -40 }, LE = { 0, 0, 0 }, LW = { -20, 0, 0 }, RS = { 15, 0, 32 }, RE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.35 } },
+			follow = { Root = { -10, 28, 0, 0, -0.26, -0.35 }, Waist = { -10, 32, 0 }, Neck = { 0, -18, 0 }, LS = { 86, 0, -60 }, LE = { 5, 0, 0 }, LW = { -40, 0, 0 }, RS = { 15, 0, 32 }, RE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.38 } },
+			prop = "mouchoir", trail = "leftHand", fx = { { "particles", tex = "smoke", color = GERM, at = "lhand", dir = "front", time = 0.15, rate = 40, speed = 6, size = 0.4 } }, text = "RE-BEURK !", hitText = "SCHLAK SCHLAK !",
+		},
+		-- → P P P : Mouche-toi !, il plaque le mouchoir usagé à deux mains sur le visage de l'adversaire et appuie fort
+		P_side3 = {
+			label = "Mouche-toi !", startup = 0.1, active = 0.12, recovery = 0.32,
+			damage = 11, hitbox = box(5.5, 4.5, 3, 0.8), kbBase = 34, kbGrowth = 78, kbAngle = 40,
+			status = { name = "sneezy", duration = 2.5 },
+			windup = { Root = { 6, 0, 0, 0, -0.15, 0.25 }, Waist = { 8, 0, 0 }, Neck = { 10, 0, 0 }, LS = { 60, 0, 20 }, LE = { 110, 0, 0 }, LW = { 0, 0, 0 }, RS = { 60, 0, -20 }, RE = { 110, 0, 0 } },
+			strike = { Root = { -16, 0, 0, 0, -0.3, -0.45 }, Waist = { -18, 0, 0 }, Neck = { 0, 0, 0 }, LS = { 92, 0, 10 }, LE = { 0, 0, 0 }, LW = { -30, 0, 0 }, RS = { 92, 0, -10 }, RE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+			follow = { Root = { -18, 0, 0, 0, -0.32, -0.5 }, Waist = { -20, 0, 0 }, Neck = { -4, 0, 0 }, LS = { 94, 0, 12 }, LE = { 2, 0, 0 }, LW = { -35, 0, 0 }, RS = { 94, 0, -12 }, RE = { 2, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+			prop = "mouchoir", trail = "bothHands", fx = { { "burst", color = GERM, size = 3, at = "front" }, { "symbols", symbols = { "🤧", "🤢" }, color = GERM, count = 4, radius = 3, at = "front" } },
+			text = "ET ON SE MOUCHE !", hitText = "SCHMOLF !",
+		},
+		-- P K P : Bouillotte sur le crâne, il sort sa bouillotte bouillante et l'abat à deux mains sur la tête de l'adversaire
+		PKP_combo = {
+			label = "Bouillotte sur le crâne", startup = 0.1, active = 0.1, recovery = 0.3,
+			damage = 11, hitbox = box(5, 4.5, 2.8, 0.8), kbBase = 34, kbGrowth = 76, kbAngle = 35, burn = true, burnTime = 1.5,
+			windup = { Root = { 8, 0, 0, 0, -0.05, 0.2 }, Waist = { 12, 0, 0 }, Neck = { 12, 0, 0 }, LS = { 185, 0, -10 }, LE = { 40, 0, 0 }, LW = { 0, 0, 0 }, RS = { 170, 0, 15 }, RE = { 50, 0, 0 } },
+			strike = { Root = { -14, 0, 0, 0, -0.4, -0.35 }, Waist = { -26, 0, 0 }, Neck = { -6, 0, 0 }, LS = { 78, 0, 5 }, LE = { 5, 0, 0 }, LW = { 30, 0, 0 }, RS = { 70, 0, 10 }, RE = { 20, 0, 0 } },
+			follow = { Root = { -16, 0, 0, 0, -0.45, -0.4 }, Waist = { -30, 0, 0 }, Neck = { -8, 0, 0 }, LS = { 58, 0, 5 }, LE = { 8, 0, 0 }, LW = { 30, 0, 0 }, RS = { 52, 0, 12 }, RE = { 20, 0, 0 } },
+			prop = "bouillotte", trail = "leftHand", fx = { { "particles", tex = "fire", color = FEVER, at = "lhand", dir = "up", time = 0.2, rate = 40, speed = 6, size = 0.5 }, { "burst", color = Color3.fromRGB(220, 60, 60), size = 2.5, at = "front" } },
+			text = "ELLE EST BOUILLANTE !", hitText = "FLOC !",
 		},
 
 		------------------------------------------------------------------ Attaques lourdes (K)
@@ -262,7 +305,7 @@ local data = {
 		-- Suites d'enchaînement K
 		-- K K : couvercle retourné, il ramène le couvercle dans l'autre sens
 		K_combo2 = {
-			label = "Couvercle retourné", startup = 0.16, active = 0.12, recovery = 0.28,
+			label = "Couvercle retourné", startup = 0.1, active = 0.12, recovery = 0.28,
 			damage = 9, hitbox = box(5, 4, 2.6, 0.6), kbBase = 28, kbGrowth = 50, kbAngle = 35,
 			windup = { Root = { -6, -26, 0, 0, -0.3, -0.1 }, Waist = { -8, -28, 0 }, Neck = { 0, 20, 0 }, LS = { 80, 0, 40 }, LE = { 60, 0, 0 }, RS = { 30, 0, 30 }, RE = { 70, 0, 0 } },
 			strike = { Root = { -10, 20, 0, 0, -0.35, -0.3 }, Waist = { -10, 22, 0 }, Neck = { 0, -14, 0 }, LS = { 88, 0, -45 }, LE = { 10, 0, 0 }, RS = { 25, 0, 35 }, RE = { 70, 0, 0 } },
@@ -271,7 +314,7 @@ local data = {
 		},
 		-- K K K : Sarcophage claqué, il soulève le couvercle à deux mains et le rabat de tout son poids
 		K_combo3 = {
-			label = "Sarcophage claqué", startup = 0.2, active = 0.12, recovery = 0.36,
+			label = "Sarcophage claqué", startup = 0.12, active = 0.12, recovery = 0.36,
 			damage = 13, hitbox = box(5, 4.5, 2.8, 0.3), kbBase = 34, kbGrowth = 84, kbAngle = 40,
 			windup = { Root = { 10, 0, 0, 0, 0, 0.25 }, Waist = { 14, 0, 0 }, Neck = { 12, 0, 0 }, LS = { 190, 0, 5 }, LE = { 30, 0, 0 }, RS = { 185, 0, -5 }, RE = { 30, 0, 0 } },
 			strike = { Root = { -18, 0, 0, 0, -0.5, -0.4 }, Waist = { -30, 0, 0 }, Neck = { -6, 0, 0 }, LS = { 70, 0, 5 }, LE = { 5, 0, 0 }, RS = { 65, 0, -5 }, RE = { 10, 0, 0 } },
@@ -281,11 +324,39 @@ local data = {
 		-- K puis P : coup de coude grincheux, il pivote en ronchonnant et plante le coude droit
 		KP_combo = {
 			label = "Coude grincheux", startup = 0.1, active = 0.08, recovery = 0.22,
-			damage = 8, hitbox = box(4, 3, 2, 0.8), kbBase = 24, kbGrowth = 38, kbAngle = 30,
+			damage = 8, hitbox = box(4.5, 3.5, 2.5, 0.6), kbBase = 24, kbGrowth = 38, kbAngle = 30,
 			windup = { Root = { -4, -25, 0, 0, -0.2, 0.15 }, Waist = { -6, -28, 0 }, RS = { 40, 0, 60 }, RE = { 140, 0, 0 }, LS = { 35, 0, 15 }, LE = { 80, 0, 0 } },
 			strike = { Root = { -12, 20, 0, 0, -0.3, -0.35 }, Waist = { -14, 26, 0 }, Neck = { 0, -10, 0 }, RS = { 88, 0, -12 }, RE = { 145, 0, 0 }, LS = { 35, 0, 15 }, LE = { 80, 0, 0 } },
 			follow = { Root = { -13, 25, 0, 0, -0.32, -0.4 }, Waist = { -15, 30, 0 }, Neck = { 0, -12, 0 }, RS = { 90, 0, -18 }, RE = { 145, 0, 0 }, LS = { 35, 0, 15 }, LE = { 80, 0, 0 } },
 			hitText = "GRMBL !",
+		},
+		-- → K K : Pied plâtré bis, petit sautillement et la jambe raide repart, il grimace encore plus
+		K_side2 = {
+			label = "Pied plâtré bis", startup = 0.1, active = 0.1, recovery = 0.2,
+			damage = 8, hitbox = box(5, 3.5, 3, 0), kbBase = 24, kbGrowth = 38, kbAngle = 30, selfVelocity = Vector2.new(18, 0),
+			windup = { Root = { 8, 0, 0, 0, -0.1, 0.15 }, Waist = { 8, 0, 0 }, Neck = { 10, 0, 8 }, RS = { 40, 0, 50 }, RE = { 40, 0, 0 }, LS = { 40, 0, -50 }, LE = { 40, 0, 0 }, RH = { -25, 0, 0 }, RK = { 0, 0, 0 }, RA = { 10, 0, 0 } },
+			strike = { Root = { 20, 0, 0, 0, 0.05, -0.3 }, Waist = { 8, 0, 0 }, Neck = { -8, 0, -8 }, RS = { -20, 0, 55 }, RE = { 30, 0, 0 }, LS = { -20, 0, -55 }, LE = { 30, 0, 0 }, RH = { 88, 0, 0 }, RK = { 0, 0, 0 }, RA = { 10, 0, 0 } },
+			follow = { Root = { 22, 0, 0, 0, 0.05, -0.36 }, Waist = { 9, 0, 0 }, Neck = { -10, 0, -8 }, RS = { -25, 0, 58 }, RE = { 30, 0, 0 }, LS = { -25, 0, -58 }, LE = { 30, 0, 0 }, RH = { 92, 0, 0 }, RK = { 0, 0, 0 }, RA = { 10, 0, 0 } },
+			trail = "rightFoot", text = "AÏE !", hitText = "CLONK CLONK !",
+		},
+		-- → K K K : Plâtre qui casse, un coup de pied si fort que le plâtre vole en éclats… « AÏE MON PIED ! »
+		K_side3 = {
+			label = "Plâtre qui casse", startup = 0.1, active = 0.12, recovery = 0.36,
+			damage = 13, hitbox = box(5.5, 4, 3.2, 0.2), kbBase = 36, kbGrowth = 86, kbAngle = 35, selfVelocity = Vector2.new(24, 0),
+			windup = { Root = { 12, 0, 0, 0, -0.15, 0.25 }, Waist = { 12, 0, 0 }, Neck = { 8, 0, 0 }, RS = { 50, 0, 50 }, RE = { 40, 0, 0 }, LS = { 50, 0, -50 }, LE = { 40, 0, 0 }, RH = { -40, 0, 0 }, RK = { 0, 0, 0 }, RA = { 10, 0, 0 } },
+			strike = { Root = { 26, 0, 0, 0, 0.05, -0.4 }, Waist = { 10, 0, 0 }, Neck = { -14, 0, 0 }, RS = { -30, 0, 60 }, RE = { 30, 0, 0 }, LS = { -30, 0, -60 }, LE = { 30, 0, 0 }, RH = { 100, 0, 0 }, RK = { 0, 0, 0 }, RA = { 10, 0, 0 } },
+			follow = { Root = { 6, 0, 0, 0, -0.3, -0.2 }, Waist = { 16, 0, 0 }, Neck = { 30, 0, 12 }, RS = { 40, 0, 20 }, RE = { 60, 0, 0 }, LS = { 40, 0, -20 }, LE = { 60, 0, 0 }, RH = { 60, 0, 10 }, RK = { -90, 0, 0 }, RA = { 10, 0, 0 } },
+			trail = "rightFoot", fx = { { "burst", color = TISSUE, size = 3.5, at = "front" }, { "symbols", symbols = { "🦴", "💥" }, color = TISSUE, count = 4, radius = 3, at = "front" }, { "toss", shape = "flat", color = TISSUE, size = 0.5, count = 5, speed = 16 }, { "shake", amount = 0.4 } },
+			text = "AÏE MON PIED !", hitText = "CRAAAC !",
+		},
+		-- ↓ K K : Luge de sarcophage, accroupi sur le couvercle il glisse en avant comme sur une luge, couvercle en étrave
+		K_downK = {
+			label = "Luge de sarcophage", startup = 0.08, active = 0.22, recovery = 0.26,
+			damage = 8, hitbox = box(6, 3.5, 3, -1), kbBase = 24, kbGrowth = 40, kbAngle = 45, selfVelocity = Vector2.new(40, 0),
+			windup = { Root = { -6, 0, 0, 0, -0.8, 0 }, Waist = { -10, 0, 0 }, Neck = { 6, 0, 0 }, LS = { 120, 0, -30 }, LE = { 60, 0, 0 }, LW = { 0, 0, 0 }, RS = { 40, 0, 30 }, RE = { 60, 0, 0 } },
+			strike = { Root = { 10, 0, 0, 0, -1.1, -0.2 }, Waist = { -16, 0, 0 }, Neck = { -6, 0, 0 }, LS = { 92, 0, -20 }, LE = { 10, 0, 0 }, LW = { 0, 0, 0 }, RS = { 20, 0, 60 }, RE = { 30, 0, 0 }, RH = { 85, 0, 8 }, RK = { -15, 0, 0 }, RA = { 10, 0, 0 }, LH = { 85, 0, -8 }, LK = { -15, 0, 0 }, LA = { 10, 0, 0 } },
+			follow = { Root = { 12, 0, 0, 0, -1.1, -0.25 }, Waist = { -18, 0, 0 }, Neck = { -8, 0, 0 }, LS = { 94, 0, -22 }, LE = { 10, 0, 0 }, LW = { 0, 0, 0 }, RS = { 18, 0, 62 }, RE = { 30, 0, 0 }, RH = { 88, 0, 8 }, RK = { -12, 0, 0 }, RA = { 10, 0, 0 }, LH = { 88, 0, -8 }, LK = { -12, 0, 0 }, LA = { 10, 0, 0 } },
+			prop = "sarcophage", trail = "leftHand", fx = { "dust", { "particles", tex = "smoke", color = Color3.fromRGB(210, 190, 150), at = "feet", dir = "all", time = 0.2, rate = 40, speed = 5, size = 0.8 } }, text = "ET QUE ÇA GLISSE !", hitText = "BONG !",
 		},
 
 		------------------------------------------------------------------ En l'air avec une flèche
@@ -396,17 +467,16 @@ local data = {
 			prop = "sarcophage", trail = "body", fx = { { "burst", color = GOLD, size = 3, at = "feet" }, { "particles", tex = "smoke", color = Color3.fromRGB(210, 190, 150), at = "feet", dir = "down", time = 0.3, rate = 50, speed = 6, size = 1 } },
 			text = "JE SORS !", hitText = "BONG !",
 		},
-		-- Arrêt maladie (esquive puis S) : il s'allonge par terre, bras croisés, invulnérable une seconde
+		-- Arrêt maladie (esquive puis S) : « je me sens mal… », il titube et s'effondre de tout son long sur l'adversaire, puis reste au sol, invulnérable une seconde
 		S_dodge = {
 			label = "Arrêt maladie", energyCost = 20, startup = 0.05, active = 0.85, recovery = 0.25, invuln = 1.0,
-			hitbox = box(6, 4, 2.5, 0.5), kbBase = 30, kbGrowth = 55, kbAngle = 35,
-			damage = 9,
+			damage = 9, hitbox = box(6, 3.5, 3, -1), kbBase = 30, kbGrowth = 55, kbAngle = 35,
 			selfEffect = { heal = 2 },
-			windup = { Root = { 30, 0, 0, 0, -0.8, 0.2 }, Waist = { 10, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 60, 0, -40 }, RE = { 110, 0, 0 }, LS = { 60, 0, 40 }, LE = { 110, 0, 0 }, RH = { 60, 0, 0 }, RK = { -60, 0, 0 }, LH = { 60, 0, 0 }, LK = { -60, 0, 0 } },
-			strike = { Root = { 80, 0, 0, 0, -1.8, 0.3 }, Waist = { 0, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 60, 0, -45 }, RE = { 120, 0, 0 }, LS = { 60, 0, 45 }, LE = { 120, 0, 0 }, RH = { 5, 0, 2 }, RK = { 0, 0, 0 }, RA = { 20, 0, 0 }, LH = { 5, 0, -2 }, LK = { 0, 0, 0 }, LA = { 20, 0, 0 } },
-			follow = { Root = { 80, 0, 0, 0, -1.8, 0.3 }, Waist = { 0, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 60, 0, -45 }, RE = { 120, 0, 0 }, LS = { 60, 0, 45 }, LE = { 120, 0, 0 }, RH = { 5, 0, 2 }, RK = { 0, 0, 0 }, RA = { 20, 0, 0 }, LH = { 5, 0, -2 }, LK = { 0, 0, 0 }, LA = { 20, 0, 0 } },
-			hold = 0.5, fx = { { "text", text = "ARRÊT MALADIE", color = Color3.fromRGB(255, 255, 255), at = "above" }, { "symbols", symbols = { "📄", "🤒" }, color = TISSUE, count = 3, radius = 2 } },
-			text = "JE SUIS EN ARRÊT !",
+			windup = { Root = { -16, 0, 0, 0, -0.3, 0.1 }, Waist = { -10, 0, 0 }, Neck = { 20, 0, 12 }, RS = { 60, 0, 40 }, RE = { 30, 0, 0 }, LS = { 60, 0, -40 }, LE = { 30, 0, 0 } },
+			strike = { Root = { -82, 0, 0, 0, -1.7, -0.7 }, Waist = { 0, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 150, 0, 30 }, RE = { 10, 0, 0 }, LS = { 150, 0, -30 }, LE = { 10, 0, 0 }, RH = { 0, 0, 4 }, RK = { -10, 0, 0 }, RA = { 20, 0, 0 }, LH = { 0, 0, -4 }, LK = { -10, 0, 0 }, LA = { 20, 0, 0 } },
+			follow = { Root = { -84, 0, 0, 0, -1.75, -0.75 }, Waist = { 0, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 60, 0, -40 }, RE = { 120, 0, 0 }, LS = { 60, 0, 40 }, LE = { 120, 0, 0 }, RH = { 0, 0, 4 }, RK = { -10, 0, 0 }, RA = { 20, 0, 0 }, LH = { 0, 0, -4 }, LK = { -10, 0, 0 }, LA = { 20, 0, 0 } },
+			hold = 0.5, trail = "body", fx = { "dust", { "text", text = "ARRÊT MALADIE", color = Color3.fromRGB(255, 255, 255), at = "above" }, { "symbols", symbols = { "📄", "🤒" }, color = TISSUE, count = 3, radius = 2 } },
+			text = "JE SUIS EN ARRÊT !", hitText = "ÉCRASÉ !",
 		},
 		-- Fièvre (S maintenu) : il tremble de tout son corps et dégage une aura brûlante autour de lui
 		S_hold = {
@@ -484,15 +554,17 @@ local data = {
 			fx = { { "screen", color = GERM, alpha = 0.3, time = 0.5 }, { "shake", amount = 0.6 }, { "particles", tex = "smoke", color = GERM, at = "head", dir = "front", time = 0.5, rate = 150, speed = 20, size = 1.5 } },
 			text = "AAAAAH… AAAAAAH… ATCHOUUUM !", hitText = "CONTAGIÉ !",
 		},
-		-- Super ↑ : il lève les bras au ciel : une tornade de bandelettes enrhumées emporte tout
+		-- Super ↑ : Tornade de bandelettes, il attrape le bout qui pend, tire… et se déroule en toupie, bras écartés, en montant vers le ciel
 		SUPER_up = {
 			label = "Tornade de bandelettes !", superCost = 100, startup = 0.4, active = 0.3, recovery = 0.6,
-			damage = 22, hitbox = box(8, 14, 4, 6), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
-			windup = { Root = { -7.2, 0, 0, 0, -0.2, 0 }, Waist = { -9.6, 0, 0 }, Neck = { 24, 0, 12 }, RS = { 24, 0, 36 }, RE = { 36, 0, 0 }, LS = { 180, 0, -12 }, LE = { 144, 0, 0 } },
-			strike = { Root = { 48, 0, 0, 0, -0.9, 0.4 }, Waist = { 12, 0, 0 }, Neck = { 24, 0, 0 }, RS = { 144, 0, 72 }, RE = { 24, 0, 0 }, LS = { 144, 0, -72 }, LE = { 24, 0, 0 }, RH = { 144, 0, 6 }, RK = { -6, 0, 0 }, RA = { 18, 0, 0 }, LH = { 126, 0, -6 }, LK = { -24, 0, 0 }, LA = { 18, 0, 0 } },
-			follow = { Root = { 52.8, 0, 0, 0, -0.95, 0.45 }, Waist = { 14.4, 0, 0 }, Neck = { 26.4, 0, 0 }, RS = { 150, 0, 78 }, RE = { 24, 0, 0 }, LS = { 150, 0, -78 }, LE = { 24, 0, 0 }, RH = { 150, 0, 6 }, RK = { -6, 0, 0 }, RA = { 18, 0, 0 }, LH = { 132, 0, -6 }, LK = { -21.6, 0, 0 }, LA = { 18, 0, 0 } },
-			hold = 0.45, shake = true,
-			windupFx = { "super" }, status = { name = "sneezy", duration = 3 }, fx = { { "pillar", color = Color3.fromRGB(228, 214, 176), height = 22, width = 5, at = "front" }, { "symbols", symbols = { "🤧", "🦠" }, count = 6 } }, text = "ATCHOUM DIVIN !", hitText = "CONTAMINÉ !",
+			damage = 22, hitbox = box(8, 14, 2, 6), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
+			windup = { Root = { -10, 0, 0, 0, -0.5, 0 }, Waist = { -24, 0, 0 }, Neck = { 14, 0, 0 }, LS = { 50, 0, -10 }, LE = { 110, 0, 0 }, LW = { 0, 0, 0 }, RS = { 50, 0, 10 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 } },
+			strike = { Root = { 4, 0, 0, 0, 0.5, 0 }, Waist = { 6, 0, 0 }, Neck = { 30, 0, 0 }, LS = { 100, 0, -90 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 }, RS = { 100, 0, 90 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, FR = { 0, 0, 0, 0, 0.4, 0 }, FL = { 0, 0, 0, 0, 0.4, 0 } },
+			follow = { Root = { 6, 0, 0, 0, 0.55, 0 }, Waist = { 8, 0, 0 }, Neck = { 36, 0, 0 }, LS = { 110, 0, -92 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 }, RS = { 110, 0, 92 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, FR = { 0, 0, 0, 0, 0.45, 0 }, FL = { 0, 0, 0, 0, 0.45, 0 } },
+			hold = 0.3, shake = true, spin = { axis = "y", degrees = 1080 }, selfVelocity = Vector2.new(0, 45), prop = "bandelette", trail = "leftHand",
+			windupFx = { "super" }, status = { name = "sneezy", duration = 3 },
+			fx = { { "pillar", color = BANDAGE, height = 22, width = 5, at = "front" }, { "swarm", shape = "ball", color = BANDAGE, count = 6, distance = 14, size = 0.8 }, { "symbols", symbols = { "🤧", "🦠", "🌀" }, count = 6, radius = 5, at = "above" } },
+			text = "DÉROULEZ-MOI !", hitText = "EMMAILLOTÉ !",
 		},
 		-- Malédiction du pharaon : bras levés vers le ciel, une nuée de scarabées cartoon s'abat devant lui
 		SUPER_down = {
@@ -753,9 +825,10 @@ local LINKS = {
 	-- au sol, P…
 	P_neutral = { P = "P_combo2", K = "PK_combo", fwd_P = "P_side", S = "S_finish_cough" },
 	P_combo2 = { P = "P_combo3", K = "PK_combo", S = "S_finish_cough" }, -- P P
-	P_combo3 = { K = "K_combo3", S = "S_neutral" }, -- P P P
-	PK_combo = { P = "P_combo3", K = "K_combo2", S = "S_finish_cough" }, -- P K
-	P_side = { P = "P_combo2", K = "K_side", S = "S_side" }, -- → P
+	P_combo3 = { P = "P_combo4", K = "K_combo3", S = "S_neutral" }, -- P P P (P P P P : thermomètre qui explose, finition)
+	PK_combo = { P = "PKP_combo", K = "K_combo2", S = "S_finish_cough" }, -- P K (P K P : bouillotte sur le crâne, finition)
+	P_side = { P = "P_side2", K = "K_side", S = "S_side" }, -- → P
+	P_side2 = { P = "P_side3", K = "PK_combo", S = "S_finish_cough" }, -- → P P (→ P P P : mouche-toi, finition)
 	P_down = { P = "P_down2", K = "K_down", S = "S_finish_cough" }, -- ↓ P
 	P_down2 = { up_K = "K_up", K = "KP_combo", S = "S_finish_cough" }, -- ↓ P P
 	P_up = { P = "P_combo2", K = "K_up", S = "S_neutral" }, -- ↑ P
@@ -765,8 +838,10 @@ local LINKS = {
 	K_combo2 = { K = "K_combo3", P = "KP_combo", S = "S_finish_cough" }, -- K K
 	K_combo3 = { S = "S_neutral" }, -- K K K
 	KP_combo = { K = "K_combo3", P = "P_combo3", S = "S_finish_cough" }, -- K P
-	K_side = { P = "KP_combo", K = "K_combo3", S = "S_finish_cough" }, -- → K
-	K_down = { P = "P_down2", K = "K_combo2", S = "S_finish_cough" }, -- ↓ K
+	K_side = { K = "K_side2", P = "KP_combo", S = "S_finish_cough" }, -- → K
+	K_side2 = { K = "K_side3", P = "KP_combo", S = "S_finish_cough" }, -- → K K (→ K K K : plâtre qui casse, finition)
+	K_down = { K = "K_downK", P = "P_down2", S = "S_finish_cough" }, -- ↓ K
+	K_downK = { P = "KP_combo", S = "S_finish_cough" }, -- ↓ K K
 	K_up = { P = "P_air_up", S = "S_finish_cough" }, -- ↑ K
 	K_dash = { P = "KP_combo", S = "S_finish_cough" }, -- dash K
 	-- en l'air (↓P et ↓K, smashs vers le sol, finissent la chaîne)

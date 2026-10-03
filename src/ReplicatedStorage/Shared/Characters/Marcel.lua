@@ -94,16 +94,16 @@ local data = {
 		-- Coup de canne invisible : il fait tournoyer la canne qu'on ne voit pas et frappe d'un revers sec
 		P_combo2 = {
 			label = "Coup de canne invisible", startup = 0.07, active = 0.08, recovery = 0.16,
-			damage = 5, hitbox = box(4.5, 3, 2.8, 0.8), kbBase = 18, kbGrowth = 24, kbAngle = 30,
+			damage = 5, hitbox = box(5, 4, 3, 0.8), kbBase = 18, kbGrowth = 24, kbAngle = 30,
 			windup = { Root = { 2, -20, 0, 0, -0.18, 0.1 }, Waist = { 2, -25, 0 }, Neck = { 0, 15, 0 }, RS = { 70, 0, 80 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -40 }, LE = { 90, 0, 0 } },
 			strike = { Root = { -6, 18, 0, 0, -0.22, -0.28 }, Waist = { -6, 22, 0 }, Neck = { 0, -12, 0 }, RS = { 95, 0, -5 }, RE = { 5, 0, 0 }, RW = { -80, 0, 0 }, LS = { 25, 0, -45 }, LE = { 90, 0, 0 } },
 			follow = { Root = { -8, 22, 0, 0, -0.24, -0.32 }, Waist = { -8, 26, 0 }, Neck = { 0, -14, 0 }, RS = { 92, 0, -20 }, RE = { 8, 0, 0 }, RW = { -85, 0, 0 }, LS = { 25, 0, -45 }, LE = { 90, 0, 0 } },
 			trail = "prop", hitText = "( TOC )",
 		},
-		-- Grand coup de canne : la canne invisible levée à deux mains comme un marteau de foire, puis abattue
+		-- P P P P : Grand coup de canne, la canne invisible levée à deux mains comme un marteau de foire, puis abattue (finition)
 		P_combo3 = {
-			label = "Grand coup de canne", startup = 0.13, active = 0.1, recovery = 0.3,
-			damage = 9, hitbox = box(5, 4, 2.6, 1), kbBase = 30, kbGrowth = 60, kbAngle = 48,
+			label = "Grand coup de canne", startup = 0.1, active = 0.1, recovery = 0.3,
+			damage = 10, hitbox = box(5.5, 4.5, 3, 1), kbBase = 36, kbGrowth = 78, kbAngle = 48,
 			windup = { Root = { 10, 0, 0, 0, 0.05, 0.2 }, Waist = { 14, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 190, 0, 5 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 185, 0, 5 }, LE = { 30, 0, 0 }, FR = { 0, 0, 0, 0, 0.15, 0 }, FL = { 0, 0, 0, 0, 0.15, 0 } },
 			strike = { Root = { -14, 0, 0, 0, -0.45, -0.35 }, Waist = { -26, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 75, 0, -5 }, RE = { 0, 0, 0 }, RW = { -40, 0, 0 }, LS = { 75, 0, 15 }, LE = { 10, 0, 0 } },
 			follow = { Root = { -18, 0, 0, 0, -0.52, -0.4 }, Waist = { -30, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 55, 0, -5 }, RE = { 0, 0, 0 }, RW = { -55, 0, 0 }, LS = { 55, 0, 15 }, LE = { 10, 0, 0 } },
@@ -203,17 +203,17 @@ local data = {
 		},
 		-- Second pied imaginaire : il reprend le ballon invisible du pied gauche (suite de K)
 		K_combo2 = {
-			label = "Reprise du gauche", startup = 0.14, active = 0.1, recovery = 0.25,
-			damage = 9, hitbox = box(5, 3, 3, -0.3), kbBase = 28, kbGrowth = 50, kbAngle = 32,
+			label = "Reprise du gauche", startup = 0.09, active = 0.1, recovery = 0.22,
+			damage = 8, hitbox = box(5, 4, 3, 0.5), kbBase = 24, kbGrowth = 40, kbAngle = 32,
 			windup = { Root = { 6, 10, 0, 0, -0.12, 0.2 }, Waist = { 8, 8, 0 }, Neck = { -12, 0, 0 }, RS = { 50, 0, 40 }, RE = { 20, 0, 0 }, LS = { -20, 0, -40 }, LE = { 20, 0, 0 }, LH = { -40, 0, 0 }, LK = { -80, 0, 0 } },
 			strike = { Root = { 14, 4, 0, 0, -0.1, -0.05 }, Waist = { 14, 2, 0 }, Neck = { -8, 0, 0 }, RS = { -30, 0, 55 }, RE = { 10, 0, 0 }, LS = { 70, 0, -50 }, LE = { 10, 0, 0 }, LH = { 100, 0, 0 }, LK = { -4, 0, 0 }, LA = { 15, 0, 0 } },
 			follow = { Root = { 16, 6, 0, 0, -0.1, 0 }, Waist = { 16, 2, 0 }, Neck = { -6, 0, 0 }, RS = { -35, 0, 60 }, RE = { 10, 0, 0 }, LS = { 80, 0, -55 }, LE = { 10, 0, 0 }, LH = { 112, 0, 0 }, LK = { 0, 0, 0 }, LA = { 18, 0, 0 } },
 			trail = "leftFoot", hitText = "( PAM )",
 		},
-		-- Ciseau muet : il saute, les jambes se croisent en l'air et la droite frappe en hauteur
+		-- K K ↑K : Ciseau muet, il saute, les jambes se croisent en l'air et la droite frappe en hauteur (finition)
 		K_combo3 = {
-			label = "Ciseau muet", startup = 0.16, active = 0.12, recovery = 0.3,
-			damage = 12, hitbox = box(5, 4, 3, 1), kbBase = 32, kbGrowth = 80, kbAngle = 42, selfVelocity = Vector2.new(15, 42),
+			label = "Ciseau muet", startup = 0.1, active = 0.12, recovery = 0.3,
+			damage = 12, hitbox = box(5.5, 4.5, 3, 1), kbBase = 36, kbGrowth = 82, kbAngle = 42, selfVelocity = Vector2.new(15, 42),
 			windup = { Root = { -8, 0, 0, 0, -0.6, 0.1 }, Waist = { -12, 0, 0 }, RS = { 150, 0, 30 }, RE = { 20, 0, 0 }, LS = { 150, 0, -30 }, LE = { 20, 0, 0 } },
 			strike = { Root = { 18, 0, 0 }, Waist = { 12, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 160, 0, 40 }, RE = { 10, 0, 0 }, LS = { 160, 0, -40 }, LE = { 10, 0, 0 }, RH = { 105, 0, 0 }, RK = { 0, 0, 0 }, RA = { 20, 0, 0 }, LH = { -20, 0, 0 }, LK = { -60, 0, 0 } },
 			follow = { Root = { 22, 0, 0 }, Waist = { 14, 0, 0 }, Neck = { 8, 0, 0 }, RS = { 165, 0, 45 }, RE = { 10, 0, 0 }, LS = { 165, 0, -45 }, LE = { 10, 0, 0 }, RH = { 115, 0, 0 }, RK = { 0, 0, 0 }, RA = { 20, 0, 0 }, LH = { -25, 0, 0 }, LK = { -65, 0, 0 } },
@@ -230,8 +230,8 @@ local data = {
 		},
 		-- P puis K : Croc-en-jambe mimé, la pointe du pied fauche la cheville
 		PK_combo = {
-			label = "Croc-en-jambe mimé", startup = 0.1, active = 0.08, recovery = 0.2,
-			damage = 7, hitbox = box(5, 2, 3, -1.6), kbBase = 22, kbGrowth = 30, kbAngle = 40,
+			label = "Croc-en-jambe mimé", startup = 0.08, active = 0.1, recovery = 0.2,
+			damage = 7, hitbox = box(5.5, 4, 3, 0.5), kbBase = 22, kbGrowth = 30, kbAngle = 40,
 			windup = { Root = { 2, -12, 0, 0, -0.18, 0.1 }, Waist = { 4, -10, 0 }, Neck = { -8, 10, 0 }, RS = { 20, 0, 40 }, RE = { 50, 0, 0 }, LS = { 20, 0, -40 }, LE = { 50, 0, 0 }, RH = { -15, 0, 15 }, RK = { -60, 0, 0 } },
 			strike = { Root = { -6, 12, 0, 0, -0.28, -0.2 }, Waist = { -6, 12, 0 }, Neck = { -12, -10, 0 }, RS = { 10, 0, 50 }, RE = { 30, 0, 0 }, LS = { 30, 0, -50 }, LE = { 30, 0, 0 }, RH = { 55, 0, -10 }, RK = { -5, 0, 0 }, RA = { -30, 0, 0 } },
 			follow = { Root = { -8, 16, 0, 0, -0.3, -0.24 }, Waist = { -8, 14, 0 }, Neck = { -12, -12, 0 }, RS = { 10, 0, 52 }, RE = { 30, 0, 0 }, LS = { 30, 0, -52 }, LE = { 30, 0, 0 }, RH = { 58, 0, -15 }, RK = { -6, 0, 0 }, RA = { -30, 0, 0 } },
@@ -239,12 +239,85 @@ local data = {
 		},
 		-- K puis P : Coup de poing à ressort, il remonte un ressort invisible dans son bras et le poing part tout seul
 		KP_combo = {
-			label = "Poing à ressort", startup = 0.1, active = 0.08, recovery = 0.2,
-			damage = 7, hitbox = box(4.5, 3, 2.8, 0.8), kbBase = 22, kbGrowth = 35, kbAngle = 30,
+			label = "Poing à ressort", startup = 0.08, active = 0.1, recovery = 0.2,
+			damage = 7, hitbox = box(5, 4, 3, 0.8), kbBase = 22, kbGrowth = 35, kbAngle = 30,
 			windup = { Root = { 2, -10, 0, 0, -0.18, 0.15 }, Waist = { 4, -14, 0 }, Neck = { 0, 10, 0 }, RS = { 40, 0, 10 }, RE = { 130, 0, 0 }, LS = { 50, 0, 30 }, LE = { 90, 0, 0 }, LW = { 0, 0, 60 } },
 			strike = { Root = { -8, 12, 0, 0, -0.25, -0.3 }, Waist = { -10, 16, 0 }, Neck = { 0, -8, 0 }, RS = { 95, 0, -2 }, RE = { 0, 0, 0 }, LS = { 30, 0, -30 }, LE = { 80, 0, 0 } },
 			follow = { Root = { -10, 14, 0, 0, -0.27, -0.34 }, Waist = { -12, 18, 0 }, Neck = { 0, -10, 0 }, RS = { 98, 0, -4 }, RE = { 0, 0, 0 }, LS = { 30, 0, -30 }, LE = { 80, 0, 0 } },
 			trail = "rightHand", hitText = "( BOING )",
+		},
+
+		-- P P P : Claquement de porte, il referme la porte invisible d'un grand revers… elle claque sur l'adversaire
+		P_porte2 = {
+			label = "Claquement de porte", startup = 0.08, active = 0.1, recovery = 0.2,
+			damage = 7, hitbox = box(5.5, 4.5, 3, 0.8), kbBase = 22, kbGrowth = 30, kbAngle = 30,
+			windup = { Root = { -6, -30, 0, 0, -0.25, 0.1 }, Waist = { -6, -30, 0 }, Neck = { 0, 20, 0 }, RS = { 85, 0, 85 }, RE = { 10, 0, 0 }, RW = { 0, 0, 30 }, LS = { 20, 0, -30 }, LE = { 80, 0, 0 } },
+			strike = { Root = { -10, 24, 0, 0, -0.3, -0.3 }, Waist = { -10, 28, 0 }, Neck = { 0, -14, 0 }, RS = { 92, 0, -20 }, RE = { 5, 0, 0 }, RW = { 0, 0, 30 }, LS = { 25, 0, -35 }, LE = { 80, 0, 0 } },
+			follow = { Root = { -12, 30, 0, 0, -0.32, -0.34 }, Waist = { -12, 34, 0 }, Neck = { 0, -18, 0 }, RS = { 90, 0, -30 }, RE = { 10, 0, 0 }, RW = { 0, 0, 30 }, LS = { 25, 0, -35 }, LE = { 80, 0, 0 } },
+			trail = "rightHand", fx = { { "ring", color = GHOST, radius = 3, at = "front" }, { "shake", amount = 0.2 } }, hitText = "( VLAN )",
+		},
+		-- → P P : Vitre invisible, il plaque les deux paumes sur une vitre qui n'existe pas… et la pousse dans le nez d'en face
+		P_vitre = {
+			label = "Vitre invisible", startup = 0.07, active = 0.1, recovery = 0.18,
+			damage = 6, hitbox = box(5.5, 4.5, 3, 1), kbBase = 20, kbGrowth = 26, kbAngle = 35, selfVelocity = Vector2.new(14, 0),
+			windup = { Root = { 2, 0, 0, 0, -0.15, 0.1 }, Waist = { 4, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 70, 0, 25 }, RE = { 100, 0, 0 }, RW = { 85, 0, 0 }, LS = { 70, 0, -25 }, LE = { 100, 0, 0 }, LW = { 85, 0, 0 } },
+			strike = { Root = { -10, 0, 0, 0, -0.3, -0.4 }, Waist = { -12, 0, 0 }, Neck = { -14, 0, 0 }, RS = { 95, 0, 14 }, RE = { 0, 0, 0 }, RW = { 85, 0, 0 }, LS = { 95, 0, -14 }, LE = { 0, 0, 0 }, LW = { 85, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+			follow = { Root = { -12, 0, 0, 0, -0.32, -0.45 }, Waist = { -14, 0, 0 }, Neck = { -16, 0, 6 }, RS = { 98, 0, 16 }, RE = { 0, 0, 0 }, RW = { 85, 0, 0 }, LS = { 98, 0, -16 }, LE = { 0, 0, 0 }, LW = { 85, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+			wobble = true, trail = "bothHands", fx = { { "ring", color = GHOST, radius = 3, at = "front" } }, text = "…", hitText = "( SPLATCH )",
+		},
+		-- → P P P : Canne à pêche invisible, il ferre d'un grand coup de poignet : l'adversaire mord et décolle (finition)
+		P_peche = {
+			label = "Canne à pêche invisible", startup = 0.09, active = 0.12, recovery = 0.3,
+			damage = 10, hitbox = box(6, 5, 3.5, 1.5), kbBase = 34, kbGrowth = 74, kbAngle = 82,
+			windup = { Root = { -6, -16, 0, 0, -0.3, 0.1 }, Waist = { -10, -16, 0 }, Neck = { -6, 10, 0 }, RS = { 40, 0, 20 }, RE = { 70, 0, 0 }, RW = { 60, 0, 0 }, LS = { 50, 0, -10 }, LE = { 90, 0, 0 } },
+			strike = { Root = { 12, 10, 0, 0, 0.05, 0.1 }, Waist = { 16, 12, 0 }, Neck = { 26, 0, 0 }, RS = { 165, 0, 10 }, RE = { 10, 0, 0 }, RW = { -40, 0, 0 }, LS = { 110, 0, -20 }, LE = { 80, 0, 0 }, FR = { 0, 0, 0, 0, 0.2, 0 }, FL = { 0, 0, 0, 0, 0.2, 0 } },
+			follow = { Root = { 16, 14, 0, 0, 0.1, 0.15 }, Waist = { 20, 16, 0 }, Neck = { 32, 0, 0 }, RS = { 180, 0, 5 }, RE = { 10, 0, 0 }, RW = { -50, 0, 0 }, LS = { 120, 0, -25 }, LE = { 85, 0, 0 }, FR = { 0, 0, 0, 0, 0.25, 0 }, FL = { 0, 0, 0, 0, 0.25, 0 } },
+			prop = "corde", hideProp = "canne", trail = "rightHand", fx = { { "burst", color = Color3.fromRGB(120, 180, 255), size = 3, at = "front" }, { "symbols", symbols = { "🐟", "💦" }, count = 3, radius = 2.5, at = "front" } }, text = "( ÇA MORD )", hitText = "( FERRÉ )",
+		},
+		-- ↓ P P : Chien invisible, il siffle, tend une laisse à bout de bras… et le chien qu'on ne voit pas mord le mollet d'en face
+		P_chien = {
+			label = "Chien invisible", startup = 0.08, active = 0.12, recovery = 0.2,
+			damage = 3, hits = 2, hitbox = box(5.5, 4, 3.5, 0.6), kbBase = 18, kbGrowth = 24, kbAngle = 40,
+			windup = { Root = { 4, 0, 0, 0, -0.1, 0.1 }, Waist = { 6, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 60, 0, 0 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -20 }, LE = { 60, 0, 0 } },
+			strike = { Root = { -14, 0, 0, 0, -0.3, -0.3 }, Waist = { -16, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 60, 0, -10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -30 }, LE = { 90, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+			follow = { Root = { -16, 0, 0, 0, -0.32, -0.35 }, Waist = { -18, 0, 0 }, Neck = { 4, 0, 0 }, RS = { 50, 0, -12 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -30 }, LE = { 90, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.55 } },
+			shake = true, prop = "corde", hideProp = "canne", windupFx = { { "symbols", symbols = { "🐕", "♪" }, count = 2, radius = 2, color = WHITE } }, fx = { { "symbols", symbols = { "🐕", "💢" }, count = 3, radius = 2.5, at = "front", color = WHITE } }, text = "( SIFFLE )", hitText = "( GRRR-WAF )",
+		},
+		-- ↓ P P P : Tapis roulant invisible, il court sur place à toute vitesse sans avancer… puis le tapis le catapulte épaule en avant (finition)
+		P_tapis = {
+			label = "Tapis roulant invisible", startup = 0.1, active = 0.14, recovery = 0.3,
+			damage = 10, hitbox = box(5.5, 4.5, 3.2, 0.8), kbBase = 36, kbGrowth = 72, kbAngle = 24, selfVelocity = Vector2.new(42, 0),
+			windup = { Root = { -12, 0, 0, 0, -0.25, 0.3 }, Waist = { -10, 0, 0 }, Neck = { 8, 0, 0 }, RS = { 60, 0, 10 }, RE = { 110, 0, 0 }, LS = { -40, 0, -10 }, LE = { 100, 0, 0 }, RH = { 60, 0, 0 }, RK = { -90, 0, 0 }, LH = { -30, 0, 0 }, LK = { -60, 0, 0 } },
+			strike = { Root = { -26, -30, 0, 0, -0.4, -0.4 }, Waist = { -10, -20, 0 }, Neck = { 10, 20, 0 }, RS = { -30, 0, 40 }, RE = { 40, 0, 0 }, LS = { 40, 0, -10 }, LE = { 110, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+			follow = { Root = { -28, -34, 0, 0, -0.42, -0.5 }, Waist = { -12, -22, 0 }, Neck = { 12, 22, 0 }, RS = { -40, 0, 45 }, RE = { 35, 0, 0 }, LS = { 35, 0, -10 }, LE = { 112, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.55 } },
+			shake = true, trail = "body", windupFx = { "dust" }, fx = { "dust", { "particles", tex = "smoke", color = WIND, dir = "front", at = "feet", time = 0.3, speed = 16, size = 0.8 } }, text = "( VITESSE 10 )", hitText = "( CATAPULTÉ )",
+		},
+		-- K K K : Tête dans le ballon, il saute et reprend le ballon invisible de la tête : but ! (finition, fait décoller)
+		K_tete = {
+			label = "Tête dans le ballon", startup = 0.1, active = 0.12, recovery = 0.3,
+			damage = 11, hitbox = box(5.5, 5, 3, 1.5), kbBase = 34, kbGrowth = 76, kbAngle = 70, selfVelocity = Vector2.new(10, 30),
+			windup = { Root = { 8, 0, 0, 0, -0.5, 0.1 }, Waist = { 14, 0, 0 }, Neck = { 25, 0, 0 }, RS = { -30, 0, 30 }, RE = { 40, 0, 0 }, LS = { -30, 0, -30 }, LE = { 40, 0, 0 } },
+			strike = { Root = { -22, 0, 0, 0, 0.3, -0.3 }, Waist = { -20, 0, 0 }, Neck = { -35, 0, 0 }, RS = { 60, 0, 60 }, RE = { 40, 0, 0 }, LS = { 60, 0, -60 }, LE = { 40, 0, 0 }, RH = { 40, 0, 0 }, RK = { -90, 0, 0 }, LH = { 30, 0, 0 }, LK = { -80, 0, 0 } },
+			follow = { Root = { -26, 0, 0, 0, 0.3, -0.35 }, Waist = { -24, 0, 0 }, Neck = { -40, 0, 0 }, RS = { 65, 0, 65 }, RE = { 40, 0, 0 }, LS = { 65, 0, -65 }, LE = { 40, 0, 0 }, RH = { 35, 0, 0 }, RK = { -85, 0, 0 }, LH = { 25, 0, 0 }, LK = { -75, 0, 0 } },
+			trail = "head", fx = { { "burst", color = WHITE, size = 3, at = "front" }, { "symbols", symbols = { "⚽", "!" }, count = 3, radius = 2.5, at = "front", color = WHITE } }, text = "…!", hitText = "( BUUUT )",
+		},
+		-- → K K : Double touche, il salue de la canne puis pique deux fois de suite comme un escrimeur pressé
+		K_side2 = {
+			label = "Double touche", startup = 0.07, active = 0.14, recovery = 0.2,
+			damage = 4, hits = 2, hitbox = box(6, 4, 3.5, 0.8), kbBase = 20, kbGrowth = 28, kbAngle = 28, selfVelocity = Vector2.new(16, 0),
+			windup = { Root = { 2, -45, 0, 0, -0.2, 0.15 }, Waist = { 2, -25, 0 }, Neck = { 0, 40, 0 }, RS = { 110, 0, -10 }, RE = { 120, 0, 0 }, RW = { -90, 0, 0 }, LS = { 140, 0, -50 }, LE = { 70, 0, 0 } },
+			strike = { Root = { -8, -55, 0, 0, -0.45, -0.5 }, Waist = { -4, -30, 0 }, Neck = { 0, 45, 0 }, RS = { 94, 0, 0 }, RE = { 0, 0, 0 }, RW = { -88, 0, 0 }, LS = { 150, 0, -70 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.6 } },
+			follow = { Root = { -6, -52, 0, 0, -0.4, -0.45 }, Waist = { -2, -28, 0 }, Neck = { 0, 44, 0 }, RS = { 70, 0, 0 }, RE = { 60, 0, 0 }, RW = { -88, 0, 0 }, LS = { 150, 0, -70 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+			wobble = true, trail = "prop", text = "( SALUT )", hitText = "( TOUCHÉ-TOUCHÉ )",
+		},
+		-- → K K K : Moulinet de canne, un tour complet sur lui-même, la canne invisible tendue à l'horizontale (finition)
+		K_side3 = {
+			label = "Moulinet de canne", startup = 0.1, active = 0.2, recovery = 0.32,
+			damage = 12, hitbox = box(7, 4, 2.5, 0.8), kbBase = 36, kbGrowth = 80, kbAngle = 32,
+			windup = { Root = { 0, -50, 0, 0, -0.25, 0.1 }, Waist = { 0, -30, 0 }, Neck = { 0, 30, 0 }, RS = { 80, 0, 60 }, RE = { 60, 0, 0 }, RW = { -60, 0, 0 }, LS = { 60, 0, -40 }, LE = { 40, 0, 0 } },
+			strike = { Root = { -4, 0, 0, 0, -0.2, -0.1 }, Waist = { -4, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 92, 0, 10 }, RE = { 0, 0, 0 }, RW = { -88, 0, 0 }, LS = { 90, 0, -85 }, LE = { 0, 0, 0 } },
+			follow = { Root = { -4, 0, 0, 0, -0.2, -0.1 }, Waist = { -4, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 92, 0, 10 }, RE = { 0, 0, 0 }, RW = { -88, 0, 0 }, LS = { 90, 0, -85 }, LE = { 0, 0, 0 } },
+			spin = { axis = "y", degrees = 360 }, trail = "prop", fx = { { "ring", color = GHOST, radius = 4, at = "root" } }, text = "…!", hitText = "( SBAM )",
 		},
 
 		------------------------------------------------------------------ En l'air avec une flèche (P / K)
@@ -304,17 +377,17 @@ local data = {
 		},
 
 		------------------------------------------------------------------ Spéciaux (S)
-		-- Mur invisible : les deux paumes à plat, il « trouve » un mur devant lui et le tâte : le mur devient réel
-		-- (2 murs au plus, le plus ancien disparaît ; ils bloquent les projectiles et les adversaires)
+		-- Mur invisible : les deux paumes à plat, il « trouve » un mur devant lui et le pousse d'un coup sec dans
+		-- l'adversaire : le mur devient réel (2 au plus, le plus ancien disparaît ; bloquent projectiles et adversaires)
 		S_neutral = {
 			label = "Mur invisible", energyCost = 20, kind = "wall", startup = 0.14, active = 0.1, recovery = 0.3,
 			hitbox = box(5, 4, 2.5, 0.5), kbBase = 30, kbGrowth = 45, kbAngle = 30,
 			damage = 7,
 			wall = { size = Vector3.new(1.2, 8, 6), offset = 4, lifetime = 6, max = 2 },
-			windup = { Root = { 0, 0, 0, 0, -0.15, 0.1 }, Waist = { -4, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 60, 0, -10 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, 10 }, LE = { 110, 0, 0 }, LW = { 0, 0, 0 } },
-			strike = { Root = { -4, 0, 0, 0, -0.2, -0.15 }, Waist = { -6, 0, 0 }, Neck = { -4, 0, 0 }, RS = { 92, 0, 18 }, RE = { 15, 0, 0 }, RW = { 85, 0, 0 }, LS = { 92, 0, -18 }, LE = { 15, 0, 0 }, LW = { 85, 0, 0 } },
-			follow = { Root = { -4, 0, 0, 0, -0.2, -0.15 }, Waist = { -6, 0, 0 }, Neck = { -2, 8, 0 }, RS = { 110, 0, 22 }, RE = { 15, 0, 0 }, RW = { 85, 0, 0 }, LS = { 80, 0, -14 }, LE = { 15, 0, 0 }, LW = { 85, 0, 0 } },
-			hold = 0.15, fx = { { "ring", color = GHOST, radius = 3, at = "front" } }, text = "…",
+			windup = { Root = { 4, 0, 0, 0, -0.15, 0.15 }, Waist = { 4, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 50, 0, -10 }, RE = { 120, 0, 0 }, RW = { 85, 0, 0 }, LS = { 50, 0, 10 }, LE = { 120, 0, 0 }, LW = { 85, 0, 0 } },
+			strike = { Root = { -14, 0, 0, 0, -0.35, -0.45 }, Waist = { -12, 0, 0 }, Neck = { -4, 0, 0 }, RS = { 94, 0, 16 }, RE = { 0, 0, 0 }, RW = { 85, 0, 0 }, LS = { 94, 0, -16 }, LE = { 0, 0, 0 }, LW = { 85, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+			follow = { Root = { -16, 0, 0, 0, -0.38, -0.5 }, Waist = { -14, 0, 0 }, Neck = { -2, 8, 0 }, RS = { 100, 0, 20 }, RE = { 0, 0, 0 }, RW = { 85, 0, 0 }, LS = { 100, 0, -20 }, LE = { 0, 0, 0 }, LW = { 85, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.55 } },
+			hold = 0.15, trail = "bothHands", fx = { { "ring", color = GHOST, radius = 3, at = "front" }, { "burst", color = GHOST, size = 2.5, at = "front" } }, text = "…", hitText = "( MUR )",
 		},
 		-- Tir à la corde : il fait tournoyer un lasso invisible au-dessus du béret et le lance ; s'il accroche,
 		-- l'adversaire est tiré brusquement vers lui (sinon Marcel se hisse vers le décor)
@@ -327,16 +400,17 @@ local data = {
 			follow = { Root = { 12, -6, 0, 0, -0.35, 0.25 }, Waist = { 16, -8, 0 }, Neck = { 10, 0, 0 }, RS = { 60, 0, 15 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 80, 0, -10 }, LE = { 40, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
 			prop = "corde", hideProp = "canne", windupFx = { { "ring", color = ROPE, radius = 2, at = "above" } }, text = "( YIIHA )", hitText = "( TCHAC )",
 		},
-		-- Contre silencieux : il se fige en statue, mains levées ; un coup reçu pendant la pose est annulé et il riposte
+		-- Contre silencieux : il se fige en statue, puis sa paume part en « STOP » dans la figure d'en face ; un coup
+		-- reçu pendant la pose est annulé et il riposte
 		S_down = {
 			label = "Contre silencieux", energyCost = 20, kind = "counter", startup = 0.04, active = 0.45, recovery = 0.3,
 			hitbox = box(5, 4, 2.5, 0.5),
 			damage = 7,
 			counter = { window = 0.5, text = "…", riposte = { damage = 13, kbBase = 38, kbGrowth = 72, kbAngle = 35, hitText = "( RETOUR À L'ENVOYEUR )" } },
 			windup = { Root = { 0, 0, 0, 0, -0.1, 0.1 }, Waist = { 4, 0, 0 }, Neck = { 8, 0, 0 }, RS = { 60, 0, 30 }, RE = { 120, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -30 }, LE = { 120, 0, 0 }, LW = { 0, 0, 0 } },
-			strike = { Root = { 6, 0, 0, 0, -0.05, 0.15 }, Waist = { 8, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 95, 0, 45 }, RE = { 100, 0, 0 }, RW = { 80, 0, 0 }, LS = { 95, 0, -45 }, LE = { 100, 0, 0 }, LW = { 80, 0, 0 }, FR = { 0, 0, 0, 0, 0.15, 0 }, FL = { 0, 0, 0, 0, 0.15, 0 } },
-			follow = { Root = { 6, 0, 0, 0, -0.05, 0.15 }, Waist = { 8, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 95, 0, 45 }, RE = { 100, 0, 0 }, RW = { 80, 0, 0 }, LS = { 95, 0, -45 }, LE = { 100, 0, 0 }, LW = { 80, 0, 0 }, FR = { 0, 0, 0, 0, 0.15, 0 }, FL = { 0, 0, 0, 0, 0.15, 0 } },
-			hold = 0.2, fx = { { "ring", color = GHOST, radius = 2.5, at = "root" } }, text = "…",
+			strike = { Root = { -8, 0, 0, 0, -0.25, -0.3 }, Waist = { -10, 0, 0 }, Neck = { 0, 0, 0 }, RS = { 96, 0, 4 }, RE = { 0, 0, 0 }, RW = { 85, 0, 0 }, LS = { 20, 0, -30 }, LE = { 100, 0, 0 }, LW = { 0, 0, 40 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+			follow = { Root = { -8, 0, 0, 0, -0.25, -0.3 }, Waist = { -10, 0, 0 }, Neck = { 0, 0, 0 }, RS = { 98, 0, 2 }, RE = { 0, 0, 0 }, RW = { 85, 0, 0 }, LS = { 20, 0, -30 }, LE = { 100, 0, 0 }, LW = { 0, 0, 40 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+			hold = 0.2, trail = "rightHand", fx = { { "ring", color = GHOST, radius = 2.5, at = "root" }, { "symbols", symbols = { "✋" }, count = 1, radius = 1.5, at = "front", color = WHITE } }, text = "…", hitText = "( STOP )",
 		},
 		-- Échelle invisible : il agrippe des barreaux imaginaires et grimpe à toute vitesse (la montée frappe)
 		-- (gratuit : c'est la remontée)
@@ -438,15 +512,18 @@ local data = {
 			fx = { { "screen", color = Color3.fromRGB(10, 10, 20), alpha = 0.6, time = 0.8 }, { "symbols", symbols = { "🤫", "…", "🔇" }, count = 8, radius = 5, color = WHITE } },
 			text = "CHUUUT…", hitText = "( … )",
 		},
-		-- Super ↑ : il mime un ascenseur qui monte, l'adversaire est soulevé avec lui
+		-- Super ↑ : il appuie sur le bouton d'un ascenseur invisible, la cabine fuse vers le ciel et il en soulève
+		-- le plafond à deux paumes ; tout ce qui est au-dessus monte au dernier étage avec lui
 		SUPER_up = {
-			label = "L'Ascenseur invisible !", superCost = 100, startup = 0.3, active = 0.25, recovery = 0.55,
-			damage = 22, hitbox = box(7, 10, 2, 4), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
-			windup = { Root = { 0, 0, 0, 0, 0.1, 0.3 }, Waist = { 4.8, 0, 0 }, Neck = { 7.2, 0, 0 }, RS = { 12, 0, 24 }, RE = { 48, 0, 0 }, LS = { 12, 0, -24 }, LE = { 48, 0, 0 }, FR = { 0, 0, 0, 0, 0.2, 0.4 }, FL = { 0, 0, 0, 0, 0, -0.2 } },
-			strike = { Root = { 30, 0, 0, 0, -0.05, 0.4 }, Waist = { 12, 0, 0 }, Neck = { 14.4, 0, 0 }, RS = { -36, 0, 66 }, RE = { 12, 0, 0 }, LS = { -36, 0, -66 }, LE = { 12, 0, 0 }, RH = { 186, 0, 0 }, RK = { -6, 0, 0 }, RA = { 30, 0, 0 } },
-			follow = { Root = { 33.6, 0, 0, 0, -0.05, 0.45 }, Waist = { 14.4, 0, 0 }, Neck = { 16.8, 0, 0 }, RS = { -42, 0, 72 }, RE = { 12, 0, 0 }, LS = { -42, 0, -72 }, LE = { 12, 0, 0 }, RH = { 198, 0, 0 }, RK = { 0, 0, 0 }, RA = { 30, 0, 0 } },
-			hold = 0.25, selfVelocity = Vector2.new(0, 45),
-			windupFx = { "super" }, trail = "rightHand", fx = { { "text", text = "[DING]", color = Color3.fromRGB(240, 240, 240), at = "above" }, { "ring", color = Color3.fromRGB(220, 235, 255), radius = 5, at = "front" } }, text = "…", hitText = "[ÉTAGE SUIVANT]",
+			label = "L'Ascenseur invisible !", superCost = 100, startup = 0.3, active = 0.3, recovery = 0.55,
+			damage = 22, hitbox = box(6.5, 12, 1.5, 5), kbBase = 46, kbGrowth = 95, kbAngle = 88, invuln = 0.3,
+			windup = { Root = { 0, -15, 0, 0, -0.1, 0.1 }, Waist = { 2, -12, 0 }, Neck = { 22, 10, 0 }, RS = { 110, 0, 5 }, RE = { 30, 0, 0 }, RW = { -40, 0, 0 }, LS = { 10, 0, -20 }, LE = { 60, 0, 0 } },
+			strike = { Root = { 0, 0, 0, 0, 0.4, 0 }, Waist = { 0, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 178, 0, 12 }, RE = { 0, 0, 0 }, RW = { 85, 0, 0 }, LS = { 178, 0, -12 }, LE = { 0, 0, 0 }, LW = { 85, 0, 0 }, FR = { 0, 0, 0, 0, 0.35, 0 }, FL = { 0, 0, 0, 0, 0.35, 0 } },
+			follow = { Root = { 0, 0, 0, 0, 0.5, 0 }, Waist = { 0, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 182, 0, 14 }, RE = { 0, 0, 0 }, RW = { 85, 0, 0 }, LS = { 182, 0, -14 }, LE = { 0, 0, 0 }, LW = { 85, 0, 0 }, FR = { 0, 0, 0, 0, 0.45, 0 }, FL = { 0, 0, 0, 0, 0.45, 0 } },
+			hold = 0.3, selfVelocity = Vector2.new(0, 60), trail = "bothHands",
+			windupFx = { "super", { "text", text = "[ 12e ÉTAGE ]", color = WHITE, at = "above" } },
+			fx = { { "pillar", color = GHOST, height = 26, width = 4, at = "root" }, { "ring", color = GHOST, radius = 5, at = "feet" }, { "symbols", symbols = { "▲", "( DING )" }, count = 5, radius = 3, color = WHITE } },
+			text = "…", hitText = "[ DERNIER ÉTAGE ]",
 		},
 		-- La Boîte ultime : il mime une cage tout autour de l'adversaire, puis la secoue et cogne dedans
 		SUPER_down = {
@@ -673,7 +750,9 @@ data.respawn = {
 }
 
 -- Arbre d'enchaînements : après le coup de gauche, le bouton (avec sa direction) lance le coup de droite.
--- Les chaînes finissent sur S : Poussée du mur (éjecte à l'horizontale) ou Coup de lasso (fait décoller).
+-- P P P P : claque, canne, porte claquée, grand coup de canne · → P P P : corde (ramène), vitre, canne à pêche (au ciel)
+-- ↓ P P P : marche, chien invisible, tapis roulant (à l'horizontale) · K K K : pied, reprise, tête dans le ballon
+-- (↑ K : ciseau muet) · → K K K : fente, double touche, moulinet. Les S finissent : Poussée du mur ou Coup de lasso.
 local function airAfterP()
 	return { K = "K_air", fwd_K = "K_air_side", up_K = "K_air_up", down_K = "K_air_down", down_S = "S_air_down", up_S = "S_up", S = "S_air" }
 end
@@ -682,24 +761,29 @@ local function airAfterK()
 end
 
 local LINKS = {
-	-- fausse claque, canne, grand coup de canne
-	P_neutral = { P = "P_combo2", K = "PK_combo", fwd_P = "P_side", S = "S_finish_mur" },
-	P_combo2 = { P = "P_combo3", K = "K_combo2", up_K = "K_up", S = "S_finish_corde" },
-	P_combo3 = { K = "K_combo3", S = "S_finish_mur" },
+	-- P P P P : fausse claque, canne invisible, claquement de porte, grand coup de canne (finition)
+	P_neutral = { P = "P_combo2", K = "PK_combo", S = "S_finish_mur" },
+	P_combo2 = { P = "P_porte2", K = "K_combo2", up_K = "K_up", S = "S_finish_corde" },
+	P_porte2 = { P = "P_combo3", K = "K_tete", S = "S_finish_mur" },
 	PK_combo = { P = "KP_combo", K = "K_combo3", S = "S_finish_corde" },
-	-- pied imaginaire, reprise du gauche, ciseau muet
+	KP_combo = { P = "P_combo3", K = "K_tete", S = "S_finish_mur" },
+	-- K K K : pied imaginaire, reprise du gauche, tête dans le ballon (↑ K : ciseau muet)
 	K_neutral = { K = "K_combo2", P = "KP_combo", S = "S_finish_mur" },
-	K_combo2 = { K = "K_combo3", P = "P_combo3", S = "S_finish_corde" },
-	K_combo3 = { K = "K_air_side", P = "P_air_side", S = "S_air" }, -- il décolle : la suite se joue en l'air
-	KP_combo = { P = "P_combo3", K = "K_combo3", S = "S_finish_mur" },
-	-- avec une flèche : la corde tirée ramène l'adversaire à portée de tout
-	P_side = { P = "P_combo2", K = "K_side", up_K = "K_up", S = "S_finish_mur" },
-	P_down = { P = "P_combo2", K = "K_down", S = "S_finish_corde" },
+	K_combo2 = { K = "K_tete", up_K = "K_combo3", P = "P_porte2", S = "S_finish_corde" },
+	-- → P P P : corde tirée (ramène), vitre invisible, canne à pêche (finition vers le ciel)
+	P_side = { P = "P_vitre", K = "K_side", S = "S_finish_mur" },
+	P_vitre = { P = "P_peche", K = "K_side2", S = "S_finish_corde" },
+	-- ↓ P P P : marche d'escalier, chien invisible, tapis roulant (finition à l'horizontale)
+	P_down = { P = "P_chien", K = "K_down", S = "S_finish_corde" },
+	P_chien = { P = "P_tapis", K = "K_tete", S = "S_finish_mur" },
+	-- → K K K : canne (fente), double touche, moulinet de canne (finition)
+	K_side = { K = "K_side2", P = "KP_combo", S = "S_finish_mur" },
+	K_side2 = { K = "K_side3", P = "P_vitre", S = "S_finish_corde" },
+	-- autres départs
 	P_up = { K = "K_up", S = "S_finish_corde" },
-	K_side = { P = "KP_combo", S = "S_finish_mur" },
 	K_down = { P = "P_up", K = "K_up", S = "S_finish_corde" },
 	K_up = { S = "S_finish_corde" },
-	P_dash = { P = "P_combo3", K = "K_side", S = "S_finish_mur" },
+	P_dash = { P = "P_porte2", K = "K_side", S = "S_finish_mur" },
 	K_dash = { P = "P_up", K = "K_up", S = "S_finish_corde" },
 	-- en l'air ; les smashs ↓ sont des finitions sans suite
 	P_air = airAfterP(),

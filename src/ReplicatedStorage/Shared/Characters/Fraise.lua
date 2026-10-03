@@ -167,7 +167,7 @@ local data = {
 		-- P P : revers de miroir, le poignet se retourne et frappe dans l'autre sens
 		P_combo2 = {
 			label = "Revers de miroir", startup = 0.07, active = 0.08, recovery = 0.16,
-			damage = 5, hitbox = box(4, 3, 2.5, 0.8), kbBase = 18, kbGrowth = 22, kbAngle = 30,
+			damage = 5, hitbox = box(5, 3.5, 2.8, 0.6), kbBase = 18, kbGrowth = 22, kbAngle = 30,
 			windup = { Root = { -2, -20, 0, 0, -0.1, -0.2 }, Waist = { -3, -22, 0 }, LS = { 80, 0, 35 }, LE = { 90, 0, 0 }, LW = { -20, 0, 0 }, RS = { 25, 0, 22 }, RE = { 80, 0, 0 } },
 			strike = { Root = { -4, 14, 0, 0, -0.12, -0.3 }, Waist = { -4, 18, 0 }, Neck = { 0, -8, 0 }, LS = { 92, 0, -35 }, LE = { 8, 0, 0 }, LW = { 10, 0, 0 }, RS = { 30, 0, 18 }, RE = { 75, 0, 0 } },
 			follow = { Root = { -4, 20, 0, 0, -0.12, -0.32 }, Waist = { -4, 24, 0 }, Neck = { 0, -10, 0 }, LS = { 88, 0, -55 }, LE = { 12, 0, 0 }, LW = { 20, 0, 0 }, RS = { 30, 0, 18 }, RE = { 75, 0, 0 } },
@@ -175,7 +175,7 @@ local data = {
 		},
 		-- P P P : coup de fraise piqué de haut en bas, comme sur une molaire récalcitrante
 		P_combo3 = {
-			label = "Fraisage de molaire", startup = 0.13, active = 0.1, recovery = 0.3,
+			label = "Fraisage de molaire", startup = 0.1, active = 0.1, recovery = 0.3,
 			damage = 9, hitbox = box(4.5, 4, 2.8, 0.6), kbBase = 30, kbGrowth = 58, kbAngle = 40,
 			windup = { Root = { 6, -12, 0, 0, 0, 0.2 }, Waist = { 10, -14, 0 }, Neck = { 10, 0, 0 }, RS = { 175, 0, 10 }, RE = { 70, 0, 0 }, RW = { 40, 0, 0 }, LS = { 50, 0, -40 }, LE = { 110, 0, 0 } },
 			strike = { Root = { -12, 10, 0, 0, -0.4, -0.35 }, Waist = { -22, 12, 0 }, Neck = { -6, 0, 0 }, RS = { 80, 0, 0 }, RE = { 10, 0, 0 }, RW = { 60, 0, 0 }, LS = { 40, 0, -45 }, LE = { 110, 0, 0 } },
@@ -186,7 +186,7 @@ local data = {
 		-- P puis K : coup de coude ganté, bras gauche replié, le buste pivote
 		PK_combo = {
 			label = "Coude ganté", startup = 0.1, active = 0.08, recovery = 0.22,
-			damage = 7, hitbox = box(4, 3, 2, 0.8), kbBase = 24, kbGrowth = 36, kbAngle = 30,
+			damage = 7, hitbox = box(4.5, 3.5, 2.5, 0.6), kbBase = 24, kbGrowth = 36, kbAngle = 30,
 			windup = { Root = { 2, 28, 0, 0, -0.15, 0.15 }, Waist = { 2, 26, 0 }, LS = { 50, 0, -70 }, LE = { 140, 0, 0 }, RS = { 30, 0, 20 }, RE = { 80, 0, 0 } },
 			strike = { Root = { -8, -22, 0, 0, -0.25, -0.35 }, Waist = { -8, -28, 0 }, Neck = { 0, 12, 0 }, LS = { 92, 0, 12 }, LE = { 145, 0, 0 }, RS = { 20, 0, 25 }, RE = { 85, 0, 0 } },
 			follow = { Root = { -9, -28, 0, 0, -0.27, -0.4 }, Waist = { -9, -32, 0 }, Neck = { 0, 14, 0 }, LS = { 94, 0, 20 }, LE = { 145, 0, 0 }, RS = { 18, 0, 26 }, RE = { 85, 0, 0 } },
@@ -200,6 +200,43 @@ local data = {
 			strike = { Root = { 6, 6, 0, 0, 0.1, 0.15 }, Waist = { 12, 6, 0 }, Neck = { 20, 0, 0 }, LS = { 170, 0, -10 }, LE = { 30, 0, 0 }, RS = { 150, 0, 15 }, RE = { 40, 0, 0 }, FR = { 0, 0, 0, 0, 0.15, 0 }, FL = { 0, 0, 0, 0, 0.15, 0 } },
 			follow = { Root = { 8, 8, 0, 0, 0.12, 0.2 }, Waist = { 15, 8, 0 }, Neck = { 24, 0, 0 }, LS = { 178, 0, -15 }, LE = { 25, 0, 0 }, RS = { 160, 0, 18 }, RE = { 35, 0, 0 }, FR = { 0, 0, 0, 0, 0.2, 0 }, FL = { 0, 0, 0, 0, 0.2, 0 } },
 			prop = "fil", trail = "bothHands", hitText = "HOP-LÀ !",
+		},
+		-- → P P : Polissage, la fraise balaie de droite à gauche en vrombissant, deux passes pour faire briller
+		P_side2 = {
+			label = "Polissage", startup = 0.07, active = 0.14, recovery = 0.16, hits = 2,
+			damage = 3, hitbox = box(5.5, 3.5, 3, 0.6), kbBase = 18, kbGrowth = 24, kbAngle = 20,
+			windup = { Root = { -6, -28, 0, 0, -0.2, -0.1 }, Waist = { -6, -24, 0 }, Neck = { 0, 16, 0 }, RS = { 85, 0, 40 }, RE = { 15, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -30 }, LE = { 110, 0, 0 } },
+			strike = { Root = { -8, 22, 0, 0, -0.25, -0.35 }, Waist = { -8, 24, 0 }, Neck = { 0, -14, 0 }, RS = { 92, 0, -30 }, RE = { 5, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -40 }, LE = { 110, 0, 0 } },
+			follow = { Root = { -8, 32, 0, 0, -0.25, -0.38 }, Waist = { -8, 34, 0 }, Neck = { 0, -20, 0 }, RS = { 90, 0, -45 }, RE = { 8, 0, 0 }, RW = { -10, 0, 0 }, LS = { 38, 0, -42 }, LE = { 110, 0, 0 } },
+			wobble = true, trail = "prop", fx = { { "particles", tex = "spark", color = SPARK, at = "hand", dir = "all", time = 0.15, rate = 80, speed = 8, size = 0.3 } }, text = "ET ON POLIT !", hitText = "BZZ-BZZ !",
+		},
+		-- → P P P : Plombage express, il tourne sur lui-même et tamponne la fraise sur la molaire : plombage posé, au suivant !
+		P_side3 = {
+			label = "Plombage express", startup = 0.1, active = 0.12, recovery = 0.3,
+			damage = 10, hitbox = box(5.5, 4, 3, 0.6), kbBase = 34, kbGrowth = 76, kbAngle = 42,
+			windup = { Root = { 4, -40, 0, 0, -0.2, 0.1 }, Waist = { 4, -30, 0 }, Neck = { 0, 24, 0 }, RS = { 60, 0, 50 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -40 }, LE = { 100, 0, 0 } },
+			strike = { Root = { -12, 10, 0, 0, -0.3, -0.4 }, Waist = { -14, 12, 0 }, Neck = { -6, 0, 0 }, RS = { 96, 0, -4 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -50 }, LE = { 110, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+			follow = { Root = { -14, 12, 0, 0, -0.32, -0.45 }, Waist = { -16, 14, 0 }, Neck = { -8, 0, 0 }, RS = { 98, 0, -6 }, RE = { 0, 0, 0 }, RW = { 10, 0, 0 }, LS = { 28, 0, -52 }, LE = { 110, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+			spin = { axis = "y", degrees = 360 }, shake = true, trail = "prop", fx = { { "burst", color = STEEL, size = 3, at = "front" }, { "symbols", symbols = { "🦷", "✨" }, color = SPARK, count = 4, radius = 2.5, at = "front" } },
+			text = "PLOMBAGE !", hitText = "CLONK !",
+		},
+		-- P P P K : Tabouret tournant, il attrape son tabouret à roulettes et tourne sur lui-même en le tenant à bout de bras
+		PPPK_combo = {
+			label = "Tabouret tournant", startup = 0.1, active = 0.16, recovery = 0.32,
+			damage = 12, hitbox = box(6.5, 4, 2.5, 0.5), kbBase = 34, kbGrowth = 80, kbAngle = 40,
+			windup = { Root = { 0, 40, 0, 0, -0.3, 0 }, Waist = { 0, 30, 0 }, Neck = { 0, -24, 0 }, LS = { 40, 0, -70 }, LE = { 60, 0, 0 }, LW = { 0, 0, 0 }, RS = { 40, 0, 40 }, RE = { 70, 0, 0 } },
+			strike = { Root = { -6, 0, 0, 0, -0.25, -0.2 }, Waist = { -6, 0, 0 }, Neck = { -6, 0, 0 }, LS = { 92, 0, -85 }, LE = { 0, 0, 0 }, LW = { 40, 0, 0 }, RS = { 60, 0, 70 }, RE = { 20, 0, 0 } },
+			follow = { Root = { -6, 0, 0, 0, -0.25, -0.2 }, Waist = { -6, 0, 0 }, Neck = { -8, 0, 0 }, LS = { 92, 0, -88 }, LE = { 0, 0, 0 }, LW = { 40, 0, 0 }, RS = { 62, 0, 72 }, RE = { 20, 0, 0 } },
+			spin = { axis = "y", degrees = 360 }, prop = "tabouret", trail = "leftHand", fx = { "dust", { "ring", color = CHAIR, radius = 5, at = "root" } }, text = "SUIVANT !", hitText = "BLONG !",
+		},
+		-- ↓ P P P : Fil scie, l'adversaire est en l'air, il tend le fil à deux mains au-dessus de lui et le scie trois fois d'avant en arrière
+		P_down3 = {
+			label = "Fil scie", startup = 0.08, active = 0.2, recovery = 0.3, hits = 3,
+			damage = 4, hitbox = box(5, 5.5, 2.5, 1.5), kbBase = 32, kbGrowth = 70, kbAngle = 55,
+			windup = { Root = { 6, 0, 0, 0, -0.1, 0.1 }, Waist = { 10, 0, 0 }, Neck = { 24, 0, 0 }, LS = { 150, 0, -10 }, LE = { 30, 0, 0 }, LW = { 0, 0, 0 }, RS = { 150, 0, 10 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 } },
+			strike = { Root = { -4, 18, 0, 0, -0.15, -0.2 }, Waist = { -4, 20, 0 }, Neck = { 22, -10, 0 }, LS = { 130, 0, -40 }, LE = { 5, 0, 0 }, LW = { 0, 0, 0 }, RS = { 130, 0, 10 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 } },
+			follow = { Root = { -4, -18, 0, 0, -0.15, -0.2 }, Waist = { -4, -20, 0 }, Neck = { 22, 10, 0 }, LS = { 130, 0, -10 }, LE = { 60, 0, 0 }, LW = { 0, 0, 0 }, RS = { 130, 0, 40 }, RE = { 5, 0, 0 }, RW = { 0, 0, 0 } },
+			wobble = true, prop = "fil", trail = "bothHands", fx = { { "symbols", symbols = { "〰️", "✂️" }, color = SPARK, count = 3, radius = 2, at = "above" } }, text = "ON SCIE !", hitText = "ZIP ZIP ZIP !",
 		},
 
 		------------------------------------------------------------------ Attaques lourdes (K)
@@ -262,8 +299,8 @@ local data = {
 		-- Suites d'enchaînement K
 		-- K K : talon de praticien, il pivote et frappe du talon du sabot
 		K_combo2 = {
-			label = "Talon de sabot", startup = 0.15, active = 0.1, recovery = 0.26,
-			damage = 9, hitbox = box(5, 3, 3, 0.3), kbBase = 28, kbGrowth = 50, kbAngle = 30,
+			label = "Talon de sabot", startup = 0.1, active = 0.1, recovery = 0.26,
+			damage = 9, hitbox = box(5, 3.5, 3, 0.3), kbBase = 28, kbGrowth = 50, kbAngle = 30,
 			windup = { Root = { 4, -40, 0, 0, -0.15, 0.1 }, Waist = { 4, -24, 0 }, Neck = { 0, 30, 0 }, RS = { 30, 0, 50 }, RE = { 90, 0, 0 }, LS = { 30, 0, -50 }, LE = { 90, 0, 0 }, RH = { 60, 0, 30 }, RK = { -100, 0, 0 } },
 			strike = { Root = { 12, 30, 0, 0, -0.1, 0 }, Waist = { 8, 20, 0 }, Neck = { 0, -10, 0 }, RS = { 30, 0, 70 }, RE = { 40, 0, 0 }, LS = { 40, 0, -60 }, LE = { 60, 0, 0 }, RH = { 88, 0, 40 }, RK = { -4, 0, 0 }, RA = { 15, 0, 0 } },
 			follow = { Root = { 14, 40, 0, 0, -0.1, 0 }, Waist = { 10, 24, 0 }, Neck = { 0, -14, 0 }, RS = { 28, 0, 72 }, RE = { 40, 0, 0 }, LS = { 42, 0, -62 }, LE = { 60, 0, 0 }, RH = { 84, 0, 30 }, RK = { -6, 0, 0 }, RA = { 15, 0, 0 } },
@@ -271,7 +308,7 @@ local data = {
 		},
 		-- K K K : grand coup de pied retourné, il tourne sur lui-même blouse au vent
 		K_combo3 = {
-			label = "Ordonnance retournée", startup = 0.18, active = 0.14, recovery = 0.34,
+			label = "Ordonnance retournée", startup = 0.12, active = 0.14, recovery = 0.34,
 			damage = 13, hitbox = box(5.5, 3.5, 2.8, 0.6), kbBase = 34, kbGrowth = 84, kbAngle = 38,
 			windup = { Root = { 4, -60, 0, 0, -0.25, 0.1 }, Waist = { 4, -30, 0 }, Neck = { 0, 40, 0 }, RS = { 50, 0, 40 }, RE = { 60, 0, 0 }, LS = { 50, 0, -40 }, LE = { 60, 0, 0 }, RH = { 40, 0, 0 }, RK = { -100, 0, 0 } },
 			strike = { Root = { 22, 0, 0, 0, -0.1, 0 }, Waist = { 6, 0, 0 }, Neck = { -15, 0, 0 }, RS = { 40, 0, 80 }, RE = { 10, 0, 0 }, LS = { 50, 0, -80 }, LE = { 10, 0, 0 }, RH = { 85, 0, 0 }, RK = { 0, 0, 0 }, RA = { 15, 0, 0 } },
@@ -281,11 +318,40 @@ local data = {
 		-- K puis P : coup de fraise remontant, de la hanche vers le menton
 		KP_combo = {
 			label = "Fraise remontante", startup = 0.1, active = 0.1, recovery = 0.24,
-			damage = 8, hitbox = box(4, 4.5, 2.4, 1.8), kbBase = 28, kbGrowth = 42, kbAngle = 70,
+			damage = 8, hitbox = box(4.5, 4.5, 2.5, 1.5), kbBase = 28, kbGrowth = 42, kbAngle = 70,
 			windup = { Root = { -6, -16, 0, 0, -0.45, 0.1 }, Waist = { -14, -16, 0 }, RS = { -20, 0, 25 }, RE = { 50, 0, 0 }, RW = { 60, 0, 0 }, LS = { 40, 0, -30 }, LE = { 110, 0, 0 } },
 			strike = { Root = { 6, 12, 0, 0, 0, -0.25 }, Waist = { 12, 16, 0 }, Neck = { 12, 0, 0 }, RS = { 150, 0, 8 }, RE = { 20, 0, 0 }, RW = { 70, 0, 0 }, LS = { 10, 0, -40 }, LE = { 110, 0, 0 } },
 			follow = { Root = { 8, 15, 0, 0, 0.05, -0.3 }, Waist = { 15, 20, 0 }, Neck = { 16, 0, 0 }, RS = { 165, 0, 4 }, RE = { 15, 0, 0 }, RW = { 70, 0, 0 }, LS = { 5, 0, -42 }, LE = { 110, 0, 0 } },
 			trail = "prop", hitText = "BZZIP !",
+		},
+		-- → K K : Deuxième genou stérile, l'autre genou monte dans la foulée, mains toujours en l'air (surtout ne rien toucher !)
+		K_side2 = {
+			label = "Deuxième genou stérile", startup = 0.1, active = 0.1, recovery = 0.2,
+			damage = 8, hitbox = box(4.5, 3.5, 2.5, 0.5), kbBase = 24, kbGrowth = 36, kbAngle = 40, selfVelocity = Vector2.new(20, 0),
+			windup = { Root = { 6, 0, 0, 0, -0.1, 0.1 }, Waist = { 6, 0, 0 }, Neck = { 8, 0, 0 }, RS = { 30, 0, 55 }, RE = { 150, 0, 0 }, LS = { 30, 0, -55 }, LE = { 150, 0, 0 }, LH = { -20, 0, 0 }, LK = { -50, 0, 0 } },
+			strike = { Root = { -10, 0, 0, 0, 0.05, -0.35 }, Waist = { -10, 0, 0 }, Neck = { 0, 0, 0 }, RS = { 32, 0, 56 }, RE = { 150, 0, 0 }, LS = { 32, 0, -56 }, LE = { 150, 0, 0 }, LH = { 112, 0, 0 }, LK = { -118, 0, 0 }, LA = { -25, 0, 0 } },
+			follow = { Root = { -12, 0, 0, 0, 0.08, -0.42 }, Waist = { -12, 0, 0 }, Neck = { 2, 0, 0 }, RS = { 34, 0, 58 }, RE = { 150, 0, 0 }, LS = { 34, 0, -58 }, LE = { 150, 0, 0 }, LH = { 118, 0, 0 }, LK = { -125, 0, 0 }, LA = { -25, 0, 0 } },
+			trail = "leftFoot", text = "TOUJOURS STÉRILE !", hitText = "GNOC GNOC !",
+		},
+		-- → K K K : Coup de lampe, il pique du nez et donne un grand coup de lampe frontale : flash et bosse
+		K_side3 = {
+			label = "Coup de lampe", startup = 0.1, active = 0.12, recovery = 0.32,
+			damage = 12, hitbox = box(5, 4, 2.8, 0.8), kbBase = 34, kbGrowth = 80, kbAngle = 38,
+			status = { name = "blinded", duration = 1 },
+			windup = { Root = { 10, 0, 0, 0, -0.15, 0.2 }, Waist = { 14, 0, 0 }, Neck = { -30, 0, 0 }, RS = { 40, 0, 50 }, RE = { 130, 0, 0 }, LS = { 40, 0, -50 }, LE = { 130, 0, 0 } },
+			strike = { Root = { -22, 0, 0, 0, -0.35, -0.4 }, Waist = { -26, 0, 0 }, Neck = { 42, 0, 0 }, RS = { -20, 0, 50 }, RE = { 40, 0, 0 }, LS = { -20, 0, -50 }, LE = { 40, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+			follow = { Root = { -24, 0, 0, 0, -0.38, -0.45 }, Waist = { -28, 0, 0 }, Neck = { 46, 0, 0 }, RS = { -25, 0, 52 }, RE = { 40, 0, 0 }, LS = { -25, 0, -52 }, LE = { 40, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+			trail = "head", fx = { { "beam", color = SPARK, length = 6, width = 2, at = "head", time = 0.2 }, { "screen", color = SPARK, alpha = 0.2, time = 0.15 }, { "burst", color = SPARK, size = 3, at = "head" } },
+			text = "REGARDEZ LA LUMIÈRE !", hitText = "FLASH-BONK !",
+		},
+		-- ↓ K K : Roulettes folles, il saute sur le tabouret à roulettes et tourne dessus en balayant tout, jambes tendues
+		K_downK = {
+			label = "Roulettes folles", startup = 0.08, active = 0.22, recovery = 0.26, hits = 2,
+			damage = 5, hitbox = box(6, 3.5, 2.5, -0.8), kbBase = 24, kbGrowth = 40, kbAngle = 50, selfVelocity = Vector2.new(30, 0),
+			windup = { Root = { -6, 0, 0, 0, -0.8, 0 }, Waist = { -8, 0, 0 }, RS = { 60, 0, 60 }, RE = { 30, 0, 0 }, LS = { 60, 0, -60 }, LE = { 30, 0, 0 } },
+			strike = { Root = { 12, 0, 0, 0, -0.95, 0 }, Waist = { 0, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 90, 0, 85 }, RE = { 0, 0, 0 }, LS = { 90, 0, -85 }, LE = { 0, 0, 0 }, RH = { 85, 0, 10 }, RK = { -10, 0, 0 }, RA = { 15, 0, 0 }, LH = { 85, 0, -10 }, LK = { -10, 0, 0 }, LA = { 15, 0, 0 } },
+			follow = { Root = { 12, 0, 0, 0, -0.95, 0 }, Waist = { 0, 0, 0 }, Neck = { -12, 0, 0 }, RS = { 92, 0, 88 }, RE = { 0, 0, 0 }, LS = { 92, 0, -88 }, LE = { 0, 0, 0 }, RH = { 88, 0, 12 }, RK = { -8, 0, 0 }, RA = { 15, 0, 0 }, LH = { 88, 0, -12 }, LK = { -8, 0, 0 }, LA = { 15, 0, 0 } },
+			spin = { axis = "y", degrees = 360 }, trail = "bothFeet", fx = { "dust", { "symbols", symbols = { "🪑", "💨" }, color = CHAIR, count = 3, radius = 2.5, at = "feet" } }, text = "ROULEZ JEUNESSE !", hitText = "ROULETTE !",
 		},
 
 		------------------------------------------------------------------ En l'air avec une flèche
@@ -471,15 +537,18 @@ local data = {
 			fx = { { "particles", tex = "spark", color = SPARK, at = "hand", dir = "all", time = 0.6, rate = 150, speed = 14, size = 0.35 }, { "shake", amount = 0.3, time = 0.6 } },
 			text = "DÉTARTRAGE !", hitText = "BZZZRRRIIIK !",
 		},
-		-- Super ↑ : elle arrache la « dent » de l'adversaire d'un grand coup de fraise vers le haut
+		-- Super ↑ : Extraction royale, la pince géante agrippe la « dent » au ras du sol et l'arrache d'un coup de reins vers le ciel
 		SUPER_up = {
 			label = "Extraction royale !", superCost = 100, startup = 0.3, active = 0.25, recovery = 0.55,
 			damage = 22, hitbox = box(7, 10, 2, 4), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
-			windup = { Root = { 9.6, 0, 0, 0, -0.2, 0.3 }, Waist = { 12, 0, 0 }, Neck = { 7.2, 0, 0 }, LS = { 120, 0, -24 }, LE = { 96, 0, 0 }, LW = { 0, 0, 0 }, RS = { 36, 0, 48 }, RE = { 72, 0, 0 }, RH = { -24, 0, 0 }, RK = { -48, 0, 0 } },
-			strike = { Root = { 28.8, 0, 0, 0, -0.05, 0.4 }, Waist = { 14.4, 0, 0 }, Neck = { -12, 0, 0 }, LS = { 144, 0, -36 }, LE = { 24, 0, 0 }, LW = { 84, 0, 0 }, RS = { -24, 0, 60 }, RE = { 24, 0, 0 }, RH = { 180, 0, 0 }, RK = { -4.8, 0, 0 }, RA = { 24, 0, 0 } },
-			follow = { Root = { 33.6, 0, 0, 0, -0.05, 0.5 }, Waist = { 16.8, 0, 0 }, Neck = { -14.4, 0, 0 }, LS = { 150, 0, -38.4 }, LE = { 24, 0, 0 }, LW = { 96, 0, 0 }, RS = { -30, 0, 62.4 }, RE = { 24, 0, 0 }, RH = { 189.6, 0, 0 }, RK = { -4.8, 0, 0 }, RA = { 24, 0, 0 } },
-			hold = 0.25, selfVelocity = Vector2.new(0, 45),
-			windupFx = { "super" }, trail = "prop", status = { name = "laughing", duration = 2 }, fx = { { "particles", tex = "spark", color = Color3.fromRGB(150, 205, 240), dir = "up", at = "hand", time = 0.5 }, { "text", text = "🦷", at = "above" } }, text = "OUVREZ GRAND !", hitText = "ARRACHÉ !",
+			windup = { Root = { -14, 10, 0, 0, -0.65, -0.1 }, Waist = { -26, 12, 0 }, Neck = { 10, -6, 0 }, LS = { 60, 0, -10 }, LE = { 10, 0, 0 }, LW = { -20, 0, 0 }, RS = { -30, 0, 40 }, RE = { 90, 0, 0 }, RW = { 60, 0, 0 } },
+			strike = { Root = { 14, 0, 0, 0, 0.5, 0.1 }, Waist = { 22, 0, 0 }, Neck = { 45, 0, 0 }, LS = { 185, 0, -20 }, LE = { 10, 0, 0 }, LW = { 0, 0, 0 }, RS = { 40, 0, 85 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, FR = { 0, 0, 0, 0, 0.35, 0 }, FL = { 0, 0, 0, 0, 0.35, 0 } },
+			follow = { Root = { 18, 0, 0, 0, 0.55, 0.15 }, Waist = { 26, 0, 0 }, Neck = { 52, 0, 0 }, LS = { 192, 0, -26 }, LE = { 8, 0, 0 }, LW = { -10, 0, 0 }, RS = { 45, 0, 90 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, FR = { 0, 0, 0, 0, 0.45, 0 }, FL = { 0, 0, 0, 0, 0.4, 0 } },
+			hold = 0.25, selfVelocity = Vector2.new(0, 45), shake = true, prop = "pince", trail = "leftHand",
+			windupFx = { "super", { "particles", tex = "spark", color = STEEL, at = "lhand", dir = "all", time = 0.3, rate = 50, speed = 6, size = 0.3 } },
+			status = { name = "laughing", duration = 2 },
+			fx = { { "pillar", color = SPARK, height = 22, width = 3, at = "front" }, { "text", text = "🦷", at = "above" }, { "burst", color = GLOVE, size = 4, at = "lhand" } },
+			text = "OUVREZ GRAND !", hitText = "ARRACHÉ !",
 		},
 		-- Grand fou rire : il ouvre en grand toutes les bonbonnes, l'arène entière se remplit de gaz rose
 		SUPER_down = {
@@ -725,11 +794,12 @@ local LINKS = {
 	-- au sol, P…
 	P_neutral = { P = "P_combo2", K = "PK_combo", fwd_K = "K_side", S = "S_finish_rinse" },
 	P_combo2 = { P = "P_combo3", K = "PK_combo", down_P = "P_down", S = "S_neutral" }, -- P P
-	P_combo3 = { K = "K_combo3", S = "S_finish_rinse" }, -- P P P
+	P_combo3 = { K = "PPPK_combo", S = "S_finish_rinse" }, -- P P P (P P P K : tabouret tournant, finition)
 	PK_combo = { P = "P_combo3", K = "K_combo2", S = "S_neutral" }, -- P K
-	P_side = { P = "P_combo3", K = "K_side", S = "S_finish_rinse" }, -- → P
+	P_side = { P = "P_side2", K = "K_side", S = "S_finish_rinse" }, -- → P
+	P_side2 = { P = "P_side3", K = "PK_combo", S = "S_neutral" }, -- → P P (→ P P P : plombage, finition)
 	P_down = { P = "P_down2", K = "K_down", S = "S_finish_rinse" }, -- ↓ P
-	P_down2 = { up_K = "K_up", K = "KP_combo", S = "S_neutral" }, -- ↓ P P
+	P_down2 = { P = "P_down3", up_K = "K_up", K = "KP_combo", S = "S_neutral" }, -- ↓ P P (↓ P P P : fil scie, finition)
 	P_up = { P = "P_combo2", K = "K_up", S = "S_finish_rinse" }, -- ↑ P
 	P_dash = { P = "P_combo2", K = "PK_combo", S = "S_hold" }, -- dash P
 	-- au sol, K…
@@ -737,8 +807,10 @@ local LINKS = {
 	K_combo2 = { K = "K_combo3", P = "KP_combo", S = "S_neutral" }, -- K K
 	K_combo3 = { S = "S_finish_rinse" }, -- K K K
 	KP_combo = { K = "K_combo3", P = "P_combo3", S = "S_finish_rinse" }, -- K P
-	K_side = { P = "KP_combo", K = "K_combo3", S = "S_neutral" }, -- → K
-	K_down = { P = "P_down2", K = "K_combo2", S = "S_finish_rinse" }, -- ↓ K
+	K_side = { K = "K_side2", P = "KP_combo", S = "S_neutral" }, -- → K
+	K_side2 = { K = "K_side3", P = "KP_combo", S = "S_finish_rinse" }, -- → K K (→ K K K : coup de lampe, finition)
+	K_down = { K = "K_downK", P = "P_down2", S = "S_finish_rinse" }, -- ↓ K
+	K_downK = { P = "KP_combo", S = "S_finish_rinse" }, -- ↓ K K
 	K_up = { P = "P_air_up", S = "S_finish_rinse" }, -- ↑ K
 	K_dash = { P = "KP_combo", S = "S_finish_rinse" }, -- dash K
 	-- en l'air (↓P et ↓K, smashs vers le sol, finissent la chaîne)

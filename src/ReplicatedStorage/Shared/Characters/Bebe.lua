@@ -102,16 +102,16 @@ local data = {
 		-- Hochet retour : le hochet revient de l'autre côté, en revers, bébé manque de tomber (suite de P)
 		P_combo2 = {
 			label = "Hochet retour", startup = 0.07, active = 0.08, recovery = 0.16,
-			damage = 5, hitbox = box(4.5, 3.5, 2.6, 0.8), kbBase = 18, kbGrowth = 22, kbAngle = 32,
+			damage = 5, hitbox = box(5, 4, 3, 0.8), kbBase = 18, kbGrowth = 22, kbAngle = 32,
 			windup = { Root = { -4, 25, 6, 0, -0.2, -0.1 }, Waist = { -6, 25, 6 }, Neck = { 0, -10, -6 }, RS = { 80, 0, -50 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -60 }, LE = { 20, 0, 0 } },
 			strike = { Root = { -6, -15, -6, 0, -0.22, -0.2 }, Waist = { -8, -20, -6 }, Neck = { 0, 10, 6 }, RS = { 90, 0, 40 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -40 }, LE = { 30, 0, 0 } },
 			follow = { Root = { -8, -22, -8, 0, -0.25, -0.24 }, Waist = { -10, -26, -8 }, Neck = { 0, 14, 8 }, RS = { 85, 0, 65 }, RE = { 15, 0, 0 }, RW = { -20, 0, 0 }, LS = { 25, 0, -40 }, LE = { 30, 0, 0 } },
 			trail = "prop", hitText = "GLANG !",
 		},
-		-- Gros hochet : il lève le hochet à deux mains en tirant la langue et l'abat de tout son poids de bébé
+		-- P P P P : Gros hochet, il lève le hochet à deux mains en tirant la langue et l'abat de tout son poids de bébé (finition)
 		P_combo3 = {
-			label = "Gros hochet", startup = 0.14, active = 0.1, recovery = 0.3,
-			damage = 9, hitbox = box(5, 4, 2.6, 1), kbBase = 30, kbGrowth = 60, kbAngle = 50,
+			label = "Gros hochet", startup = 0.1, active = 0.1, recovery = 0.3,
+			damage = 10, hitbox = box(5.5, 4.5, 3, 1), kbBase = 36, kbGrowth = 78, kbAngle = 50,
 			windup = { Root = { 12, 0, 0, 0, 0.05, 0.25 }, Waist = { 16, 0, 0 }, Neck = { 18, 0, 0 }, RS = { 195, 0, 5 }, RE = { 50, 0, 0 }, RW = { 0, 0, 0 }, LS = { 190, 0, -5 }, LE = { 50, 0, 0 } },
 			strike = { Root = { -16, 0, 0, 0, -0.5, -0.4 }, Waist = { -30, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 75, 0, 0 }, RE = { 0, 0, 0 }, RW = { -30, 0, 0 }, LS = { 75, 0, 10 }, LE = { 10, 0, 0 } },
 			follow = { Root = { -20, 0, 0, 0, -0.6, -0.45 }, Waist = { -34, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 50, 0, 0 }, RE = { 0, 0, 0 }, RW = { -45, 0, 0 }, LS = { 50, 0, 10 }, LE = { 10, 0, 0 } },
@@ -163,15 +163,15 @@ local data = {
 			fx = { "dust" }, text = "GUILI-GUILI !", hitText = "AÏE MES JOUES !",
 		},
 
-		------------------------------------------------------------------ Attaques lourdes (K)
-		-- Petit pied potelé : il lève haut la jambe en se dandinant et tape un grand coup de pied à plat
+		-- Petit pied potelé : il lève la jambe tout droit devant, les bras en moulinet pour ne pas tomber, et la jambe
+		-- claque à plat comme une palme ; il part en arrière sur la lancée, les bras qui pédalent
 		K_neutral = {
 			label = "Petit pied potelé", startup = 0.19, active = 0.1, recovery = 0.3,
-			damage = 11, hitbox = box(5, 3, 3, -0.2), kbBase = 30, kbGrowth = 70, kbAngle = 35,
-			windup = { Root = { 10, 0, -8, 0, -0.1, 0.2 }, Waist = { 12, 0, -6 }, Neck = { 10, 0, 8 }, RS = { 60, 0, 60 }, RE = { 30, 0, 0 }, LS = { 60, 0, -60 }, LE = { 30, 0, 0 }, RH = { 95, 0, 0 }, RK = { -110, 0, 0 }, RA = { 10, 0, 0 } },
-			strike = { Root = { 16, 0, 4, 0, -0.1, 0 }, Waist = { 16, 0, 4 }, Neck = { 14, 0, -4 }, RS = { 40, 0, 70 }, RE = { 20, 0, 0 }, LS = { 40, 0, -70 }, LE = { 20, 0, 0 }, RH = { 95, 0, 0 }, RK = { -5, 0, 0 }, RA = { 25, 0, 0 } },
-			follow = { Root = { 18, 0, 6, 0, -0.1, 0.05 }, Waist = { 18, 0, 6 }, Neck = { 16, 0, -6 }, RS = { 35, 0, 75 }, RE = { 20, 0, 0 }, LS = { 35, 0, -75 }, LE = { 20, 0, 0 }, RH = { 100, 0, 0 }, RK = { 0, 0, 0 }, RA = { 25, 0, 0 } },
-			trail = "rightFoot", hitText = "PATAPON !",
+			damage = 11, hitbox = box(5, 3.5, 3, 0.2), kbBase = 30, kbGrowth = 70, kbAngle = 35,
+			windup = { Root = { 6, 0, -6, 0, -0.2, 0.15 }, Waist = { 8, 0, -8 }, Neck = { 10, 0, 10 }, RS = { 120, 0, 80 }, RE = { 20, 0, 0 }, LS = { 120, 0, -80 }, LE = { 20, 0, 0 }, RH = { 40, 0, 10 }, RK = { -30, 0, 0 }, RA = { 20, 0, 0 } },
+			strike = { Root = { 22, 0, 6, 0, -0.1, 0.1 }, Waist = { 14, 0, 6 }, Neck = { 18, 0, -8 }, RS = { -60, 0, 70 }, RE = { 30, 0, 0 }, LS = { -60, 0, -70 }, LE = { 30, 0, 0 }, RH = { 100, 0, 10 }, RK = { 0, 0, 0 }, RA = { 30, 0, 0 } },
+			follow = { Root = { 30, 0, 8, 0, -0.1, 0.25 }, Waist = { 18, 0, 8 }, Neck = { 22, 0, -10 }, RS = { -80, 0, 60 }, RE = { 60, 0, 0 }, LS = { -40, 0, -80 }, LE = { 20, 0, 0 }, RH = { 104, 0, 12 }, RK = { 0, 0, 0 }, RA = { 30, 0, 0 } },
+			shake = true, trail = "rightFoot", fx = { { "symbols", symbols = { "!", "?" }, count = 2, radius = 1.5, at = "head", color = YELLOW } }, text = "HOU-LÀ !", hitText = "PATAPON !",
 		},
 		-- Gifle de bébé : la grosse main gauche s'ouvre et part en grand arc, tout le corps tourne avec
 		K_side = {
@@ -191,14 +191,15 @@ local data = {
 			follow = { Root = { 12, 0, 0, 0, -1.5, 0.2 }, Waist = { 8, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 45, 0, 65 }, RE = { 20, 0, 0 }, LS = { 45, 0, -65 }, LE = { 20, 0, 0 }, RH = { 80, 0, 15 }, RK = { -10, 0, 0 }, RA = { 10, 0, 0 }, LH = { 80, 0, -15 }, LK = { -10, 0, 0 }, LA = { 10, 0, 0 } },
 			fx = { { "ring", color = DIAPER, radius = 5, at = "feet" }, { "shake", amount = 0.4 }, "dust" }, text = "POUF !", hitText = "BOUM-BOUM !",
 		},
-		-- Porte-moi ! (anti-air) : il tend brusquement les deux bras au ciel en sautillant pour qu'on le prenne
+		-- Porte-moi ! (anti-air) : il sautille sur place genoux repliés, les deux bras tendus au ciel pour qu'on le prenne,
+		-- et c'est son bonnet à oreilles qui cogne tout ce qui passe au-dessus
 		K_up = {
 			label = "Porte-moi !", startup = 0.18, active = 0.12, recovery = 0.3,
-			damage = 12, hitbox = box(5, 5, 0.8, 3.5), kbBase = 34, kbGrowth = 74, kbAngle = 88,
-			windup = { Root = { -4, 0, 0, 0, -0.7, 0 }, Waist = { -12, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 20, 0, 20 }, RE = { 90, 0, 0 }, LS = { 20, 0, -20 }, LE = { 90, 0, 0 } },
-			strike = { Root = { 4, 0, 0, 0, 0.45, 0 }, Waist = { 10, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 175, 0, 15 }, RE = { 5, 0, 0 }, RW = { 0, 0, 0 }, LS = { 175, 0, -15 }, LE = { 5, 0, 0 }, FR = { 0, 0, 0, 0, 0.4, 0 }, FL = { 0, 0, 0, 0, 0.4, 0 } },
-			follow = { Root = { 6, 0, 0, 0, 0.5, 0 }, Waist = { 12, 0, 0 }, Neck = { 34, 0, 0 }, RS = { 178, 0, 22 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 178, 0, -22 }, LE = { 10, 0, 0 }, FR = { 0, 0, 0, 0, 0.45, 0 }, FL = { 0, 0, 0, 0, 0.45, 0 } },
-			trail = "bothHands", text = "PORTE-MOI !", hitText = "HOPLA !",
+			damage = 12, hitbox = box(5, 5, 0.8, 3.5), kbBase = 34, kbGrowth = 74, kbAngle = 88, selfVelocity = Vector2.new(0, 28),
+			windup = { Root = { -4, 0, 0, 0, -0.55, 0 }, Waist = { -10, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 120, 0, 30 }, RE = { 60, 0, 0 }, LS = { 120, 0, -30 }, LE = { 60, 0, 0 } },
+			strike = { Root = { 6, 0, 0, 0, 0.5, 0 }, Waist = { 10, 0, 0 }, Neck = { 40, 0, 0 }, RS = { 178, 0, 12 }, RE = { 5, 0, 0 }, RW = { 0, 0, 0 }, LS = { 178, 0, -12 }, LE = { 5, 0, 0 }, RH = { 70, 0, 10 }, RK = { -110, 0, 0 }, LH = { 70, 0, -10 }, LK = { -110, 0, 0 } },
+			follow = { Root = { 8, 0, 0, 0, 0.55, 0 }, Waist = { 12, 0, 0 }, Neck = { 44, 0, 0 }, RS = { 182, 0, 18 }, RE = { 8, 0, 0 }, RW = { 0, 0, 0 }, LS = { 182, 0, -18 }, LE = { 8, 0, 0 }, RH = { 80, 0, 12 }, RK = { -120, 0, 0 }, LH = { 80, 0, -12 }, LK = { -120, 0, 0 } },
+			trail = "head", fx = { { "symbols", symbols = { "🧸", "♥" }, count = 3, radius = 2, at = "above", color = PINK } }, text = "PORTE-MOI !", hitText = "HOPLA !",
 		},
 		-- Plat ventre : en l'air, il s'étale à plat ventre bras et jambes en étoile sur l'adversaire
 		K_air = {
@@ -211,17 +212,17 @@ local data = {
 		},
 		-- Petit pied gauche : l'autre pied potelé tape à son tour en tapant du talon (suite de K)
 		K_combo2 = {
-			label = "Petit pied gauche", startup = 0.14, active = 0.1, recovery = 0.25,
-			damage = 9, hitbox = box(5, 3, 3, -0.2), kbBase = 28, kbGrowth = 50, kbAngle = 32,
+			label = "Petit pied gauche", startup = 0.09, active = 0.1, recovery = 0.22,
+			damage = 8, hitbox = box(5, 4, 3, 0.5), kbBase = 24, kbGrowth = 40, kbAngle = 32,
 			windup = { Root = { 10, 0, 8, 0, -0.1, 0.15 }, Waist = { 12, 0, 6 }, Neck = { 10, 0, -8 }, RS = { 60, 0, 60 }, RE = { 30, 0, 0 }, LS = { 60, 0, -60 }, LE = { 30, 0, 0 }, LH = { 95, 0, 0 }, LK = { -110, 0, 0 } },
 			strike = { Root = { 16, 0, -4, 0, -0.1, 0 }, Waist = { 16, 0, -4 }, Neck = { 14, 0, 4 }, RS = { 40, 0, 70 }, RE = { 20, 0, 0 }, LS = { 40, 0, -70 }, LE = { 20, 0, 0 }, LH = { 95, 0, 0 }, LK = { -5, 0, 0 }, LA = { 25, 0, 0 } },
 			follow = { Root = { 18, 0, -6, 0, -0.1, 0.05 }, Waist = { 18, 0, -6 }, Neck = { 16, 0, 6 }, RS = { 35, 0, 75 }, RE = { 20, 0, 0 }, LS = { 35, 0, -75 }, LE = { 20, 0, 0 }, LH = { 100, 0, 0 }, LK = { 0, 0, 0 }, LA = { 25, 0, 0 } },
 			trail = "leftFoot", hitText = "PATAPAN !",
 		},
-		-- Coup de pied colère : il saute en tapant des deux pieds en l'air comme un bébé en pleine crise
+		-- K K K K : Coup de pied colère, il saute en tapant des deux pieds en l'air comme un bébé en pleine crise (finition)
 		K_combo3 = {
-			label = "Coup de pied colère", startup = 0.16, active = 0.14, recovery = 0.3,
-			damage = 12, hitbox = box(5, 4, 2.8, 0.5), kbBase = 32, kbGrowth = 80, kbAngle = 40, selfVelocity = Vector2.new(12, 38),
+			label = "Coup de pied colère", startup = 0.1, active = 0.14, recovery = 0.3,
+			damage = 12, hitbox = box(5.5, 4.5, 3, 0.8), kbBase = 36, kbGrowth = 82, kbAngle = 40, selfVelocity = Vector2.new(12, 38),
 			windup = { Root = { -8, 0, 0, 0, -0.65, 0.1 }, Waist = { -14, 0, 0 }, Neck = { -15, 0, 0 }, RS = { 140, 0, 40 }, RE = { 60, 0, 0 }, LS = { 140, 0, -40 }, LE = { 60, 0, 0 } },
 			strike = { Root = { 25, 0, 0 }, Waist = { 14, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 160, 0, 60 }, RE = { 30, 0, 0 }, LS = { 160, 0, -60 }, LE = { 30, 0, 0 }, RH = { 90, 0, 8 }, RK = { 0, 0, 0 }, RA = { 20, 0, 0 }, LH = { 80, 0, -8 }, LK = { -10, 0, 0 }, LA = { 20, 0, 0 } },
 			follow = { Root = { 30, 0, 0 }, Waist = { 16, 0, 0 }, Neck = { 24, 0, 0 }, RS = { 165, 0, 65 }, RE = { 30, 0, 0 }, LS = { 165, 0, -65 }, LE = { 30, 0, 0 }, RH = { 100, 0, 10 }, RK = { 0, 0, 0 }, RA = { 20, 0, 0 }, LH = { 90, 0, -10 }, LK = { -5, 0, 0 }, LA = { 20, 0, 0 } },
@@ -238,8 +239,8 @@ local data = {
 		},
 		-- P puis K : Coup de genou potelé, petit genou qui remonte dans le ventre
 		PK_combo = {
-			label = "Genou potelé", startup = 0.1, active = 0.08, recovery = 0.2,
-			damage = 7, hitbox = box(4, 3, 2.2, 0), kbBase = 22, kbGrowth = 32, kbAngle = 45,
+			label = "Genou potelé", startup = 0.08, active = 0.1, recovery = 0.2,
+			damage = 7, hitbox = box(5, 4, 3, 0.5), kbBase = 22, kbGrowth = 32, kbAngle = 45,
 			windup = { Root = { 4, 0, 0, 0, -0.15, 0.1 }, Waist = { 6, 0, 0 }, RS = { 50, 0, 40 }, RE = { 40, 0, 0 }, LS = { 50, 0, -40 }, LE = { 40, 0, 0 }, RH = { -15, 0, 0 }, RK = { -50, 0, 0 } },
 			strike = { Root = { -10, 0, 0, 0, 0.05, -0.25 }, Waist = { -8, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 20, 0, 50 }, RE = { 50, 0, 0 }, LS = { 20, 0, -50 }, LE = { 50, 0, 0 }, RH = { 100, 0, 0 }, RK = { -120, 0, 0 }, RA = { -20, 0, 0 } },
 			follow = { Root = { -12, 0, 0, 0, 0.08, -0.3 }, Waist = { -10, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 15, 0, 52 }, RE = { 50, 0, 0 }, LS = { 15, 0, -52 }, LE = { 50, 0, 0 }, RH = { 108, 0, 0 }, RK = { -125, 0, 0 }, RA = { -20, 0, 0 } },
@@ -248,11 +249,86 @@ local data = {
 		-- K puis P : Tape-tape, il tape deux fois à deux mains comme sur un tambour
 		KP_combo = {
 			label = "Tape-tape", startup = 0.08, active = 0.14, recovery = 0.2,
-			damage = 4, hits = 2, hitbox = box(4.5, 3.5, 2.4, 0.8), kbBase = 20, kbGrowth = 30, kbAngle = 35,
+			damage = 4, hits = 2, hitbox = box(5, 4, 3, 0.8), kbBase = 20, kbGrowth = 30, kbAngle = 35,
 			windup = { Root = { 6, 0, 0, 0, -0.1, 0.1 }, Waist = { 8, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 150, 0, 15 }, RE = { 60, 0, 0 }, LS = { 150, 0, -15 }, LE = { 60, 0, 0 } },
 			strike = { Root = { -8, 0, 0, 0, -0.25, -0.25 }, Waist = { -14, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 80, 0, 10 }, RE = { 20, 0, 0 }, LS = { 80, 0, -10 }, LE = { 20, 0, 0 } },
 			follow = { Root = { -8, 0, 0, 0, -0.25, -0.25 }, Waist = { -10, 0, 0 }, Neck = { -4, 0, 0 }, RS = { 120, 0, 10 }, RE = { 50, 0, 0 }, LS = { 120, 0, -10 }, LE = { 50, 0, 0 } },
 			wobble = true, trail = "bothHands", hitText = "TAPE TAPE !",
+		},
+
+		-- P P P : Secouage de hochet, il agite le hochet sous le nez d'en face, grelots en folie, deux coups
+		P_grelot = {
+			label = "Secouage de hochet", startup = 0.06, active = 0.14, recovery = 0.18,
+			damage = 3, hits = 2, hitbox = box(5, 4, 3, 1), kbBase = 18, kbGrowth = 22, kbAngle = 40,
+			windup = { Root = { 2, 0, 0, 0, -0.15, 0.1 }, Waist = { 4, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 110, 0, 20 }, RE = { 90, 0, 0 }, RW = { 20, 0, 0 }, LS = { 40, 0, -50 }, LE = { 40, 0, 0 } },
+			strike = { Root = { -8, 0, 0, 0, -0.25, -0.3 }, Waist = { -8, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 100, 0, 0 }, RE = { 30, 0, 0 }, RW = { -30, 0, 0 }, LS = { 40, 0, -50 }, LE = { 40, 0, 0 } },
+			follow = { Root = { -8, 0, 0, 0, -0.25, -0.3 }, Waist = { -8, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 100, 0, 0 }, RE = { 50, 0, 0 }, RW = { 20, 0, 0 }, LS = { 40, 0, -50 }, LE = { 40, 0, 0 } },
+			shake = true, wobble = true, trail = "prop", fx = { { "symbols", symbols = { "🔔", "♪" }, count = 4, radius = 2.5, at = "front", color = YELLOW } }, text = "AREUH-REUH !", hitText = "GLING-GLING !",
+		},
+		-- → P P : Couche rebond, il retombe sur les fesses et rebondit sur sa couche comme sur un ballon, couche en avant
+		P_couche2 = {
+			label = "Couche rebond", startup = 0.08, active = 0.12, recovery = 0.2,
+			damage = 7, hitbox = box(5, 4, 3, 0.6), kbBase = 20, kbGrowth = 28, kbAngle = 45, selfVelocity = Vector2.new(20, 22),
+			windup = { Root = { 8, 0, 0, 0, -0.9, 0 }, Waist = { 6, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 60, 0, 50 }, RE = { 40, 0, 0 }, LS = { 60, 0, -50 }, LE = { 40, 0, 0 }, RH = { 80, 0, 15 }, RK = { -40, 0, 0 }, LH = { 80, 0, -15 }, LK = { -40, 0, 0 } },
+			strike = { Root = { 30, 0, 0, 0, -0.2, -0.3 }, Waist = { 10, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 140, 0, 50 }, RE = { 20, 0, 0 }, LS = { 140, 0, -50 }, LE = { 20, 0, 0 }, RH = { 90, 0, 20 }, RK = { -20, 0, 0 }, LH = { 90, 0, -20 }, LK = { -20, 0, 0 } },
+			follow = { Root = { 34, 0, 0, 0, -0.15, -0.35 }, Waist = { 12, 0, 0 }, Neck = { -12, 0, 0 }, RS = { 150, 0, 55 }, RE = { 20, 0, 0 }, LS = { 150, 0, -55 }, LE = { 20, 0, 0 }, RH = { 95, 0, 22 }, RK = { -15, 0, 0 }, LH = { 95, 0, -22 }, LK = { -15, 0, 0 } },
+			trail = "body", fx = { { "burst", color = DIAPER, size = 3, at = "feet" } }, text = "BOING !", hitText = "PLOF !",
+		},
+		-- → P P P : Prout propulseur, un pet de bébé le propulse couche en avant jusqu'au bout de l'arène (finition)
+		P_couche3 = {
+			label = "Prout propulseur", startup = 0.1, active = 0.16, recovery = 0.32,
+			damage = 11, hitbox = box(5.5, 4.5, 3.2, 0.6), kbBase = 36, kbGrowth = 76, kbAngle = 22, selfVelocity = Vector2.new(48, 6),
+			windup = { Root = { -10, 40, 0, 0, -0.4, 0.1 }, Waist = { -8, 10, 0 }, Neck = { 20, -30, 0 }, RS = { 40, 0, 40 }, RE = { 60, 0, 0 }, LS = { 40, 0, -40 }, LE = { 60, 0, 0 } },
+			strike = { Root = { -24, 172, 0, 0, -0.5, -0.1 }, Waist = { -8, 0, 0 }, Neck = { 28, 0, 0 }, RS = { 80, 0, 70 }, RE = { 20, 0, 0 }, LS = { 80, 0, -70 }, LE = { 20, 0, 0 } },
+			follow = { Root = { -28, 176, 0, 0, -0.55, -0.15 }, Waist = { -10, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 90, 0, 75 }, RE = { 20, 0, 0 }, LS = { 90, 0, -75 }, LE = { 20, 0, 0 } },
+			shake = true, trail = "body", windupFx = { { "symbols", symbols = { "😳" }, count = 1, radius = 1.5, color = CHEEK } }, fx = { { "burst", color = Color3.fromRGB(190, 220, 120), size = 4, at = "root" }, { "particles", tex = "smoke", color = Color3.fromRGB(190, 220, 120), dir = "front", at = "root", time = 0.35, speed = 20, size = 1 } }, text = "PROUUUUT !", hitText = "ASPHYXIÉ !",
+		},
+		-- ↓ P P : Galop à quatre pattes, il galope tête baissée et donne deux coups de tête dans les tibias
+		P_galop = {
+			label = "Galop à quatre pattes", startup = 0.07, active = 0.16, recovery = 0.2,
+			damage = 4, hits = 2, hitbox = box(5, 4, 3, 0.5), kbBase = 18, kbGrowth = 24, kbAngle = 45, selfVelocity = Vector2.new(28, 0),
+			windup = { Root = { -50, 0, 0, 0, -1.0, 0 }, Waist = { -20, 0, 0 }, Neck = { 40, 0, 0 }, RS = { 100, 0, 15 }, RE = { 10, 0, 0 }, LS = { 60, 0, -15 }, LE = { 20, 0, 0 }, RH = { 50, 0, 0 }, RK = { -80, 0, 0 }, LH = { 80, 0, 0 }, LK = { -110, 0, 0 } },
+			strike = { Root = { -62, 0, 0, 0, -1.1, -0.3 }, Waist = { -10, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 60, 0, 15 }, RE = { 10, 0, 0 }, LS = { 110, 0, -15 }, LE = { 10, 0, 0 }, RH = { 80, 0, 0 }, RK = { -110, 0, 0 }, LH = { 50, 0, 0 }, LK = { -80, 0, 0 } },
+			follow = { Root = { -62, 0, 0, 0, -1.1, -0.35 }, Waist = { -10, 0, 0 }, Neck = { -24, 0, 0 }, RS = { 110, 0, 15 }, RE = { 10, 0, 0 }, LS = { 60, 0, -15 }, LE = { 10, 0, 0 }, RH = { 50, 0, 0 }, RK = { -80, 0, 0 }, LH = { 80, 0, 0 }, LK = { -110, 0, 0 } },
+			wobble = true, trail = "head", fx = { "dust" }, text = "DADA !", hitText = "TONK-TONK !",
+		},
+		-- ↓ P P P : Gros bisou baveux, il se redresse d'un bond, attrape la tête d'en face et lui colle un bisou qui dégouline (finition, trempe)
+		P_bisou = {
+			label = "Gros bisou baveux", startup = 0.1, active = 0.12, recovery = 0.34,
+			damage = 10, hitbox = box(5.5, 4.5, 3, 1), kbBase = 34, kbGrowth = 70, kbAngle = 55,
+			status = { name = "wet", duration = 1.5 },
+			windup = { Root = { -20, 0, 0, 0, -0.7, 0.1 }, Waist = { -16, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 70, 0, 40 }, RE = { 60, 0, 0 }, LS = { 70, 0, -40 }, LE = { 60, 0, 0 } },
+			strike = { Root = { -12, 0, 0, 0, -0.15, -0.4 }, Waist = { -10, 0, 0 }, Neck = { -14, 0, 0 }, RS = { 95, 0, -10 }, RE = { 60, 0, 0 }, LS = { 95, 0, 10 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+			follow = { Root = { 6, 0, 0, 0, -0.2, 0 }, Waist = { 8, 0, 0 }, Neck = { 20, 0, 10 }, RS = { 60, 0, 40 }, RE = { 60, 0, 0 }, LS = { 60, 0, -40 }, LE = { 60, 0, 0 } },
+			trail = "head", fx = { { "symbols", symbols = { "💋", "💦", "♥" }, count = 5, radius = 3, at = "front", color = PINK }, { "burst", color = MILK, size = 3, at = "front" } }, text = "SMACK !", hitText = "BEURK, DE LA BAVE !",
+		},
+		-- K K K : Trépignement, il tape des deux pieds par terre de rage, trois coups de talon dans les tibias
+		K_trepigne = {
+			label = "Trépignement", startup = 0.06, active = 0.2, recovery = 0.2,
+			damage = 3, hits = 3, hitbox = box(5, 4, 3, 0.5), kbBase = 18, kbGrowth = 24, kbAngle = 50,
+			windup = { Root = { 4, 0, 0, 0, -0.1, 0.1 }, Waist = { 6, 0, 0 }, Neck = { 15, 0, 0 }, RS = { 20, 0, 20 }, RE = { 120, 0, 0 }, LS = { 20, 0, -20 }, LE = { 120, 0, 0 }, RH = { 60, 0, 0 }, RK = { -90, 0, 0 } },
+			strike = { Root = { -6, 0, 0, 0, -0.2, -0.2 }, Waist = { -6, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 10, 0, 25 }, RE = { 125, 0, 0 }, LS = { 10, 0, -25 }, LE = { 125, 0, 0 }, RH = { 60, 0, 0 }, RK = { -5, 0, 0 }, RA = { -20, 0, 0 } },
+			follow = { Root = { -6, 0, 0, 0, -0.2, -0.2 }, Waist = { -6, 0, 0 }, Neck = { 22, 0, 0 }, RS = { 10, 0, 25 }, RE = { 125, 0, 0 }, LS = { 10, 0, -25 }, LE = { 125, 0, 0 }, LH = { 60, 0, 0 }, LK = { -5, 0, 0 }, LA = { -20, 0, 0 } },
+			shake = true, wobble = true, trail = "bothFeet", fx = { { "shake", amount = 0.25 }, "dust" }, text = "NAN NAN NAN !", hitText = "TAP-TAP-TAP !",
+		},
+		-- → K K : Gifle retour, la grosse main revient de l'autre côté, en revers, l'autre joue y passe
+		K_side2 = {
+			label = "Gifle retour", startup = 0.08, active = 0.1, recovery = 0.2,
+			damage = 8, hitbox = box(5.5, 4, 3, 1), kbBase = 22, kbGrowth = 32, kbAngle = 30,
+			windup = { Root = { -6, -40, 0, 0, -0.3, -0.2 }, Waist = { -8, -40, 0 }, Neck = { -4, 30, 0 }, RS = { 40, 0, 40 }, RE = { 50, 0, 0 }, LS = { 95, 0, 30 }, LE = { 10, 0, 0 }, LW = { 0, 0, -30 } },
+			strike = { Root = { -10, 28, 0, 0, -0.35, -0.4 }, Waist = { -12, 34, 0 }, Neck = { -6, -22, 0 }, RS = { 20, 0, 50 }, RE = { 40, 0, 0 }, LS = { 92, 0, -40 }, LE = { 5, 0, 0 }, LW = { 0, 0, 40 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+			follow = { Root = { -12, 38, 0, 0, -0.38, -0.45 }, Waist = { -14, 44, 0 }, Neck = { -8, -28, 0 }, RS = { 15, 0, 55 }, RE = { 40, 0, 0 }, LS = { 88, 0, -60 }, LE = { 10, 0, 0 }, LW = { 0, 0, 40 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+			trail = "leftHand", text = "ET NA !", hitText = "PIF !",
+		},
+		-- → K K K : Claque-oreilles, les deux grosses mains claquent en même temps sur les oreilles d'en face (finition)
+		K_side3 = {
+			label = "Claque-oreilles", startup = 0.1, active = 0.1, recovery = 0.34,
+			damage = 12, hitbox = box(6, 4.5, 3, 1.2), kbBase = 36, kbGrowth = 80, kbAngle = 28,
+			status = { name = "stunned", duration = 0.4 },
+			windup = { Root = { 4, 0, 0, 0, -0.15, 0.15 }, Waist = { 6, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 90, 0, 90 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, -90 }, LE = { 10, 0, 0 } },
+			strike = { Root = { -12, 0, 0, 0, -0.3, -0.4 }, Waist = { -14, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 95, 0, 10 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 95, 0, -10 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+			follow = { Root = { -14, 0, 0, 0, -0.32, -0.45 }, Waist = { -16, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 96, 0, 4 }, RE = { 12, 0, 0 }, RW = { 0, 0, 0 }, LS = { 96, 0, -4 }, LE = { 12, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.55 } },
+			trail = "bothHands", fx = { { "ring", color = YELLOW, radius = 3.5, at = "front" }, { "symbols", symbols = { "💫", "★" }, count = 4, radius = 2, at = "front", color = YELLOW } }, text = "CLAP !", hitText = "BLAM-BLAM !",
 		},
 
 		------------------------------------------------------------------ En l'air avec une flèche (P / K)
@@ -366,15 +442,17 @@ local data = {
 			follow = { Root = { -80, 0, 0 }, Waist = { -12, 0, 0 }, Neck = { 10, 0, 20 }, RS = { 120, 0, 70 }, RE = { 30, 0, 0 }, LS = { 120, 0, -70 }, LE = { 30, 0, 0 }, RH = { -12, 0, 18 }, RK = { -15, 0, 0 }, LH = { -12, 0, -18 }, LK = { -15, 0, 0 } },
 			trail = "body", fx = { { "shake", amount = 0.5 }, { "symbols", symbols = { "Z", "z", "💤" }, count = 4, radius = 2, color = Color3.fromRGB(170, 200, 255) } }, text = "DODO !", hitText = "ZZZ-BAM !",
 		},
-		-- Biberon (esquive puis S) : il s'assoit, tète un biberon en fermant les yeux et se soigne (vulnérable)
+		-- Biberon (esquive puis S) : il sort son biberon, l'abat sur le crâne d'en face comme un gourdin… puis s'assoit
+		-- et le tète les yeux fermés pour se soigner (vulnérable pendant la tétée)
 		S_dodge = {
-			label = "Biberon", energyCost = 25, startup = 0.15, active = 0, recovery = 0.8,
-			hitbox = box(6, 4, 2.5, 0.5), kbBase = 30, kbGrowth = 55, kbAngle = 35,
-			damage = 9, selfEffect = { heal = 6 },
-			windup = { Root = { -4, 0, 0, 0, -0.4, 0.1 }, Neck = { 10, 0, 0 }, RS = { 110, 0, -15 }, RE = { 110, 0, 0 }, RW = { -80, 0, 0 }, LS = { 100, 0, 10 }, LE = { 110, 0, 0 } },
-			strike = { Root = { -6, 0, 0, 0, -0.5, 0.15 }, Waist = { 10, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 140, 0, -15 }, RE = { 120, 0, 0 }, RW = { -110, 0, 0 }, LS = { 130, 0, 15 }, LE = { 120, 0, 0 } },
+			label = "Biberon", energyCost = 25, startup = 0.14, active = 0.1, recovery = 0.75,
+			damage = 9, hitbox = box(5.5, 4.5, 3, 1), kbBase = 30, kbGrowth = 55, kbAngle = 35,
+			selfEffect = { heal = 6 },
+			windup = { Root = { 6, 0, 0, 0, -0.1, 0.15 }, Waist = { 10, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 190, 0, 15 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -40 }, LE = { 60, 0, 0 } },
+			strike = { Root = { -14, 0, 0, 0, -0.35, -0.4 }, Waist = { -18, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 80, 0, 5 }, RE = { 0, 0, 0 }, RW = { -30, 0, 0 }, LS = { 30, 0, -40 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
 			follow = { Root = { -6, 0, 0, 0, -0.5, 0.15 }, Waist = { 12, 0, 0 }, Neck = { 36, 0, 0 }, RS = { 145, 0, -15 }, RE = { 118, 0, 0 }, RW = { -115, 0, 0 }, LS = { 135, 0, 15 }, LE = { 118, 0, 0 } },
-			hold = 0.4, prop = "biberon", hideProp = "hochet", fx = { { "symbols", symbols = { "🍼", "♥" }, count = 3, radius = 2, color = MILK } }, text = "GLOU GLOU",
+			hold = 0.4, prop = "biberon", hideProp = "hochet", trail = "prop",
+			fx = { { "burst", color = MILK, size = 2.5, at = "front" }, { "symbols", symbols = { "🍼", "♥" }, count = 3, radius = 2, color = MILK } }, text = "GLOU GLOU", hitText = "BIBERONNÉ !",
 		},
 		-- Cri supersonique (S maintenu) : il retient sa respiration, devient tout rouge… et lâche une onde de cri qui traverse tout
 		S_hold = {
@@ -446,15 +524,21 @@ local data = {
 			fx = { { "screen", color = TEARS, alpha = 0.35 }, { "puddle", color = TEARS, width = 10, time = 2 }, { "particles", tex = "smoke", color = TEARS, dir = "front", at = "head", time = 0.8, speed = 18, size = 1, rate = 90 } },
 			text = "BOUHOUHOUUU !", hitText = "PLOUF !",
 		},
-		-- Super ↑ : il pique une colère en tournoyant et projette ses jouets vers le ciel
+		-- Super ↑ : il aspire un grand coup, les joues gonflées à bloc… et crache sa tétine vers le ciel comme une fusée ;
+		-- tout ce qui passe au-dessus part en orbite avec elle
 		SUPER_up = {
-			label = "Lancer de jouets !", superCost = 100, startup = 0.25, active = 0.45, recovery = 0.55,
-			damage = 22, hitbox = box(9, 10, 0, 3), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
-			windup = { Root = { -4.8, 0, 0, 0, -0.7, 0 }, Waist = { -14.4, 0, 0 }, Neck = { -12, 0, 0 }, RS = { 24, 0, 24 }, RE = { 108, 0, 0 }, LS = { 24, 0, -24 }, LE = { 108, 0, 0 } },
-			strike = { Root = { 4.8, 0, 0, 0, 0.45, 0 }, Waist = { 12, 0, 0 }, Neck = { 36, 0, 0 }, RS = { 210, 0, 18 }, RE = { 6, 0, 0 }, RW = { 0, 0, 0 }, LS = { 210, 0, -18 }, LE = { 6, 0, 0 }, FR = { 0, 0, 0, 0, 0.4, 0 }, FL = { 0, 0, 0, 0, 0.4, 0 } },
-			follow = { Root = { 7.2, 0, 0, 0, 0.5, 0 }, Waist = { 14.4, 0, 0 }, Neck = { 40.8, 0, 0 }, RS = { 213.6, 0, 26.4 }, RE = { 12, 0, 0 }, RW = { 0, 0, 0 }, LS = { 213.6, 0, -26.4 }, LE = { 12, 0, 0 }, FR = { 0, 0, 0, 0, 0.45, 0 }, FL = { 0, 0, 0, 0, 0.45, 0 } },
-			spin = { axis = "y", degrees = 720 }, selfVelocity = Vector2.new(0, 70),
-			windupFx = { "super" }, trail = "prop", fx = { { "toss", shape = "ball", color = Color3.fromRGB(150, 200, 255), count = 8, speed = 12, lift = 45 }, { "symbols", symbols = { "😭", "🧸", "🍼" }, count = 6 } }, text = "OUIIIN !", hitText = "BOING !",
+			label = "Tétine-fusée !", kind = "projectile", superCost = 100, startup = 0.35, active = 0, recovery = 0.6,
+			damage = 22, kbBase = 46, kbGrowth = 95, kbAngle = 88,
+			projectile = { speed = 80, angle = 90, gravity = 15, lifetime = 0.9, size = 3.2, color = PINK, pierce = true, from = "above",
+				visual = { shape = "ball", size = 2.4, color = PINK, neon = true, spin = 6,
+					parts = { { "block", Vector3.new(2.6, 0.3, 2.6), Vector3.new(0, -1.1, 0), YELLOW }, { "ball", Vector3.new(1.2, 1.2, 1.2), Vector3.new(0, -1.9, 0), PINK } } } },
+			windup = { Root = { 8, 0, 0, 0, -0.35, 0.1 }, Waist = { 14, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 30, 0, 20 }, RE = { 120, 0, 0 }, LS = { 30, 0, -20 }, LE = { 120, 0, 0 } },
+			strike = { Root = { 10, 0, 0, 0, 0.3, 0 }, Waist = { 20, 0, 0 }, Neck = { 55, 0, 0 }, RS = { -40, 0, 50 }, RE = { 10, 0, 0 }, LS = { -40, 0, -50 }, LE = { 10, 0, 0 }, FR = { 0, 0, 0, 0, 0.3, 0 }, FL = { 0, 0, 0, 0, 0.3, 0 } },
+			follow = { Root = { 6, 0, 0, 0, 0.15, 0 }, Waist = { 14, 0, 0 }, Neck = { 50, 0, 0 }, RS = { 120, 0, -30 }, RE = { 130, 0, 0 }, LS = { 120, 0, 30 }, LE = { 130, 0, 0 } },
+			hold = 0.3, shake = true,
+			windupFx = { "super", { "symbols", symbols = { "😤", "💨" }, count = 3, radius = 2, color = CHEEK } },
+			fx = { { "pillar", color = PINK, height = 24, width = 3, at = "root" }, { "burst", color = YELLOW, size = 4, at = "head" }, { "particles", tex = "fire", color = PINK, dir = "up", at = "head", time = 0.5, speed = 20, size = 1 }, { "shake", amount = 0.4 } },
+			text = "PTHOUU !", hitText = "TÉTINE EN ORBITE !",
 		},
 		-- « Encore ! » : il attrape l'adversaire comme un jouet et le fait tourner autour de lui à toute vitesse
 		SUPER_down = {
@@ -692,7 +776,9 @@ data.respawn = {
 }
 
 -- Arbre d'enchaînements : après le coup de gauche, le bouton (avec sa direction) lance le coup de droite.
--- Les chaînes finissent sur S : Caprice tape-sol (fait décoller) ou Petit cri (éjecte à l'horizontale).
+-- P P P P : hochet, retour, secouage, gros hochet · → P P P : coup de couche, couche rebond, prout propulseur
+-- ↓ P P P : roulade, galop, gros bisou baveux · K K K K : pied, pied gauche, trépignement, coup de pied colère
+-- → K K K : gifle, gifle retour, claque-oreilles. Les S finissent : Caprice tape-sol (décolle) ou Petit cri (horizontal).
 local function airAfterP()
 	return { K = "K_air", fwd_K = "K_air_side", up_K = "K_air_up", down_K = "K_air_down", down_S = "S_air_down", up_S = "S_up", S = "S_air" }
 end
@@ -701,25 +787,31 @@ local function airAfterK()
 end
 
 local LINKS = {
-	-- hochet maladroit, hochet retour, gros hochet
-	P_neutral = { P = "P_combo2", K = "PK_combo", fwd_P = "P_side", S = "S_finish_cri" },
-	P_combo2 = { P = "P_combo3", K = "K_combo2", up_K = "K_up", S = "S_finish_caprice" },
-	P_combo3 = { K = "K_combo3", S = "S_finish_cri" },
+	-- P P P P : hochet maladroit, hochet retour, secouage de hochet, gros hochet (finition)
+	P_neutral = { P = "P_combo2", K = "PK_combo", S = "S_finish_cri" },
+	P_combo2 = { P = "P_grelot", K = "K_combo2", up_K = "K_up", S = "S_finish_caprice" },
+	P_grelot = { P = "P_combo3", K = "K_trepigne", S = "S_finish_cri" },
 	PK_combo = { P = "KP_combo", K = "K_combo3", S = "S_finish_caprice" },
-	-- petit pied potelé, petit pied gauche, coup de pied colère
+	KP_combo = { P = "P_combo3", K = "K_trepigne", S = "S_finish_cri" },
+	-- K K K K : petit pied potelé, petit pied gauche, trépignement, coup de pied colère (finition)
 	K_neutral = { K = "K_combo2", P = "KP_combo", S = "S_finish_cri" },
-	K_combo2 = { K = "K_combo3", P = "P_combo3", S = "S_finish_caprice" },
-	K_combo3 = { K = "K_air_side", P = "P_air_side", S = "S_air" }, -- il décolle : la suite se joue en l'air
-	KP_combo = { P = "P_combo3", K = "K_combo3", S = "S_finish_cri" },
-	-- avec une flèche
-	P_side = { P = "P_combo2", K = "K_side", S = "S_finish_cri" },
-	P_down = { P = "P_up", K = "K_up", S = "S_finish_caprice" },
+	K_combo2 = { K = "K_trepigne", P = "P_grelot", S = "S_finish_caprice" },
+	K_trepigne = { K = "K_combo3", P = "P_bisou", S = "S_finish_cri" },
+	-- → P P P : coup de couche, couche rebond, prout propulseur (finition à l'horizontale)
+	P_side = { P = "P_couche2", K = "K_side", S = "S_finish_cri" },
+	P_couche2 = { P = "P_couche3", K = "K_side2", S = "S_finish_caprice" },
+	-- ↓ P P P : roulade à quatre pattes, galop, gros bisou baveux (finition)
+	P_down = { P = "P_galop", K = "K_up", S = "S_finish_caprice" },
+	P_galop = { P = "P_bisou", K = "K_trepigne", S = "S_finish_cri" },
+	-- → K K K : gifle de bébé, gifle retour, claque-oreilles (finition)
+	K_side = { K = "K_side2", P = "KP_combo", S = "S_finish_cri" },
+	K_side2 = { K = "K_side3", P = "P_grelot", S = "S_finish_caprice" },
+	-- autres départs
 	P_up = { K = "K_up", S = "S_finish_caprice" },
-	K_side = { P = "KP_combo", S = "S_finish_cri" },
 	K_down = { P = "P_up", K = "K_up", S = "S_finish_caprice" },
 	K_up = { S = "S_finish_caprice" },
-	P_dash = { P = "P_combo3", K = "K_side", S = "S_finish_cri" },
-	K_dash = { P = "P_up", K = "K_up", S = "S_finish_caprice" },
+	P_dash = { P = "P_grelot", K = "K_side", S = "S_finish_cri" },
+	K_dash = { P = "P_galop", K = "K_up", S = "S_finish_caprice" },
 	-- en l'air ; les smashs ↓ sont des finitions sans suite
 	P_air = airAfterP(),
 	P_air_side = airAfterP(),

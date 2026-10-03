@@ -182,7 +182,7 @@ local data = {
 		-- P P : Pincement de joue, elle attrape la joue de l'adversaire et la tortille
 		P_combo2 = {
 			label = "Pincement de joue", startup = 0.07, active = 0.1, recovery = 0.16,
-			damage = 5, hitbox = box(4, 3, 2.4, 1), kbBase = 16, kbGrowth = 20, kbAngle = 35,
+			damage = 5, hitbox = box(5, 4, 2.6, 0.8), kbBase = 16, kbGrowth = 20, kbAngle = 35,
 			windup = { Root = { -4, -10, 0, 0, -0.1, 0.1 }, Waist = { -12, -12, 0 }, Neck = { 10, 10, 0 }, RS = { 70, 0, 20 }, RE = { 80, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -10 }, LE = { 40, 0, 0 } },
 			strike = { Root = { -10, 10, 0, 0, -0.15, -0.25 }, Waist = { -16, 12, 0 }, Neck = { 16, -8, 8 }, RS = { 100, 0, -5 }, RE = { 10, 0, 0 }, RW = { 0, 0, 35 }, LS = { 15, 0, -12 }, LE = { 40, 0, 0 } },
 			follow = { Root = { -10, 12, 0, 0, -0.15, -0.28 }, Waist = { -16, 14, 0 }, Neck = { 16, -8, -8 }, RS = { 98, 0, -2 }, RE = { 12, 0, 0 }, RW = { 0, 0, -35 }, LS = { 15, 0, -12 }, LE = { 40, 0, 0 } },
@@ -190,7 +190,7 @@ local data = {
 		},
 		-- P P P : Le cabas du marché, sac levé bien haut puis abattu sur le crâne
 		P_combo3 = {
-			label = "Le cabas du marché", startup = 0.14, active = 0.1, recovery = 0.3,
+			label = "Le cabas du marché", startup = 0.1, active = 0.1, recovery = 0.3,
 			damage = 9, hitbox = box(5, 4, 2.5, 1), kbBase = 30, kbGrowth = 60, kbAngle = 50,
 			windup = { Root = { 4, -10, 0, 0, -0.05, 0.2 }, Waist = { 4, -12, 0 }, Neck = { 22, 0, 0 }, RS = { 178, 0, 20 }, RE = { 40, 0, 0 }, LS = { 25, 0, -15 }, LE = { 40, 0, 0 } },
 			strike = { Root = { -16, 10, 0, 0, -0.45, -0.35 }, Waist = { -30, 10, 0 }, Neck = { 30, 0, 0 }, RS = { 70, 0, 5 }, RE = { 0, 0, 0 }, LS = { 30, 0, -20 }, LE = { 30, 0, 0 } },
@@ -249,21 +249,21 @@ local data = {
 			follow = { Root = { 8, 12, 0 }, Waist = { -4, 16, 0 }, Neck = { 12, -12, 0 }, RS = { 88, 0, 8 }, RE = { 10, 0, 0 }, RW = { -10, 0, 0 }, LS = { 18, 0, -48 }, LE = { 40, 0, 0 }, RH = { 35, 0, 0 }, RK = { -65, 0, 0 }, LH = { 55, 0, 0 }, LK = { -95, 0, 0 } },
 			text = "CLAC CLAC !", hitText = "CROC !",
 		},
-		-- Glissade en charentaises (dash puis K) : elle glisse sur le parquet ciré, les deux chaussons devant
+		-- Charge à la canne (dash puis K) : canne calée sous le bras comme une lance de tournoi, elle trottine droit devant en tremblotant
 		K_dash = {
-			label = "Glissade en charentaises", startup = 0.1, active = 0.25, recovery = 0.32,
-			damage = 11, hitbox = box(6, 2, 3, -1.5), kbBase = 30, kbGrowth = 62, kbAngle = 40, selfVelocity = Vector2.new(48, 0),
-			windup = { Root = { -8, 0, 0, 0, -0.5, 0 }, Waist = { -16, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 50, 0, 45 }, RE = { 40, 0, 0 }, LS = { 50, 0, -45 }, LE = { 40, 0, 0 } },
-			strike = { Root = { 40, 0, 0, 0, -1.4, 0 }, Waist = { -25, 0, 0 }, Neck = { -15, 0, 0 }, RS = { 130, 0, 55 }, RE = { 20, 0, 0 }, LS = { 130, 0, -55 }, LE = { 20, 0, 0 }, RH = { 80, 0, 0 }, RK = { -5, 0, 0 }, RA = { 15, 0, 0 }, LH = { 72, 0, 0 }, LK = { -15, 0, 0 } },
-			follow = { Root = { 44, 0, 3, 0, -1.45, 0 }, Waist = { -28, 0, 0 }, Neck = { -18, 0, 0 }, RS = { 140, 0, 62 }, RE = { 25, 0, 0 }, LS = { 135, 0, -62 }, LE = { 25, 0, 0 }, RH = { 84, 0, 0 }, RK = { 0, 0, 0 }, RA = { 20, 0, 0 }, LH = { 76, 0, 0 }, LK = { -10, 0, 0 } },
-			trail = "bothFeet", fx = { { "particles", tex = "spark", color = WHITE, dir = "up", at = "feet", time = 0.3, speed = 6 } }, text = "OUPSIE !", hitText = "SCHLIIIP !",
+			label = "Charge à la canne", startup = 0.1, active = 0.25, recovery = 0.32,
+			damage = 11, hitbox = box(7, 3, 4, 0.3), kbBase = 30, kbGrowth = 62, kbAngle = 30, selfVelocity = Vector2.new(48, 0),
+			windup = { Root = { -8, 20, 0, 0, -0.25, 0.1 }, Waist = { -16, 20, 0 }, Neck = { 16, -16, 0 }, RS = { 30, 0, 30 }, RE = { 60, 0, 0 }, LS = { 40, 0, -20 }, LE = { 100, 0, 0 }, LW = { 0, 0, 0 } },
+			strike = { Root = { -22, 25, 0, 0, -0.35, -0.3 }, Waist = { -20, 28, 0 }, Neck = { 24, -24, 0 }, RS = { -30, 0, 35 }, RE = { 30, 0, 0 }, LS = { 92, 0, 2 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 } },
+			follow = { Root = { -24, 28, 0, 0, -0.38, -0.35 }, Waist = { -22, 30, 0 }, Neck = { 26, -26, 0 }, RS = { -35, 0, 38 }, RE = { 30, 0, 0 }, LS = { 95, 0, 0 }, LE = { 0, 0, 0 }, LW = { -8, 0, 0 } },
+			wobble = true, trail = "leftHand", fx = { { "particles", tex = "smoke", color = Color3.fromRGB(220, 210, 190), dir = "up", at = "feet", time = 0.35, speed = 6 } }, text = "TOURNOI !", hitText = "EMBROCHÉE !",
 		},
 
 		-- Suites d'enchaînement : K K, K K K
 		-- K K : Revers de canne, elle ramène la canne de droite à gauche à hauteur des côtes
 		K_combo2 = {
-			label = "Revers de canne", startup = 0.14, active = 0.1, recovery = 0.26,
-			damage = 9, hitbox = box(5.5, 3, 3, 0.3), kbBase = 26, kbGrowth = 45, kbAngle = 30,
+			label = "Revers de canne", startup = 0.1, active = 0.1, recovery = 0.26,
+			damage = 9, hitbox = box(5.5, 3.5, 3, 0.5), kbBase = 26, kbGrowth = 45, kbAngle = 30,
 			windup = { Root = { -8, -30, 0, 0, -0.2, 0.1 }, Waist = { -16, -32, 0 }, Neck = { 14, 25, 0 }, RS = { 15, 0, 30 }, RE = { 60, 0, 0 }, LS = { 80, 0, 45 }, LE = { 30, 0, 0 }, LW = { 0, 0, 0 } },
 			strike = { Root = { -10, 18, 0, 0, -0.25, -0.2 }, Waist = { -16, 26, 0 }, Neck = { 14, -15, 0 }, RS = { 15, 0, 32 }, RE = { 60, 0, 0 }, LS = { 90, 0, -55 }, LE = { 5, 0, 0 }, LW = { 0, 0, 0 } },
 			follow = { Root = { -10, 26, 0, 0, -0.25, -0.22 }, Waist = { -16, 36, 0 }, Neck = { 14, -22, 0 }, RS = { 15, 0, 34 }, RE = { 60, 0, 0 }, LS = { 85, 0, -80 }, LE = { 10, 0, 0 }, LW = { -10, 0, 0 } },
@@ -271,7 +271,7 @@ local data = {
 		},
 		-- K K K : Coup de golf, la canne part du sol et remonte comme un swing (fait décoller)
 		K_combo3 = {
-			label = "Coup de golf", startup = 0.18, active = 0.12, recovery = 0.34,
+			label = "Coup de golf", startup = 0.1, active = 0.12, recovery = 0.34,
 			damage = 12, hitbox = box(5, 4, 2.5, 0.5), kbBase = 34, kbGrowth = 80, kbAngle = 70,
 			windup = { Root = { -12, 30, 0, 0, -0.45, 0.15 }, Waist = { -30, 30, 0 }, Neck = { 30, -25, 0 }, RS = { 20, 0, -20 }, RE = { 40, 0, 0 }, LS = { 10, 0, 40 }, LE = { 5, 0, 0 }, LW = { 0, 0, 0 } },
 			strike = { Root = { 0, -15, 0, 0, -0.2, -0.2 }, Waist = { -6, -20, 0 }, Neck = { 30, 15, 0 }, RS = { 30, 0, 20 }, RE = { 50, 0, 0 }, LS = { 150, 0, -20 }, LE = { 5, 0, 0 }, LW = { 0, 0, 0 } },
@@ -281,7 +281,7 @@ local data = {
 		-- P puis K : Coup de pantoufle au tibia, petit coup sec et sournois
 		PK_combo = {
 			label = "Pantoufle au tibia", startup = 0.1, active = 0.08, recovery = 0.2,
-			damage = 7, hitbox = box(4.5, 2, 2.8, -1.6), kbBase = 22, kbGrowth = 30, kbAngle = 35,
+			damage = 7, hitbox = box(5, 3.5, 2.8, -0.6), kbBase = 22, kbGrowth = 30, kbAngle = 35,
 			windup = { Root = { -4, -8, 0, 0, -0.2, 0.1 }, Waist = { -14, -8, 0 }, Neck = { 14, 0, 0 }, RS = { 35, 0, 30 }, RE = { 60, 0, 0 }, LS = { 30, 0, -20 }, LE = { 40, 0, 0 }, RH = { -15, 0, 6 }, RK = { -70, 0, 0 } },
 			strike = { Root = { -8, 8, 0, 0, -0.25, -0.2 }, Waist = { -14, 8, 0 }, Neck = { 16, 0, 0 }, RS = { 20, 0, 40 }, RE = { 50, 0, 0 }, LS = { 45, 0, -25 }, LE = { 40, 0, 0 }, RH = { 55, 0, 4 }, RK = { -5, 0, 0 }, RA = { -20, 0, 0 } },
 			follow = { Root = { -9, 10, 0, 0, -0.26, -0.22 }, Waist = { -15, 10, 0 }, Neck = { 16, 0, 0 }, RS = { 18, 0, 42 }, RE = { 50, 0, 0 }, LS = { 48, 0, -25 }, LE = { 40, 0, 0 }, RH = { 58, 0, 0 }, RK = { -8, 0, 0 }, RA = { -20, 0, 0 } },
@@ -290,11 +290,69 @@ local data = {
 		-- K puis P : Sac retourné, après la canne elle repart dans l'autre sens avec le sac
 		KP_combo = {
 			label = "Sac retourné", startup = 0.09, active = 0.08, recovery = 0.2,
-			damage = 7, hitbox = box(4.5, 3, 2.6, 0.5), kbBase = 22, kbGrowth = 35, kbAngle = 30,
+			damage = 7, hitbox = box(5, 3.5, 2.6, 0.5), kbBase = 22, kbGrowth = 35, kbAngle = 30,
 			windup = { Root = { -8, 25, 0, 0, -0.2, -0.2 }, Waist = { -16, 30, 0 }, Neck = { 14, -20, 0 }, RS = { 80, 0, -50 }, RE = { 60, 0, 0 }, LS = { 50, 0, -10 }, LE = { 20, 0, 0 } },
 			strike = { Root = { -10, -12, 0, 0, -0.22, -0.3 }, Waist = { -16, -20, 0 }, Neck = { 14, 12, 0 }, RS = { 92, 0, 40 }, RE = { 10, 0, 0 }, LS = { 30, 0, -20 }, LE = { 40, 0, 0 } },
 			follow = { Root = { -10, -18, 0, 0, -0.22, -0.32 }, Waist = { -16, -28, 0 }, Neck = { 14, 18, 0 }, RS = { 82, 0, 65 }, RE = { 15, 0, 0 }, LS = { 28, 0, -22 }, LE = { 40, 0, 0 } },
 			trail = "prop", hitText = "PIF !",
+		},
+
+		-- → P P : Re-pic d'aiguille, deuxième estoc en tremblotant, les lunettes de travers
+		P_side2 = {
+			label = "Re-pic d'aiguille", startup = 0.07, active = 0.1, recovery = 0.18,
+			damage = 6, hitbox = box(6.5, 3.5, 3.2, 0.6), kbBase = 20, kbGrowth = 30, kbAngle = 20, selfVelocity = Vector2.new(10, 0),
+			windup = { Root = { -8, -12, 0, 0, -0.25, 0 }, Waist = { -14, -16, 0 }, Neck = { 14, 12, 6 }, RS = { 60, 0, 10 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -22 }, LE = { 40, 0, 0 } },
+			strike = { Root = { -14, 20, 0, 0, -0.32, -0.5 }, Waist = { -18, 26, 0 }, Neck = { 18, -20, -6 }, RS = { 98, 0, -8 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -12, 0, -26 }, LE = { 30, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+			follow = { Root = { -14, 24, 0, 0, -0.32, -0.55 }, Waist = { -18, 30, 0 }, Neck = { 18, -24, -6 }, RS = { 100, 0, -12 }, RE = { 0, 0, 0 }, RW = { -8, 0, 0 }, LS = { -15, 0, -28 }, LE = { 30, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.55 } },
+			wobble = true, prop = "aiguille", hideProp = "sac", trail = "rightHand", text = "ET RE-PIC !", hitText = "PIC PIC !",
+		},
+		-- → P P P : Point de croix, l'aiguille et la canne se croisent en ciseaux sous le nez de l'adversaire, qui part en fil coupé (finition)
+		P_side3 = {
+			label = "Point de croix", startup = 0.1, active = 0.12, recovery = 0.32,
+			damage = 10, hitbox = box(6, 4, 3, 0.8), kbBase = 34, kbGrowth = 78, kbAngle = 38, selfVelocity = Vector2.new(12, 0),
+			windup = { Root = { -6, 0, 0, 0, -0.2, 0.15 }, Waist = { -12, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 70, 0, 50 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, -50 }, LE = { 60, 0, 0 }, LW = { 0, 0, 0 } },
+			strike = { Root = { -12, 0, 0, 0, -0.3, -0.45 }, Waist = { -18, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 95, 0, -30 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 95, 0, 30 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+			follow = { Root = { -14, 0, 0, 0, -0.32, -0.5 }, Waist = { -20, 0, 0 }, Neck = { 22, 0, 0 }, RS = { 92, 0, -45 }, RE = { 5, 0, 0 }, RW = { -10, 0, 0 }, LS = { 92, 0, 45 }, LE = { 5, 0, 0 }, LW = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+			prop = "aiguille", hideProp = "sac", trail = "bothHands", fx = { { "burst", color = WOOL, size = 3, at = "front" }, { "symbols", symbols = { "✂️", "🧶" }, count = 4, radius = 2.5, at = "front", color = WOOL } },
+			text = "POINT DE CROIX !", hitText = "COUPÉ !",
+		},
+		-- ↓ P P : Tire-cheville, la crosse de la canne accroche la cheville et ramène l'adversaire vers elle
+		P_down2 = {
+			label = "Tire-cheville", startup = 0.08, active = 0.1, recovery = 0.2,
+			damage = 6, hitbox = box(6.5, 3.5, 3.2, -0.6), kbBase = 20, kbGrowth = 28, kbAngle = 20, pull = true,
+			windup = { Root = { -12, 20, 0, 0, -0.7, 0.1 }, Waist = { -26, 18, 0 }, Neck = { 20, -12, 0 }, RS = { 25, 0, 25 }, RE = { 60, 0, 0 }, LS = { 80, 0, -25 }, LE = { 5, 0, 0 }, LW = { 30, 0, 0 } },
+			strike = { Root = { -16, 5, 0, 0, -0.8, -0.3 }, Waist = { -30, 5, 0 }, Neck = { 24, -4, 0 }, RS = { 25, 0, 28 }, RE = { 60, 0, 0 }, LS = { 92, 0, -5 }, LE = { 0, 0, 0 }, LW = { 45, 0, 0 } },
+			follow = { Root = { -8, -12, 0, 0, -0.65, 0.1 }, Waist = { -22, -12, 0 }, Neck = { 18, 8, 0 }, RS = { 25, 0, 28 }, RE = { 60, 0, 0 }, LS = { 30, 0, -15 }, LE = { 60, 0, 0 }, LW = { 45, 0, 0 } },
+			trail = "leftHand", text = "VIENS ICI !", hitText = "ACCROCHÉ !",
+		},
+		-- ↓ P P P : Dentier au tibia, elle lâche son dentier qui mord la cheville en claquant des dents (finition)
+		P_down3 = {
+			label = "Dentier au tibia", startup = 0.1, active = 0.14, recovery = 0.32,
+			damage = 10, hitbox = box(6, 4, 3, -0.4), kbBase = 34, kbGrowth = 72, kbAngle = 70,
+			windup = { Root = { -8, -10, 0, 0, -0.55, 0.1 }, Waist = { -20, -10, 0 }, Neck = { 22, 8, 0 }, RS = { 130, 0, -20 }, RE = { 130, 0, 0 }, RW = { 0, 0, 0 }, LS = { 25, 0, -15 }, LE = { 40, 0, 0 } },
+			strike = { Root = { -16, 12, 0, 0, -0.85, -0.3 }, Waist = { -32, 12, 0 }, Neck = { 26, -8, 0 }, RS = { 60, 0, 0 }, RE = { 0, 0, 0 }, RW = { 20, 0, 0 }, LS = { 20, 0, -20 }, LE = { 40, 0, 0 } },
+			follow = { Root = { -16, 16, 0, 0, -0.85, -0.35 }, Waist = { -32, 16, 0 }, Neck = { 28, -10, 0 }, RS = { 50, 0, 5 }, RE = { 5, 0, 0 }, RW = { 30, 0, 0 }, LS = { 20, 0, -22 }, LE = { 40, 0, 0 } },
+			wobble = true, prop = "dentier", hideProp = "sac", trail = "rightHand", fx = { { "symbols", symbols = { "🦷", "CLAC" }, count = 4, radius = 2, at = "front", color = WHITE } },
+			text = "CLAC CLAC CLAC !", hitText = "MORDU !",
+		},
+		-- → K K : L'autre pantoufle, la charentaise gauche part à son tour, elle sautille sur un pied
+		K_side2 = {
+			label = "L'autre pantoufle", startup = 0.09, active = 0.1, recovery = 0.22,
+			damage = 8, hitbox = box(6, 3.5, 3, 0), kbBase = 24, kbGrowth = 40, kbAngle = 30, selfVelocity = Vector2.new(14, 0),
+			windup = { Root = { 6, 10, 0, 0, -0.2, 0.15 }, Waist = { -4, 10, 0 }, Neck = { 8, -6, 0 }, RS = { 30, 0, 40 }, RE = { 60, 0, 0 }, LS = { 40, 0, -40 }, LE = { 50, 0, 0 }, LH = { 70, 0, 0 }, LK = { -110, 0, 0 }, LA = { -10, 0, 0 } },
+			strike = { Root = { 14, -6, 0, 0, -0.12, -0.25 }, Waist = { 4, -6, 0 }, Neck = { -6, 4, 0 }, RS = { 25, 0, 45 }, RE = { 40, 0, 0 }, LS = { 60, 0, -60 }, LE = { 30, 0, 0 }, LH = { 80, 0, 0 }, LK = { -4, 0, 0 }, LA = { 20, 0, 0 } },
+			follow = { Root = { 16, -8, 0, 0, -0.12, -0.3 }, Waist = { 6, -8, 0 }, Neck = { -8, 6, 0 }, RS = { 22, 0, 48 }, RE = { 40, 0, 0 }, LS = { 62, 0, -65 }, LE = { 30, 0, 0 }, LH = { 84, 0, 0 }, LK = { 0, 0, 0 }, LA = { 25, 0, 0 } },
+			trail = "leftFoot", fx = { { "toss", shape = "flat", color = SLIPPER, size = 1, count = 1, speed = 26 } }, text = "ET L'AUTRE !", hitText = "FLAP FLAP !",
+		},
+		-- → K K K : Pieds nus et furieuse, plus de chaussons : elle bondit à pieds joints sur l'adversaire (finition)
+		K_side3 = {
+			label = "Pieds nus et furieuse", startup = 0.1, active = 0.16, recovery = 0.34,
+			damage = 12, hitbox = box(6, 4, 3, 0.5), kbBase = 36, kbGrowth = 82, kbAngle = 42, selfVelocity = Vector2.new(22, 38),
+			windup = { Root = { -10, 0, 0, 0, -0.6, 0.1 }, Waist = { -24, 0, 0 }, Neck = { 30, 0, 0 }, RS = { -40, 0, 30 }, RE = { 40, 0, 0 }, LS = { -40, 0, -30 }, LE = { 40, 0, 0 } },
+			strike = { Root = { 16, 0, 0 }, Waist = { 14, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 150, 0, 45 }, RE = { 20, 0, 0 }, LS = { 150, 0, -45 }, LE = { 20, 0, 0 }, RH = { 92, 0, 6 }, RK = { 0, 0, 0 }, RA = { 15, 0, 0 }, LH = { 92, 0, -6 }, LK = { 0, 0, 0 }, LA = { 15, 0, 0 } },
+			follow = { Root = { 20, 0, 0 }, Waist = { 16, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 160, 0, 55 }, RE = { 20, 0, 0 }, LS = { 160, 0, -55 }, LE = { 20, 0, 0 }, RH = { 100, 0, 8 }, RK = { 0, 0, 0 }, RA = { 18, 0, 0 }, LH = { 100, 0, -8 }, LK = { 0, 0, 0 }, LA = { 18, 0, 0 } },
+			shake = true, trail = "bothFeet", fx = { { "symbols", symbols = { "💢", "😡" }, count = 4, radius = 2.5, at = "head", color = SLIPPER }, { "burst", color = SLIPPER, size = 3, at = "front" } },
+			text = "MES CHAUSSONS !", hitText = "PIEDS NUS !",
 		},
 
 		------------------------------------------------------------------ En l'air avec une flèche
@@ -417,10 +475,10 @@ local data = {
 			follow = { Root = { 8, 0, 0, 0, 0.3, 0 }, Waist = { 10, 0, 0 }, Neck = { 28, 0, 0 }, RS = { 165, 0, 70 }, RE = { 10, 0, 0 }, LS = { 165, 0, -70 }, LE = { 10, 0, 0 }, RH = { 5, 0, 0 }, RK = { -40, 0, 0 }, LH = { 25, 0, 0 }, LK = { -60, 0, 0 } },
 			fx = { { "particles", tex = "smoke", color = SHAWL, dir = "down", at = "root", time = 0.4, speed = 8 } }, text = "HOP LÀ !", hitText = "FLOUF !",
 		},
-		-- Tricot express (S maintenu) : elle tricote à toute vitesse un pull-bouclier qui avale le prochain projectile
+		-- Tricot express (S maintenu) : elle tricote à toute vitesse un pull-bouclier qui avale le prochain projectile… et pique l'adversaire d'un coup d'aiguille en estoc pour finir le rang
 		S_hold = {
-			label = "Tricot express", kind = "wall", energyCost = 30, startup = 0.3, active = 0.1, recovery = 0.3,
-			hitbox = box(5, 4, 2.5, 0.5), kbBase = 30, kbGrowth = 45, kbAngle = 30,
+			label = "Tricot express", kind = "wall", energyCost = 30, startup = 0.3, active = 0.12, recovery = 0.3,
+			hitbox = box(6.5, 3.5, 3.5, 0.6), kbBase = 30, kbGrowth = 45, kbAngle = 30,
 			damage = 7,
 			wall = { size = Vector3.new(2.5, 5, 6), offset = 2.2, lifetime = 4, max = 1, follow = true, absorbs = true, solid = false, color = WOOL,
 				visual = { shape = "block", size = 2.4, color = WOOL, trail = false, material = "Fabric", parts = {
@@ -429,11 +487,12 @@ local data = {
 					{ "block", Vector3.new(2.5, 0.3, 1.5), Vector3.new(0, 0.3, 0), WHITE, "Fabric" },
 				} } },
 			windup = { Root = { -6, 0, 0, 0, -0.2, 0 }, Waist = { -16, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 45, 0, -20 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 45, 0, 20 }, LE = { 100, 0, 0 } },
-			strike = { Root = { -6, 0, 0, 0, -0.2, -0.1 }, Waist = { -14, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 80, 0, 20 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 80, 0, -20 }, LE = { 30, 0, 0 } },
-			follow = { Root = { -6, 0, 0, 0, -0.2, -0.1 }, Waist = { -14, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 82, 0, 25 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 82, 0, -25 }, LE = { 30, 0, 0 } },
-			shake = true, prop = "aiguille", hideProp = "sac",
+			strike = { Root = { -12, 15, 0, 0, -0.3, -0.45 }, Waist = { -18, 20, 0 }, Neck = { 18, -14, 0 }, RS = { 96, 0, -8 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -10, 0, -25 }, LE = { 30, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+			follow = { Root = { -14, 20, 0, 0, -0.32, -0.5 }, Waist = { -20, 26, 0 }, Neck = { 20, -18, 0 }, RS = { 98, 0, -14 }, RE = { 0, 0, 0 }, RW = { -8, 0, 0 }, LS = { -15, 0, -28 }, LE = { 30, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+			shake = true, prop = "aiguille", hideProp = "sac", trail = "rightHand",
 			windupFx = { { "particles", tex = "spark", color = WOOL, dir = "all", at = "hand", time = 0.3, speed = 4 } },
-			text = "TRICOT EXPRESS !", hitText = "TOUT DOUX !",
+			fx = { { "burst", color = WOOL, size = 2.5, at = "front" } },
+			text = "TRICOT EXPRESS !", hitText = "PIQUÉ AU PULL !",
 		},
 		-- Chat boomerang (→→S) : elle lance Pompon à l'horizontale, il griffe 3 fois et revient sur son épaule
 		S_dash = {
@@ -489,15 +548,17 @@ local data = {
 			hold = 0.2, windupFx = { { "screen", color = MINOU, alpha = 0.25 }, { "symbols", symbols = { "🐈", "🐾" }, count = 6, radius = 3, color = MINOU } },
 			fx = { { "shake", amount = 0.4 } }, text = "MES CHÉRIS, À L'ATTAQUE !", hitText = "MIAAAOU !",
 		},
-		-- Super ↑ : elle lève sac et canne : une colonne de pelotes de laine jaillit et emporte tout
+		-- Super ↑ : elle roule une pelote géante entre ses mains, la jette au plafond et le fil l'entortille en vrille, aiguilles au ciel
 		SUPER_up = {
-			label = "Envolée de pelotes !", superCost = 100, startup = 0.4, active = 0.3, recovery = 0.6,
-			damage = 22, hitbox = box(8, 14, 4, 6), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
-			windup = { Root = { -12, 12, 0, 0, -0.35, 0 }, Waist = { -28.8, 12, 0 }, Neck = { 36, 0, 0 }, RS = { 24, 0, 36 }, RE = { 72, 0, 0 }, LS = { 48, 0, -18 }, LE = { 132, 0, 0 }, LW = { 0, 0, 0 } },
-			strike = { Root = { 9.6, -6, 0, 0, -0.1, 0.4 }, Waist = { 7.2, -6, 0 }, Neck = { 45.6, 0, 0 }, RS = { -24, 0, 42 }, RE = { 48, 0, 0 }, LS = { 210, 0, -6 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 }, FR = { 0, 0, 0, 0, 0, 0.3 }, FL = { 0, 0, 0, 0, 0, 0.35 } },
-			follow = { Root = { 12, -6, 0, 0, -0.1, 0.45 }, Waist = { 9.6, -6, 0 }, Neck = { 48, 0, 0 }, RS = { -30, 0, 45.6 }, RE = { 48, 0, 0 }, LS = { 216, 0, -2.4 }, LE = { 0, 0, 0 }, LW = { -12, 0, 0 }, FR = { 0, 0, 0, 0, 0, 0.35 }, FL = { 0, 0, 0, 0, 0, 0.4 } },
-			hold = 0.45, shake = true,
-			windupFx = { "super" }, trail = "prop", status = { name = "rooted", duration = 1 }, fx = { { "pillar", color = Color3.fromRGB(230, 120, 170), height = 20, width = 4, at = "front" }, { "toss", shape = "ball", color = Color3.fromRGB(160, 90, 200), count = 6, speed = 10, lift = 40 } }, text = "DE MON TEMPS !", hitText = "EMBOBINÉ !",
+			label = "Pelote-fusée !", superCost = 100, startup = 0.35, active = 0.3, recovery = 0.6,
+			damage = 22, hitbox = box(8, 14, 2, 6), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
+			windup = { Root = { -12, 0, 0, 0, -0.7, 0.1 }, Waist = { -30, 0, 0 }, Neck = { 24, 0, 0 }, RS = { 55, 0, -25 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 55, 0, 25 }, LE = { 110, 0, 0 }, LW = { 0, 0, 0 } },
+			strike = { Root = { 8, 0, 0, 0, 0.45, 0 }, Waist = { 16, 0, 0 }, Neck = { 42, 0, 0 }, RS = { 182, 0, 14 }, RE = { 5, 0, 0 }, RW = { 0, 0, 0 }, LS = { 182, 0, -14 }, LE = { 5, 0, 0 }, LW = { 0, 0, 0 }, FR = { 0, 0, 0, 0, 0.35, 0 }, FL = { 0, 0, 0, 0, 0.35, 0 } },
+			follow = { Root = { 10, 0, 0, 0, 0.5, 0 }, Waist = { 20, 0, 0 }, Neck = { 46, 0, 0 }, RS = { 170, 0, 55 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 170, 0, -55 }, LE = { 10, 0, 0 }, LW = { 0, 0, 0 }, FR = { 0, 0, 0, 0, 0.4, 0 }, FL = { 0, 0, 0, 0, 0.4, 0 } },
+			hold = 0.3, shake = true, spin = { axis = "y", degrees = 360 }, prop = "aiguille", hideProp = "sac",
+			windupFx = { "super", { "symbols", symbols = { "🧶" }, count = 4, radius = 2, at = "hand", color = WOOL } }, status = { name = "rooted", duration = 1 },
+			fx = { { "pillar", color = WOOL, height = 22, width = 4, at = "front" }, { "toss", shape = "ball", color = WOOL2, size = 1.2, count = 8, speed = 12, lift = 40 }, { "ring", color = WOOL, radius = 6, at = "feet" } },
+			text = "ET QUE ÇA MONTE !", hitText = "EMBOBINÉ !",
 		},
 		-- « De mon temps… » : elle raconte sa jeunesse en agitant le doigt, tout le monde s'endort
 		SUPER_down = {
@@ -737,8 +798,9 @@ data.respawn = {
 	},
 }
 
--- Arbre d'enchaînements : P P P (sac, joue, cabas), K K K (canne, revers, golf), mélanges P/K,
--- et presque tout peut finir sur S (écharpe-fouet, ou chat lancé après un coup qui fait décoller)
+-- Arbre d'enchaînements : P P P (sac, joue, cabas), → P P P (aiguille, re-pic, point de croix), ↓ P P P (canne, tire-cheville,
+-- dentier), K K K (canne, revers, golf), → K K K (pantoufle, l'autre, pieds nus), mélanges P/K, et presque tout peut finir
+-- sur S (écharpe-fouet, ou chat lancé après un coup qui fait décoller)
 local function airAfterP()
 	return { K = "K_air", fwd_K = "K_air_side", up_K = "K_air_up", down_K = "K_air_down", down_S = "S_air_down", up_S = "S_up", S = "S_air" }
 end
@@ -755,11 +817,14 @@ local LINKS = {
 	K_combo2 = { K = "K_combo3", P = "P_combo3", S = "S_finish_echarpe" }, -- K K
 	K_combo3 = { S = "S_neutral" }, -- K K K (fait décoller : le chat en cloche suit)
 	KP_combo = { K = "K_combo3", P = "P_combo2", S = "S_finish_echarpe" }, -- K P
-	P_side = { P = "P_combo2", K = "K_neutral", S = "S_finish_echarpe" }, -- → P
-	P_down = { P = "P_up", K = "K_combo3", S = "S_down" }, -- ↓ P (balayage puis parapluie ou golf)
+	P_side = { P = "P_side2", K = "K_combo2", S = "S_finish_echarpe" }, -- → P
+	P_side2 = { P = "P_side3", K = "K_side2", S = "S_finish_echarpe" }, -- → P P
+	P_down = { P = "P_down2", K = "K_combo3", up_P = "P_up", S = "S_down" }, -- ↓ P (balayage puis tire-cheville, golf ou parapluie)
+	P_down2 = { P = "P_down3", K = "K_combo2", S = "S_finish_echarpe" }, -- ↓ P P
 	P_up = { P = "P_combo3", S = "S_neutral" }, -- ↑ P
 	K_down = { P = "P_combo2", K = "K_combo2", S = "S_down" }, -- ↓ K (elle attire, puis enchaîne)
-	K_side = { P = "KP_combo", S = "S_finish_echarpe" }, -- → K
+	K_side = { K = "K_side2", P = "KP_combo", S = "S_finish_echarpe" }, -- → K
+	K_side2 = { K = "K_side3", P = "P_combo2", S = "S_finish_echarpe" }, -- → K K
 	P_dash = { P = "P_combo2", K = "PK_combo", S = "S_finish_echarpe" }, -- dash P
 	K_dash = { P = "P_up", S = "S_finish_echarpe" }, -- dash K
 	-- en l'air

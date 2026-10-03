@@ -141,7 +141,7 @@ local data = {
 		-- P P : claque molle de la main gauche
 		P_combo2 = {
 			label = "Claque molle gauche", startup = 0.1, active = 0.08, recovery = 0.18,
-			damage = 6, hitbox = box(4.5, 3, 2.8, 0.6), kbBase = 20, kbGrowth = 25, kbAngle = 30,
+			damage = 6, hitbox = box(5, 3.5, 2.8, 0.6), kbBase = 20, kbGrowth = 25, kbAngle = 30,
 			windup = { Root = { 2, 16, 0, 0, -0.35, 0.1 }, Waist = { 0, 14, 0 }, LS = { 60, 0, -45 }, LE = { 100, 0, 0 }, LW = { -40, 0, 0 }, RS = { 60, 0, 30 }, RE = { 70, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
 			strike = { Root = { -8, -14, 0, 0, -0.42, -0.3 }, Waist = { -6, -16, 0 }, LS = { 92, 0, -5 }, LE = { 5, 0, 0 }, LW = { -70, 0, 0 }, RS = { 40, 0, 40 }, RE = { 80, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
 			follow = { Root = { -9, -18, 0, 0, -0.44, -0.35 }, Waist = { -7, -20, 0 }, LS = { 94, 0, 5 }, LE = { 8, 0, 0 }, LW = { -75, 0, 0 }, RS = { 38, 0, 42 }, RE = { 80, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
@@ -149,7 +149,7 @@ local data = {
 		},
 		-- P P P : Tsuppari, poussée des deux paumes à plat, tout le poids du corps derrière
 		P_combo3 = {
-			label = "Poussée de paumes", startup = 0.14, active = 0.1, recovery = 0.32,
+			label = "Poussée de paumes", startup = 0.1, active = 0.1, recovery = 0.32,
 			damage = 9, hitbox = box(5, 3.5, 2.8, 0.6), kbBase = 32, kbGrowth = 62, kbAngle = 25, selfVelocity = Vector2.new(15, 0),
 			windup = { Root = { -6, 0, 0, 0, -0.55, 0.3 }, Waist = { -8, 0, 0 }, RS = { 70, 0, 20 }, RE = { 130, 0, 0 }, RW = { -60, 0, 0 }, LS = { 70, 0, -20 }, LE = { 130, 0, 0 }, LW = { -60, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
 			strike = { Root = { -14, 0, 0, 0, -0.5, -0.55 }, Waist = { -10, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 90, 0, 10 }, RE = { 0, 0, 0 }, RW = { -80, 0, 0 }, LS = { 90, 0, -10 }, LE = { 0, 0, 0 }, LW = { -80, 0, 0 }, FR = WIDE_R, FL = { 0, 0, 0, -0.35, 0, -0.5 } },
@@ -158,8 +158,8 @@ local data = {
 		},
 		-- P puis K : coup de hanche, il pivote et envoie sa grosse hanche gélatineuse
 		PK_combo = {
-			label = "Coup de hanche", startup = 0.12, active = 0.1, recovery = 0.24,
-			damage = 8, hitbox = box(4, 3.5, 2, 0), kbBase = 28, kbGrowth = 40, kbAngle = 30,
+			label = "Coup de hanche", startup = 0.1, active = 0.1, recovery = 0.24,
+			damage = 8, hitbox = box(5, 4, 2.5, 0.3), kbBase = 28, kbGrowth = 40, kbAngle = 30,
 			windup = { Root = { 0, 30, 0, 0, -0.4, 0.1 }, Waist = { 0, 10, 0 }, Neck = { 0, -25, 0 }, RS = { 40, 0, 50 }, RE = { 60, 0, 0 }, LS = { 40, 0, -50 }, LE = { 60, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
 			strike = { Root = { 0, 75, 12, 0, -0.45, -0.4 }, Waist = { 0, -15, 0 }, Neck = { 0, -50, 0 }, RS = { 20, 0, 60 }, RE = { 40, 0, 0 }, LS = { 30, 0, -60 }, LE = { 40, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
 			follow = { Root = { 0, 80, 14, 0, -0.45, -0.45 }, Waist = { 0, -18, 0 }, Neck = { 0, -52, 0 }, RS = { 18, 0, 62 }, RE = { 40, 0, 0 }, LS = { 28, 0, -62 }, LE = { 40, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
@@ -167,12 +167,51 @@ local data = {
 		},
 		-- ↓P P : Rebond de bedaine, de la glissade il rebondit sur le ventre et remonte d'un coup (fait décoller)
 		P_down2 = {
-			label = "Rebond de bedaine", startup = 0.12, active = 0.12, recovery = 0.28,
-			damage = 8, hitbox = box(5, 5, 1.5, 1.5), kbBase = 30, kbGrowth = 42, kbAngle = 84,
+			label = "Rebond de bedaine", startup = 0.1, active = 0.12, recovery = 0.28,
+			damage = 8, hitbox = box(5, 5, 2.5, 1.5), kbBase = 30, kbGrowth = 42, kbAngle = 84,
 			windup = { Root = { -40, 0, 0, 0, -1.3, 0 }, Waist = { -10, 0, 0 }, Neck = { 25, 0, 0 }, RS = { 120, 0, 40 }, RE = { 20, 0, 0 }, LS = { 120, 0, -40 }, LE = { 20, 0, 0 }, RH = { 20, 0, 10 }, RK = { -60, 0, 0 }, LH = { 20, 0, -10 }, LK = { -60, 0, 0 } },
 			strike = { Root = { 16, 0, 0, 0, 0.25, 0 }, Waist = { 24, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 140, 0, 60 }, RE = { 10, 0, 0 }, LS = { 140, 0, -60 }, LE = { 10, 0, 0 }, FR = { 0, 0, 0, 0.35, 0.3, 0 }, FL = { 0, 0, 0, -0.35, 0.3, 0 } },
 			follow = { Root = { 18, 0, 0, 0, 0.3, 0 }, Waist = { 26, 0, 0 }, Neck = { 24, 0, 0 }, RS = { 150, 0, 66 }, RE = { 10, 0, 0 }, LS = { 150, 0, -66 }, LE = { 10, 0, 0 }, FR = { 0, 0, 0, 0.35, 0.35, 0 }, FL = { 0, 0, 0, -0.35, 0.35, 0 } },
 			wobble = true, text = "BOÏNG !", hitText = "HOP !",
+		},
+		-- P P P P : Plat-ventre du canard, il bondit et s'étale de tout son ventre sur l'adversaire ; le canard fait COIN
+		P_combo4 = {
+			label = "Plat-ventre du canard", startup = 0.1, active = 0.14, recovery = 0.34,
+			damage = 12, hitbox = box(6, 4, 3, -0.5), kbBase = 34, kbGrowth = 80, kbAngle = 40, selfVelocity = Vector2.new(24, 0),
+			windup = { Root = { 8, 0, 0, 0, 0.3, 0.2 }, Waist = { 12, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 160, 0, 40 }, RE = { 20, 0, 0 }, LS = { 160, 0, -40 }, LE = { 20, 0, 0 }, FR = { 0, 0, 0, 0.35, 0.35, 0 }, FL = { 0, 0, 0, -0.35, 0.35, 0 } },
+			strike = { Root = { -45, 0, 0, 0, -0.7, -0.7 }, Waist = { -8, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 130, 0, 70 }, RE = { 10, 0, 0 }, LS = { 130, 0, -70 }, LE = { 10, 0, 0 } },
+			follow = { Root = { -50, 0, 0, 0, -0.75, -0.75 }, Waist = { -10, 0, 0 }, Neck = { 34, 0, 0 }, RS = { 120, 0, 80 }, RE = { 10, 0, 0 }, LS = { 120, 0, -80 }, LE = { 10, 0, 0 } },
+			wobble = true, trail = "body", fx = { { "puddle", color = JELLY, width = 8 }, { "symbols", symbols = { "🦆", "COIN" }, color = DUCK, count = 4, radius = 3, at = "front" }, { "shake", amount = 0.4 } },
+			text = "COIN !", hitText = "SPLATCH !",
+		},
+		-- → P P : Double bedaine, le ventre revient en arrière… et repart aussitôt, encore plus loin
+		P_side2 = {
+			label = "Double bedaine", startup = 0.07, active = 0.1, recovery = 0.18,
+			damage = 6, hitbox = box(5, 4, 2.8, 0.4), kbBase = 20, kbGrowth = 28, kbAngle = 22, selfVelocity = Vector2.new(16, 0),
+			windup = { Root = { -14, 0, 0, 0, -0.4, 0.2 }, Waist = { -24, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 60, 0, 25 }, RE = { 60, 0, 0 }, LS = { 60, 0, -25 }, LE = { 60, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+			strike = { Root = { 20, 0, 0, 0, -0.3, -0.65 }, Waist = { 26, 0, 0 }, Neck = { -18, 0, 0 }, RS = { -50, 0, 40 }, RE = { 15, 0, 0 }, LS = { -50, 0, -40 }, LE = { 15, 0, 0 }, FR = WIDE_R, FL = { 0, 0, 0, -0.35, 0, -0.45 } },
+			follow = { Root = { 24, 0, 0, 0, -0.3, -0.75 }, Waist = { 30, 0, 0 }, Neck = { -22, 0, 0 }, RS = { -60, 0, 45 }, RE = { 20, 0, 0 }, LS = { -60, 0, -45 }, LE = { 20, 0, 0 }, FR = WIDE_R, FL = { 0, 0, 0, -0.35, 0, -0.5 } },
+			wobble = true, trail = "body", text = "RE-BLOING !", hitText = "BOÏNG BOÏNG !",
+		},
+		-- → P P P : Bedaine supersonique, il rentre tout le ventre, tremble… et le lâche d'un coup : un bélier de gelée
+		P_side3 = {
+			label = "Bedaine supersonique", startup = 0.1, active = 0.16, recovery = 0.34,
+			damage = 12, hitbox = box(6, 4.5, 3, 0.4), kbBase = 36, kbGrowth = 82, kbAngle = 32, selfVelocity = Vector2.new(40, 0),
+			windup = { Root = { -22, 0, 0, 0, -0.5, 0.35 }, Waist = { -34, 0, 0 }, Neck = { -14, 0, 0 }, RS = { 80, 0, 30 }, RE = { 70, 0, 0 }, LS = { 80, 0, -30 }, LE = { 70, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+			strike = { Root = { 26, 0, 0, 0, -0.25, -0.8 }, Waist = { 34, 0, 0 }, Neck = { -24, 0, 0 }, RS = { -70, 0, 50 }, RE = { 10, 0, 0 }, LS = { -70, 0, -50 }, LE = { 10, 0, 0 }, FR = WIDE_R, FL = { 0, 0, 0, -0.35, 0, -0.5 } },
+			follow = { Root = { 28, 0, 0, 0, -0.25, -0.85 }, Waist = { 36, 0, 0 }, Neck = { -26, 0, 0 }, RS = { -75, 0, 55 }, RE = { 10, 0, 0 }, LS = { -75, 0, -55 }, LE = { 10, 0, 0 }, FR = WIDE_R, FL = { 0, 0, 0, -0.35, 0, -0.55 } },
+			shake = true, wobble = true, trail = "body", fx = { { "ring", color = JELLY, radius = 5, at = "front" }, { "burst", color = MARSH, size = 3, at = "front" }, { "shake", amount = 0.5 } },
+			text = "BEDAINE SUPERSONIQUE !", hitText = "BLAAAM !",
+		},
+		-- P K K : Cloche de gelée, il attrape sa bedaine à deux mains et la secoue : trois vagues de gelée claquent devant lui
+		PKK_combo = {
+			label = "Cloche de gelée", startup = 0.08, active = 0.3, recovery = 0.3, hits = 3,
+			damage = 4, hitbox = box(5.5, 4.5, 2.5, 0.5), kbBase = 30, kbGrowth = 70, kbAngle = 60,
+			windup = { Root = { -6, 0, 0, 0, -0.45, 0.1 }, Waist = { -10, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 20, 0, 30 }, RE = { 110, 0, 0 }, RW = { -40, 0, 0 }, LS = { 20, 0, -30 }, LE = { 110, 0, 0 }, LW = { -40, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+			strike = { Root = { 10, 0, 0, 0, -0.35, -0.25 }, Waist = { 20, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 30, 0, 40 }, RE = { 120, 0, 0 }, RW = { -60, 0, 0 }, LS = { 30, 0, -40 }, LE = { 120, 0, 0 }, LW = { -60, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+			follow = { Root = { 12, 0, 0, 0, -0.35, -0.3 }, Waist = { 24, 0, 0 }, Neck = { -12, 0, 0 }, RS = { 28, 0, 42 }, RE = { 120, 0, 0 }, RW = { -60, 0, 0 }, LS = { 28, 0, -42 }, LE = { 120, 0, 0 }, LW = { -60, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+			shake = true, wobble = true, trail = "body", fx = { { "ring", color = JELLY, radius = 4, at = "front" }, { "symbols", symbols = { "〰️", "🍮" }, color = JELLY, count = 4, radius = 3, at = "front" } },
+			text = "DING DONG !", hitText = "BLOB BLOB BLOB !",
 		},
 
 		------------------------------------------------------------------ Attaques lourdes (K)
@@ -235,8 +274,8 @@ local data = {
 		-- Suites d'enchaînement K
 		-- K K : Shiko de la jambe gauche
 		K_combo2 = {
-			label = "Shiko gauche", startup = 0.22, active = 0.1, recovery = 0.3,
-			damage = 10, hitbox = box(7, 2.5, 1.5, -1.6), kbBase = 30, kbGrowth = 55, kbAngle = 70,
+			label = "Shiko gauche", startup = 0.1, active = 0.1, recovery = 0.3,
+			damage = 10, hitbox = box(7, 3.5, 2.5, -1), kbBase = 30, kbGrowth = 55, kbAngle = 70,
 			windup = { Root = { 0, 0, 14, 0.3, -0.2, 0 }, Waist = { 4, 0, 10 }, Neck = { 0, 0, -10 }, LS = { 20, 0, -40 }, LE = { 30, 0, 0 }, RS = { 10, 0, 30 }, RE = { 60, 0, 0 }, LH = { 30, 0, -70 }, LK = { -30, 0, 0 }, FR = WIDE_R },
 			strike = { Root = { 6, 0, -2, 0, -0.65, 0 }, Waist = { 10, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 30, 0, 30 }, RE = { 100, 0, 0 }, LS = { 30, 0, -30 }, LE = { 100, 0, 0 }, FR = WIDE_R, FL = { 0, 0, 0, -0.45, 0, 0 } },
 			follow = { Root = { 8, 0, 0, 0, -0.7, 0 }, Waist = { 12, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 28, 0, 32 }, RE = { 105, 0, 0 }, LS = { 28, 0, -32 }, LE = { 105, 0, 0 }, FR = WIDE_R, FL = { 0, 0, 0, -0.45, 0, 0 } },
@@ -244,8 +283,8 @@ local data = {
 		},
 		-- K K K : Double Shiko sauté, il saute pieds écartés et retombe des deux pieds (fait décoller)
 		K_combo3 = {
-			label = "Double Shiko sauté", startup = 0.26, active = 0.12, recovery = 0.38,
-			damage = 13, hitbox = box(9, 3, 1, -1.5), kbBase = 34, kbGrowth = 82, kbAngle = 78,
+			label = "Double Shiko sauté", startup = 0.12, active = 0.12, recovery = 0.38,
+			damage = 13, hitbox = box(9, 4, 2, -1), kbBase = 34, kbGrowth = 82, kbAngle = 78,
 			windup = { Root = { 0, 0, 0, 0, 0.5, 0 }, Waist = { 6, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 120, 0, 70 }, RE = { 20, 0, 0 }, LS = { 120, 0, -70 }, LE = { 20, 0, 0 }, FR = { 0, 0, 0, 0.5, 0.5, 0 }, FL = { 0, 0, 0, -0.5, 0.5, 0 } },
 			strike = { Root = { 8, 0, 0, 0, -0.8, 0 }, Waist = { 12, 0, 0 }, Neck = { -12, 0, 0 }, RS = { 30, 0, 35 }, RE = { 100, 0, 0 }, LS = { 30, 0, -35 }, LE = { 100, 0, 0 }, FR = { 0, 0, 0, 0.55, 0, 0 }, FL = { 0, 0, 0, -0.55, 0, 0 } },
 			follow = { Root = { 10, 0, 0, 0, -0.85, 0 }, Waist = { 14, 0, 0 }, Neck = { -14, 0, 0 }, RS = { 28, 0, 36 }, RE = { 105, 0, 0 }, LS = { 28, 0, -36 }, LE = { 105, 0, 0 }, FR = { 0, 0, 0, 0.55, 0, 0 }, FL = { 0, 0, 0, -0.55, 0, 0 } },
@@ -253,12 +292,40 @@ local data = {
 		},
 		-- K puis P : gifle tournante, il tourne sur lui-même bras tendu comme une hélice molle
 		KP_combo = {
-			label = "Gifle tournante", startup = 0.12, active = 0.14, recovery = 0.26,
-			damage = 8, hitbox = box(7, 3.5, 0.5, 0.5), kbBase = 26, kbGrowth = 40, kbAngle = 35,
+			label = "Gifle tournante", startup = 0.1, active = 0.14, recovery = 0.26,
+			damage = 8, hitbox = box(7, 3.5, 1.5, 0.5), kbBase = 26, kbGrowth = 40, kbAngle = 35,
 			windup = { Root = { 0, -30, 0, 0, -0.35, 0 }, Waist = { 0, -20, 0 }, RS = { 80, 0, 70 }, RE = { 20, 0, 0 }, LS = { 80, 0, -70 }, LE = { 20, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
 			strike = { Root = { 0, 0, 0, 0, -0.35, 0 }, Waist = { 0, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 90, 0, 88 }, RE = { 0, 0, 0 }, RW = { -60, 0, 0 }, LS = { 90, 0, -88 }, LE = { 0, 0, 0 }, LW = { -60, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
 			follow = { Root = { 0, 0, 0, 0, -0.35, 0 }, Waist = { 0, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 90, 0, 90 }, RE = { 0, 0, 0 }, RW = { -60, 0, 0 }, LS = { 90, 0, -90 }, LE = { 0, 0, 0 }, LW = { -60, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
 			spin = { axis = "y", degrees = 360 }, trail = "bothHands", hitText = "FLAP FLAP !",
+		},
+		-- → K K : Paume gauche géante, l'autre paume suit à plat, le gant en guimauve s'écrase sur le nez
+		K_side2 = {
+			label = "Paume gauche géante", startup = 0.1, active = 0.1, recovery = 0.2,
+			damage = 8, hitbox = box(5, 4, 3, 0.6), kbBase = 24, kbGrowth = 40, kbAngle = 28, selfVelocity = Vector2.new(16, 0),
+			windup = { Root = { 4, 30, 0, 0, -0.4, 0.2 }, Waist = { 6, 26, 0 }, Neck = { 0, -20, 0 }, LS = { 50, 0, -60 }, LE = { 130, 0, 0 }, LW = { -50, 0, 0 }, RS = { 70, 0, 10 }, RE = { 30, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+			strike = { Root = { -14, -18, 0, 0, -0.5, -0.5 }, Waist = { -10, -20, 0 }, Neck = { 0, 10, 0 }, LS = { 92, 0, -6 }, LE = { 0, 0, 0 }, LW = { -85, 0, 0 }, RS = { -20, 0, 40 }, RE = { 40, 0, 0 }, FR = { 0, 0, 0, 0.35, 0, -0.5 }, FL = WIDE_L },
+			follow = { Root = { -16, -22, 0, 0, -0.52, -0.58 }, Waist = { -12, -24, 0 }, Neck = { 0, 12, 0 }, LS = { 94, 0, -2 }, LE = { 0, 0, 0 }, LW = { -88, 0, 0 }, RS = { -25, 0, 42 }, RE = { 40, 0, 0 }, FR = { 0, 0, 0, 0.35, 0, -0.55 }, FL = WIDE_L },
+			wobble = true, trail = "leftHand", fx = { { "ring", color = MARSH, radius = 3, at = "front" } }, hitText = "PLAF PLAF !",
+		},
+		-- → K K K : Tsuppari de fin de tournoi, il bondit en avant et enfonce les deux paumes d'un coup, tout le poids de la gelée derrière
+		K_side3 = {
+			label = "Tsuppari de fin de tournoi", startup = 0.1, active = 0.12, recovery = 0.36,
+			damage = 13, hitbox = box(6, 4.5, 3, 0.6), kbBase = 36, kbGrowth = 86, kbAngle = 30, selfVelocity = Vector2.new(30, 0),
+			windup = { Root = { -8, 0, 0, 0, -0.6, 0.35 }, Waist = { -12, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 60, 0, 25 }, RE = { 130, 0, 0 }, RW = { -60, 0, 0 }, LS = { 60, 0, -25 }, LE = { 130, 0, 0 }, LW = { -60, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+			strike = { Root = { -16, 0, 0, 0, -0.3, -0.7 }, Waist = { -12, 0, 0 }, Neck = { 8, 0, 0 }, RS = { 92, 0, 10 }, RE = { 0, 0, 0 }, RW = { -85, 0, 0 }, LS = { 92, 0, -10 }, LE = { 0, 0, 0 }, LW = { -85, 0, 0 }, FR = { 0, 0, 0, 0.35, 0, -0.5 }, FL = { 0, 0, 0, -0.35, 0, -0.5 } },
+			follow = { Root = { -18, 0, 0, 0, -0.3, -0.78 }, Waist = { -14, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 94, 0, 8 }, RE = { 0, 0, 0 }, RW = { -88, 0, 0 }, LS = { 94, 0, -8 }, LE = { 0, 0, 0 }, LW = { -88, 0, 0 }, FR = { 0, 0, 0, 0.35, 0, -0.55 }, FL = { 0, 0, 0, -0.35, 0, -0.55 } },
+			shake = true, trail = "bothHands", fx = { { "ring", color = JELLY, radius = 6, at = "front" }, { "burst", color = MARSH, size = 3.5, at = "front" }, { "shake", amount = 0.5 } },
+			text = "YOROSHII !", hitText = "BLAAAM !",
+		},
+		-- ↓ K K : Toupie de bide, à plat ventre il tourne sur sa bedaine comme une toupie, bras et jambes en étoile
+		K_downK = {
+			label = "Toupie de bide", startup = 0.08, active = 0.26, recovery = 0.26, hits = 2,
+			damage = 5, hitbox = box(7, 3.5, 0.5, -1), kbBase = 24, kbGrowth = 40, kbAngle = 45,
+			windup = { Root = { -30, 0, 0, 0, -1.0, 0 }, Waist = { -10, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 60, 0, 60 }, RE = { 20, 0, 0 }, LS = { 60, 0, -60 }, LE = { 20, 0, 0 } },
+			strike = { Root = { -72, 0, 0, 0, -1.5, 0 }, Waist = { 0, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 100, 0, 88 }, RE = { 0, 0, 0 }, LS = { 100, 0, -88 }, LE = { 0, 0, 0 }, RH = { 0, 0, 40 }, RK = { 0, 0, 0 }, LH = { 0, 0, -40 }, LK = { 0, 0, 0 } },
+			follow = { Root = { -72, 0, 0, 0, -1.5, 0 }, Waist = { 0, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 100, 0, 90 }, RE = { 0, 0, 0 }, LS = { 100, 0, -90 }, LE = { 0, 0, 0 }, RH = { 0, 0, 42 }, RK = { 0, 0, 0 }, LH = { 0, 0, -42 }, LK = { 0, 0, 0 } },
+			spin = { axis = "y", degrees = 720 }, wobble = true, trail = "body", fx = { { "puddle", color = JELLY, width = 7 }, { "ring", color = JELLY, radius = 5, at = "feet" } }, text = "TOUPIIIE !", hitText = "SPLOTCH SPLOTCH !",
 		},
 
 		------------------------------------------------------------------ En l'air avec une flèche
@@ -359,29 +426,27 @@ local data = {
 			follow = { Root = { 2, 0, 0, 0, 0.6, 0 }, Waist = { 8, 0, 0 }, Neck = { 24, 0, 0 }, RS = { 178, 0, 12 }, RE = { 5, 0, 0 }, LS = { 178, 0, -12 }, LE = { 5, 0, 0 }, RH = { 20, 0, 10 }, RK = { -40, 0, 0 }, LH = { 10, 0, -10 }, LK = { -30, 0, 0 } },
 			wobble = true, trail = "body", fx = { { "pillar", color = JELLY, height = 6, width = 2.5, time = 0.35 } }, text = "BOÏÏÏNG !", hitText = "TCHAC !",
 		},
-		-- Trampoline (esquive puis S) : ventre gonflé à bloc, bras écartés, il renvoie les projectiles
+		-- Trampoline (esquive puis S) : il se cambre, gonfle le ventre à bloc et le projette en avant : l'adversaire rebondit… et les projectiles aussi
 		S_dodge = {
 			label = "Trampoline", energyCost = 25, kind = "wall", startup = 0.1, active = 0.6, recovery = 0.3,
-			hitbox = box(5, 4, 2.5, 0.5), kbBase = 30, kbGrowth = 45, kbAngle = 30,
-			damage = 7,
+			damage = 7, hitbox = box(5.5, 4.5, 2.8, 0.4), kbBase = 30, kbGrowth = 45, kbAngle = 30,
 			wall = { size = Vector3.new(1.5, 6, 6), offset = 2.2, lifetime = 1.4, max = 1, reflect = true, follow = true, solid = false, color = JELLY,
 				visual = { shape = "disc", size = 5.5, color = JELLY, transparency = 0.45, trail = false } },
-			windup = { Root = { -6, 0, 0, 0, -0.5, 0.2 }, Waist = { -14, 0, 0 }, RS = { 60, 0, 20 }, RE = { 70, 0, 0 }, LS = { 60, 0, -20 }, LE = { 70, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
-			strike = { Root = { 20, 0, 0, 0, -0.3, -0.1 }, Waist = { 24, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 60, 0, 85 }, RE = { 10, 0, 0 }, LS = { 60, 0, -85 }, LE = { 10, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
-			follow = { Root = { 22, 0, 0, 0, -0.3, -0.1 }, Waist = { 26, 0, 0 }, Neck = { -12, 0, 0 }, RS = { 62, 0, 88 }, RE = { 10, 0, 0 }, LS = { 62, 0, -88 }, LE = { 10, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
-			hold = 0.2, wobble = true, fx = { { "ring", color = JELLY, radius = 4, at = "front" } }, text = "TRAMPOLINE !",
+			windup = { Root = { -12, 0, 0, 0, -0.5, 0.35 }, Waist = { -22, 0, 0 }, Neck = { -12, 0, 0 }, RS = { 70, 0, 20 }, RE = { 70, 0, 0 }, LS = { 70, 0, -20 }, LE = { 70, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+			strike = { Root = { 22, 0, 0, 0, -0.3, -0.5 }, Waist = { 28, 0, 0 }, Neck = { -16, 0, 0 }, RS = { 40, 0, 88 }, RE = { 10, 0, 0 }, LS = { 40, 0, -88 }, LE = { 10, 0, 0 }, FR = WIDE_R, FL = { 0, 0, 0, -0.35, 0, -0.4 } },
+			follow = { Root = { 24, 0, 0, 0, -0.3, -0.55 }, Waist = { 30, 0, 0 }, Neck = { -18, 0, 0 }, RS = { 42, 0, 90 }, RE = { 10, 0, 0 }, LS = { 42, 0, -90 }, LE = { 10, 0, 0 }, FR = WIDE_R, FL = { 0, 0, 0, -0.35, 0, -0.45 } },
+			hold = 0.2, wobble = true, trail = "body", fx = { { "ring", color = JELLY, radius = 4, at = "front" }, { "burst", color = JELLY, size = 2.5, at = "front" } }, text = "TRAMPOLINE !", hitText = "BOÏNG !",
 		},
-		-- Gonflement (S maintenu) : il inspire, gonfle comme un ballon et devient inébranlable un moment
+		-- Gonflement (S maintenu) : il inspire, gonfle comme un ballon… et son ventre gonflé à bloc cogne l'adversaire ; il reste inébranlable un moment
 		S_hold = {
-			label = "Gonflement", energyCost = 35, startup = 0.3, active = 0, recovery = 0.4,
-			hitbox = box(6, 4, 2.5, 0.5), kbBase = 30, kbGrowth = 55, kbAngle = 35,
-			damage = 9,
+			label = "Gonflement", energyCost = 35, startup = 0.3, active = 0.12, recovery = 0.4,
+			damage = 9, hitbox = box(6, 4.5, 2.8, 0.5), kbBase = 30, kbGrowth = 55, kbAngle = 35,
 			selfEffect = { heal = 6, armor = 2.5 },
-			windup = { Root = { -4, 0, 0, 0, -0.5, 0 }, Waist = { -10, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 30, 0, 20 }, RE = { 90, 0, 0 }, LS = { 30, 0, -20 }, LE = { 90, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
-			strike = { Root = { 6, 0, 0, 0, -0.05, 0 }, Waist = { 14, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 40, 0, 80 }, RE = { 10, 0, 0 }, LS = { 40, 0, -80 }, LE = { 10, 0, 0 }, FR = { 0, 0, 0, 0.5, 0, 0 }, FL = { 0, 0, 0, -0.5, 0, 0 } },
-			follow = { Root = { 6, 0, 0, 0, -0.05, 0 }, Waist = { 16, 0, 0 }, Neck = { 18, 0, 0 }, RS = { 42, 0, 84 }, RE = { 10, 0, 0 }, LS = { 42, 0, -84 }, LE = { 10, 0, 0 }, FR = { 0, 0, 0, 0.5, 0, 0 }, FL = { 0, 0, 0, -0.5, 0, 0 } },
-			hold = 0.4, shake = true, fx = { { "ring", color = JELLY, radius = 5, at = "root" }, { "symbols", symbols = { "💪", "🍮" }, color = JELLY, count = 4, radius = 3 } },
-			text = "INÉBRANLABLE !",
+			windup = { Root = { -4, 0, 0, 0, -0.5, 0.2 }, Waist = { -10, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 30, 0, 20 }, RE = { 90, 0, 0 }, LS = { 30, 0, -20 }, LE = { 90, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+			strike = { Root = { 14, 0, 0, 0, -0.1, -0.3 }, Waist = { 26, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 40, 0, 80 }, RE = { 10, 0, 0 }, LS = { 40, 0, -80 }, LE = { 10, 0, 0 }, FR = { 0, 0, 0, 0.5, 0, 0 }, FL = { 0, 0, 0, -0.5, 0, -0.3 } },
+			follow = { Root = { 14, 0, 0, 0, -0.1, -0.3 }, Waist = { 28, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 42, 0, 84 }, RE = { 10, 0, 0 }, LS = { 42, 0, -84 }, LE = { 10, 0, 0 }, FR = { 0, 0, 0, 0.5, 0, 0 }, FL = { 0, 0, 0, -0.5, 0, -0.3 } },
+			hold = 0.4, shake = true, wobble = true, trail = "body", fx = { { "ring", color = JELLY, radius = 5, at = "root" }, { "symbols", symbols = { "💪", "🍮" }, color = JELLY, count = 4, radius = 3 } },
+			text = "INÉBRANLABLE !", hitText = "BLOUMP !",
 		},
 		-- Roulade gluante (→→S) : il se met en boule et roule deux fois en avant
 		S_dash = {
@@ -441,15 +506,17 @@ local data = {
 			follow = { Root = { 8, 0, 0, 0, 0.12, 0 }, Waist = { 16, 0, 0 }, Neck = { 24, 0, 0 }, RS = { 150, 0, 75 }, RE = { 0, 0, 0 }, LS = { 150, 0, -75 }, LE = { 0, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
 			shake = true, windupFx = { "super" }, fx = { { "burst", color = JELLY, size = 4, at = "root" } }, text = "DIVISION !", hitText = "TRIPLE BOÏNG !",
 		},
-		-- Super ↑ : il tape du pied si fort que la gelée du sol jaillit en geyser
+		-- Super ↑ : Shiko volcanique, jambe levée très haut puis un piétinement si fort que la gelée du sol jaillit en geyser et le fait rebondir au ciel
 		SUPER_up = {
 			label = "Shiko volcanique !", superCost = 100, startup = 0.4, active = 0.3, recovery = 0.6,
 			damage = 22, hitbox = box(8, 14, 4, 6), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3,
-			windup = { Root = { -9.6, 0, 0, 0, -0.6, 0.3 }, Waist = { -19.2, 0, 0 }, Neck = { -7.2, 0, 0 }, RS = { 72, 0, 24 }, RE = { 108, 0, 0 }, LS = { 72, 0, -24 }, LE = { 108, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
-			strike = { Root = { 26.4, 0, 0, 0, -0.15, 0.45 }, Waist = { 31.2, 0, 0 }, Neck = { 24, 0, 0 }, RS = { 144, 0, 90 }, RE = { 12, 0, 0 }, LS = { 144, 0, -90 }, LE = { 12, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
-			follow = { Root = { 28.8, 0, 0, 0, -0.12, 0.5 }, Waist = { 33.6, 0, 0 }, Neck = { 28.8, 0, 0 }, RS = { 153.6, 0, 96 }, RE = { 12, 0, 0 }, LS = { 153.6, 0, -96 }, LE = { 12, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
-			hold = 0.45, shake = true,
-			windupFx = { "super" }, status = { name = "slowed", duration = 2 }, fx = { { "pillar", color = Color3.fromRGB(110, 220, 90), height = 20, width = 6, at = "front" }, { "shake", amount = 0.6 } }, text = "DOSUKOI !", hitText = "GLOUP !",
+			windup = { Root = { 0, 0, -18, -0.35, -0.15, 0 }, Waist = { 4, 0, -14 }, Neck = { 0, 0, 12 }, RS = { 170, 0, 40 }, RE = { 10, 0, 0 }, LS = { 150, 0, -30 }, LE = { 20, 0, 0 }, RH = { 30, 0, 95 }, RK = { -30, 0, 0 }, FL = WIDE_L },
+			strike = { Root = { 10, 0, 0, 0, -0.85, 0 }, Waist = { 16, 0, 0 }, Neck = { -14, 0, 0 }, RS = { 185, 0, 20 }, RE = { 5, 0, 0 }, LS = { 185, 0, -20 }, LE = { 5, 0, 0 }, FR = { 0, 0, 0, 0.55, 0, 0 }, FL = WIDE_L },
+			follow = { Root = { 6, 0, 0, 0, 0.45, 0 }, Waist = { 10, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 190, 0, 30 }, RE = { 5, 0, 0 }, LS = { 190, 0, -30 }, LE = { 5, 0, 0 }, FR = { 0, 0, 0, 0.5, 0.3, 0 }, FL = { 0, 0, 0, -0.5, 0.3, 0 } },
+			hold = 0.3, shake = true, wobble = true, trail = "rightFoot", selfVelocity = Vector2.new(0, 38),
+			windupFx = { "super" }, status = { name = "slowed", duration = 2 },
+			fx = { { "pillar", color = JELLY, height = 20, width = 6, at = "front" }, { "ring", color = JELLY, radius = 10, at = "feet" }, { "toss", shape = "ball", color = JELLY, size = 1, count = 8, speed = 20, lift = 30 }, { "shake", amount = 0.8 } },
+			text = "DOSUKOIII !", hitText = "GEYSER !",
 		},
 		-- Tsunami de gelée : il frappe le sol à deux mains, une énorme vague verte traverse l'arène
 		SUPER_down = {
@@ -699,9 +766,10 @@ local LINKS = {
 	-- au sol, P…
 	P_neutral = { P = "P_combo2", K = "PK_combo", S = "S_finish_shiko" },
 	P_combo2 = { P = "P_combo3", K = "PK_combo", S = "S_finish_shiko" }, -- P P
-	P_combo3 = { K = "K_neutral", S = "S_side" }, -- P P P
-	PK_combo = { P = "P_combo3", K = "K_combo2", S = "S_finish_shiko" }, -- P K
-	P_side = { P = "P_combo3", K = "K_side", S = "S_side" }, -- → P
+	P_combo3 = { P = "P_combo4", K = "K_neutral", S = "S_side" }, -- P P P (P P P P : plat-ventre du canard, finition)
+	PK_combo = { P = "P_combo3", K = "PKK_combo", S = "S_finish_shiko" }, -- P K (P K K : cloche de gelée, finition)
+	P_side = { P = "P_side2", K = "K_side", S = "S_side" }, -- → P
+	P_side2 = { P = "P_side3", K = "PK_combo", S = "S_finish_shiko" }, -- → P P (→ P P P : bedaine supersonique, finition)
 	P_down = { P = "P_down2", K = "K_down", S = "S_finish_shiko" }, -- ↓ P
 	P_down2 = { P = "P_air_up", K = "K_air_up", S = "S_air" }, -- ↓ P P (il décolle)
 	P_up = { P = "P_combo2", K = "K_up", S = "S_finish_shiko" }, -- ↑ P
@@ -711,8 +779,10 @@ local LINKS = {
 	K_combo2 = { K = "K_combo3", P = "KP_combo", S = "S_finish_shiko" }, -- K K
 	K_combo3 = { S = "S_down" }, -- K K K
 	KP_combo = { K = "K_combo3", P = "P_combo3", S = "S_finish_shiko" }, -- K P
-	K_side = { P = "KP_combo", S = "S_side" }, -- → K
-	K_down = { P = "P_down2", K = "K_combo3", S = "S_finish_shiko" }, -- ↓ K
+	K_side = { K = "K_side2", P = "KP_combo", S = "S_side" }, -- → K
+	K_side2 = { K = "K_side3", P = "KP_combo", S = "S_finish_shiko" }, -- → K K (→ K K K : tsuppari de fin de tournoi, finition)
+	K_down = { K = "K_downK", P = "P_down2", S = "S_finish_shiko" }, -- ↓ K
+	K_downK = { P = "P_down2", S = "S_finish_shiko" }, -- ↓ K K
 	K_up = { P = "P_air_up", S = "S_finish_shiko" }, -- ↑ K
 	K_dash = { P = "KP_combo", S = "S_finish_shiko" }, -- dash K
 	-- en l'air (↓P et ↓K, smashs vers le sol, finissent la chaîne)
