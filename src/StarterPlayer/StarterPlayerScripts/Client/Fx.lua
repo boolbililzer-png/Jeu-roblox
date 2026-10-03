@@ -1016,7 +1016,10 @@ local function buildCustomProjectile(visual, color)
 	local size = visual.size or 1.4
 	local mat = visual.material and Enum.Material[visual.material] or nil
 	if visual.shape == "disc" then
-		add("disc", Vector3.new(0.25, size, size), Vector3.zero, visual.color, mat)
+		-- disque vu de face par la caméra (un cylindre Roblox est couché sur X : on le tourne vers Z)
+		local disc = add("disc", Vector3.new(0.25, size, size), Vector3.zero, visual.color, mat)
+		pieces[#pieces][3] = CFrame.Angles(0, math.rad(90), 0)
+		local _ = disc
 	elseif visual.shape == "cyl" then
 		add("cyl", Vector3.new(size, size * 0.5, size * 0.5), Vector3.zero, visual.color, mat)
 	elseif visual.shape == "block" then
@@ -1063,7 +1066,7 @@ local function buildCustomProjectile(visual, color)
 	return holder, function(cf)
 		local spin = CFrame.Angles(0, 0, -os.clock() * spinSpeed)
 		for _, entry in ipairs(pieces) do
-			entry[1].CFrame = cf * spin * CFrame.new(entry[2])
+			entry[1].CFrame = cf * spin * CFrame.new(entry[2]) * (entry[3] or CFrame.new())
 		end
 	end
 end

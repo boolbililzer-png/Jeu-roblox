@@ -144,7 +144,10 @@ function Mechanics.reset(model)
 		elseif p.kind == "tricks" then
 			model:SetAttribute("NextTrick", rng:NextInteger(1, 3))
 		elseif p.kind == "playlist" then
+			-- le premier morceau donne son bonus dès le début
 			model:SetAttribute("Track", p.tracks[1])
+			model:SetAttribute("Buff", p.tracks[1])
+			model:SetAttribute("BuffUntil", workspace:GetServerTimeNow() + 9999)
 		end
 	end
 	model:SetAttribute("MeterMax", max)
