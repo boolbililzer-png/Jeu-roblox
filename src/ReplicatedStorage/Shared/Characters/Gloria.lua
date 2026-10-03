@@ -377,7 +377,7 @@ local data = {
 			trail = "bothFeet", text = "TIC-TAC !", hitText = "TCHONK !",
 		},
 
-		------------------------------------------------------------------ Signatures (S)
+		------------------------------------------------------------------ Signatures (L) : sûres de toucher (couloir / projectiles visés, voir docs/fiche-perso.md)
 		-- Onde de basse : elle pose un genou, braque l'enceinte et la basse fonce droit sur l'adversaire, en le suivant
 		S_neutral = {
 			label = "Onde de basse", kind = "projectile", startup = 0.2, active = 0, recovery = 0.45,
@@ -499,7 +499,7 @@ local data = {
 			spin = { axis = "y", degrees = 720 }, trail = "rightFoot", text = "ET ON TOURNE !", hitText = "VLOUF !",
 		},
 
-		------------------------------------------------------------------ Supers
+		------------------------------------------------------------------ Supers (Y) : couloir 1,3 fois plus grand, plus farfelus
 		-- Cours collectif (Y) : coup de sifflet, enceinte au ciel, toute la salle doit danser : tout le monde autour d'elle,
 		-- des deux côtés, danse 3 s sans pouvoir s'arrêter
 		SUPER = {

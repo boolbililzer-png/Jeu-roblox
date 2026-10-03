@@ -394,7 +394,7 @@ local data = {
 			trail = "bothFeet", text = "TALONS !", hitText = "CRONCH !",
 		},
 
-		------------------------------------------------------------------ Signatures (S)
+		------------------------------------------------------------------ Signatures (L) : sûres de toucher (couloir / projectiles visés, voir docs/fiche-perso.md)
 		-- Le Flash : téléphone braqué devant elle, un flash énorme éclaire tout le couloir et étourdit tout ce qu'il y a dedans
 		S_neutral = {
 			label = "Le Flash", startup = 0.18, active = 0.12, recovery = 0.42,
@@ -518,7 +518,7 @@ local data = {
 			spin = { axis = "y", degrees = 720 }, prop = "ringlight", hideProp = "perche", trail = "prop", text = "LUMIÈRE !", hitText = "BZZZT !",
 		},
 
-		------------------------------------------------------------------ Supers
+		------------------------------------------------------------------ Supers (Y) : couloir 1,3 fois plus grand, plus farfelus
 		-- Virale ! (Y) : elle publie la vidéo, une avalanche de notifications tombe du ciel pile sur l'adversaire et elle devient virale
 		SUPER = {
 			label = "Virale !", kind = "projectile", startup = 0.4, active = 0, recovery = 0.7,

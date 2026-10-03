@@ -439,12 +439,12 @@ local data = {
 			trail = "body", fx = { { "shake", amount = 0.6 }, { "ring", color = GHOST, radius = 6, at = "feet" }, { "burst", color = GHOST, size = 3, at = "feet" } }, text = "…", hitText = "( PLONK )",
 		},
 		-- Peau de banane invisible (esquive puis S) : il pèle une banane imaginaire, la mange et jette la peau d'un grand
-		-- geste… elle file droit sous les pieds de l'adversaire et reste là un moment, glissante
+		-- geste… elle file droit sur l'adversaire (personne à portée : elle retombe et reste au sol un moment, glissante)
 		S_dodge = {
 			label = "Peau de banane invisible", kind = "projectile", startup = 0.18, active = 0, recovery = 0.4,
 			damage = 12, kbBase = 24, kbGrowth = 30, kbAngle = 80,
 			status = { name = "slippery", duration = 2 },
-			projectile = { speed = 60, angle = 0, gravity = 0, lifetime = 0.6, size = 2, color = BANANA, linger = 1.5, from = "feet",
+			projectile = { speed = 60, angle = 8, gravity = 30, lifetime = 0.6, size = 2, color = BANANA, linger = 1.5, from = "feet",
 				visual = { shape = "ball", size = 0.9, color = BANANA, transparency = 0.75, spin = 6,
 					parts = { { "block", Vector3.new(0.9, 0.1, 0.3), Vector3.new(0.6, -0.3, 0), BANANA }, { "block", Vector3.new(0.9, 0.1, 0.3), Vector3.new(-0.6, -0.3, 0), BANANA } } } },
 			windup = { Root = { 0, 0, 0, 0, -0.1, 0 }, Waist = { 4, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 110, 0, -30 }, RE = { 130, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, 10 }, LE = { 100, 0, 0 } },

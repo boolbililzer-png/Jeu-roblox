@@ -427,12 +427,13 @@ local data = {
 			trail = "bothFeet", text = "CTRL-ALT-SUPPR !", hitText = "CRONCH !",
 		},
 
-		------------------------------------------------------------------ Signatures (S)
-		-- Paquet de chips : il sort son paquet et le balance droit sur la figure de l'adversaire ; il éclate en un nuage de miettes grasses qui reste là
+		------------------------------------------------------------------ Signatures (L) : sûres de toucher (couloir / projectiles visés, voir docs/fiche-perso.md)
+		-- Paquet de chips : il sort son paquet et le balance droit sur la figure de l'adversaire ; personne à portée : il retombe
+		-- et éclate en un nuage de miettes grasses qui reste au sol
 		S_neutral = {
 			label = "Paquet de chips", kind = "projectile", startup = 0.2, active = 0, recovery = 0.42,
 			damage = 13, kbBase = 22, kbGrowth = 38, kbAngle = 35,
-			projectile = { speed = 55, angle = 0, gravity = 0, lifetime = 0.8, size = 2.6, color = CHIPS, linger = 1.2,
+			projectile = { speed = 55, angle = 12, gravity = 40, lifetime = 0.8, size = 2.6, color = CHIPS, linger = 1.2,
 				visual = { shape = "block", size = 1.2, color = CHIPS, material = "Foil", spin = 10, parts = { { "block", Vector3.new(1.25, 0.3, 0.75), Vector3.zero, ROUGE } } } },
 			windup = { Root = { 6, -24, 0, 0, -0.15, 0.25 }, Waist = { 10, -30, 0 }, Neck = { 0, 16, 0 }, RS = { 185, 0, 25 }, RE = { 80, 0, 0 }, RW = { 0, 0, 0 }, LS = { 80, 0, -20 }, LE = { 30, 0, 0 } },
 			strike = { Root = { -12, 20, 0, 0, -0.3, -0.35 }, Waist = { -22, 30, 0 }, Neck = { 0, -10, 0 }, RS = { 92, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -20, 0, -30 }, LE = { 70, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
@@ -545,7 +546,7 @@ local data = {
 			prop = "clavier", hideProp = "manette", trail = "prop", text = "ENTRÉE !", hitText = "CLAC !",
 		},
 
-		------------------------------------------------------------------ Supers
+		------------------------------------------------------------------ Supers (Y) : couloir 1,3 fois plus grand, plus farfelus
 		-- Rage Quit ! (Y) : il fracasse son clavier et une pluie de touches tombe du ciel pile sur l'adversaire
 		SUPER = {
 			label = "Rage Quit !", kind = "projectile", startup = 0.4, active = 0, recovery = 0.7,

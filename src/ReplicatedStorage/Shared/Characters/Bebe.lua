@@ -390,7 +390,7 @@ local data = {
 			trail = "bothFeet", text = "PATATRAS !", hitText = "CRONCH !",
 		},
 
-		------------------------------------------------------------------ Spéciaux (S)
+		------------------------------------------------------------------ Signatures (L) : sûres de toucher (couloir / projectiles visés, voir docs/fiche-perso.md)
 		-- Hurlement de bébé : il gonfle les joues, se cambre poings serrés et pousse un cri qui repousse tout, des deux côtés,
 		-- sur toute la plateforme
 		S_neutral = {
@@ -515,7 +515,7 @@ local data = {
 			fx = { { "ring", color = TEARS, radius = 4, at = "front" } }, text = "IIIIH !", hitText = "AÏE !",
 		},
 
-		------------------------------------------------------------------ Supers
+		------------------------------------------------------------------ Supers (Y) : couloir 1,3 fois plus grand, plus farfelus
 		-- Crise de larmes (Y) : il éclate en sanglots et un raz-de-marée de larmes fonce droit sur l'adversaire, le trempe et l'emporte
 		SUPER = {
 			label = "Crise de larmes !", kind = "projectile", startup = 0.4, active = 0, recovery = 0.7,
