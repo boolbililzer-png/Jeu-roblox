@@ -310,6 +310,12 @@ function Mechanics.applySelf(model, move)
 	if e.meter then
 		Mechanics.setMeter(model, Mechanics.meter(model) + e.meter)
 		Mechanics.updateSpeed(model)
+		-- Lola : un Live qui atteint les 1000 likes la rend virale tout de suite
+		local p = Mechanics.passive(model)
+		if p and p.kind == "likes" and Mechanics.meter(model) >= p.max then
+			Mechanics.setMeter(model, 0)
+			Mechanics.setBuff(model, "viral", p.duration)
+		end
 	end
 	if e.bulles then
 		model:SetAttribute("Bulles", math.min(3, (model:GetAttribute("Bulles") or 0) + e.bulles))
