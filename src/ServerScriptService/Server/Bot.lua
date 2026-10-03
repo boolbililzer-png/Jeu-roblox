@@ -355,6 +355,10 @@ RunService.Heartbeat:Connect(function(dt)
 			-- marche (sauf sonné ou pendant un coup au sol)
 			local busy = s and os.clock() < s.busyUntil
 			local velocity = root.AssemblyLinearVelocity
+			-- en plein combo adverse, un bot armé jette parfois son arme pour s'en sortir (comme les joueurs)
+			if stunned and MoveSets.armed(model) and (model:GetAttribute("Damage") or 0) > 60 and rng:NextNumber() < 0.003 * brain.difficulty then
+				Combat.handleModelAction(model, "THROW_WEAPON", "fwd")
+			end
 			if stunned then
 				velocity = Vector3.new(velocity.X * math.exp(-Config.KB_DRAG * dt), velocity.Y, 0)
 				humanoid:Move(Vector3.zero)

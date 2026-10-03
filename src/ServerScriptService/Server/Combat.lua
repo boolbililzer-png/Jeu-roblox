@@ -663,6 +663,33 @@ function Combat.handleModelAction(model, action, extra)
 		return
 	end
 	local now = os.clock()
+	-- jeter son arme : possible même en se faisant frapper (ça casse le combo adverse)
+	if action == "THROW_WEAPON" then
+		if now >= (s.weaponThrowReadyAt or 0) and not Statuses.flags(model).noAct then
+			local stunned = now < s.stunnedUntil
+			local direction = (extra == "up" or extra == "down") and extra or "fwd"
+			if Pickups.throwWeapon(model, direction) then
+				s.weaponThrowReadyAt = now + 1
+				if stunned then
+					s.stunnedUntil = now
+					s.invulnUntil = math.max(s.invulnUntil, now + 0.5)
+					model:SetAttribute("HitstunUntil", 0)
+					if fxRemote then
+						fxRemote:FireAllClients("Popup", { model = model, text = "ARME JETÉE !", icon = "📦" })
+					end
+				end
+				model:SetAttribute("WeaponThrown", workspace:GetServerTimeNow())
+				-- tout le monde voit le geste de lancer
+				local character = CharacterList[model:GetAttribute("Character") or Config.DEFAULT_CHARACTER]
+				local key = direction == "fwd" and "ITEM_throw" or "ITEM_throw_" .. direction
+				local throwMove = character and (character.moves[key] or character.moves.ITEM_throw)
+				if throwMove then
+					Combat.perform(model, key, throwMove, true)
+				end
+			end
+		end
+		return
+	end
 	if now < s.stunnedUntil or model:GetAttribute("Grabbed") then
 		return
 	end

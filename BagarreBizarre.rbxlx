@@ -18520,6 +18520,10 @@ RunService.Heartbeat:Connect(function(dt)
 			-- marche (sauf sonné ou pendant un coup au sol)
 			local busy = s and os.clock() < s.busyUntil
 			local velocity = root.AssemblyLinearVelocity
+			-- en plein combo adverse, un bot armé jette parfois son arme pour s'en sortir (comme les joueurs)
+			if stunned and MoveSets.armed(model) and (model:GetAttribute("Damage") or 0) > 60 and rng:NextNumber() < 0.003 * brain.difficulty then
+				Combat.handleModelAction(model, "THROW_WEAPON", "fwd")
+			end
 			if stunned then
 				velocity = Vector3.new(velocity.X * math.exp(-Config.KB_DRAG * dt), velocity.Y, 0)
 				humanoid:Move(Vector3.zero)
@@ -19204,6 +19208,33 @@ function Combat.handleModelAction(model, action, extra)
 		return
 	end
 	local now = os.clock()
+	-- jeter son arme : possible même en se faisant frapper (ça casse le combo adverse)
+	if action == "THROW_WEAPON" then
+		if now >= (s.weaponThrowReadyAt or 0) and not Statuses.flags(model).noAct then
+			local stunned = now < s.stunnedUntil
+			local direction = (extra == "up" or extra == "down") and extra or "fwd"
+			if Pickups.throwWeapon(model, direction) then
+				s.weaponThrowReadyAt = now + 1
+				if stunned then
+					s.stunnedUntil = now
+					s.invulnUntil = math.max(s.invulnUntil, now + 0.5)
+					model:SetAttribute("HitstunUntil", 0)
+					if fxRemote then
+						fxRemote:FireAllClients("Popup", { model = model, text = "ARME JETÉE !", icon = "📦" })
+					end
+				end
+				model:SetAttribute("WeaponThrown", workspace:GetServerTimeNow())
+				-- tout le monde voit le geste de lancer
+				local character = CharacterList[model:GetAttribute("Character") or Config.DEFAULT_CHARACTER]
+				local key = direction == "fwd" and "ITEM_throw" or "ITEM_throw_" .. direction
+				local throwMove = character and (character.moves[key] or character.moves.ITEM_throw)
+				if throwMove then
+					Combat.perform(model, key, throwMove, true)
+				end
+			end
+		end
+		return
+	end
 	if now < s.stunnedUntil or model:GetAttribute("Grabbed") then
 		return
 	end
@@ -22679,6 +22710,7 @@ local nextId = 100000 -- identifiants des objets lancés (les coups utilisent de
 local BOMB_DIRECT = { damage = 20, kbBase = 260, kbGrowth = 0, kbAngle = 55, hitText = "KABOUM !" }
 local BOMB_SPLASH = { damage = 18, kbBase = 60, kbGrowth = 95, kbAngle = 60, hitText = "BOUM !" }
 local CROUSTY_HIT = { damage = 5, kbBase = 0, kbGrowth = 0, kbAngle = 0, hitText = "MIAM !" }
+local THROWN_WEAPON = { damage = 9, kbBase = 35, kbGrowth = 55, kbAngle = 40, hitText = "BLONG !" }
 local BANANA_SLIP = { damage = 6, kbBase = 45, kbGrowth = 25, kbAngle = 82, hitText = "GLISSS !" }
 
 local function serverNow()
@@ -22954,6 +22986,10 @@ local function onThrownHit(id, thrower, target, direction, position)
 		fire("Obese", { model = target })
 	elseif id == "banana" then
 		Fighters.hit(thrower, target, BANANA_SLIP, 1, direction)
+	elseif id == "crate" then
+		-- arme jetée : elle assomme celui qu'elle touche, puis retombe en caisse
+		Fighters.hit(thrower, target, THROWN_WEAPON, 1, direction)
+		task.delay(0.3, Pickups.spawnItem, "crate", position)
 	end
 end
 
@@ -22965,7 +23001,21 @@ local function onThrownLand(id, thrower, position, landed)
 		landBanana(position, thrower)
 	elseif id == "crousty" then
 		fire("Splat", { position = position, id = id })
+	elseif id == "crate" then
+		-- l'arme jetée retombe en Caisse Bizarre : n'importe qui peut la reprendre
+		Pickups.spawnItem("crate", position)
 	end
+end
+
+-- Jeter son arme (✋ avec la caisse ouverte, même en se faisant frapper) : elle part en projectile, le perso
+-- repasse à mains nues. En plein combo adverse, ça le casse (court instant d'invulnérabilité).
+function Pickups.throwWeapon(model, direction)
+	if model:GetAttribute("Armed") ~= true or Pickups.heldId(model) then
+		return false
+	end
+	Pickups.disarm(model)
+	model:SetAttribute("Held", "crate") -- le temps du lancer : l'objet lancé est la caisse
+	return Pickups.throw(model, direction)
 end
 
 function Pickups.throw(model, direction)
@@ -27471,13 +27521,36 @@ local function handAction()
 	if nearestPickup() then
 		return "pickup"
 	end
+	if MoveSets.armed(character) then
+		return "throwWeapon" -- jeter son arme (même en se faisant frapper)
+	end
 	return "none"
+end
+
+-- Jeter son arme : on repasse à mains nues ; en plein combo adverse, ça le casse
+local function throwWeapon()
+	local direction = aimDirection()
+	if direction == "back" then
+		facing = -facing
+		direction = "fwd"
+	end
+	ActionRemote:FireServer("THROW_WEAPON", direction)
+	-- le serveur coupe l'étourdissement ; on reprend la main tout de suite chez soi
+	stunnedUntil = 0
+	busyUntil = 0
+	if humanoid then
+		humanoid.PlatformStand = false
+	end
 end
 
 local function doHand()
 	local action = handAction()
 	if action == "throw" then
 		ActionRemote:FireServer("THROW", aimDirection())
+		return
+	end
+	if action == "throwWeapon" then
+		throwWeapon()
 		return
 	end
 	if os.clock() < busyUntil or not canAct() then
@@ -27606,6 +27679,11 @@ controls.Pressed:Connect(function(name)
 		return
 	end
 	if not canAct() then
+		-- en se faisant frapper, ✋ peut quand même jeter l'arme pour casser le combo
+		if name == "MAIN" and character and MoveSets.armed(character) and root and not root.Anchored
+			and not character:GetAttribute("Eliminated") and not flags().noAct then
+			throwWeapon()
+		end
 		return
 	end
 	if name == "CHARGE" then
@@ -27837,6 +27915,8 @@ RunService.Heartbeat:Connect(function(dt)
 	local _, heldId = heldItem()
 	if hand == "throw" then
 		controls:setHandLabel("LANCE", Color3.fromRGB(230, 90, 60))
+	elseif hand == "throwWeapon" then
+		controls:setHandLabel("📦↗", Color3.fromRGB(200, 140, 60))
 	elseif hand == "throwItem" then
 		controls:setHandLabel((Items.LIST[heldId] and Items.LIST[heldId].icon or "") .. "↗", Color3.fromRGB(230, 140, 40))
 	elseif hand == "pickup" then

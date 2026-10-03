@@ -25,6 +25,7 @@ local nextId = 100000 -- identifiants des objets lancés (les coups utilisent de
 local BOMB_DIRECT = { damage = 20, kbBase = 260, kbGrowth = 0, kbAngle = 55, hitText = "KABOUM !" }
 local BOMB_SPLASH = { damage = 18, kbBase = 60, kbGrowth = 95, kbAngle = 60, hitText = "BOUM !" }
 local CROUSTY_HIT = { damage = 5, kbBase = 0, kbGrowth = 0, kbAngle = 0, hitText = "MIAM !" }
+local THROWN_WEAPON = { damage = 9, kbBase = 35, kbGrowth = 55, kbAngle = 40, hitText = "BLONG !" }
 local BANANA_SLIP = { damage = 6, kbBase = 45, kbGrowth = 25, kbAngle = 82, hitText = "GLISSS !" }
 
 local function serverNow()
@@ -300,6 +301,10 @@ local function onThrownHit(id, thrower, target, direction, position)
 		fire("Obese", { model = target })
 	elseif id == "banana" then
 		Fighters.hit(thrower, target, BANANA_SLIP, 1, direction)
+	elseif id == "crate" then
+		-- arme jetée : elle assomme celui qu'elle touche, puis retombe en caisse
+		Fighters.hit(thrower, target, THROWN_WEAPON, 1, direction)
+		task.delay(0.3, Pickups.spawnItem, "crate", position)
 	end
 end
 
@@ -311,7 +316,21 @@ local function onThrownLand(id, thrower, position, landed)
 		landBanana(position, thrower)
 	elseif id == "crousty" then
 		fire("Splat", { position = position, id = id })
+	elseif id == "crate" then
+		-- l'arme jetée retombe en Caisse Bizarre : n'importe qui peut la reprendre
+		Pickups.spawnItem("crate", position)
 	end
+end
+
+-- Jeter son arme (✋ avec la caisse ouverte, même en se faisant frapper) : elle part en projectile, le perso
+-- repasse à mains nues. En plein combo adverse, ça le casse (court instant d'invulnérabilité).
+function Pickups.throwWeapon(model, direction)
+	if model:GetAttribute("Armed") ~= true or Pickups.heldId(model) then
+		return false
+	end
+	Pickups.disarm(model)
+	model:SetAttribute("Held", "crate") -- le temps du lancer : l'objet lancé est la caisse
+	return Pickups.throw(model, direction)
 end
 
 function Pickups.throw(model, direction)

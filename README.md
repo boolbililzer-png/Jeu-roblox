@@ -39,7 +39,7 @@ On ne combine jamais deux boutons : la direction tenue au moment de l'appui choi
 | Esquive (puis S = spécial d'esquive) | Maj | ESQ |
 | ⭐ 3 Supers (jauge pleine) : ↑I, →I (ou I), ↓I ; et coup fatal | I | ⭐ |
 | ⚡ Recharger l'énergie des spéciaux | O (maintenu) | ⚡ |
-| ✋ Ramasser une caisse ou un objet, lancer l'objet (pas de saisie) | U | ✋ |
+| ✋ Ramasser une caisse ou un objet, lancer l'objet, **jeter son arme** (pas de saisie) | U | ✋ |
 | 😀 Emotes | 1, 2, 3, 4 | 😀 |
 | Aide des touches | H | — |
 
@@ -58,6 +58,9 @@ On ne combine jamais deux boutons : la direction tenue au moment de l'appui choi
 - **Aventure** : 5 combats contre des bots de plus en plus forts, chacun dans l'arène de l'adversaire,
   avec un boss à la fin. On peut la faire à deux.
 - **Entraînement** : le mannequin, sans chrono. Le bouton ⏏ QUITTER ramène au salon.
+- **Jeter son arme** : avec la caisse ouverte, ✋ lance l'arme sur l'adversaire, même pendant qu'on se fait
+  frapper ; ça casse alors le combo adverse (0,5 s d'invulnérabilité). On repasse à mains nues, et l'arme
+  retombe en Caisse Bizarre que n'importe qui peut reprendre.
 - **Caisse Bizarre** 📦 : on entre à mains nues, avec des coups communs à tous. Ouvrir une caisse avec ✋
   sort l'arme du perso, et P, K et S deviennent son moveset unique jusqu'à la prochaine éjection. La
   saisie, les Supers, les fatals et la mécanique du perso marchent toujours.

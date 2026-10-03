@@ -460,13 +460,36 @@ local function handAction()
 	if nearestPickup() then
 		return "pickup"
 	end
+	if MoveSets.armed(character) then
+		return "throwWeapon" -- jeter son arme (même en se faisant frapper)
+	end
 	return "none"
+end
+
+-- Jeter son arme : on repasse à mains nues ; en plein combo adverse, ça le casse
+local function throwWeapon()
+	local direction = aimDirection()
+	if direction == "back" then
+		facing = -facing
+		direction = "fwd"
+	end
+	ActionRemote:FireServer("THROW_WEAPON", direction)
+	-- le serveur coupe l'étourdissement ; on reprend la main tout de suite chez soi
+	stunnedUntil = 0
+	busyUntil = 0
+	if humanoid then
+		humanoid.PlatformStand = false
+	end
 end
 
 local function doHand()
 	local action = handAction()
 	if action == "throw" then
 		ActionRemote:FireServer("THROW", aimDirection())
+		return
+	end
+	if action == "throwWeapon" then
+		throwWeapon()
 		return
 	end
 	if os.clock() < busyUntil or not canAct() then
@@ -595,6 +618,11 @@ controls.Pressed:Connect(function(name)
 		return
 	end
 	if not canAct() then
+		-- en se faisant frapper, ✋ peut quand même jeter l'arme pour casser le combo
+		if name == "MAIN" and character and MoveSets.armed(character) and root and not root.Anchored
+			and not character:GetAttribute("Eliminated") and not flags().noAct then
+			throwWeapon()
+		end
 		return
 	end
 	if name == "CHARGE" then
@@ -826,6 +854,8 @@ RunService.Heartbeat:Connect(function(dt)
 	local _, heldId = heldItem()
 	if hand == "throw" then
 		controls:setHandLabel("LANCE", Color3.fromRGB(230, 90, 60))
+	elseif hand == "throwWeapon" then
+		controls:setHandLabel("📦↗", Color3.fromRGB(200, 140, 60))
 	elseif hand == "throwItem" then
 		controls:setHandLabel((Items.LIST[heldId] and Items.LIST[heldId].icon or "") .. "↗", Color3.fromRGB(230, 140, 40))
 	elseif hand == "pickup" then
