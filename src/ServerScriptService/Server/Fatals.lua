@@ -170,10 +170,10 @@ STEPS.spawn = function(step, attacker, target, props)
 	local offset = step.offset or Vector3.zero
 	local base = anchorPoint(step.at or "target", attacker, target) + Vector3.new(offset.X * dir, offset.Y, offset.Z)
 	for _, piece in ipairs(step.pieces or {}) do
-		local part, offset = Costumes.buildPiece(piece)
+		local part, local_ = Costumes.buildPiece(piece)
 		part.Anchored = true
 		part.CanCollide = false
-		part.CFrame = CFrame.new(base) * CFrame.new(offset.Position.X * dir, offset.Position.Y, offset.Position.Z) * (offset - offset.Position)
+		part.CFrame = CFrame.new(base) * CFrame.new(local_.Position.X * dir, local_.Position.Y, local_.Position.Z) * (local_ - local_.Position)
 		part.Parent = model
 	end
 	model.Parent = workspace
