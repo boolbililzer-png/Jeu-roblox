@@ -21,11 +21,497 @@ local ARGENT = Color3.fromRGB(200, 200, 210)
 local BLEU = Color3.fromRGB(60, 140, 255)
 local FLASH = Color3.fromRGB(255, 255, 240)
 
+local CHAUD = Color3.fromRGB(255, 160, 90) -- air chaud du sèche-cheveux (arme n° 2)
+local GIVRE = Color3.fromRGB(190, 235, 255) -- mode froid du sèche-cheveux (arme n° 2)
+local CUIR_ROSE = Color3.fromRGB(230, 120, 170) -- sac à main de luxe (arme n° 3)
 local data = {
 	id = "Lola",
 	name = "Lola Filtre",
 	costume = "Lola",
 	style = "diva",
+
+	------------------------------------------------------------------ Les 3 armes de la Caisse Bizarre (une au hasard)
+	-- n° 1 : la perche à selfie (ses coups sont ceux de moves). n° 2 : le sèche-cheveux turbo, jeu de souffles et de
+	-- projectiles d'air chaud (un saut de plus). n° 3 : le sac à main de luxe, lourd, bourré d'affaires, qui éjecte loin.
+	weapons = {
+		{ id = "perche", name = "Perche à selfie", icon = "🤳",
+			ability = { reach = 1.15, text = "Perche télescopique : portée de tous les coups +15 %" } },
+		{ id = "seche_cheveux", name = "Sèche-cheveux turbo", icon = "💨",
+			prop = { name = "PropSeche", hand = "Right", pieces = {
+				{ "Poignee", "", "block", Vector3.new(0.32, 0.95, 0.42), Vector3.new(0, -0.45, 0.05), Vector3.zero, ROSE_VIF, "SmoothPlastic" },
+				{ "Corps", "", "cyl", Vector3.new(0.72, 0.72, 1.5), Vector3.new(0, -1.05, -0.35), Vector3.zero, ROSE_VIF, "SmoothPlastic", { axis = "z" } },
+				{ "Embout", "", "cyl", Vector3.new(0.5, 0.5, 0.6), Vector3.new(0, -1.05, -1.35), Vector3.zero, ARGENT, "Metal", { axis = "z" } },
+				{ "Grille", "", "cyl", Vector3.new(0.76, 0.76, 0.16), Vector3.new(0, -1.05, 0.45), Vector3.zero, NOIR, "SmoothPlastic", { axis = "z" } },
+				{ "Bouton", "", "ball", Vector3.new(0.18, 0.18, 0.18), Vector3.new(-0.2, -0.5, -0.1), Vector3.zero, OR, "Metal" },
+			} },
+			ability = { jumps = 1, text = "Air chaud : un saut en l'air de plus" },
+			moves = {
+				-- J : coup de sèche-cheveux, un petit coup sec de l'embout sur le front, hanche sortie
+				P_neutral = {
+					label = "Coup de sèche-cheveux", startup = 0.07, active = 0.08, recovery = 0.14,
+					damage = 5, hitbox = box(4.5, 3, 2.6, 0.8), kbBase = 18, kbGrowth = 22, kbAngle = 28,
+					windup = { Root = { 2, -12, 4, 0, -0.12, 0.1 }, Waist = { 2, -14, -6 }, Neck = { 4, 10, 0 }, RS = { 70, 0, 20 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 10, 0, -40 }, LE = { 115, 0, 0 } },
+					strike = { Root = { -4, 10, -4, 0, -0.2, -0.2 }, Waist = { -4, 12, 6 }, Neck = { 0, -8, 0 }, RS = { 92, 0, 0 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 10, 0, -45 }, LE = { 115, 0, 0 } },
+					follow = { Root = { -6, 12, -4, 0, -0.22, -0.24 }, Waist = { -6, 14, 6 }, Neck = { 0, -10, 0 }, RS = { 94, 0, -2 }, RE = { 12, 0, 0 }, RW = { -6, 0, 0 }, LS = { 10, 0, -46 }, LE = { 115, 0, 0 } },
+					trail = "prop", hitText = "TOC !",
+				},
+				-- →J : souffle chaud, une bouffée d'air brûlant à bout portant, cheveux d'en face en pétard
+				P_side = {
+					label = "Souffle chaud", kind = "projectile", startup = 0.08, active = 0, recovery = 0.18,
+					damage = 6, kbBase = 22, kbGrowth = 34, kbAngle = 25,
+					projectile = { speed = 60, angle = 0, gravity = 0, lifetime = 0.3, size = 1.6, color = CHAUD, aim = false,
+						visual = { shape = "ball", size = 1.4, color = CHAUD, transparency = 0.4, trail = false, parts = { { "ball", Vector3.new(0.7, 0.7, 0.7), Vector3.new(0.6, 0.3, 0), CHAUD } } } },
+					windup = { Root = { 4, -16, 0, 0, -0.15, 0.15 }, Waist = { 4, -14, 0 }, Neck = { 0, 12, 0 }, RS = { 50, 0, 20 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -30 }, LE = { 100, 0, 0 } },
+					strike = { Root = { -8, 14, 0, 0, -0.28, -0.3 }, Waist = { -6, 16, 0 }, Neck = { 4, -12, 0 }, RS = { 94, 0, -4 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -35 }, LE = { 100, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.35 } },
+					follow = { Root = { -10, 16, 0, 0, -0.3, -0.34 }, Waist = { -8, 18, 0 }, Neck = { 6, -14, 0 }, RS = { 96, 0, -6 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -36 }, LE = { 100, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.38 } },
+					fx = { { "particles", tex = "smoke", color = CHAUD, dir = "front", at = "hand", time = 0.25, speed = 18, size = 0.5, rate = 60 } }, hitText = "FSHHH !",
+				},
+				-- ↓J : sèche-chaussettes, accroupie, elle souffle sur les pieds d'en face qui décollent du sol
+				P_down = {
+					label = "Sèche-chaussettes", startup = 0.08, active = 0.12, recovery = 0.16,
+					damage = 5, hitbox = box(6, 2, 3.5, -1.6), kbBase = 20, kbGrowth = 26, kbAngle = 72,
+					windup = { Root = { 6, -10, 0, 0, -0.8, 0.1 }, Waist = { 10, -10, 0 }, Neck = { 10, 8, 0 }, RS = { 60, 0, 20 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -40 }, LE = { 60, 0, 0 } },
+					strike = { Root = { 10, 8, 0, 0, -0.95, -0.15 }, Waist = { 16, 10, 0 }, Neck = { 14, -6, 0 }, RS = { 40, 0, 10 }, RE = { 0, 0, 0 }, RW = { 20, 0, 0 }, LS = { 40, 0, -40 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					follow = { Root = { 10, 10, 0, 0, -0.95, -0.18 }, Waist = { 16, 12, 0 }, Neck = { 14, -8, 0 }, RS = { 36, 0, 12 }, RE = { 0, 0, 0 }, RW = { 24, 0, 0 }, LS = { 40, 0, -40 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.32 } },
+					trail = "prop", fx = { { "particles", tex = "smoke", color = CHAUD, dir = "front", at = "feet", time = 0.3, speed = 14, size = 0.5, rate = 50 }, "dust" }, hitText = "FSHT !",
+				},
+				-- ↑J : brushing au plafond, le sèche-cheveux braqué vers le ciel, l'air chaud soulève ce qui passe
+				P_up = {
+					label = "Brushing au plafond", startup = 0.08, active = 0.14, recovery = 0.18,
+					damage = 6, hitbox = box(4.5, 6, 1, 3.8), kbBase = 26, kbGrowth = 30, kbAngle = 87,
+					windup = { Root = { -4, 0, 0, 0, -0.35, 0 }, Waist = { -8, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 30, 0, 20 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 10, 0, -40 }, LE = { 115, 0, 0 } },
+					strike = { Root = { 4, 8, 4, 0, 0.1, 0 }, Waist = { 8, 8, 6 }, Neck = { 26, 0, 0 }, RS = { 178, 0, 6 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 10, 0, -45 }, LE = { 115, 0, 0 }, FR = { 0, 0, 0, 0, 0.2, 0 }, FL = { 0, 0, 0, 0, 0.2, 0 } },
+					follow = { Root = { 6, 10, 6, 0, 0.12, 0 }, Waist = { 10, 10, 8 }, Neck = { 30, 0, 4 }, RS = { 182, 0, 4 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 10, 0, -46 }, LE = { 115, 0, 0 }, FR = { 0, 0, 0, 0, 0.22, 0 }, FL = { 0, 0, 0, 0, 0.22, 0 } },
+					trail = "prop", fx = { { "particles", tex = "smoke", color = CHAUD, dir = "up", at = "hand", time = 0.3, speed = 16, size = 0.5, rate = 60 } }, text = "VOLUME !", hitText = "SOULEVÉ !",
+				},
+				-- J en l'air : souffle plongeant, elle braque le sèche-cheveux vers le sol et crache un souffle sous elle
+				P_air = {
+					label = "Souffle plongeant", kind = "projectile", startup = 0.08, active = 0, recovery = 0.16,
+					damage = 6, kbBase = 20, kbGrowth = 32, kbAngle = -40,
+					projectile = { speed = 55, angle = -60, gravity = 0, lifetime = 0.35, size = 1.6, color = CHAUD, aim = false,
+						visual = { shape = "ball", size = 1.3, color = CHAUD, transparency = 0.4, trail = false } },
+					windup = { Root = { 8, 0, 0 }, Waist = { 12, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 160, 0, 20 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -40 }, LE = { 60, 0, 0 }, RH = { 50, 0, 0 }, RK = { -80, 0, 0 }, LH = { 40, 0, 0 }, LK = { -70, 0, 0 } },
+					strike = { Root = { -10, 0, 0 }, Waist = { -20, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 30, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -40 }, LE = { 60, 0, 0 }, RH = { 30, 0, 0 }, RK = { -50, 0, 0 }, LH = { 40, 0, 0 }, LK = { -70, 0, 0 } },
+					follow = { Root = { -12, 0, 0 }, Waist = { -24, 0, 0 }, Neck = { -12, 0, 0 }, RS = { 24, 0, 12 }, RE = { 4, 0, 0 }, RW = { 0, 0, 0 }, LS = { 26, 0, -42 }, LE = { 60, 0, 0 }, RH = { 26, 0, 0 }, RK = { -46, 0, 0 }, LH = { 36, 0, 0 }, LK = { -66, 0, 0 } },
+					fx = { { "particles", tex = "smoke", color = CHAUD, dir = "down", at = "hand", time = 0.25, speed = 16, size = 0.5, rate = 50 } }, hitText = "FSHHH !",
+				},
+				-- dash J : brushing en courant, elle fonce en se coiffant, le sèche-cheveux brûlant devant elle
+				P_dash = {
+					label = "Brushing en courant", startup = 0.08, active = 0.14, recovery = 0.22,
+					damage = 7, hitbox = box(5, 3.5, 3, 0.8), kbBase = 26, kbGrowth = 46, kbAngle = 28, selfVelocity = Vector2.new(40, 0),
+					windup = { Root = { -6, -10, 0, 0, -0.2, 0.1 }, Waist = { -4, -10, 0 }, Neck = { 0, 8, -8 }, RS = { 120, 0, 40 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, -30 }, LE = { 120, 0, 0 } },
+					strike = { Root = { -14, 8, 0, 0, -0.3, -0.3 }, Waist = { -8, 8, 0 }, Neck = { 8, -6, 0 }, RS = { 94, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 160, 0, -20 }, LE = { 120, 0, 0 } },
+					follow = { Root = { -16, 10, 0, 0, -0.32, -0.34 }, Waist = { -8, 10, 0 }, Neck = { 10, -8, 0 }, RS = { 96, 0, -2 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 162, 0, -22 }, LE = { 120, 0, 0 } },
+					trail = "prop", fx = { "dust", { "particles", tex = "smoke", color = CHAUD, dir = "front", at = "hand", time = 0.3, speed = 16, size = 0.5, rate = 50 } }, text = "ATTENTION, ÇA CHAUFFE !", hitText = "GRILLÉ !",
+				},
+				-- K : talon brûlant, elle se sèche la semelle d'un coup de souffle et décoche un coup de talon fumant
+				K_neutral = {
+					label = "Talon brûlant", startup = 0.17, active = 0.1, recovery = 0.28,
+					damage = 11, hitbox = box(5, 3.5, 3, 0.5), kbBase = 30, kbGrowth = 68, kbAngle = 35,
+					windup = { Root = { 6, -10, 0, 0, -0.15, 0.1 }, Waist = { 8, -8, 0 }, Neck = { 6, 6, 0 }, RS = { 40, 0, 30 }, RE = { 110, 0, 0 }, RW = { 60, 0, 0 }, LS = { 30, 0, -40 }, LE = { 70, 0, 0 }, RH = { 60, 0, 0 }, RK = { -110, 0, 0 } },
+					strike = { Root = { 16, 0, 0, 0, -0.1, 0.1 }, Waist = { 12, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 30, 0, 50 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -60 }, LE = { 40, 0, 0 }, RH = { 100, 0, 0 }, RK = { 0, 0, 0 }, RA = { 20, 0, 0 } },
+					follow = { Root = { 18, 0, 0, 0, -0.1, 0.14 }, Waist = { 14, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 32, 0, 52 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 32, 0, -62 }, LE = { 40, 0, 0 }, RH = { 104, 0, 0 }, RK = { 0, 0, 0 }, RA = { 20, 0, 0 } },
+					trail = "rightFoot", fx = { { "particles", tex = "smoke", color = CHAUD, dir = "front", at = "feet", time = 0.2, speed = 10, size = 0.4, rate = 40 } }, hitText = "TSSS !",
+				},
+				-- →K : pivot soufflant, elle tourne sur elle-même sèche-cheveux à bout de bras, la jambe suit en fouetté
+				K_side = {
+					label = "Pivot soufflant", startup = 0.18, active = 0.12, recovery = 0.3,
+					damage = 12, hitbox = box(6, 3.5, 3.4, 0.6), kbBase = 32, kbGrowth = 76, kbAngle = 30, selfVelocity = Vector2.new(20, 0),
+					windup = { Root = { 6, 36, 0, 0, -0.2, 0.1 }, Waist = { 8, 40, 0 }, Neck = { 0, -30, 0 }, RS = { 80, 0, 70 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -40 }, LE = { 60, 0, 0 }, RH = { -20, 0, 10 }, RK = { -50, 0, 0 } },
+					strike = { Root = { 10, -40, 0, 0, -0.1, -0.1 }, Waist = { 10, -50, 0 }, Neck = { 0, 30, 0 }, RS = { 90, 0, 80 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -50 }, LE = { 40, 0, 0 }, RH = { 100, 0, 20 }, RK = { -6, 0, 0 }, RA = { 10, 0, 0 } },
+					follow = { Root = { 12, -50, 0, 0, -0.1, -0.14 }, Waist = { 12, -60, 0 }, Neck = { 0, 36, 0 }, RS = { 92, 0, 84 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 64, 0, -54 }, LE = { 40, 0, 0 }, RH = { 108, 0, 24 }, RK = { 0, 0, 0 }, RA = { 14, 0, 0 } },
+					spin = { axis = "y", degrees = 360 }, trail = "rightFoot", fx = { { "ring", color = CHAUD, radius = 4, at = "root" } }, text = "PIVOT !", hitText = "VLAN !",
+				},
+				-- ↓K : balayage à air chaud, accroupie, le souffle soulève la poussière et la jambe fauche les chevilles
+				K_down = {
+					label = "Balayage à air chaud", startup = 0.15, active = 0.16, recovery = 0.3,
+					damage = 11, hitbox = box(7, 2, 2, -1.8), kbBase = 28, kbGrowth = 58, kbAngle = 76,
+					windup = { Root = { -6, -24, 0, 0, -0.9, 0.1 }, Waist = { -10, -16, 0 }, Neck = { 0, 16, 0 }, RS = { 40, 0, 50 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -50 }, LE = { 60, 0, 0 }, RH = { 60, 0, 30 }, RK = { -120, 0, 0 } },
+					strike = { Root = { -8, 0, 0, 0, -1.0, -0.1 }, Waist = { -14, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 20, 0, 10 }, RE = { 0, 0, 0 }, RW = { 30, 0, 0 }, LS = { 20, 0, -70 }, LE = { 90, 0, 0 }, RH = { 76, 0, 12 }, RK = { -4, 0, 0 }, RA = { -20, 0, 0 } },
+					follow = { Root = { -8, 0, 0, 0, -1.0, -0.12 }, Waist = { -14, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 18, 0, 12 }, RE = { 0, 0, 0 }, RW = { 34, 0, 0 }, LS = { 18, 0, -72 }, LE = { 90, 0, 0 }, RH = { 74, 0, 12 }, RK = { -6, 0, 0 }, RA = { -20, 0, 0 } },
+					spin = { axis = "y", degrees = 360 }, trail = "rightFoot", fx = { "dust", { "ring", color = CHAUD, radius = 4, at = "feet" } }, text = "ON BALAIE !", hitText = "ZOUIP !",
+				},
+				-- ↑K : jet vertical, le sèche-cheveux braqué au sol la propulse et son talon monte dans le menton
+				K_up = {
+					label = "Jet vertical", startup = 0.16, active = 0.14, recovery = 0.3,
+					damage = 11, hitbox = box(4.5, 5.5, 1.5, 3.5), kbBase = 32, kbGrowth = 70, kbAngle = 87, selfVelocity = Vector2.new(0, 34),
+					windup = { Root = { 2, 0, 0, 0, -0.5, 0 }, Waist = { 4, 0, 0 }, Neck = { -6, 0, 0 }, RS = { -20, 0, 20 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -30 }, LE = { 80, 0, 0 } },
+					strike = { Root = { -6, 0, 0, 0, 0.4, 0 }, Waist = { -4, 0, 0 }, Neck = { 24, 0, 0 }, RS = { -40, 0, 20 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, -40 }, LE = { 20, 0, 0 }, RH = { 150, 0, 0 }, RK = { -4, 0, 0 }, RA = { 20, 0, 0 }, LH = { 20, 0, 0 }, LK = { -60, 0, 0 } },
+					follow = { Root = { -8, 0, 0, 0, 0.45, 0 }, Waist = { -6, 0, 0 }, Neck = { 28, 0, 0 }, RS = { -44, 0, 22 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 154, 0, -44 }, LE = { 20, 0, 0 }, RH = { 158, 0, 0 }, RK = { 0, 0, 0 }, RA = { 20, 0, 0 }, LH = { 24, 0, 0 }, LK = { -64, 0, 0 } },
+					trail = "rightLeg", fx = { { "particles", tex = "smoke", color = CHAUD, dir = "down", at = "hand", time = 0.35, speed = 18, size = 0.6, rate = 70 } }, text = "TURBO !", hitText = "TCHAK !",
+				},
+				-- K en l'air : talon turbo, le souffle dans le dos la pousse en avant et le talon compensé part à l'horizontale
+				K_air = {
+					label = "Talon turbo", startup = 0.14, active = 0.14, recovery = 0.24,
+					damage = 12, hitbox = box(5.5, 3.5, 3, 0), kbBase = 30, kbGrowth = 70, kbAngle = 36, selfVelocity = Vector2.new(22, 0),
+					windup = { Root = { -10, 20, 0 }, Waist = { -10, 10, 0 }, Neck = { 0, -10, 0 }, RS = { -40, 0, 30 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -40 }, LE = { 70, 0, 0 }, RH = { 100, 0, 0 }, RK = { -130, 0, 0 }, LH = { 30, 0, 0 }, LK = { -90, 0, 0 } },
+					strike = { Root = { 24, 20, 0 }, Waist = { 10, 5, 0 }, Neck = { -12, 0, 0 }, RS = { -60, 0, 30 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -70 }, LE = { 30, 0, 0 }, RH = { 70, 0, 0 }, RK = { 0, 0, 0 }, RA = { 25, 0, 0 }, LH = { 20, 0, 0 }, LK = { -110, 0, 0 } },
+					follow = { Root = { 28, 22, 0 }, Waist = { 12, 5, 0 }, Neck = { -14, 0, 0 }, RS = { -64, 0, 32 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 42, 0, -72 }, LE = { 30, 0, 0 }, RH = { 74, 0, 0 }, RK = { 0, 0, 0 }, RA = { 25, 0, 0 }, LH = { 16, 0, 0 }, LK = { -106, 0, 0 } },
+					trail = "rightFoot", fx = { { "particles", tex = "smoke", color = CHAUD, dir = "front", at = "hand", time = 0.3, speed = 16, size = 0.5, rate = 60 } }, hitText = "CLAC !",
+				},
+				-- dash K : propulsion sèche-cheveux, le souffle braqué derrière elle la catapulte en coup de pied volant
+				K_dash = {
+					label = "Propulsion sèche-cheveux", startup = 0.1, active = 0.22, recovery = 0.3,
+					damage = 12, hitbox = box(6, 3.5, 3, 0.3), kbBase = 32, kbGrowth = 68, kbAngle = 32, selfVelocity = Vector2.new(56, 10),
+					windup = { Root = { -8, 0, 0, 0, -0.35, 0 }, Waist = { -8, 0, 0 }, Neck = { 6, 0, 0 }, RS = { -40, 0, 30 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -40 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -6, 0, 0 }, Waist = { 4, 0, 0 }, Neck = { 12, 0, 0 }, RS = { -70, 0, 30 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 100, 0, -70 }, LE = { 10, 0, 0 }, RH = { 92, 0, 0 }, RK = { 0, 0, 0 }, RA = { 20, 0, 0 }, LH = { -50, 0, 0 }, LK = { -20, 0, 0 } },
+					follow = { Root = { -4, 0, 0 }, Waist = { 6, 0, 0 }, Neck = { 14, 0, 0 }, RS = { -74, 0, 32 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 104, 0, -74 }, LE = { 10, 0, 0 }, RH = { 96, 0, 0 }, RK = { 0, 0, 0 }, RA = { 20, 0, 0 }, LH = { -54, 0, 0 }, LK = { -20, 0, 0 } },
+					trail = "rightFoot", fx = { { "particles", tex = "smoke", color = CHAUD, dir = "front", at = "root", time = 0.35, speed = 20, size = 0.7, rate = 80 }, "dust" }, text = "FUSÉE !", hitText = "SBAM !",
+				},
+				-- L : grand souffle, le sèche-cheveux à deux mains comme une lance à incendie : un cône d'air chaud traverse le couloir
+				S_neutral = {
+					label = "Grand souffle", kind = "projectile", startup = 0.22, active = 0, recovery = 0.46,
+					damage = 14, kbBase = 40, kbGrowth = 62, kbAngle = 22,
+					projectile = { speed = 72, angle = 0, gravity = 0, lifetime = 0.8, size = 3, color = CHAUD, pierce = true,
+						visual = { shape = "ball", size = 2.4, color = CHAUD, transparency = 0.35, parts = { { "ball", Vector3.new(1.6, 1.6, 1.6), Vector3.new(-1.2, 0.4, 0), CHAUD }, { "ball", Vector3.new(1.2, 1.2, 1.2), Vector3.new(-2.2, -0.3, 0), CHAUD } } } },
+					windup = { Root = { 6, -14, 0, 0, -0.25, 0.2 }, Waist = { 8, -16, 0 }, Neck = { 6, 12, 0 }, RS = { 50, 0, 10 }, RE = { 120, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -10 }, LE = { 120, 0, 0 }, LW = { 0, 0, 0 } },
+					strike = { Root = { -12, 10, 0, 0, -0.32, -0.4 }, Waist = { -14, 12, 0 }, Neck = { -4, -8, 0 }, RS = { 96, 0, 2 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 92, 0, -2 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+					follow = { Root = { -14, 12, 0, 0, -0.34, -0.45 }, Waist = { -16, 14, 0 }, Neck = { -6, -10, 0 }, RS = { 100, 0, 4 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 96, 0, -4 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+					shake = true, windupFx = { { "symbols", symbols = { "💨" }, count = 2, radius = 2, at = "hand", color = CHAUD } },
+					fx = { { "beam", color = CHAUD, length = 14, width = 3, at = "hand" }, { "particles", tex = "smoke", color = CHAUD, dir = "front", at = "hand", time = 0.4, speed = 26, size = 0.8, rate = 100 } },
+					text = "GRAND SOUFFLE !", hitText = "DÉCOIFFÉ !",
+				},
+				-- →L : tornade de boucles, un tourbillon d'air chaud qui tourne sur lui-même et poursuit l'adversaire
+				S_side = {
+					label = "Tornade de boucles", kind = "projectile", startup = 0.24, active = 0, recovery = 0.48,
+					damage = 14, kbBase = 30, kbGrowth = 56, kbAngle = 60,
+					projectile = { speed = 55, angle = 0, gravity = 0, lifetime = 1.0, size = 2.6, color = CHAUD, homing = 0.5,
+						visual = { shape = "cyl", size = 2.6, color = CHAUD, transparency = 0.3, spin = 20, parts = { { "ball", Vector3.new(0.5, 0.5, 0.5), Vector3.new(0, 1.0, 0.9), CHEVEUX }, { "ball", Vector3.new(0.5, 0.5, 0.5), Vector3.new(0, -0.8, -0.9), CHEVEUX } } } },
+					windup = { Root = { 4, -24, 0, 0, -0.2, 0.15 }, Waist = { 6, -28, 0 }, Neck = { 4, 20, 0 }, RS = { 60, 0, 50 }, RE = { 110, 0, 0 }, RW = { 60, 0, 0 }, LS = { 30, 0, -40 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -12, 18, 0, 0, -0.3, -0.38 }, Waist = { -14, 22, 0 }, Neck = { -4, -14, 0 }, RS = { 94, 0, -4 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -45 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+					follow = { Root = { -14, 22, 0, 0, -0.32, -0.42 }, Waist = { -16, 26, 0 }, Neck = { -6, -16, 0 }, RS = { 98, 0, -6 }, RE = { 0, 0, 0 }, RW = { 90, 0, 0 }, LS = { 26, 0, -48 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+					spin = { axis = "y", degrees = 360 }, fx = { { "ring", color = CHAUD, radius = 4, at = "front" }, { "symbols", symbols = { "🌪️", "💇" }, count = 3, radius = 2.5, at = "front", color = CHAUD } },
+					text = "TORNADE !", hitText = "FRISÉ !",
+				},
+				-- ↓L : mode froid, elle bascule le bouton et souffle une nappe d'air glacé au sol qui reste un moment
+				S_down = {
+					label = "Mode froid", kind = "projectile", startup = 0.22, active = 0, recovery = 0.48,
+					damage = 12, kbBase = 20, kbGrowth = 36, kbAngle = 45,
+					status = { name = "frozen", duration = 1 },
+					projectile = { speed = 48, angle = 0, gravity = 0, lifetime = 0.8, size = 3, color = GIVRE, linger = 1.5, from = "feet",
+						visual = { shape = "ball", size = 2.4, color = GIVRE, transparency = 0.35, neon = true, parts = { { "ball", Vector3.new(1.4, 1.4, 1.4), Vector3.new(1.2, 0.2, 0), GIVRE }, { "ball", Vector3.new(1.2, 1.2, 1.2), Vector3.new(-1.2, 0.2, 0.4), GIVRE } } } },
+					windup = { Root = { 6, 0, 0, 0, -0.5, 0.1 }, Waist = { 10, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 60, 0, 20 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 100, 0, 10 }, LE = { 120, 0, 0 }, LW = { 0, 0, 40 } },
+					strike = { Root = { 12, 0, 0, 0, -0.9, -0.2 }, Waist = { 24, 0, 0 }, Neck = { 8, 0, 0 }, RS = { 40, 0, 10 }, RE = { 0, 0, 0 }, RW = { 30, 0, 0 }, LS = { 40, 0, -40 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					follow = { Root = { 14, 0, 0, 0, -0.92, -0.24 }, Waist = { 26, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 36, 0, 12 }, RE = { 0, 0, 0 }, RW = { 34, 0, 0 }, LS = { 36, 0, -42 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.32 } },
+					trail = "prop", windupFx = { { "text", text = "CLIC : FROID", color = GIVRE, at = "hand" } }, fx = { { "puddle", color = GIVRE, width = 8 }, { "particles", tex = "smoke", color = GIVRE, dir = "front", at = "feet", time = 0.4, speed = 18, size = 0.7, rate = 70 } },
+					text = "BRRR !", hitText = "GELÉ !",
+				},
+				-- ↑L : décollage brushing, le sèche-cheveux braqué vers le sol à pleine puissance l'emporte en diagonale, cheveux au vent
+				S_up = {
+					label = "Décollage brushing", startup = 0.15, active = 0.3, recovery = 0.4,
+					damage = 13, hitbox = box(10, 11, 3, 4), kbBase = 30, kbGrowth = 52, kbAngle = 72, selfVelocity = Vector2.new(44, 84),
+					windup = { Root = { 4, 0, 0, 0, -0.65, 0.1 }, Waist = { -10, 0, 0 }, Neck = { 12, 0, 0 }, RS = { -20, 0, 20 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -30 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -38, 0, 0, 0, 0.3, 0 }, Waist = { -6, 0, 0 }, Neck = { 32, 0, 0 }, RS = { -40, 0, 20 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 160, 0, -40 }, LE = { 20, 0, 0 }, RH = { -22, 0, 6 }, RK = { -35, 0, 0 }, RA = { -30, 0, 0 }, LH = { -36, 0, -6 }, LK = { -50, 0, 0 }, LA = { -30, 0, 0 } },
+					follow = { Root = { -42, 0, 0, 0, 0.35, 0 }, Waist = { -8, 0, 0 }, Neck = { 34, 0, 0 }, RS = { -44, 0, 22 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 164, 0, -44 }, LE = { 20, 0, 0 }, RH = { -30, 0, 8 }, RK = { -45, 0, 0 }, RA = { -30, 0, 0 }, LH = { -42, 0, -8 }, LK = { -60, 0, 0 }, LA = { -30, 0, 0 } },
+					trail = "body", fx = { { "ring", color = CHAUD, radius = 5, at = "feet" }, { "particles", tex = "smoke", color = CHAUD, dir = "down", at = "hand", time = 0.5, speed = 22, size = 0.8, rate = 90 }, { "symbols", symbols = { "💇", "✨" }, count = 3, radius = 2 } },
+					text = "DÉCOLLAGE !", hitText = "SOUFFLÉ !",
+				},
+				-- L en l'air : rafale d'air chaud, trois bouffées lâchées en éventail sous elle, qui foncent sur l'adversaire
+				S_air = {
+					label = "Rafale d'air chaud", kind = "projectile", startup = 0.16, active = 0, recovery = 0.4,
+					damage = 5, kbBase = 22, kbGrowth = 40, kbAngle = -30,
+					projectile = { speed = 70, angle = -30, gravity = 0, lifetime = 0.7, size = 1.6, color = CHAUD, fan = { count = 3, from = -12, to = 12 },
+						visual = { shape = "ball", size = 1.3, color = CHAUD, transparency = 0.35, trail = false } },
+					windup = { Root = { 6, 0, 0 }, Waist = { 8, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 150, 0, 20 }, RE = { 50, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -40 }, LE = { 60, 0, 0 }, RH = { 40, 0, 0 }, RK = { -70, 0, 0 }, LH = { 30, 0, 0 }, LK = { -60, 0, 0 } },
+					strike = { Root = { -10, 0, 0 }, Waist = { -18, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 50, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -40 }, LE = { 60, 0, 0 }, RH = { 30, 0, 0 }, RK = { -50, 0, 0 }, LH = { 40, 0, 0 }, LK = { -70, 0, 0 } },
+					follow = { Root = { -12, 0, 0 }, Waist = { -20, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 44, 0, 12 }, RE = { 4, 0, 0 }, RW = { 0, 0, 0 }, LS = { 26, 0, -42 }, LE = { 60, 0, 0 }, RH = { 26, 0, 0 }, RK = { -46, 0, 0 }, LH = { 36, 0, 0 }, LK = { -66, 0, 0 } },
+					fx = { { "burst", color = CHAUD, size = 2, at = "hand" } }, text = "RAFALE !", hitText = "FSH-FSH-FSH !",
+				},
+				-- Y : tempête de chaleur, le sèche-cheveux poussé en mode sauna : une vague d'air brûlant traverse le couloir et fait fondre les coiffures
+				SUPER = {
+					label = "Tempête de chaleur !", kind = "projectile", startup = 0.4, active = 0, recovery = 0.7,
+					damage = 24, kbBase = 46, kbGrowth = 94, kbAngle = 30, burn = true,
+					projectile = { speed = 60, angle = 0, gravity = 0, lifetime = 1.1, size = 6, color = CHAUD, pierce = true,
+						visual = { shape = "ball", size = 4.5, color = CHAUD, transparency = 0.3, neon = true, parts = { { "ball", Vector3.new(3, 3, 3), Vector3.new(-2.5, 0.8, 0), CHAUD }, { "ball", Vector3.new(2.4, 2.4, 2.4), Vector3.new(-4, -0.6, 0.5), CHAUD }, { "ball", Vector3.new(1.4, 1.4, 1.4), Vector3.new(1.8, 1.2, 0), Color3.fromRGB(255, 240, 180) } } } },
+					windup = { Root = { 6, -14, 0, 0, -0.3, 0.2 }, Waist = { 10, -16, 0 }, Neck = { 8, 12, 0 }, RS = { 50, 0, 10 }, RE = { 120, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, 10 }, LE = { 120, 0, 0 }, LW = { 0, 0, 40 } },
+					strike = { Root = { -16, 10, 0, 0, -0.36, -0.5 }, Waist = { -18, 12, 0 }, Neck = { -6, -8, 0 }, RS = { 96, 0, 2 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 92, 0, -2 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.55 } },
+					follow = { Root = { -18, 12, 0, 0, -0.38, -0.55 }, Waist = { -22, 14, 0 }, Neck = { -8, -10, 0 }, RS = { 100, 0, 4 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 96, 0, -4 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.58 } },
+					hold = 0.2, shake = true, windupFx = { "super", { "text", text = "MODE SAUNA", color = CHAUD, at = "hand" } },
+					fx = { { "beam", color = CHAUD, length = 18, width = 6, at = "hand" }, { "particles", tex = "fire", color = CHAUD, dir = "front", at = "hand", time = 0.6, speed = 30, size = 1.2, rate = 120 }, { "screen", color = CHAUD, alpha = 0.25 }, { "shake", amount = 0.45 } },
+					text = "ÇA VA CHAUFFER !", hitText = "CRAMÉ !",
+				},
+				-- →Y : ouragan capillaire, elle lance le sèche-cheveux qui tourne sur lui-même : un ouragan qui traverse le couloir et revient
+				SUPER_side = {
+					label = "Ouragan capillaire !", kind = "projectile", startup = 0.4, active = 0, recovery = 0.7,
+					damage = 24, kbBase = 44, kbGrowth = 90, kbAngle = 70,
+					status = { name = "slowed", duration = 2 },
+					projectile = { speed = 60, angle = 0, gravity = 0, lifetime = 1.0, size = 4.5, color = CHAUD, pierce = true, returns = true,
+						visual = { shape = "cyl", size = 4.5, color = CHAUD, transparency = 0.3, spin = 24, parts = { { "block", Vector3.new(0.4, 1.0, 0.5), Vector3.new(0, 0, 0), ROSE_VIF }, { "cyl", Vector3.new(1.4, 0.7, 0.7), Vector3.new(0, 0, -0.6), ROSE_VIF }, { "ball", Vector3.new(0.6, 0.6, 0.6), Vector3.new(1.4, 1.2, 0), CHEVEUX }, { "ball", Vector3.new(0.6, 0.6, 0.6), Vector3.new(-1.4, -1.2, 0), CHEVEUX } } } },
+					windup = { Root = { 4, -36, 0, 0, -0.3, 0.2 }, Waist = { 6, -40, 0 }, Neck = { 6, 26, 0 }, RS = { 170, 0, 40 }, RE = { 30, 0, 0 }, RW = { 60, 0, 0 }, LS = { 50, 0, -30 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -16, 24, 0, 0, -0.36, -0.5 }, Waist = { -18, 28, 0 }, Neck = { -6, -16, 0 }, RS = { 94, 0, -6 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -40 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.55 } },
+					follow = { Root = { 2, 0, 0, 0, -0.25, 0 }, Waist = { 4, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 60, 0, 20 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -20 }, LE = { 110, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					spin = { axis = "y", degrees = 720 }, shake = true, hideProp = "seche", windupFx = { "super", { "symbols", symbols = { "🌪️", "💇", "💨" }, count = 5, radius = 3, color = CHAUD } },
+					fx = { { "ring", color = CHAUD, radius = 6, at = "front" }, { "burst", color = ROSE_VIF, size = 3, at = "hand" }, { "shake", amount = 0.4 } },
+					text = "OURAGAN !", hitText = "PERMANENTE !",
+				},
+				-- ↑Y : montgolfière, le sèche-cheveux braqué au sol gonfle une bulle d'air chaud sous tout le couloir : tout le monde monte au plafond
+				SUPER_up = {
+					label = "Montgolfière !", startup = 0.36, active = 0.34, recovery = 0.7,
+					damage = 24, hitbox = box(14, 12, 7, 4), kbBase = 46, kbGrowth = 94, kbAngle = 88, invuln = 0.3, selfVelocity = Vector2.new(0, 58),
+					windup = { Root = { 6, 0, 0, 0, -0.8, 0.1 }, Waist = { 10, 0, 0 }, Neck = { 20, 0, 0 }, RS = { -30, 0, 20 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -30 }, LE = { 60, 0, 0 } },
+					strike = { Root = { 2, 0, 0, 0, 0.5, 0 }, Waist = { 6, 0, 0 }, Neck = { 40, 0, 0 }, RS = { -50, 0, 24 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 180, 0, -20 }, LE = { 0, 0, 0 }, RH = { 40, 0, 10 }, RK = { -80, 0, 0 }, LH = { 40, 0, -10 }, LK = { -80, 0, 0 } },
+					follow = { Root = { 4, 0, 0, 0, 0.55, 0 }, Waist = { 8, 0, 0 }, Neck = { 44, 0, 0 }, RS = { -54, 0, 26 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 184, 0, -22 }, LE = { 0, 0, 0 }, RH = { 50, 0, 12 }, RK = { -90, 0, 0 }, LH = { 50, 0, -12 }, LK = { -90, 0, 0 } },
+					hold = 0.25, shake = true, trail = "body", windupFx = { "super", { "text", text = "PLEINE PUISSANCE…", color = CHAUD } },
+					fx = { { "pillar", color = CHAUD, height = 24, width = 8, at = "front" }, { "ring", color = CHAUD, radius = 9, at = "feet" }, { "particles", tex = "fire", color = CHAUD, dir = "down", at = "hand", time = 0.6, speed = 24, size = 1, rate = 110 }, { "symbols", symbols = { "🎈", "💨" }, count = 6, radius = 4, color = ROSE }, { "shake", amount = 0.4 } },
+					text = "ET ON S'ENVOLE !", hitText = "MONTGOLFIÈRE !",
+				},
+				-- ↓Y : chaud-froid, elle alterne les deux modes à toute vitesse au ras du sol : tout le couloir gèle, dégèle, regèle…
+				SUPER_down = {
+					label = "Chaud-froid !", startup = 0.38, active = 0.5, recovery = 0.7,
+					damage = 4, hits = 6, hitbox = box(14, 5, 7, 0.5), kbBase = 18, kbGrowth = 26, kbAngle = 60,
+					status = { name = "frozen", duration = 1.5 },
+					windup = { Root = { 8, -20, 0, 0, -0.85, 0.1 }, Waist = { 12, -24, 0 }, Neck = { 8, 16, 0 }, RS = { 60, 0, 40 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 100, 0, 10 }, LE = { 120, 0, 0 }, LW = { 0, 0, 40 } },
+					strike = { Root = { 8, 30, 0, 0, -0.95, -0.2 }, Waist = { 12, 34, 0 }, Neck = { 8, -24, 0 }, RS = { 36, 0, -20 }, RE = { 0, 0, 0 }, RW = { 30, 0, 0 }, LS = { 110, 0, 20 }, LE = { 130, 0, 0 }, LW = { 0, 0, 40 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					follow = { Root = { 8, -30, 0, 0, -0.95, -0.2 }, Waist = { 12, -34, 0 }, Neck = { 8, 24, 0 }, RS = { 36, 0, 40 }, RE = { 0, 0, 0 }, RW = { 30, 0, 0 }, LS = { 110, 0, 20 }, LE = { 130, 0, 0 }, LW = { 0, 0, 40 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					wobble = true, shake = true, trail = "prop", windupFx = { "super", { "text", text = "CLIC-CLIC-CLIC !", color = GIVRE } },
+					fx = { { "beam", color = GIVRE, length = 16, width = 4, at = "feet" }, { "beam", color = CHAUD, length = 16, width = 3, at = "feet" }, { "puddle", color = GIVRE, width = 14, time = 2 }, { "symbols", symbols = { "❄️", "🔥", "❄️" }, count = 8, radius = 4, color = GIVRE }, { "shake", amount = 0.35 } },
+					text = "CHAUD… FROID… CHAUD !", hitText = "CONGELÉ-GRILLÉ !",
+				},
+			},
+			links = {
+				P_neutral = { P = "P_side", K = "K_neutral", S = "S_neutral" },
+				P_side = { P = "P_up", K = "K_side", S = "S_side" },
+				P_down = { P = "P_neutral", K = "K_down", S = "S_down" },
+				K_neutral = { P = "P_neutral", K = "K_side", S = "S_neutral" },
+				K_side = { P = "P_up", K = "K_up", S = "S_side" },
+				P_dash = { P = "P_side", K = "K_side", S = "S_side" },
+				K_dash = { P = "P_up", S = "S_up" },
+			},
+		},
+		{ id = "sac_luxe", name = "Sac à main de luxe", icon = "👜",
+			prop = { name = "PropSac", hand = "Right", pieces = {
+				{ "Anse", "", "block", Vector3.new(0.16, 0.9, 0.16), Vector3.new(0, -0.4, 0), Vector3.zero, OR, "Metal" },
+				{ "Sac", "", "block", Vector3.new(1.7, 1.3, 0.65), Vector3.new(0, -1.55, 0), Vector3.zero, CUIR_ROSE, "Leather" },
+				{ "Rabat", "", "block", Vector3.new(1.72, 0.55, 0.68), Vector3.new(0, -1.1, 0), Vector3.zero, ROSE_VIF, "Leather" },
+				{ "Fermoir", "", "ball", Vector3.new(0.34, 0.34, 0.16), Vector3.new(0, -1.3, -0.38), Vector3.zero, OR, "Metal" },
+				{ "Logo", "", "block", Vector3.new(0.45, 0.45, 0.06), Vector3.new(0.4, -1.75, -0.36), Vector3.new(0, 0, 45), OR, "Metal" },
+			} },
+			ability = { knockback = 1.25, armor = true, text = "Sac de luxe (et tout ce qu'il y a dedans) : éjecte 25 % plus loin, les L encaissent" },
+			moves = {
+				-- J : coup de sac, elle balance le sac d'un coup sec dans la figure, main sur la hanche
+				P_neutral = {
+					label = "Coup de sac", startup = 0.12, active = 0.1, recovery = 0.22,
+					damage = 8, hitbox = box(4.5, 3.5, 2.8, 0.8), kbBase = 24, kbGrowth = 32, kbAngle = 30,
+					windup = { Root = { 4, -20, 4, 0, -0.15, 0.15 }, Waist = { 4, -22, -6 }, Neck = { 4, 14, 0 }, RS = { 120, 0, 30 }, RE = { 50, 0, 0 }, RW = { 0, 0, 0 }, LS = { 10, 0, -45 }, LE = { 115, 0, 0 } },
+					strike = { Root = { -8, 14, -4, 0, -0.26, -0.3 }, Waist = { -8, 16, 6 }, Neck = { -4, -10, 0 }, RS = { 92, 0, -4 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 10, 0, -45 }, LE = { 115, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.35 } },
+					follow = { Root = { -10, 18, -4, 0, -0.28, -0.34 }, Waist = { -10, 20, 6 }, Neck = { -6, -12, 0 }, RS = { 80, 0, -14 }, RE = { 6, 0, 0 }, RW = { -10, 0, 0 }, LS = { 10, 0, -46 }, LE = { 115, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.38 } },
+					trail = "prop", text = "PARDON ?", hitText = "BLAM !",
+				},
+				-- →J : grand coup de sac, le sac part de derrière l'épaule en grand arc horizontal
+				P_side = {
+					label = "Grand coup de sac", startup = 0.14, active = 0.12, recovery = 0.26,
+					damage = 9, hitbox = box(6, 3.5, 3.4, 0.8), kbBase = 26, kbGrowth = 42, kbAngle = 28, selfVelocity = Vector2.new(16, 0),
+					windup = { Root = { 6, 44, 0, 0, -0.2, 0.2 }, Waist = { 8, 48, 0 }, Neck = { 0, -34, 0 }, RS = { 70, 0, 60 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -40 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -8, -30, 0, 0, -0.3, -0.38 }, Waist = { -10, -36, 0 }, Neck = { 0, 26, 0 }, RS = { 90, 0, -30 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -50 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+					follow = { Root = { -10, -42, 0, 0, -0.32, -0.42 }, Waist = { -12, -48, 0 }, Neck = { 0, 32, 0 }, RS = { 86, 0, -50 }, RE = { 6, 0, 0 }, RW = { -10, 0, 0 }, LS = { 26, 0, -54 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+					trail = "prop", hitText = "VLAN !",
+				},
+				-- ↓J : sac aux chevilles, elle pose le sac lourdement par terre… sur les pieds d'en face
+				P_down = {
+					label = "Sac aux chevilles", startup = 0.13, active = 0.1, recovery = 0.24,
+					damage = 8, hitbox = box(5, 2.5, 2.8, -1.5), kbBase = 24, kbGrowth = 36, kbAngle = 74,
+					windup = { Root = { 6, 0, 0, 0, -0.5, 0.1 }, Waist = { 10, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 120, 0, 20 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 10, 0, -45 }, LE = { 115, 0, 0 } },
+					strike = { Root = { 14, 0, 0, 0, -0.95, -0.2 }, Waist = { 26, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 30, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 10, 0, -45 }, LE = { 115, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					follow = { Root = { 16, 0, 0, 0, -0.97, -0.24 }, Waist = { 28, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 26, 0, 12 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 10, 0, -46 }, LE = { 115, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.32 } },
+					trail = "prop", fx = { { "shake", amount = 0.25 }, "dust" }, text = "OUPS.", hitText = "ÉCRASÉ !",
+				},
+				-- ↑J : sac au menton, un uppercut de sac depuis la hanche jusqu'au ciel
+				P_up = {
+					label = "Sac au menton", startup = 0.13, active = 0.12, recovery = 0.24,
+					damage = 9, hitbox = box(4.5, 5.5, 1.2, 3.5), kbBase = 28, kbGrowth = 40, kbAngle = 86,
+					windup = { Root = { 4, 20, 0, 0, -0.4, 0.1 }, Waist = { 6, 24, 0 }, Neck = { -8, -16, 0 }, RS = { -30, 0, 20 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 10, 0, -45 }, LE = { 115, 0, 0 } },
+					strike = { Root = { -4, -10, 0, 0, 0.1, -0.1 }, Waist = { -6, -12, 0 }, Neck = { 28, 6, 0 }, RS = { 178, 0, 6 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 10, 0, -46 }, LE = { 115, 0, 0 }, FR = { 0, 0, 0, 0, 0.2, 0 }, FL = { 0, 0, 0, 0, 0.2, 0 } },
+					follow = { Root = { -6, -12, 0, 0, 0.12, -0.12 }, Waist = { -8, -14, 0 }, Neck = { 32, 8, 0 }, RS = { 184, 0, 8 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 10, 0, -46 }, LE = { 115, 0, 0 }, FR = { 0, 0, 0, 0, 0.22, 0 }, FL = { 0, 0, 0, 0, 0.22, 0 } },
+					trail = "prop", hitText = "TCHONK !",
+				},
+				-- J en l'air : sac plongeant, le sac tenu à deux mains au-dessus de la tête puis abattu sous elle
+				P_air = {
+					label = "Sac plongeant", startup = 0.12, active = 0.12, recovery = 0.2,
+					damage = 9, hitbox = box(4.5, 4, 1.5, -1.5), kbBase = 24, kbGrowth = 40, kbAngle = -42,
+					windup = { Root = { 8, 0, 0 }, Waist = { 12, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 182, 0, 12 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 178, 0, -12 }, LE = { 40, 0, 0 }, RH = { 50, 0, 0 }, RK = { -80, 0, 0 }, LH = { 40, 0, 0 }, LK = { -70, 0, 0 } },
+					strike = { Root = { -14, 0, 0 }, Waist = { -30, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 36, 0, 6 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 36, 0, -6 }, LE = { 0, 0, 0 }, RH = { 24, 0, 0 }, RK = { -40, 0, 0 }, LH = { 30, 0, 0 }, LK = { -60, 0, 0 } },
+					follow = { Root = { -18, 0, 0 }, Waist = { -34, 0, 0 }, Neck = { -12, 0, 0 }, RS = { 24, 0, 8 }, RE = { 6, 0, 0 }, RW = { -10, 0, 0 }, LS = { 24, 0, -8 }, LE = { 6, 0, 0 }, RH = { 20, 0, 0 }, RK = { -36, 0, 0 }, LH = { 26, 0, 0 }, LK = { -56, 0, 0 } },
+					trail = "prop", hitText = "BOUM !",
+				},
+				-- dash J : shopping express, elle fonce sac en avant comme dans les soldes, tout le monde pousse
+				P_dash = {
+					label = "Shopping express", startup = 0.1, active = 0.16, recovery = 0.26,
+					damage = 10, hitbox = box(5.5, 3.5, 3, 0.6), kbBase = 28, kbGrowth = 50, kbAngle = 26, selfVelocity = Vector2.new(44, 0),
+					windup = { Root = { -6, -10, 0, 0, -0.2, 0.1 }, Waist = { -4, -10, 0 }, Neck = { 6, 8, 0 }, RS = { 60, 0, 20 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -20 }, LE = { 110, 0, 0 } },
+					strike = { Root = { -18, 0, 0, 0, -0.35, -0.3 }, Waist = { -10, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 94, 0, 6 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 94, 0, -6 }, LE = { 0, 0, 0 } },
+					follow = { Root = { -20, 0, 0, 0, -0.38, -0.34 }, Waist = { -12, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 96, 0, 8 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 96, 0, -8 }, LE = { 0, 0, 0 } },
+					trail = "prop", fx = { "dust", { "symbols", symbols = { "-70 %", "🛍️" }, count = 3, radius = 2.5, color = ROSE_VIF } }, text = "SOLDES !", hitText = "POUSSÉ !",
+				},
+				-- K : talon de luxe, elle pose le sac au creux du coude et décoche un coup de talon compensé bien lourd
+				K_neutral = {
+					label = "Talon de luxe", startup = 0.2, active = 0.1, recovery = 0.32,
+					damage = 12, hitbox = box(5, 3.5, 3, 0.5), kbBase = 32, kbGrowth = 74, kbAngle = 35,
+					windup = { Root = { 6, -10, 0, 0, -0.15, 0.1 }, Waist = { 8, -8, 0 }, Neck = { 6, 6, 0 }, RS = { 20, 0, 20 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -40 }, LE = { 70, 0, 0 }, RH = { 60, 0, 0 }, RK = { -110, 0, 0 } },
+					strike = { Root = { 16, 0, 0, 0, -0.1, 0.1 }, Waist = { 12, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 20, 0, 30 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -60 }, LE = { 40, 0, 0 }, RH = { 100, 0, 0 }, RK = { 0, 0, 0 }, RA = { 20, 0, 0 } },
+					follow = { Root = { 18, 0, 0, 0, -0.1, 0.14 }, Waist = { 14, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 20, 0, 32 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 32, 0, -62 }, LE = { 40, 0, 0 }, RH = { 104, 0, 0 }, RK = { 0, 0, 0 }, RA = { 20, 0, 0 } },
+					trail = "rightFoot", text = "DÉGAGE !", hitText = "CLAC !",
+				},
+				-- →K : tourniquet du sac, un tour complet sur elle-même, le sac au bout de l'anse comme un fléau
+				K_side = {
+					label = "Tourniquet du sac", startup = 0.22, active = 0.14, recovery = 0.36,
+					damage = 13, hitbox = box(6.5, 3.5, 3.5, 0.8), kbBase = 34, kbGrowth = 86, kbAngle = 30, selfVelocity = Vector2.new(14, 0),
+					windup = { Root = { 4, -50, 0, 0, -0.2, 0.15 }, Waist = { 6, -50, 0 }, Neck = { 6, 36, 0 }, RS = { 60, 0, 80 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -40 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -8, 0, 0, 0, -0.3, -0.3 }, Waist = { -10, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 92, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -50 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { -10, 0, 0, 0, -0.32, -0.34 }, Waist = { -12, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 94, 0, 12 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 36, 0, -54 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+					spin = { axis = "y", degrees = 360 }, trail = "prop", text = "TOURNIQUET !", hitText = "FLÉAU !",
+				},
+				-- ↓K : sac posé sur les pieds, accroupie, elle pose le sac par terre et le pousse d'un coup de talon dans les tibias
+				K_down = {
+					label = "Sac dans les tibias", startup = 0.18, active = 0.14, recovery = 0.34,
+					damage = 12, hitbox = box(6, 2.5, 3.5, -1.5), kbBase = 30, kbGrowth = 62, kbAngle = 74, selfVelocity = Vector2.new(10, 0),
+					windup = { Root = { 8, -10, 0, 0, -0.9, 0.1 }, Waist = { 12, -10, 0 }, Neck = { 6, 6, 0 }, RS = { 30, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -40 }, LE = { 60, 0, 0 }, RH = { -20, 0, 6 }, RK = { -60, 0, 0 } },
+					strike = { Root = { 6, 0, 0, 0, -0.95, -0.15 }, Waist = { 10, 0, 0 }, Neck = { 4, 0, 0 }, RS = { 20, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -40 }, LE = { 60, 0, 0 }, RH = { 70, 0, 4 }, RK = { -4, 0, 0 }, RA = { 20, 0, 0 } },
+					follow = { Root = { 6, 0, 0, 0, -0.95, -0.18 }, Waist = { 10, 0, 0 }, Neck = { 4, 0, 0 }, RS = { 18, 0, 12 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -40 }, LE = { 60, 0, 0 }, RH = { 74, 0, 4 }, RK = { -6, 0, 0 }, RA = { 20, 0, 0 } },
+					trail = "rightFoot", fx = { "dust" }, hitText = "TONK !",
+				},
+				-- ↑K : lancer de sac au plafond, elle balance le sac droit en l'air pour dégager le ciel
+				K_up = {
+					label = "Sac au plafond", kind = "projectile", startup = 0.18, active = 0, recovery = 0.32,
+					damage = 12, kbBase = 32, kbGrowth = 68, kbAngle = 88,
+					projectile = { speed = 60, angle = 82, gravity = 60, lifetime = 0.55, size = 2, color = CUIR_ROSE, aim = false,
+						visual = { shape = "block", size = 1.6, color = CUIR_ROSE, spin = 4, parts = { { "block", Vector3.new(1.62, 0.5, 1.0), Vector3.new(0, 0.5, 0), ROSE_VIF }, { "block", Vector3.new(0.3, 0.3, 0.1), Vector3.new(0.4, -0.2, -0.5), OR } } } },
+					windup = { Root = { 8, 0, 0, 0, -0.4, 0.1 }, Waist = { 12, 0, 0 }, Neck = { -10, 0, 0 }, RS = { -20, 0, 20 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -30 }, LE = { 80, 0, 0 } },
+					strike = { Root = { -8, 0, 0, 0, 0.1, -0.1 }, Waist = { -12, 0, 0 }, Neck = { 32, 0, 0 }, RS = { 180, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -40 }, LE = { 60, 0, 0 }, FR = { 0, 0, 0, 0, 0.15, 0 }, FL = { 0, 0, 0, 0, 0.15, 0 } },
+					follow = { Root = { -10, 0, 0, 0, 0.12, -0.12 }, Waist = { -14, 0, 0 }, Neck = { 36, 0, 0 }, RS = { 186, 0, 12 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 16, 0, -42 }, LE = { 60, 0, 0 }, FR = { 0, 0, 0, 0, 0.16, 0 }, FL = { 0, 0, 0, 0, 0.16, 0 } },
+					hideProp = "sac", fx = { { "symbols", symbols = { "👜", "▲" }, count = 2, radius = 2, at = "above", color = ROSE_VIF } }, text = "ATTENTION LA TÊTE !", hitText = "BLONG !",
+				},
+				-- K en l'air : sac tombant, elle serre le sac contre elle et tombe dessus genoux en avant
+				K_air = {
+					label = "Sac tombant", startup = 0.16, active = 0.14, recovery = 0.28,
+					damage = 12, hitbox = box(5, 4, 1.8, -1), kbBase = 30, kbGrowth = 66, kbAngle = -40,
+					windup = { Root = { 10, 0, 0 }, Waist = { 10, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 60, 0, -10 }, RE = { 120, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, 10 }, LE = { 120, 0, 0 }, RH = { 60, 0, 0 }, RK = { -90, 0, 0 }, LH = { 60, 0, 0 }, LK = { -90, 0, 0 } },
+					strike = { Root = { -30, 0, 0 }, Waist = { -16, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 70, 0, -20 }, RE = { 130, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, 20 }, LE = { 130, 0, 0 }, RH = { 100, 0, 10 }, RK = { -130, 0, 0 }, LH = { 100, 0, -10 }, LK = { -130, 0, 0 } },
+					follow = { Root = { -34, 0, 0 }, Waist = { -18, 0, 0 }, Neck = { 18, 0, 0 }, RS = { 72, 0, -22 }, RE = { 132, 0, 0 }, RW = { 0, 0, 0 }, LS = { 72, 0, 22 }, LE = { 132, 0, 0 }, RH = { 104, 0, 12 }, RK = { -134, 0, 0 }, LH = { 104, 0, -12 }, LK = { -134, 0, 0 } },
+					trail = "body", hitText = "SPLATCH !",
+				},
+				-- dash K : charge VIP, elle traverse la file d'attente sac devant, « laissez passer ! », elle encaisse tout
+				K_dash = {
+					label = "Charge VIP", startup = 0.12, active = 0.22, recovery = 0.34,
+					damage = 12, hitbox = box(5.5, 3.5, 3, 0.3), kbBase = 32, kbGrowth = 66, kbAngle = 34, selfVelocity = Vector2.new(50, 0), armor = true,
+					windup = { Root = { -8, 0, 0, 0, -0.3, 0 }, Waist = { -8, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 60, 0, 20 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -20 }, LE = { 110, 0, 0 } },
+					strike = { Root = { -22, 0, 0, 0, -0.45, -0.3 }, Waist = { -12, 0, 0 }, Neck = { 8, 0, 0 }, RS = { 94, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 94, 0, -10 }, LE = { 0, 0, 0 } },
+					follow = { Root = { -24, 0, 0, 0, -0.48, -0.34 }, Waist = { -14, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 96, 0, 12 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 96, 0, -12 }, LE = { 0, 0, 0 } },
+					shake = true, trail = "prop", fx = { "dust", { "text", text = "VIP", color = OR, at = "above" } }, text = "LAISSEZ PASSER !", hitText = "ENFONCÉ !",
+				},
+				-- L : vide-sac, elle retourne le sac : rouge à lèvres, parfum, téléphone, tout vole sur l'adversaire
+				S_neutral = {
+					label = "Vide-sac", kind = "projectile", startup = 0.22, active = 0, recovery = 0.46,
+					damage = 5, kbBase = 22, kbGrowth = 38, kbAngle = 30,
+					projectile = { speed = 78, angle = 0, gravity = 10, lifetime = 0.7, size = 1.4, color = ROSE_VIF, fan = { count = 4, from = -12, to = 12 },
+						visual = { shape = "block", size = 1.0, color = ROSE_VIF, spin = 10, parts = { { "cyl", Vector3.new(1.0, 0.3, 0.3), Vector3.new(0.6, 0.4, 0), OR }, { "ball", Vector3.new(0.6, 0.6, 0.6), Vector3.new(-0.5, -0.4, 0), LILAS } } } },
+					windup = { Root = { 6, -20, 0, 0, -0.2, 0.2 }, Waist = { 8, -24, 0 }, Neck = { 6, 16, 0 }, RS = { 150, 0, 40 }, RE = { 50, 0, 0 }, RW = { 0, 0, 0 }, LS = { 120, 0, -30 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -12, 16, 0, 0, -0.3, -0.35 }, Waist = { -14, 22, 0 }, Neck = { -2, -12, 0 }, RS = { 96, 0, 0 }, RE = { 0, 0, 0 }, RW = { 180, 0, 0 }, LS = { 90, 0, 6 }, LE = { 5, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { -14, 20, 0, 0, -0.34, -0.42 }, Waist = { -18, 26, 0 }, Neck = { -4, -16, 0 }, RS = { 100, 0, 4 }, RE = { 4, 0, 0 }, RW = { 180, 0, 0 }, LS = { 94, 0, 8 }, LE = { 5, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+					shake = true, trail = "prop", fx = { { "toss", shape = "cyl", color = OR, size = 0.5, count = 5, speed = 22 }, { "symbols", symbols = { "💄", "📱", "🧴" }, count = 4, radius = 3, at = "front" } },
+					text = "TIENS, TOUT ÇA !", hitText = "PAF-PAF-PAF !",
+				},
+				-- →L : lancer de sac, le sac part en tournoyant au bout de son anse, fauche l'adversaire et lui revient dans la main
+				S_side = {
+					label = "Lancer de sac", kind = "projectile", startup = 0.26, active = 0, recovery = 0.52,
+					damage = 16, kbBase = 34, kbGrowth = 66, kbAngle = 32,
+					projectile = { speed = 70, angle = 0, gravity = 0, lifetime = 0.9, size = 2.4, color = CUIR_ROSE, returns = true,
+						visual = { shape = "block", size = 1.8, color = CUIR_ROSE, spin = 10, parts = { { "block", Vector3.new(1.82, 0.55, 1.1), Vector3.new(0, 0.55, 0), ROSE_VIF }, { "block", Vector3.new(0.16, 1.2, 0.16), Vector3.new(0, 1.4, 0), OR }, { "block", Vector3.new(0.4, 0.4, 0.1), Vector3.new(0.4, -0.3, -0.55), OR } } } },
+					windup = { Root = { 6, -40, 0, 0, -0.25, 0.25 }, Waist = { 8, -44, 0 }, Neck = { 6, 30, 0 }, RS = { 150, 0, 60 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -30 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -14, 24, 0, 0, -0.34, -0.45 }, Waist = { -16, 28, 0 }, Neck = { -6, -16, 0 }, RS = { 94, 0, -6 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -40 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+					follow = { Root = { 2, 10, 4, 0, -0.22, 0 }, Waist = { 4, 10, 6 }, Neck = { 4, -8, 0 }, RS = { 60, 0, 10 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 10, 0, -45 }, LE = { 115, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					shake = true, hideProp = "sac", fx = { { "burst", color = ROSE_VIF, size = 3, at = "hand" }, { "symbols", symbols = { "👜", "💫" }, count = 3, radius = 2.5, at = "front", color = OR } },
+					text = "C'EST DU CUIR !", hitText = "ET RETOUR !",
+				},
+				-- ↓L : sac écrasant, le sac levé à deux mains puis abattu au sol : tout ce qu'il y a dedans fait trembler le couloir
+				S_down = {
+					label = "Sac écrasant", startup = 0.26, active = 0.16, recovery = 0.52,
+					damage = 15, hitbox = box(14, 6, 7, 0.5), kbBase = 34, kbGrowth = 62, kbAngle = 80,
+					windup = { Root = { 8, 0, 0, 0, 0.1, 0.15 }, Waist = { 14, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 184, 0, 10 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 184, 0, -10 }, LE = { 30, 0, 0 } },
+					strike = { Root = { -24, 0, 0, 0, -0.9, -0.25 }, Waist = { -44, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 70, 0, 12 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, -12 }, LE = { 0, 0, 0 } },
+					follow = { Root = { -26, 0, 0, 0, -0.95, -0.25 }, Waist = { -48, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 60, 0, 14 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -14 }, LE = { 0, 0, 0 } },
+					shake = true, trail = "prop", fx = { { "ring", color = ROSE_VIF, radius = 7, at = "feet" }, { "pillar", color = CUIR_ROSE, height = 3, width = 8, at = "front", time = 0.4 }, { "shake", amount = 0.6 }, "dust" },
+					text = "IL PÈSE UNE TONNE !", hitText = "BRRROUM !",
+				},
+				-- ↑L : sac-parachute, le sac tenu au-dessus de la tête se gonfle comme un parachute et l'emporte en diagonale
+				S_up = {
+					label = "Sac-parachute", startup = 0.16, active = 0.3, recovery = 0.42,
+					damage = 14, hitbox = box(10, 11, 3, 4), kbBase = 32, kbGrowth = 56, kbAngle = 72, selfVelocity = Vector2.new(42, 82),
+					windup = { Root = { 6, 0, 0, 0, -0.75, 0.1 }, Waist = { -8, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 60, 0, 20 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -30 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -36, 0, 0, 0, 0.3, 0 }, Waist = { -6, 0, 0 }, Neck = { 32, 0, 0 }, RS = { 182, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 120, 0, -40 }, LE = { 30, 0, 0 }, RH = { -20, 0, 8 }, RK = { -40, 0, 0 }, RA = { -25, 0, 0 }, LH = { -30, 0, -8 }, LK = { -50, 0, 0 }, LA = { -25, 0, 0 } },
+					follow = { Root = { -40, 0, 0, 0, 0.35, 0 }, Waist = { -8, 0, 0 }, Neck = { 34, 0, 0 }, RS = { 186, 0, 12 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 124, 0, -44 }, LE = { 30, 0, 0 }, RH = { -26, 0, 10 }, RK = { -48, 0, 0 }, RA = { -25, 0, 0 }, LH = { -36, 0, -10 }, LK = { -58, 0, 0 }, LA = { -25, 0, 0 } },
+					trail = "prop", fx = { { "ring", color = ROSE, radius = 5, at = "feet" }, { "burst", color = ROSE_VIF, size = 3, at = "feet" }, { "symbols", symbols = { "👜", "✨" }, count = 3, radius = 2, color = OR } },
+					text = "ENVOLÉE !", hitText = "PLOF !",
+				},
+				-- L en l'air : sac-enclume, elle lâche le sac qui tombe comme une enclume pile sur la tête de l'adversaire
+				S_air = {
+					label = "Sac-enclume", kind = "projectile", startup = 0.16, active = 0, recovery = 0.42,
+					damage = 15, kbBase = 30, kbGrowth = 58, kbAngle = -65,
+					projectile = { speed = 60, gravity = 70, lifetime = 0.8, size = 2.4, color = CUIR_ROSE, rain = { count = 1, spread = 0.5, ahead = 6, height = 18 },
+						visual = { shape = "block", size = 1.8, color = CUIR_ROSE, spin = 2, parts = { { "block", Vector3.new(1.82, 0.55, 1.1), Vector3.new(0, 0.55, 0), ROSE_VIF }, { "block", Vector3.new(0.16, 1.2, 0.16), Vector3.new(0, 1.4, 0), OR } } } },
+					windup = { Root = { -6, 0, 0 }, Waist = { -6, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 180, 0, 10 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -40 }, LE = { 60, 0, 0 }, RH = { 40, 0, 0 }, RK = { -60, 0, 0 }, LH = { 20, 0, 0 }, LK = { -50, 0, 0 } },
+					strike = { Root = { 6, 0, 0 }, Waist = { 8, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 60, 0, 40 }, RE = { 20, 0, 0 }, RW = { 60, 0, 0 }, LS = { 40, 0, -40 }, LE = { 60, 0, 0 }, RH = { 30, 0, 0 }, RK = { -50, 0, 0 }, LH = { 20, 0, 0 }, LK = { -50, 0, 0 } },
+					follow = { Root = { 6, 0, 0 }, Waist = { 8, 0, 0 }, Neck = { -24, 0, 0 }, RS = { 50, 0, 44 }, RE = { 20, 0, 0 }, RW = { 60, 0, 0 }, LS = { 120, 0, -10 }, LE = { 130, 0, 0 }, RH = { 30, 0, 0 }, RK = { -50, 0, 0 }, LH = { 20, 0, 0 }, LK = { -50, 0, 0 } },
+					hideProp = "sac", fx = { { "symbols", symbols = { "👜", "⬇" }, count = 3, radius = 2, at = "above", color = ROSE_VIF } }, text = "OUPS, MON SAC !", hitText = "ENCLUME !",
+				},
+				-- Y : sac XXL, le sac gonfle jusqu'à devenir énorme et elle le balance d'un grand coup sur tout le couloir
+				SUPER = {
+					label = "Sac XXL !", startup = 0.42, active = 0.24, recovery = 0.7,
+					damage = 26, hitbox = box(14, 8, 7, 1.5), kbBase = 50, kbGrowth = 100, kbAngle = 32, armor = true,
+					windup = { Root = { 6, -50, 0, 0, -0.3, 0.2 }, Waist = { 8, -54, 0 }, Neck = { 8, 36, 0 }, RS = { 150, 0, 70 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -40 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -16, 20, 0, 0, -0.4, -0.5 }, Waist = { -18, 24, 0 }, Neck = { -6, -16, 0 }, RS = { 92, 0, -10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -50 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.55 } },
+					follow = { Root = { -18, 34, 0, 0, -0.42, -0.55 }, Waist = { -20, 40, 0 }, Neck = { -8, -22, 0 }, RS = { 84, 0, -40 }, RE = { 6, 0, 0 }, RW = { -10, 0, 0 }, LS = { 26, 0, -54 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.58 } },
+					hold = 0.2, shake = true, trail = "prop", windupFx = { "super", { "symbols", symbols = { "👜", "💰", "✨" }, count = 6, radius = 3, color = OR } },
+					fx = { { "burst", color = ROSE_VIF, size = 5, at = "front" }, { "ring", color = OR, radius = 7, at = "front" }, { "beam", color = CUIR_ROSE, length = 16, width = 6, at = "hand" }, { "shake", amount = 0.5 } },
+					text = "ÉDITION LIMITÉE !", hitText = "KA-BLAM !",
+				},
+				-- →Y : le sac à 10 000 €, elle le lance comme un boulet de canon : il traverse tout le couloir, rebondit et personne n'y touche
+				SUPER_side = {
+					label = "Le sac à 10 000 € !", kind = "projectile", startup = 0.42, active = 0, recovery = 0.72,
+					damage = 26, kbBase = 50, kbGrowth = 100, kbAngle = 30,
+					projectile = { speed = 82, angle = 0, gravity = 0, lifetime = 0.9, size = 3.6, color = CUIR_ROSE, pierce = true, bounce = 1,
+						visual = { shape = "block", size = 3, color = CUIR_ROSE, spin = 8, parts = { { "block", Vector3.new(3.02, 0.9, 1.9), Vector3.new(0, 0.9, 0), ROSE_VIF }, { "block", Vector3.new(0.3, 2.2, 0.3), Vector3.new(0, 2.4, 0), OR }, { "block", Vector3.new(0.8, 0.8, 0.12), Vector3.new(0.7, -0.4, -0.95), OR } } } },
+					windup = { Root = { 8, -36, 0, 0, -0.4, 0.3 }, Waist = { 12, -40, 0 }, Neck = { 10, 26, 0 }, RS = { 40, 0, 20 }, RE = { 130, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -20 }, LE = { 130, 0, 0 }, LW = { 0, 0, 0 } },
+					strike = { Root = { -18, 24, 0, 0, -0.38, -0.55 }, Waist = { -20, 28, 0 }, Neck = { -6, -16, 0 }, RS = { 96, 0, -4 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 92, 0, 4 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.6 } },
+					follow = { Root = { -20, 28, 0, 0, -0.4, -0.6 }, Waist = { -24, 32, 0 }, Neck = { -8, -18, 0 }, RS = { 100, 0, -6 }, RE = { 4, 0, 0 }, RW = { 6, 0, 0 }, LS = { 96, 0, 6 }, LE = { 0, 0, 0 }, LW = { 6, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.62 } },
+					shake = true, hideProp = "sac", windupFx = { "super", { "text", text = "10 000 € !", color = OR, at = "above" } },
+					fx = { { "burst", color = OR, size = 4, at = "hand" }, { "beam", color = ROSE_VIF, length = 14, width = 3, at = "hand" }, { "shake", amount = 0.45 } },
+					text = "ATTRAPE, C'EST CADEAU !", hitText = "HORS DE PRIX !",
+				},
+				-- ↑Y : la note de frais, elle sort du sac un ticket de caisse interminable qui se déroule jusqu'au plafond et emporte tout le couloir
+				SUPER_up = {
+					label = "La note de frais !", startup = 0.36, active = 0.34, recovery = 0.7,
+					damage = 24, hitbox = box(14, 12, 7, 4), kbBase = 46, kbGrowth = 94, kbAngle = 88, invuln = 0.3, selfVelocity = Vector2.new(0, 50),
+					windup = { Root = { 6, 0, 0, 0, -0.6, 0.1 }, Waist = { 10, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 60, 0, 20 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 100, 0, 20 }, LE = { 130, 0, 0 } },
+					strike = { Root = { 2, 0, 0, 0, 0.45, 0 }, Waist = { 6, 0, 0 }, Neck = { 44, 0, 0 }, RS = { 150, 0, 30 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 186, 0, -10 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 }, RH = { 30, 0, 10 }, RK = { -70, 0, 0 }, LH = { 30, 0, -10 }, LK = { -70, 0, 0 } },
+					follow = { Root = { 4, 0, 0, 0, 0.5, 0 }, Waist = { 8, 0, 0 }, Neck = { 48, 0, 0 }, RS = { 154, 0, 32 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 190, 0, -12 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 }, RH = { 40, 0, 12 }, RK = { -80, 0, 0 }, LH = { 40, 0, -12 }, LK = { -80, 0, 0 } },
+					hold = 0.25, shake = true, trail = "leftHand", windupFx = { "super", { "text", text = "TICKET DE CAISSE…", color = BLANC, at = "hand" } },
+					fx = { { "pillar", color = BLANC, height = 26, width = 4, at = "front" }, { "ring", color = OR, radius = 8, at = "feet" }, { "symbols", symbols = { "🧾", "€", "€€€" }, count = 8, radius = 4, color = OR }, { "shake", amount = 0.4 } },
+					text = "ET VOILÀ LA NOTE !", hitText = "RUINÉ !",
+				},
+				-- ↓Y : remboursement, elle renverse le sac sur tout le couloir : flacons de parfum brisés, tout le monde glisse dedans
+				SUPER_down = {
+					label = "Remboursement !", startup = 0.4, active = 0.3, recovery = 0.72,
+					damage = 22, hitbox = box(14, 5, 7, -0.5), kbBase = 44, kbGrowth = 90, kbAngle = 60,
+					status = { name = "slippery", duration = 2.5 },
+					windup = { Root = { 8, -30, 0, 0, -0.5, 0.2 }, Waist = { 12, -34, 0 }, Neck = { 10, 24, 0 }, RS = { 160, 0, 40 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, -30 }, LE = { 40, 0, 0 } },
+					strike = { Root = { 14, 20, 0, 0, -1.0, -0.3 }, Waist = { 26, 24, 0 }, Neck = { 6, -14, 0 }, RS = { 40, 0, -10 }, RE = { 0, 0, 0 }, RW = { 180, 0, 0 }, LS = { 40, 0, 10 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { 16, 30, 0, 0, -1.0, -0.34 }, Waist = { 28, 34, 0 }, Neck = { 8, -20, 0 }, RS = { 34, 0, -20 }, RE = { 0, 0, 0 }, RW = { 180, 0, 0 }, LS = { 34, 0, 20 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+					hold = 0.2, shake = true, trail = "prop", windupFx = { "super", { "text", text = "JE VEUX ÊTRE REMBOURSÉE !", color = ROSE_VIF } },
+					fx = { { "puddle", color = LILAS, width = 16, time = 2 }, { "toss", shape = "cyl", color = OR, size = 0.8, count = 8, speed = 26 }, { "beam", color = LILAS, length = 16, width = 3, at = "feet" }, { "symbols", symbols = { "💄", "🧴", "📱", "💳" }, count = 8, radius = 5, at = "front" }, { "shake", amount = 0.4 } },
+					text = "TOUT PAR TERRE !", hitText = "GLISSÉ DANS LE PARFUM !",
+				},
+			},
+			links = {
+				P_neutral = { P = "P_side", K = "K_neutral", S = "S_neutral" },
+				P_side = { P = "P_up", K = "K_side", S = "S_side" },
+				P_down = { P = "P_up", K = "K_down", S = "S_down" },
+				K_neutral = { P = "P_neutral", K = "K_side", S = "S_down" },
+				K_side = { P = "P_up", K = "K_up", S = "S_neutral" },
+				P_dash = { P = "P_side", K = "K_side", S = "S_side" },
+				K_dash = { P = "P_up", S = "S_up" },
+			},
+		},
+	},
 
 	look = {
 		body = {
@@ -532,6 +1018,19 @@ local data = {
 			hold = 0.3, windupFx = { "super", { "text", text = "PUBLIER…", color = BLEU } },
 			fx = { { "symbols", symbols = { "🔔", "❤️", "💬", "📈" }, count = 12, radius = 6 }, { "screen", color = ROSE, alpha = 0.25 }, { "ring", color = ROSE_VIF, radius = 8, at = "above" } },
 			text = "JE SUIS VIRALE !", hitText = "DING DING DING !",
+		},
+		-- Perche télescopique (→Y) : elle déplie la perche cran par cran, encore, encore… jusqu'à ce qu'elle traverse tout le
+		-- couloir comme une lance de tournoi, le téléphone au bout en pleine figure de tout le monde, et flash pour la photo
+		SUPER_side = {
+			label = "Perche télescopique !", startup = 0.42, active = 0.24, recovery = 0.72,
+			damage = 26, hitbox = box(14, 6, 7, 1), kbBase = 50, kbGrowth = 100, kbAngle = 24,
+			status = { name = "stunned", duration = 0.5 },
+			windup = { Root = { 6, -30, 0, 0, -0.25, 0.25 }, Waist = { 8, -32, 0 }, Neck = { 4, 22, 0 }, RS = { 50, 0, 20 }, RE = { 130, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -10 }, LE = { 120, 0, 0 }, LW = { 0, 0, 0 } },
+			strike = { Root = { -16, 24, 0, 0, -0.45, -0.6 }, Waist = { -12, 28, 0 }, Neck = { 6, -18, 0 }, RS = { 94, 0, -2 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 130, 0, -60 }, LE = { 40, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.75 } },
+			follow = { Root = { -18, 26, 0, 0, -0.48, -0.65 }, Waist = { -14, 30, 0 }, Neck = { 8, -20, 0 }, RS = { 96, 0, -4 }, RE = { 0, 0, 0 }, RW = { -4, 0, 0 }, LS = { 134, 0, -62 }, LE = { 40, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.8 } },
+			hold = 0.3, shake = true, trail = "prop", windupFx = { "super", { "symbols", symbols = { "CLIC", "CLIC", "CLIC" }, count = 5, radius = 2.5, at = "hand", color = ARGENT } },
+			fx = { { "beam", color = ARGENT, length = 18, width = 1.6, at = "hand" }, { "burst", color = FLASH, size = 5, at = "front" }, { "screen", color = FLASH, alpha = 0.25 }, { "symbols", symbols = { "📸", "✨" }, count = 6, radius = 4, at = "front" }, { "shake", amount = 0.4 } },
+			text = "ENCORE PLUS LOIN !", hitText = "EMBROCHÉ-FLASHÉ !",
 		},
 		-- Auréole de ring light (Y↑) : accroupie, elle sort la ring light, se dresse sur les pointes et la brandit au-dessus de sa
 		-- tête en tournant : une auréole de lumière qui aspire tout le couloir vers le ciel (et aveugle)

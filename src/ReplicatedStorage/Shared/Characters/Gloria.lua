@@ -20,11 +20,479 @@ local NOIR = Color3.fromRGB(25, 25, 30)
 local OR = Color3.fromRGB(255, 200, 60)
 local DISCO = Color3.fromRGB(210, 215, 230)
 
+local FONTE = Color3.fromRGB(60, 60, 70) -- disques des haltères (arme n° 2)
+local CORDE = Color3.fromRGB(120, 255, 120) -- corde à sauter (arme n° 3)
 local data = {
 	id = "Gloria",
 	name = "Gloria Zumba",
 	costume = "Gloria",
 	style = "dance",
+
+	------------------------------------------------------------------ Les 3 armes de la Caisse Bizarre (une au hasard)
+	-- n° 1 : l'enceinte fluo (ses coups sont ceux de moves). n° 2 : les haltères fluo, lourdes et lentes, qui éjectent loin
+	-- et encaissent pendant les L. n° 3 : la corde à sauter, rapide, mobile, à fouet et lasso (un saut de plus).
+	weapons = {
+		{ id = "enceinte", name = "Enceinte fluo", icon = "🔊",
+			ability = { superCooldown = 0.6, text = "Playlist non-stop : recharge des Supers × 0,6" } },
+		{ id = "halteres", name = "Haltères fluo", icon = "🏋️",
+			prop = { name = "PropHaltere", hand = "Right", pieces = {
+				{ "Barre", "", "cyl", Vector3.new(2.8, 0.22, 0.22), Vector3.new(0, -0.3, 0), Vector3.zero, NOIR, "Metal", { axis = "x" } },
+				{ "DisqueD", "", "cyl", Vector3.new(0.28, 1.2, 1.2), Vector3.new(1.25, -0.3, 0), Vector3.zero, FONTE, "Metal", { axis = "x" } },
+				{ "DisqueG", "", "cyl", Vector3.new(0.28, 1.2, 1.2), Vector3.new(-1.25, -0.3, 0), Vector3.zero, FONTE, "Metal", { axis = "x" } },
+				{ "FluoD", "", "cyl", Vector3.new(0.22, 0.85, 0.85), Vector3.new(0.98, -0.3, 0), Vector3.zero, ROSE, "Neon", { axis = "x", neon = true } },
+				{ "FluoG", "", "cyl", Vector3.new(0.22, 0.85, 0.85), Vector3.new(-0.98, -0.3, 0), Vector3.zero, JAUNE, "Neon", { axis = "x", neon = true } },
+			} },
+			ability = { damage = 1.15, armor = true, text = "20 kg de chaque côté : dégâts +15 %, les L encaissent sans broncher" },
+			moves = {
+				-- J : curl de biceps, l'haltère remonte d'un coup sec sous le menton d'en face
+				P_neutral = {
+					label = "Curl de biceps", startup = 0.12, active = 0.1, recovery = 0.22,
+					damage = 8, hitbox = box(4.5, 4, 2.6, 1), kbBase = 24, kbGrowth = 32, kbAngle = 60,
+					windup = { Root = { 4, -10, 0, 0, -0.15, 0.1 }, Waist = { 6, -12, 0 }, Neck = { 8, 8, 0 }, RS = { 20, 0, 10 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -30 }, LE = { 90, 0, 0 } },
+					strike = { Root = { -8, 10, 0, 0, -0.25, -0.25 }, Waist = { -10, 12, 0 }, Neck = { -4, -6, 0 }, RS = { 40, 0, 6 }, RE = { 130, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -35 }, LE = { 90, 0, 0 } },
+					follow = { Root = { -10, 12, 0, 0, -0.28, -0.3 }, Waist = { -12, 14, 0 }, Neck = { -6, -8, 0 }, RS = { 44, 0, 8 }, RE = { 140, 0, 0 }, RW = { -10, 0, 0 }, LS = { 30, 0, -36 }, LE = { 90, 0, 0 } },
+					trail = "prop", text = "ET UNE !", hitText = "CLONK !",
+				},
+				-- →J : développé debout, l'haltère poussée à deux mains droit devant, pas en avant
+				P_side = {
+					label = "Développé debout", startup = 0.14, active = 0.1, recovery = 0.26,
+					damage = 9, hitbox = box(5, 3.5, 3.2, 0.8), kbBase = 26, kbGrowth = 40, kbAngle = 26, selfVelocity = Vector2.new(16, 0),
+					windup = { Root = { 6, 0, 0, 0, -0.2, 0.2 }, Waist = { 8, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 60, 0, 20 }, RE = { 120, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -20 }, LE = { 120, 0, 0 }, LW = { 0, 0, 0 } },
+					strike = { Root = { -12, 0, 0, 0, -0.32, -0.4 }, Waist = { -14, 0, 0 }, Neck = { -4, 0, 0 }, RS = { 94, 0, 6 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 94, 0, -6 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+					follow = { Root = { -14, 0, 0, 0, -0.34, -0.45 }, Waist = { -16, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 98, 0, 8 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 98, 0, -8 }, LE = { 0, 0, 0 }, LW = { -10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+					trail = "prop", text = "POUSSE !", hitText = "BLAM !",
+				},
+				-- ↓J : soulevé de terre, dos plat, l'haltère part du sol et remonte dans les tibias
+				P_down = {
+					label = "Soulevé de terre", startup = 0.14, active = 0.1, recovery = 0.26,
+					damage = 8, hitbox = box(5.5, 2.5, 3, -1.4), kbBase = 24, kbGrowth = 36, kbAngle = 75,
+					windup = { Root = { -30, 0, 0, 0, -0.8, 0 }, Waist = { -30, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 80, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 80, 0, -10 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 } },
+					strike = { Root = { -10, 0, 0, 0, -0.3, -0.1 }, Waist = { -8, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 40, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -10 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 } },
+					follow = { Root = { -4, 0, 0, 0, -0.1, -0.1 }, Waist = { 4, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 30, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -10 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 } },
+					shake = true, trail = "prop", fx = { "dust" }, text = "DOS DROIT !", hitText = "SOULEVÉ !",
+				},
+				-- ↑J : développé militaire, montée sur les pointes et l'haltère part à bout de bras vers le ciel
+				P_up = {
+					label = "Développé militaire", startup = 0.13, active = 0.12, recovery = 0.26,
+					damage = 9, hitbox = box(4.5, 5.5, 1, 3.6), kbBase = 28, kbGrowth = 40, kbAngle = 86,
+					windup = { Root = { 4, 0, 0, 0, -0.4, 0.05 }, Waist = { 6, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 60, 0, 30 }, RE = { 130, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -30 }, LE = { 130, 0, 0 } },
+					strike = { Root = { 2, 0, 0, 0, 0.25, 0 }, Waist = { 4, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 182, 0, 8 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 182, 0, -8 }, LE = { 0, 0, 0 }, FR = { 0, 0, 0, 0, 0.3, 0 }, FL = { 0, 0, 0, 0, 0.3, 0 } },
+					follow = { Root = { 2, 0, 0, 0, 0.3, 0 }, Waist = { 6, 0, 0 }, Neck = { 34, 0, 0 }, RS = { 186, 0, 10 }, RE = { 0, 0, 0 }, RW = { -8, 0, 0 }, LS = { 186, 0, -10 }, LE = { 0, 0, 0 }, FR = { 0, 0, 0, 0, 0.32, 0 }, FL = { 0, 0, 0, 0, 0.32, 0 } },
+					trail = "prop", fx = { { "symbols", symbols = { "💪" }, count = 2, radius = 2, at = "above", color = JAUNE } }, text = "ET HOP !", hitText = "PRESSÉ !",
+				},
+				-- J en l'air : crunch lesté, genoux à la poitrine, l'haltère abattue sous elle
+				P_air = {
+					label = "Crunch lesté", startup = 0.12, active = 0.12, recovery = 0.2,
+					damage = 9, hitbox = box(4.5, 4, 1.5, -1.5), kbBase = 24, kbGrowth = 40, kbAngle = -40,
+					windup = { Root = { 8, 0, 0 }, Waist = { 12, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 180, 0, 14 }, RE = { 50, 0, 0 }, RW = { 0, 0, 0 }, LS = { 176, 0, -14 }, LE = { 50, 0, 0 }, RH = { 40, 0, 0 }, RK = { -70, 0, 0 }, LH = { 40, 0, 0 }, LK = { -70, 0, 0 } },
+					strike = { Root = { -14, 0, 0 }, Waist = { -30, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 36, 0, 6 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 36, 0, -6 }, LE = { 0, 0, 0 }, RH = { 100, 0, 0 }, RK = { -130, 0, 0 }, LH = { 100, 0, 0 }, LK = { -130, 0, 0 } },
+					follow = { Root = { -18, 0, 0 }, Waist = { -34, 0, 0 }, Neck = { -12, 0, 0 }, RS = { 24, 0, 8 }, RE = { 6, 0, 0 }, RW = { -10, 0, 0 }, LS = { 24, 0, -8 }, LE = { 6, 0, 0 }, RH = { 96, 0, 0 }, RK = { -126, 0, 0 }, LH = { 96, 0, 0 }, LK = { -126, 0, 0 } },
+					trail = "prop", hitText = "BOUM !",
+				},
+				-- dash J : fente avant lestée, une immense fente en courant et l'haltère part en coup de boutoir
+				P_dash = {
+					label = "Fente avant lestée", startup = 0.1, active = 0.14, recovery = 0.28,
+					damage = 10, hitbox = box(5.5, 3.5, 3.2, 0.6), kbBase = 28, kbGrowth = 50, kbAngle = 28, selfVelocity = Vector2.new(36, 0),
+					windup = { Root = { -6, -12, 0, 0, -0.2, 0.1 }, Waist = { -4, -12, 0 }, Neck = { 6, 10, 0 }, RS = { 40, 0, 30 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { -20, 0, -30 }, LE = { 40, 0, 0 } },
+					strike = { Root = { -18, 10, 0, 0, -0.55, -0.6 }, Waist = { -10, 10, 0 }, Neck = { 10, -8, 0 }, RS = { 94, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -40, 0, -35 }, LE = { 20, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.75 } },
+					follow = { Root = { -20, 12, 0, 0, -0.58, -0.65 }, Waist = { -12, 12, 0 }, Neck = { 12, -10, 0 }, RS = { 96, 0, -2 }, RE = { 0, 0, 0 }, RW = { -8, 0, 0 }, LS = { -44, 0, -38 }, LE = { 20, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.8 } },
+					trail = "prop", fx = { "dust" }, text = "FENTE !", hitText = "BOUTOIR !",
+				},
+				-- K : squat sauté, elle décolle en squat haltère au ciel et retombe en pliant les genoux : le sol tremble
+				K_neutral = {
+					label = "Squat sauté", startup = 0.2, active = 0.14, recovery = 0.34,
+					damage = 12, hitbox = box(7, 3, 2, -1.2), kbBase = 30, kbGrowth = 66, kbAngle = 72,
+					windup = { Root = { 6, 0, 0, 0, -0.9, 0.1 }, Waist = { 10, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 150, 0, 20 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, -20 }, LE = { 30, 0, 0 } },
+					strike = { Root = { 2, 0, 0, 0, -0.95, -0.1 }, Waist = { 6, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 170, 0, 20 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 170, 0, -20 }, LE = { 10, 0, 0 }, FR = { 0, 0, 0, 0.2, 0, 0 }, FL = { 0, 0, 0, -0.2, 0, 0 } },
+					follow = { Root = { 4, 0, 0, 0, -1.0, -0.1 }, Waist = { 8, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 174, 0, 22 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 174, 0, -22 }, LE = { 10, 0, 0 }, FR = { 0, 0, 0, 0.2, 0, 0 }, FL = { 0, 0, 0, -0.2, 0, 0 } },
+					fx = { { "ring", color = JAUNE, radius = 5, at = "feet" }, { "shake", amount = 0.4 }, "dust" }, text = "SQUAT !", hitText = "BOUM-BOUM !",
+				},
+				-- →K : rowing du bûcheron, penchée en avant, l'haltère tirée en arrière… puis lâchée en grand balayage
+				K_side = {
+					label = "Rowing du bûcheron", startup = 0.22, active = 0.12, recovery = 0.36,
+					damage = 13, hitbox = box(6.5, 3.5, 3.5, 0.8), kbBase = 34, kbGrowth = 86, kbAngle = 30, selfVelocity = Vector2.new(14, 0),
+					windup = { Root = { -16, 30, 0, 0, -0.35, 0.1 }, Waist = { -14, 36, 0 }, Neck = { 10, -24, 0 }, RS = { -30, 0, 20 }, RE = { 120, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, -20 }, LE = { 20, 0, 0 } },
+					strike = { Root = { -8, -30, 0, 0, -0.3, -0.4 }, Waist = { -10, -36, 0 }, Neck = { -6, 22, 0 }, RS = { 90, 0, -30 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -50 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+					follow = { Root = { -10, -44, 0, 0, -0.32, -0.45 }, Waist = { -12, -50, 0 }, Neck = { -8, 30, 0 }, RS = { 86, 0, -50 }, RE = { 6, 0, 0 }, RW = { -10, 0, 0 }, LS = { 26, 0, -54 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+					trail = "prop", text = "ET ON TIRE !", hitText = "VLAN !",
+				},
+				-- ↓K : burpee écraseur, elle se jette à plat ventre et l'haltère s'écrase au sol devant elle
+				K_down = {
+					label = "Burpee écraseur", startup = 0.18, active = 0.12, recovery = 0.38,
+					damage = 12, hitbox = box(6, 2.5, 3.5, -1.6), kbBase = 30, kbGrowth = 62, kbAngle = 76,
+					windup = { Root = { -10, 0, 0, 0, -0.5, 0 }, Waist = { -10, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 150, 0, 20 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, -20 }, LE = { 40, 0, 0 } },
+					strike = { Root = { -72, 0, 0, 0, -1.5, -0.3 }, Waist = { -6, 0, 0 }, Neck = { 40, 0, 0 }, RS = { 100, 0, 20 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 100, 0, -20 }, LE = { 0, 0, 0 }, RH = { -10, 0, 8 }, RK = { -10, 0, 0 }, LH = { -10, 0, -8 }, LK = { -10, 0, 0 } },
+					follow = { Root = { -74, 0, 0, 0, -1.52, -0.34 }, Waist = { -8, 0, 0 }, Neck = { 42, 0, 0 }, RS = { 104, 0, 22 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 104, 0, -22 }, LE = { 0, 0, 0 }, RH = { -12, 0, 10 }, RK = { -12, 0, 0 }, LH = { -12, 0, -10 }, LK = { -12, 0, 0 } },
+					trail = "prop", fx = { { "ring", color = ROSE, radius = 4, at = "front" }, { "shake", amount = 0.35 }, "dust" }, text = "BURPEE !", hitText = "ÉCRASÉ !",
+				},
+				-- ↑K : élévation latérale, bras tendu l'haltère monte en grand arc sur le côté jusqu'au ciel
+				K_up = {
+					label = "Élévation latérale", startup = 0.2, active = 0.12, recovery = 0.34,
+					damage = 12, hitbox = box(5, 6, 1.5, 3.5), kbBase = 32, kbGrowth = 72, kbAngle = 88,
+					windup = { Root = { 4, 0, 10, 0, -0.3, 0.05 }, Waist = { 6, 0, 14 }, Neck = { -8, 0, -10 }, RS = { 10, 0, -20 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -30 }, LE = { 90, 0, 0 } },
+					strike = { Root = { -6, 0, -12, 0, 0.1, -0.1 }, Waist = { -8, 0, -16 }, Neck = { 24, 0, 12 }, RS = { 30, 0, 170 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -40 }, LE = { 90, 0, 0 }, FR = { 0, 0, 0, 0, 0.2, 0 } },
+					follow = { Root = { -8, 0, -14, 0, 0.12, -0.12 }, Waist = { -10, 0, -18 }, Neck = { 28, 0, 14 }, RS = { 32, 0, 176 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 20, 0, -42 }, LE = { 90, 0, 0 }, FR = { 0, 0, 0, 0, 0.22, 0 } },
+					trail = "prop", text = "ET ON LÈVE !", hitText = "TCHONK !",
+				},
+				-- K en l'air : tirage vertical, couchée dans le vide, elle hisse l'haltère au-dessus d'elle puis la rabat
+				K_air = {
+					label = "Tirage vertical", startup = 0.16, active = 0.14, recovery = 0.28,
+					damage = 12, hitbox = box(5.5, 4, 2, -0.5), kbBase = 30, kbGrowth = 68, kbAngle = 35,
+					windup = { Root = { 30, 0, 0 }, Waist = { 10, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 40, 0, 20 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -20 }, LE = { 100, 0, 0 }, RH = { 60, 0, 0 }, RK = { -90, 0, 0 }, LH = { 60, 0, 0 }, LK = { -90, 0, 0 } },
+					strike = { Root = { -10, 0, 0 }, Waist = { -24, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 96, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 96, 0, -10 }, LE = { 0, 0, 0 }, RH = { 30, 0, 0 }, RK = { -50, 0, 0 }, LH = { 40, 0, 0 }, LK = { -60, 0, 0 } },
+					follow = { Root = { -14, 0, 0 }, Waist = { -28, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 100, 0, 12 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 100, 0, -12 }, LE = { 0, 0, 0 }, RH = { 26, 0, 0 }, RK = { -46, 0, 0 }, LH = { 36, 0, 0 }, LK = { -56, 0, 0 } },
+					trail = "prop", hitText = "BLAM !",
+				},
+				-- dash K : charge du rack, l'haltère tenue en bélier devant elle, tête baissée, elle encaisse tout
+				K_dash = {
+					label = "Charge du rack", startup = 0.12, active = 0.22, recovery = 0.34,
+					damage = 12, hitbox = box(5.5, 3.5, 3, 0.4), kbBase = 32, kbGrowth = 66, kbAngle = 34, selfVelocity = Vector2.new(48, 0), armor = true,
+					windup = { Root = { -8, 0, 0, 0, -0.3, 0 }, Waist = { -8, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 60, 0, 20 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -20 }, LE = { 110, 0, 0 } },
+					strike = { Root = { -24, 0, 0, 0, -0.45, -0.3 }, Waist = { -14, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 94, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 94, 0, -10 }, LE = { 0, 0, 0 } },
+					follow = { Root = { -26, 0, 0, 0, -0.48, -0.34 }, Waist = { -16, 0, 0 }, Neck = { 8, 0, 0 }, RS = { 96, 0, 12 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 96, 0, -12 }, LE = { 0, 0, 0 } },
+					shake = true, trail = "prop", fx = { "dust" }, text = "DÉGAGEZ !", hitText = "ENFONCÉ !",
+				},
+				-- L : grand moulinet lesté, l'haltère à bout de bras, un tour complet qui fauche tout le couloir
+				S_neutral = {
+					label = "Grand moulinet lesté", startup = 0.24, active = 0.2, recovery = 0.5,
+					damage = 15, hitbox = box(14, 6, 7, 0.8), kbBase = 36, kbGrowth = 64, kbAngle = 32,
+					windup = { Root = { 4, -50, 0, 0, -0.3, 0.15 }, Waist = { 6, -50, 0 }, Neck = { 6, 36, 0 }, RS = { 60, 0, 80 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -40 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -10, 0, 0, 0, -0.35, -0.3 }, Waist = { -12, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 92, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -50 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { -12, 0, 0, 0, -0.38, -0.34 }, Waist = { -14, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 94, 0, 12 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 36, 0, -54 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+					spin = { axis = "y", degrees = 360 }, shake = true, trail = "prop", fx = { { "ring", color = ROSE, radius = 6, at = "root" }, { "shake", amount = 0.3 } },
+					text = "MOULINET !", hitText = "FAUCHÉ !",
+				},
+				-- →L : lancer d'haltère, à deux mains depuis la poitrine comme un lancer de poids : l'haltère vole droit sur l'adversaire
+				S_side = {
+					label = "Lancer d'haltère", kind = "projectile", startup = 0.26, active = 0, recovery = 0.52,
+					damage = 16, kbBase = 34, kbGrowth = 66, kbAngle = 30,
+					projectile = { speed = 72, angle = 5, gravity = 25, lifetime = 0.9, size = 2.2, color = FONTE, spin = 0,
+						visual = { shape = "ball", size = 0.6, color = NOIR, spin = 6, parts = { { "cyl", Vector3.new(2.6, 0.22, 0.22), Vector3.new(0, 0, 0), NOIR }, { "cyl", Vector3.new(0.26, 1.1, 1.1), Vector3.new(1.2, 0, 0), FONTE }, { "cyl", Vector3.new(0.26, 1.1, 1.1), Vector3.new(-1.2, 0, 0), FONTE }, { "cyl", Vector3.new(0.2, 0.8, 0.8), Vector3.new(0.95, 0, 0), ROSE }, { "cyl", Vector3.new(0.2, 0.8, 0.8), Vector3.new(-0.95, 0, 0), JAUNE } } } },
+					windup = { Root = { 6, -30, 0, 0, -0.35, 0.3 }, Waist = { 10, -34, 0 }, Neck = { 8, 22, 0 }, RS = { 40, 0, 10 }, RE = { 130, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -10 }, LE = { 130, 0, 0 }, LW = { 0, 0, 0 } },
+					strike = { Root = { -16, 22, 0, 0, -0.36, -0.5 }, Waist = { -18, 26, 0 }, Neck = { -6, -16, 0 }, RS = { 96, 0, -4 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 92, 0, 4 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.55 } },
+					follow = { Root = { -18, 26, 0, 0, -0.38, -0.55 }, Waist = { -22, 30, 0 }, Neck = { -8, -18, 0 }, RS = { 100, 0, -6 }, RE = { 4, 0, 0 }, RW = { 6, 0, 0 }, LS = { 96, 0, 6 }, LE = { 0, 0, 0 }, LW = { 6, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.58 } },
+					shake = true, hideProp = "haltere", fx = { { "burst", color = ROSE, size = 3, at = "hand" }, { "symbols", symbols = { "💪", "!" }, count = 3, radius = 2, color = JAUNE } },
+					text = "ATTRAPE !", hitText = "20 KILOS !",
+				},
+				-- ↓L : soulevé sismique, l'haltère levée au-dessus de la tête puis abattue sur le sol : l'onde court tout le couloir
+				S_down = {
+					label = "Soulevé sismique", startup = 0.26, active = 0.16, recovery = 0.52,
+					damage = 14, hitbox = box(14, 6, 7, 0.5), kbBase = 34, kbGrowth = 60, kbAngle = 80,
+					windup = { Root = { 8, 0, 0, 0, 0.1, 0.15 }, Waist = { 14, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 184, 0, 10 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 184, 0, -10 }, LE = { 30, 0, 0 }, LW = { 0, 0, 0 } },
+					strike = { Root = { -24, 0, 0, 0, -0.9, -0.25 }, Waist = { -44, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 70, 0, 12 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, -12 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 } },
+					follow = { Root = { -26, 0, 0, 0, -0.95, -0.25 }, Waist = { -48, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 60, 0, 14 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -14 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 } },
+					shake = true, trail = "prop", fx = { { "ring", color = JAUNE, radius = 7, at = "feet" }, { "pillar", color = FONTE, height = 3, width = 8, at = "front", time = 0.4 }, { "shake", amount = 0.6 }, "dust" },
+					text = "ET ON LÂCHE !", hitText = "BRRROUM !",
+				},
+				-- ↑L : développé-fusée, l'haltère pressée au-dessus de la tête si fort qu'elle l'emporte en diagonale vers le ciel
+				S_up = {
+					label = "Développé-fusée", startup = 0.16, active = 0.3, recovery = 0.42,
+					damage = 14, hitbox = box(10, 11, 3, 4), kbBase = 32, kbGrowth = 56, kbAngle = 72, selfVelocity = Vector2.new(42, 82),
+					windup = { Root = { 6, 0, 0, 0, -0.85, 0.1 }, Waist = { 4, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 60, 0, 20 }, RE = { 130, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -20 }, LE = { 130, 0, 0 } },
+					strike = { Root = { -38, 0, 0, 0, 0.3, 0 }, Waist = { -6, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 184, 0, 8 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 184, 0, -8 }, LE = { 0, 0, 0 }, RH = { -20, 0, 6 }, RK = { -30, 0, 0 }, RA = { -25, 0, 0 }, LH = { -30, 0, -6 }, LK = { -40, 0, 0 }, LA = { -25, 0, 0 } },
+					follow = { Root = { -42, 0, 0, 0, 0.35, 0 }, Waist = { -8, 0, 0 }, Neck = { 32, 0, 0 }, RS = { 188, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 188, 0, -10 }, LE = { 0, 0, 0 }, RH = { -26, 0, 8 }, RK = { -36, 0, 0 }, RA = { -25, 0, 0 }, LH = { -36, 0, -8 }, LK = { -46, 0, 0 }, LA = { -25, 0, 0 } },
+					shake = true, trail = "prop", fx = { { "ring", color = ROSE, radius = 5, at = "feet" }, { "particles", tex = "spark", color = JAUNE, dir = "down", at = "feet", time = 0.4, speed = 16 }, { "burst", color = JAUNE, size = 3, at = "feet" } },
+					text = "DÉCOLLAGE LESTÉ !", hitText = "SOULEVÉ !",
+				},
+				-- L en l'air : haltère-enclume, elle lâche l'haltère qui tombe du ciel pile sur l'adversaire
+				S_air = {
+					label = "Haltère-enclume", kind = "projectile", startup = 0.16, active = 0, recovery = 0.42,
+					damage = 15, kbBase = 30, kbGrowth = 58, kbAngle = -65,
+					projectile = { speed = 60, gravity = 70, lifetime = 0.8, size = 2.4, color = FONTE, rain = { count = 1, spread = 0.5, ahead = 6, height = 18 },
+						visual = { shape = "ball", size = 0.6, color = NOIR, spin = 2, parts = { { "cyl", Vector3.new(2.6, 0.22, 0.22), Vector3.new(0, 0, 0), NOIR }, { "cyl", Vector3.new(0.26, 1.1, 1.1), Vector3.new(1.2, 0, 0), FONTE }, { "cyl", Vector3.new(0.26, 1.1, 1.1), Vector3.new(-1.2, 0, 0), FONTE } } } },
+					windup = { Root = { -6, 0, 0 }, Waist = { -6, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 180, 0, 10 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 180, 0, -10 }, LE = { 10, 0, 0 }, RH = { 40, 0, 0 }, RK = { -60, 0, 0 }, LH = { 20, 0, 0 }, LK = { -50, 0, 0 } },
+					strike = { Root = { 6, 0, 0 }, Waist = { 8, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 60, 0, 40 }, RE = { 20, 0, 0 }, RW = { 60, 0, 0 }, LS = { 60, 0, -40 }, LE = { 20, 0, 0 }, RH = { 30, 0, 0 }, RK = { -50, 0, 0 }, LH = { 20, 0, 0 }, LK = { -50, 0, 0 } },
+					follow = { Root = { 6, 0, 0 }, Waist = { 8, 0, 0 }, Neck = { -24, 0, 0 }, RS = { 50, 0, 44 }, RE = { 20, 0, 0 }, RW = { 60, 0, 0 }, LS = { 50, 0, -44 }, LE = { 20, 0, 0 }, RH = { 30, 0, 0 }, RK = { -50, 0, 0 }, LH = { 20, 0, 0 }, LK = { -50, 0, 0 } },
+					hideProp = "haltere", fx = { { "symbols", symbols = { "⬇", "💪" }, count = 3, radius = 2, at = "above", color = JAUNE } }, text = "OUPS !", hitText = "ENCLUME !",
+				},
+				-- Y : record du monde, elle hisse l'haltère au-dessus de sa tête en hurlant, tout le couloir est soufflé par l'effort
+				SUPER = {
+					label = "Record du monde !", startup = 0.42, active = 0.24, recovery = 0.7,
+					damage = 24, hitbox = box(14, 8, 7, 2), kbBase = 46, kbGrowth = 94, kbAngle = 40, armor = true,
+					windup = { Root = { 0, 0, 0, 0, -0.95, 0 }, Waist = { -10, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 60, 0, 20 }, RE = { 130, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -20 }, LE = { 130, 0, 0 }, LW = { 0, 0, 0 } },
+					strike = { Root = { 4, 0, 0, 0, 0.1, 0 }, Waist = { 8, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 184, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 184, 0, -10 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 }, FR = { 0, 0, 0, 0.3, 0, 0 }, FL = { 0, 0, 0, -0.3, 0, 0 } },
+					follow = { Root = { 6, 0, 0, 0, 0.12, 0 }, Waist = { 10, 0, 0 }, Neck = { 34, 0, 0 }, RS = { 188, 0, 12 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 188, 0, -12 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 }, FR = { 0, 0, 0, 0.3, 0, 0 }, FL = { 0, 0, 0, -0.3, 0, 0 } },
+					hold = 0.4, shake = true, trail = "prop", windupFx = { "super", { "symbols", symbols = { "💪", "🔥" }, count = 5, radius = 3, color = JAUNE } },
+					fx = { { "ring", color = JAUNE, radius = 9, at = "root" }, { "ring", color = ROSE, radius = 14, at = "root", time = 0.5 }, { "burst", color = ROSE, size = 4, at = "above" }, { "shake", amount = 0.6 }, { "text", text = "NOUVEAU RECORD !", color = JAUNE, at = "above" } },
+					text = "RRRAAAH !", hitText = "SOUFFLÉ !",
+				},
+				-- →Y : lancer du marteau fluo, deux tours sur elle-même l'haltère à bout de bras et elle la lâche à travers le couloir
+				SUPER_side = {
+					label = "Lancer du marteau fluo !", kind = "projectile", startup = 0.42, active = 0, recovery = 0.72,
+					damage = 26, kbBase = 50, kbGrowth = 100, kbAngle = 30,
+					projectile = { speed = 85, angle = 0, gravity = 0, lifetime = 0.9, size = 3.4, color = FONTE, pierce = true,
+						visual = { shape = "ball", size = 0.8, color = NOIR, spin = 14, parts = { { "cyl", Vector3.new(3.4, 0.3, 0.3), Vector3.new(0, 0, 0), NOIR }, { "cyl", Vector3.new(0.34, 1.6, 1.6), Vector3.new(1.55, 0, 0), FONTE }, { "cyl", Vector3.new(0.34, 1.6, 1.6), Vector3.new(-1.55, 0, 0), FONTE }, { "cyl", Vector3.new(0.28, 1.2, 1.2), Vector3.new(1.2, 0, 0), ROSE }, { "cyl", Vector3.new(0.28, 1.2, 1.2), Vector3.new(-1.2, 0, 0), JAUNE } } } },
+					windup = { Root = { 4, -50, 0, 0, -0.35, 0.2 }, Waist = { 6, -54, 0 }, Neck = { 8, 36, 0 }, RS = { 90, 0, 85 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, -40 }, LE = { 20, 0, 0 } },
+					strike = { Root = { -16, 26, 0, 0, -0.4, -0.5 }, Waist = { -18, 30, 0 }, Neck = { -6, -18, 0 }, RS = { 94, 0, -6 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -40 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.55 } },
+					follow = { Root = { -18, 30, 0, 0, -0.42, -0.55 }, Waist = { -22, 34, 0 }, Neck = { -8, -20, 0 }, RS = { 98, 0, -8 }, RE = { 4, 0, 0 }, RW = { 6, 0, 0 }, LS = { 46, 0, -44 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.58 } },
+					spin = { axis = "y", degrees = 720 }, shake = true, hideProp = "haltere", trail = "prop", windupFx = { "super", { "symbols", symbols = { "🏋️", "💫" }, count = 5, radius = 3, color = ROSE } },
+					fx = { { "burst", color = ROSE, size = 4, at = "hand" }, { "ring", color = JAUNE, radius = 5, at = "front" }, { "shake", amount = 0.4 } },
+					text = "MARTEAU !", hitText = "KA-TCHONK !",
+				},
+				-- ↑Y : squat stratosphérique, un squat sauté si puissant qu'elle décolle au plafond et emporte tout le couloir avec elle
+				SUPER_up = {
+					label = "Squat stratosphérique !", startup = 0.38, active = 0.3, recovery = 0.7,
+					damage = 24, hitbox = box(14, 10, 7, 3), kbBase = 46, kbGrowth = 96, kbAngle = 88, invuln = 0.3, selfVelocity = Vector2.new(0, 60),
+					windup = { Root = { 6, 0, 0, 0, -1.1, 0.1 }, Waist = { 12, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 150, 0, 24 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, -24 }, LE = { 30, 0, 0 } },
+					strike = { Root = { 2, 0, 0, 0, 0.5, 0 }, Waist = { 6, 0, 0 }, Neck = { 40, 0, 0 }, RS = { 186, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 186, 0, -10 }, LE = { 0, 0, 0 }, RH = { 50, 0, 10 }, RK = { -100, 0, 0 }, LH = { 50, 0, -10 }, LK = { -100, 0, 0 } },
+					follow = { Root = { 4, 0, 0, 0, 0.55, 0 }, Waist = { 8, 0, 0 }, Neck = { 44, 0, 0 }, RS = { 190, 0, 12 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 190, 0, -12 }, LE = { 0, 0, 0 }, RH = { 60, 0, 12 }, RK = { -110, 0, 0 }, LH = { 60, 0, -12 }, LK = { -110, 0, 0 } },
+					hold = 0.2, shake = true, trail = "prop", windupFx = { "super", { "text", text = "3… 2… 1…", color = JAUNE } },
+					fx = { { "pillar", color = JAUNE, height = 24, width = 6, at = "front" }, { "ring", color = ROSE, radius = 8, at = "feet" }, { "burst", color = CYAN, size = 4, at = "above" }, { "shake", amount = 0.5 }, "dust" },
+					text = "SQUAT !", hitText = "AU PLAFOND !",
+				},
+				-- ↓Y : burpee de l'apocalypse, elle se jette au sol avec l'haltère : une fissure traverse tout le couloir et laisse tout le monde sur les rotules
+				SUPER_down = {
+					label = "Burpee de l'apocalypse !", startup = 0.38, active = 0.3, recovery = 0.72,
+					damage = 22, hitbox = box(14, 5, 7, -0.5), kbBase = 44, kbGrowth = 90, kbAngle = 62,
+					status = { name = "slowed", duration = 2.5 },
+					windup = { Root = { 4, 0, 0, 0, 0.1, 0.1 }, Waist = { 10, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 184, 0, 12 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 184, 0, -12 }, LE = { 20, 0, 0 }, LW = { 0, 0, 0 } },
+					strike = { Root = { -76, 0, 0, 0, -1.55, -0.3 }, Waist = { -6, 0, 0 }, Neck = { 40, 0, 0 }, RS = { 100, 0, 14 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 100, 0, -14 }, LE = { 0, 0, 0 }, RH = { -10, 0, 10 }, RK = { -10, 0, 0 }, LH = { -10, 0, -10 }, LK = { -10, 0, 0 } },
+					follow = { Root = { -78, 0, 0, 0, -1.58, -0.34 }, Waist = { -8, 0, 0 }, Neck = { 42, 0, 0 }, RS = { 104, 0, 16 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 104, 0, -16 }, LE = { 0, 0, 0 }, RH = { -12, 0, 12 }, RK = { -12, 0, 0 }, LH = { -12, 0, -12 }, LK = { -12, 0, 0 } },
+					hold = 0.25, shake = true, trail = "prop", windupFx = { "super", { "text", text = "DERNIER BURPEE !", color = ROSE } },
+					fx = { { "beam", color = FONTE, length = 16, width = 3, at = "feet" }, { "ring", color = JAUNE, radius = 8, at = "front" }, { "particles", tex = "smoke", color = Color3.fromRGB(200, 200, 210), dir = "front", at = "feet", time = 0.5, speed = 20, size = 1.2, rate = 90 }, { "shake", amount = 0.7 } },
+					text = "BURPEEEE !", hitText = "SUR LES ROTULES !",
+				},
+			},
+			links = {
+				P_neutral = { P = "P_side", K = "K_neutral", S = "S_neutral" },
+				P_side = { P = "P_up", K = "K_side", S = "S_side" },
+				P_down = { P = "P_neutral", K = "K_down", S = "S_down" },
+				K_neutral = { P = "P_up", K = "K_side", S = "S_down" },
+				K_side = { P = "P_neutral", K = "K_up", S = "S_neutral" },
+				P_dash = { P = "P_side", K = "K_side", S = "S_side" },
+				K_dash = { P = "P_up", S = "S_up" },
+			},
+		},
+		{ id = "corde", name = "Corde à sauter", icon = "🪢",
+			prop = { name = "PropCorde", hand = "Right", pieces = {
+				{ "PoigneeD", "", "cyl", Vector3.new(0.26, 0.9, 0.26), Vector3.new(-0.15, -0.4, 0), Vector3.zero, ROSE, "SmoothPlastic", { axis = "y" } },
+				{ "PoigneeG", "", "cyl", Vector3.new(0.26, 0.9, 0.26), Vector3.new(0.18, -0.4, 0.12), Vector3.zero, JAUNE, "SmoothPlastic", { axis = "y" } },
+				{ "Corde1", "", "cyl", Vector3.new(0.08, 2.2, 0.08), Vector3.new(-0.15, -1.95, 0), Vector3.new(0, 0, 6), CORDE, "SmoothPlastic", { axis = "y" } },
+				{ "Corde2", "", "cyl", Vector3.new(0.08, 2.2, 0.08), Vector3.new(0.18, -1.95, 0.12), Vector3.new(0, 0, -6), CORDE, "SmoothPlastic", { axis = "y" } },
+				{ "Boucle", "", "cyl", Vector3.new(0.9, 0.9, 0.08), Vector3.new(0.02, -3.2, 0.06), Vector3.zero, CORDE, "SmoothPlastic", { axis = "z" } },
+			} },
+			ability = { jumps = 1, speed = 1.1, text = "Cardio corde : un saut en l'air de plus, 10 % plus vite" },
+			moves = {
+				-- J : claquement de corde, un coup sec du poignet et la corde claque sur le nez
+				P_neutral = {
+					label = "Claquement de corde", startup = 0.06, active = 0.08, recovery = 0.12,
+					damage = 5, hitbox = box(5.5, 3, 3.2, 0.8), kbBase = 16, kbGrowth = 20, kbAngle = 28,
+					windup = { Root = { 2, -8, 0, 0, -0.1, 0.1 }, Waist = { 4, -10, 0 }, Neck = { 4, 6, 0 }, RS = { 110, 0, 20 }, RE = { 60, 0, 0 }, RW = { 40, 0, 0 }, LS = { 20, 0, -30 }, LE = { 90, 0, 0 } },
+					strike = { Root = { -4, 8, 0, 0, -0.18, -0.2 }, Waist = { -6, 10, 0 }, Neck = { 0, -6, 0 }, RS = { 90, 0, 0 }, RE = { 10, 0, 0 }, RW = { -50, 0, 0 }, LS = { 20, 0, -30 }, LE = { 90, 0, 0 } },
+					follow = { Root = { -6, 10, 0, 0, -0.2, -0.22 }, Waist = { -8, 12, 0 }, Neck = { 0, -8, 0 }, RS = { 86, 0, -4 }, RE = { 14, 0, 0 }, RW = { -60, 0, 0 }, LS = { 20, 0, -30 }, LE = { 90, 0, 0 } },
+					trail = "prop", hitText = "CLAC !",
+				},
+				-- →J : fouet de corde, le bras part en arrière puis la corde fouette loin devant, pas chassé en avant
+				P_side = {
+					label = "Fouet de corde", startup = 0.08, active = 0.1, recovery = 0.16,
+					damage = 6, hitbox = box(7, 2.5, 4.5, 0.8), kbBase = 20, kbGrowth = 28, kbAngle = 24, selfVelocity = Vector2.new(18, 0),
+					windup = { Root = { 6, -30, 0, 0, -0.15, 0.2 }, Waist = { 8, -34, 0 }, Neck = { 4, 22, 0 }, RS = { 150, 0, 40 }, RE = { 40, 0, 0 }, RW = { 30, 0, 0 }, LS = { 40, 0, -30 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -10, 22, 0, 0, -0.3, -0.4 }, Waist = { -12, 26, 0 }, Neck = { -4, -16, 0 }, RS = { 92, 0, -6 }, RE = { 0, 0, 0 }, RW = { -40, 0, 0 }, LS = { 30, 0, -40 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+					follow = { Root = { -12, 26, 0, 0, -0.32, -0.45 }, Waist = { -14, 30, 0 }, Neck = { -6, -18, 0 }, RS = { 86, 0, -10 }, RE = { 6, 0, 0 }, RW = { -55, 0, 0 }, LS = { 26, 0, -44 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+					trail = "prop", text = "FOUETTÉ !", hitText = "TCHAC !",
+				},
+				-- ↓J : corde au sol, accroupie, elle fait claquer la corde par terre comme un fouet de dompteuse
+				P_down = {
+					label = "Corde au sol", startup = 0.07, active = 0.1, recovery = 0.14,
+					damage = 5, hitbox = box(6.5, 2, 3.5, -1.6), kbBase = 18, kbGrowth = 24, kbAngle = 70,
+					windup = { Root = { 6, -10, 0, 0, -0.8, 0.1 }, Waist = { 10, -12, 0 }, Neck = { -6, 8, 0 }, RS = { 150, 0, 30 }, RE = { 30, 0, 0 }, RW = { 20, 0, 0 }, LS = { 40, 0, -40 }, LE = { 60, 0, 0 } },
+					strike = { Root = { 10, 10, 0, 0, -0.95, -0.15 }, Waist = { 16, 12, 0 }, Neck = { 8, -8, 0 }, RS = { 30, 0, 10 }, RE = { 0, 0, 0 }, RW = { -50, 0, 0 }, LS = { 40, 0, -40 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					follow = { Root = { 10, 12, 0, 0, -0.95, -0.18 }, Waist = { 16, 14, 0 }, Neck = { 8, -10, 0 }, RS = { 24, 0, 12 }, RE = { 0, 0, 0 }, RW = { -56, 0, 0 }, LS = { 40, 0, -40 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.32 } },
+					trail = "prop", fx = { "dust" }, hitText = "CLAC !",
+				},
+				-- ↑J : corde au ciel, un tour de corde au-dessus de la tête qui cueille tout ce qui passe
+				P_up = {
+					label = "Corde au ciel", startup = 0.08, active = 0.14, recovery = 0.16,
+					damage = 6, hitbox = box(5, 5.5, 0.5, 3.6), kbBase = 24, kbGrowth = 30, kbAngle = 86,
+					windup = { Root = { 2, 0, 0, 0, -0.3, 0 }, Waist = { 4, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 60, 0, 30 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -30 }, LE = { 80, 0, 0 } },
+					strike = { Root = { -2, 0, 0, 0, 0.1, 0 }, Waist = { 2, 0, 0 }, Neck = { 28, 0, 0 }, RS = { 180, 0, 10 }, RE = { 0, 0, 0 }, RW = { 90, 0, 0 }, LS = { 30, 0, -40 }, LE = { 80, 0, 0 }, FR = { 0, 0, 0, 0, 0.15, 0 }, FL = { 0, 0, 0, 0, 0.15, 0 } },
+					follow = { Root = { -2, 0, 0, 0, 0.12, 0 }, Waist = { 2, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 184, 0, 12 }, RE = { 0, 0, 0 }, RW = { 90, 0, 0 }, LS = { 28, 0, -42 }, LE = { 80, 0, 0 }, FR = { 0, 0, 0, 0, 0.16, 0 }, FL = { 0, 0, 0, 0, 0.16, 0 } },
+					spin = { axis = "y", degrees = 360 }, trail = "prop", hitText = "ZIOUP !",
+				},
+				-- J en l'air : double-dutch volant, la corde tourne deux fois autour d'elle en plein saut
+				P_air = {
+					label = "Double-dutch volant", startup = 0.06, active = 0.16, recovery = 0.12,
+					damage = 3, hits = 2, hitbox = box(6, 5, 0.5, 0.5), kbBase = 16, kbGrowth = 24, kbAngle = 40,
+					windup = { Root = { -6, 0, 0 }, Waist = { -8, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 40, 0, 50 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -50 }, LE = { 60, 0, 0 }, RH = { 40, 0, 0 }, RK = { -80, 0, 0 }, LH = { 40, 0, 0 }, LK = { -80, 0, 0 } },
+					strike = { Root = { 4, 0, 0 }, Waist = { 4, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 20, 0, 70 }, RE = { 40, 0, 0 }, RW = { 60, 0, 0 }, LS = { 20, 0, -70 }, LE = { 40, 0, 0 }, RH = { 70, 0, 0 }, RK = { -120, 0, 0 }, LH = { 70, 0, 0 }, LK = { -120, 0, 0 } },
+					follow = { Root = { 4, 0, 0 }, Waist = { 4, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 20, 0, 70 }, RE = { 40, 0, 0 }, RW = { -60, 0, 0 }, LS = { 20, 0, -70 }, LE = { 40, 0, 0 }, RH = { 40, 0, 0 }, RK = { -80, 0, 0 }, LH = { 40, 0, 0 }, LK = { -80, 0, 0 } },
+					wobble = true, trail = "prop", fx = { { "symbols", symbols = { "♪" }, count = 2, radius = 2, color = CORDE } }, hitText = "TIC-TAC !",
+				},
+				-- dash J : saut à la corde ruée, elle arrive en sautillant à la corde et la corde claque dans les tibias
+				P_dash = {
+					label = "Saut à la corde ruée", startup = 0.06, active = 0.16, recovery = 0.18,
+					damage = 7, hitbox = box(5.5, 4, 3, 0), kbBase = 22, kbGrowth = 40, kbAngle = 30, selfVelocity = Vector2.new(40, 10),
+					windup = { Root = { 0, 0, 0, 0, -0.2, 0 }, Waist = { 2, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 30, 0, 50 }, RE = { 80, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -50 }, LE = { 80, 0, 0 } },
+					strike = { Root = { -8, 0, 0, 0, 0.15, -0.2 }, Waist = { -4, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 20, 0, 70 }, RE = { 50, 0, 0 }, RW = { 70, 0, 0 }, LS = { 20, 0, -70 }, LE = { 50, 0, 0 }, FR = { 0, 0, 0, 0, 0.3, 0 }, FL = { 0, 0, 0, 0, 0.3, 0 } },
+					follow = { Root = { -10, 0, 0, 0, 0.0, -0.25 }, Waist = { -6, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 20, 0, 70 }, RE = { 50, 0, 0 }, RW = { -70, 0, 0 }, LS = { 20, 0, -70 }, LE = { 50, 0, 0 } },
+					wobble = true, trail = "prop", fx = { "dust" }, text = "ET ON SAUTE !", hitText = "CLAC !",
+				},
+				-- K : pas de boxeuse, elle sautille sur place en boxeuse puis décoche un direct du pied
+				K_neutral = {
+					label = "Pas de boxeuse", startup = 0.16, active = 0.1, recovery = 0.26,
+					damage = 10, hitbox = box(5, 3.5, 3, 0.5), kbBase = 28, kbGrowth = 64, kbAngle = 35,
+					windup = { Root = { 4, 0, 0, 0, 0.1, 0.1 }, Waist = { 6, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 50, 0, 20 }, RE = { 120, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -20 }, LE = { 120, 0, 0 }, RH = { 40, 0, 0 }, RK = { -90, 0, 0 } },
+					strike = { Root = { 12, 0, 0, 0, -0.12, 0 }, Waist = { 10, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 50, 0, 30 }, RE = { 120, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -30 }, LE = { 120, 0, 0 }, RH = { 95, 0, 0 }, RK = { 0, 0, 0 }, RA = { 15, 0, 0 } },
+					follow = { Root = { 14, 0, 0, 0, -0.12, 0.02 }, Waist = { 12, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 50, 0, 32 }, RE = { 120, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -32 }, LE = { 120, 0, 0 }, RH = { 100, 0, 0 }, RK = { 0, 0, 0 }, RA = { 15, 0, 0 } },
+					trail = "rightFoot", text = "JAB !", hitText = "PAF !",
+				},
+				-- →K : fouetté à la corde, un coup de pied retourné, la corde à bout de bras tourne avec elle
+				K_side = {
+					label = "Fouetté à la corde", startup = 0.18, active = 0.12, recovery = 0.3,
+					damage = 11, hitbox = box(6, 3.5, 3.4, 0.5), kbBase = 30, kbGrowth = 70, kbAngle = 32, selfVelocity = Vector2.new(22, 0),
+					windup = { Root = { 6, 30, 0, 0, -0.2, 0.1 }, Waist = { 8, 40, 0 }, Neck = { 0, -30, 0 }, RS = { 60, 0, 70 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -40 }, LE = { 60, 0, 0 }, RH = { -20, 0, 10 }, RK = { -50, 0, 0 } },
+					strike = { Root = { 10, -40, 0, 0, -0.1, -0.1 }, Waist = { 10, -50, 0 }, Neck = { 0, 30, 0 }, RS = { 90, 0, 85 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -50 }, LE = { 40, 0, 0 }, RH = { 100, 0, 20 }, RK = { -6, 0, 0 }, RA = { 10, 0, 0 } },
+					follow = { Root = { 12, -50, 0, 0, -0.1, -0.14 }, Waist = { 12, -60, 0 }, Neck = { 0, 36, 0 }, RS = { 92, 0, 88 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 64, 0, -54 }, LE = { 40, 0, 0 }, RH = { 108, 0, 24 }, RK = { 0, 0, 0 }, RA = { 14, 0, 0 } },
+					spin = { axis = "y", degrees = 360 }, trail = "rightFoot", text = "FOUETTÉ !", hitText = "VLAN !",
+				},
+				-- ↓K : corde balayée, accroupie, la corde tourne au ras du sol et la jambe suit en balayette
+				K_down = {
+					label = "Corde balayée", startup = 0.14, active = 0.16, recovery = 0.3,
+					damage = 10, hitbox = box(7, 2, 2, -1.8), kbBase = 28, kbGrowth = 58, kbAngle = 76,
+					windup = { Root = { -6, -30, 0, 0, -0.9, 0.1 }, Waist = { -10, -20, 0 }, Neck = { 0, 20, 0 }, RS = { 40, 0, 60 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -60 }, LE = { 60, 0, 0 }, RH = { 60, 0, 30 }, RK = { -120, 0, 0 } },
+					strike = { Root = { -8, 0, 0, 0, -1.0, -0.1 }, Waist = { -14, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 20, 0, 40 }, RE = { 0, 0, 0 }, RW = { -40, 0, 0 }, LS = { 20, 0, -70 }, LE = { 90, 0, 0 }, RH = { 76, 0, 12 }, RK = { -4, 0, 0 }, RA = { -20, 0, 0 } },
+					follow = { Root = { -8, 0, 0, 0, -1.0, -0.12 }, Waist = { -14, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 18, 0, 42 }, RE = { 0, 0, 0 }, RW = { -44, 0, 0 }, LS = { 18, 0, -72 }, LE = { 90, 0, 0 }, RH = { 74, 0, 12 }, RK = { -6, 0, 0 }, RA = { -20, 0, 0 } },
+					spin = { axis = "y", degrees = 360 }, trail = "rightFoot", fx = { "dust" }, text = "BALAYÉ !", hitText = "ZOUIP !",
+				},
+				-- ↑K : saut criss-cross, bras croisés la corde passe sous ses pieds et le genou monte dans le menton
+				K_up = {
+					label = "Saut criss-cross", startup = 0.16, active = 0.14, recovery = 0.28,
+					damage = 11, hitbox = box(4.5, 5.5, 1.2, 3.5), kbBase = 30, kbGrowth = 68, kbAngle = 87, selfVelocity = Vector2.new(0, 30),
+					windup = { Root = { 2, 0, 0, 0, -0.45, 0 }, Waist = { 4, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 40, 0, -40 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, 40 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -6, 0, 0, 0, 0.4, 0 }, Waist = { -4, 0, 0 }, Neck = { 24, 0, 0 }, RS = { 30, 0, -50 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, 50 }, LE = { 60, 0, 0 }, RH = { 120, 0, 0 }, RK = { -130, 0, 0 }, RA = { -20, 0, 0 }, LH = { 20, 0, 0 }, LK = { -40, 0, 0 } },
+					follow = { Root = { -8, 0, 0, 0, 0.45, 0 }, Waist = { -6, 0, 0 }, Neck = { 28, 0, 0 }, RS = { 30, 0, -54 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, 54 }, LE = { 60, 0, 0 }, RH = { 126, 0, 0 }, RK = { -134, 0, 0 }, RA = { -20, 0, 0 }, LH = { 24, 0, 0 }, LK = { -44, 0, 0 } },
+					trail = "rightLeg", fx = { { "symbols", symbols = { "✖", "♪" }, count = 2, radius = 2, at = "feet", color = CORDE } }, text = "CRISS-CROSS !", hitText = "GENOU !",
+				},
+				-- K en l'air : ciseaux cordés, deux coups de pied en ciseaux, la corde file entre les jambes
+				K_air = {
+					label = "Ciseaux cordés", startup = 0.14, active = 0.18, recovery = 0.22,
+					damage = 5, hits = 2, hitbox = box(5.5, 4, 2.8, 0), kbBase = 24, kbGrowth = 52, kbAngle = 38,
+					windup = { Root = { -12, 0, 0 }, Waist = { -10, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 60, 0, 60 }, RE = { 50, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -60 }, LE = { 50, 0, 0 }, RH = { -30, 0, 0 }, RK = { -40, 0, 0 }, LH = { 80, 0, 0 }, LK = { -60, 0, 0 } },
+					strike = { Root = { 16, 0, 0 }, Waist = { 8, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 30, 0, 70 }, RE = { 30, 0, 0 }, RW = { 60, 0, 0 }, LS = { 30, 0, -70 }, LE = { 30, 0, 0 }, RH = { 100, 0, 0 }, RK = { 0, 0, 0 }, RA = { 15, 0, 0 }, LH = { -30, 0, 0 }, LK = { -20, 0, 0 } },
+					follow = { Root = { 18, 0, 0 }, Waist = { 10, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 30, 0, 72 }, RE = { 30, 0, 0 }, RW = { -60, 0, 0 }, LS = { 30, 0, -72 }, LE = { 30, 0, 0 }, RH = { -30, 0, 0 }, RK = { -20, 0, 0 }, LH = { 100, 0, 0 }, LK = { 0, 0, 0 }, LA = { 15, 0, 0 } },
+					trail = "bothFeet", hitText = "CLIC-CLAC !",
+				},
+				-- dash K : double saut lancé, elle plante un pied et décolle en coup de pied sauté, corde au-dessus de la tête
+				K_dash = {
+					label = "Double saut lancé", startup = 0.1, active = 0.22, recovery = 0.3,
+					damage = 11, hitbox = box(6, 3.5, 3, 0.5), kbBase = 30, kbGrowth = 64, kbAngle = 36, selfVelocity = Vector2.new(46, 24),
+					windup = { Root = { -8, 0, 0, 0, -0.45, 0 }, Waist = { -10, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 40, 0, 40 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -40 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -4, 0, 0 }, Waist = { 6, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 176, 0, 14 }, RE = { 10, 0, 0 }, RW = { 60, 0, 0 }, LS = { 100, 0, -70 }, LE = { 10, 0, 0 }, RH = { 92, 0, 0 }, RK = { 0, 0, 0 }, RA = { 15, 0, 0 }, LH = { -50, 0, 0 }, LK = { -30, 0, 0 } },
+					follow = { Root = { -2, 0, 0 }, Waist = { 8, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 180, 0, 16 }, RE = { 10, 0, 0 }, RW = { -60, 0, 0 }, LS = { 104, 0, -74 }, LE = { 10, 0, 0 }, RH = { 96, 0, 0 }, RK = { 0, 0, 0 }, RA = { 15, 0, 0 }, LH = { -54, 0, 0 }, LK = { -30, 0, 0 } },
+					trail = "rightFoot", fx = { "dust" }, text = "HOP HOP !", hitText = "SBAM !",
+				},
+				-- L : rafale de corde, trois claquements de fouet à la suite sur toute la longueur du couloir
+				S_neutral = {
+					label = "Rafale de corde", startup = 0.2, active = 0.3, recovery = 0.42,
+					damage = 5, hits = 3, hitbox = box(14, 6, 7, 0.8), kbBase = 24, kbGrowth = 40, kbAngle = 30,
+					windup = { Root = { 4, -24, 0, 0, -0.2, 0.15 }, Waist = { 6, -28, 0 }, Neck = { 4, 18, 0 }, RS = { 160, 0, 40 }, RE = { 30, 0, 0 }, RW = { 30, 0, 0 }, LS = { 40, 0, -30 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -10, 16, 0, 0, -0.3, -0.35 }, Waist = { -12, 20, 0 }, Neck = { -4, -12, 0 }, RS = { 96, 0, 0 }, RE = { 0, 0, 0 }, RW = { -60, 0, 0 }, LS = { 30, 0, -40 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { -10, 16, 0, 0, -0.3, -0.35 }, Waist = { -12, 20, 0 }, Neck = { -4, -12, 0 }, RS = { 130, 0, 10 }, RE = { 20, 0, 0 }, RW = { 40, 0, 0 }, LS = { 30, 0, -40 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					wobble = true, trail = "prop", fx = { { "beam", color = CORDE, length = 14, width = 1.2, at = "hand" }, { "symbols", symbols = { "CLAC", "CLAC" }, count = 3, radius = 3, at = "front", color = CORDE } },
+					text = "RAFALE !", hitText = "CLAC-CLAC-CLAC !",
+				},
+				-- →L : lasso, la boucle de la corde part en tournoyant, attrape l'adversaire et le ramène à elle
+				S_side = {
+					label = "Lasso", kind = "projectile", startup = 0.24, active = 0, recovery = 0.5,
+					damage = 13, kbBase = 26, kbGrowth = 40, kbAngle = 20, pull = true,
+					projectile = { speed = 75, angle = 0, gravity = 0, lifetime = 0.8, size = 2.2, color = CORDE, returns = true,
+						visual = { shape = "ball", size = 0.5, color = CORDE, spin = 16, parts = { { "cyl", Vector3.new(0.14, 2.4, 2.4), Vector3.new(0, 0, 0), CORDE }, { "block", Vector3.new(0.3, 0.3, 0.3), Vector3.new(0, -1.2, 0), ROSE } } } },
+					windup = { Root = { 2, -20, 0, 0, -0.2, 0.15 }, Waist = { 4, -24, 0 }, Neck = { 0, 16, 0 }, RS = { 176, 0, 20 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -30 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -12, 20, 0, 0, -0.3, -0.4 }, Waist = { -14, 24, 0 }, Neck = { -4, -14, 0 }, RS = { 94, 0, -4 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -40 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+					follow = { Root = { 4, 10, 0, 0, -0.25, 0 }, Waist = { 6, 12, 0 }, Neck = { 4, -8, 0 }, RS = { 60, 0, 20 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -20 }, LE = { 110, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					spin = { axis = "y", degrees = 360 }, hideProp = "corde", windupFx = { { "symbols", symbols = { "🪢", "💫" }, count = 3, radius = 2, at = "above", color = CORDE } },
+					fx = { { "ring", color = CORDE, radius = 4, at = "front" } }, text = "YIHAAA !", hitText = "ATTRAPÉ !",
+				},
+				-- ↓L : corde-piège, la corde tendue au ras du sol d'un bout à l'autre du couloir : tout le monde se prend les pieds dedans
+				S_down = {
+					label = "Corde-piège", startup = 0.22, active = 0.18, recovery = 0.48,
+					damage = 13, hitbox = box(14, 6, 7, 0.5), kbBase = 28, kbGrowth = 48, kbAngle = 72,
+					status = { name = "rooted", duration = 1 },
+					windup = { Root = { 8, -20, 0, 0, -0.85, 0.1 }, Waist = { 12, -24, 0 }, Neck = { 6, 16, 0 }, RS = { 60, 0, 40 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -40 }, LE = { 60, 0, 0 } },
+					strike = { Root = { 6, 0, 0, 0, -0.95, -0.2 }, Waist = { 10, 0, 0 }, Neck = { 8, 0, 0 }, RS = { 40, 0, 80 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -80 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					follow = { Root = { 6, 0, 0, 0, -0.95, -0.22 }, Waist = { 10, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 36, 0, 84 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 36, 0, -84 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.32 } },
+					hold = 0.15, trail = "prop", fx = { { "beam", color = CORDE, length = 16, width = 0.8, at = "feet" }, { "symbols", symbols = { "🪢" }, count = 3, radius = 3, at = "front", color = CORDE }, "dust" },
+					text = "CORDE TENDUE !", hitText = "EMPÊTRÉ !",
+				},
+				-- ↑L : hélico de corde, la corde tourne au-dessus de sa tête comme un rotor et l'emporte en diagonale
+				S_up = {
+					label = "Hélico de corde", startup = 0.14, active = 0.3, recovery = 0.4,
+					damage = 13, hitbox = box(10, 11, 3, 4), kbBase = 30, kbGrowth = 52, kbAngle = 72, selfVelocity = Vector2.new(44, 84),
+					windup = { Root = { 4, 0, 0, 0, -0.7, 0.1 }, Waist = { -8, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 60, 0, 30 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -30 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -36, 0, 0, 0, 0.3, 0 }, Waist = { -6, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 182, 0, 8 }, RE = { 0, 0, 0 }, RW = { 90, 0, 0 }, LS = { -30, 0, -40 }, LE = { 20, 0, 0 }, RH = { -20, 0, 8 }, RK = { -40, 0, 0 }, RA = { -25, 0, 0 }, LH = { -30, 0, -8 }, LK = { -50, 0, 0 }, LA = { -25, 0, 0 } },
+					follow = { Root = { -40, 0, 0, 0, 0.35, 0 }, Waist = { -8, 0, 0 }, Neck = { 32, 0, 0 }, RS = { 186, 0, 10 }, RE = { 0, 0, 0 }, RW = { 90, 0, 0 }, LS = { -34, 0, -44 }, LE = { 20, 0, 0 }, RH = { -26, 0, 10 }, RK = { -48, 0, 0 }, RA = { -25, 0, 0 }, LH = { -36, 0, -10 }, LK = { -58, 0, 0 }, LA = { -25, 0, 0 } },
+					spin = { axis = "y", degrees = 720 }, trail = "prop", fx = { { "ring", color = CORDE, radius = 5, at = "above" }, { "particles", tex = "smoke", color = BLANC, dir = "down", at = "feet", time = 0.35, speed = 14, size = 0.6, rate = 60 }, { "symbols", symbols = { "♪", "🚁" }, count = 3, radius = 2, color = CORDE } },
+					text = "HÉLICO !", hitText = "DÉCOIFFÉ !",
+				},
+				-- L en l'air : corde-fouet plongeante, elle fouette vers le sol de tout son long, l'adversaire part au tapis
+				S_air = {
+					label = "Corde-fouet plongeante", startup = 0.14, active = 0.14, recovery = 0.38,
+					damage = 13, hitbox = box(6, 5, 2, -2), kbBase = 28, kbGrowth = 52, kbAngle = -50,
+					windup = { Root = { 10, 0, 0 }, Waist = { 14, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 184, 0, 14 }, RE = { 40, 0, 0 }, RW = { 30, 0, 0 }, LS = { 60, 0, -40 }, LE = { 60, 0, 0 }, RH = { 50, 0, 0 }, RK = { -80, 0, 0 }, LH = { 50, 0, 0 }, LK = { -80, 0, 0 } },
+					strike = { Root = { -16, 0, 0 }, Waist = { -30, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 30, 0, 6 }, RE = { 0, 0, 0 }, RW = { -60, 0, 0 }, LS = { 20, 0, -50 }, LE = { 40, 0, 0 }, RH = { 20, 0, 0 }, RK = { -40, 0, 0 }, LH = { 30, 0, 0 }, LK = { -60, 0, 0 } },
+					follow = { Root = { -20, 0, 0 }, Waist = { -34, 0, 0 }, Neck = { -12, 0, 0 }, RS = { 20, 0, 8 }, RE = { 6, 0, 0 }, RW = { -70, 0, 0 }, LS = { 16, 0, -54 }, LE = { 40, 0, 0 }, RH = { 16, 0, 0 }, RK = { -36, 0, 0 }, LH = { 26, 0, 0 }, LK = { -56, 0, 0 } },
+					trail = "prop", fx = { { "burst", color = CORDE, size = 2.5, at = "feet" } }, text = "AU TAPIS !", hitText = "CLAAAC !",
+				},
+				-- Y : marathon de corde, elle traverse tout le couloir en sautant à la corde à une vitesse indécente, quatre claquements au passage
+				SUPER = {
+					label = "Marathon de corde !", startup = 0.36, active = 0.4, recovery = 0.6,
+					damage = 6, hits = 4, hitbox = box(14, 6, 7, 0.8), kbBase = 26, kbGrowth = 44, kbAngle = 35, selfVelocity = Vector2.new(60, 8), armor = true,
+					windup = { Root = { 2, 0, 0, 0, -0.35, 0 }, Waist = { 4, 0, 0 }, Neck = { 8, 0, 0 }, RS = { 30, 0, 50 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -50 }, LE = { 90, 0, 0 } },
+					strike = { Root = { -8, 0, 0, 0, 0.2, -0.2 }, Waist = { -4, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 20, 0, 70 }, RE = { 50, 0, 0 }, RW = { 70, 0, 0 }, LS = { 20, 0, -70 }, LE = { 50, 0, 0 }, FR = { 0, 0, 0, 0, 0.35, 0 }, FL = { 0, 0, 0, 0, 0.35, 0 } },
+					follow = { Root = { -8, 0, 0, 0, 0.0, -0.2 }, Waist = { -4, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 20, 0, 70 }, RE = { 50, 0, 0 }, RW = { -70, 0, 0 }, LS = { 20, 0, -70 }, LE = { 50, 0, 0 } },
+					wobble = true, trail = "prop", windupFx = { "super", { "text", text = "1 000 SAUTS !", color = CORDE } },
+					fx = { { "beam", color = CORDE, length = 16, width = 2, at = "feet" }, { "symbols", symbols = { "♪", "CLAC", "💨" }, count = 8, radius = 4, color = CORDE }, { "shake", amount = 0.35 }, "dust" },
+					text = "MARATHON !", hitText = "CLAC-CLAC-CLAC-CLAC !",
+				},
+				-- →Y : lasso géant, une boucle grande comme l'arène tournoie, ramasse tout le couloir et le ramène à ses pieds
+				SUPER_side = {
+					label = "Lasso géant !", kind = "projectile", startup = 0.4, active = 0, recovery = 0.7,
+					damage = 24, kbBase = 30, kbGrowth = 50, kbAngle = 25, pull = true,
+					status = { name = "rooted", duration = 1.5 },
+					projectile = { speed = 70, angle = 0, gravity = 0, lifetime = 1.0, size = 4, color = CORDE, pierce = true, returns = true,
+						visual = { shape = "ball", size = 0.6, color = CORDE, spin = 14, parts = { { "cyl", Vector3.new(0.22, 5, 5), Vector3.new(0, 0, 0), CORDE }, { "block", Vector3.new(0.5, 0.5, 0.5), Vector3.new(0, -2.5, 0), ROSE } } } },
+					windup = { Root = { 2, -30, 0, 0, -0.25, 0.15 }, Waist = { 4, -34, 0 }, Neck = { 0, 22, 0 }, RS = { 182, 0, 20 }, RE = { 10, 0, 0 }, RW = { 90, 0, 0 }, LS = { 40, 0, -30 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -14, 22, 0, 0, -0.34, -0.45 }, Waist = { -16, 26, 0 }, Neck = { -6, -16, 0 }, RS = { 96, 0, -4 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -40 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+					follow = { Root = { 8, 0, 0, 0, -0.3, 0.1 }, Waist = { 10, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 40, 0, 20 }, RE = { 120, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -20 }, LE = { 120, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					spin = { axis = "y", degrees = 720 }, shake = true, hideProp = "corde", windupFx = { "super", { "symbols", symbols = { "🪢", "🪢" }, count = 5, radius = 3, at = "above", color = CORDE } },
+					fx = { { "ring", color = CORDE, radius = 7, at = "front" }, { "burst", color = ROSE, size = 3, at = "hand" }, { "shake", amount = 0.35 } },
+					text = "YIHAAAA !", hitText = "FICELÉ !",
+				},
+				-- ↑Y : tornade de corde, la corde tourne si vite au-dessus d'elle qu'elle crée une tornade qui aspire tout le couloir au plafond
+				SUPER_up = {
+					label = "Tornade de corde !", startup = 0.36, active = 0.34, recovery = 0.7,
+					damage = 24, hitbox = box(14, 12, 7, 4), kbBase = 46, kbGrowth = 94, kbAngle = 88, invuln = 0.3, selfVelocity = Vector2.new(0, 55),
+					windup = { Root = { 4, 0, 0, 0, -0.8, 0.1 }, Waist = { -10, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 60, 0, 30 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -30 }, LE = { 90, 0, 0 } },
+					strike = { Root = { 2, 0, 0, 0, 0.5, 0 }, Waist = { 6, 0, 0 }, Neck = { 40, 0, 0 }, RS = { 184, 0, 8 }, RE = { 0, 0, 0 }, RW = { 90, 0, 0 }, LS = { 184, 0, -8 }, LE = { 0, 0, 0 }, LW = { 90, 0, 0 }, RH = { 30, 0, 10 }, RK = { -60, 0, 0 }, LH = { 30, 0, -10 }, LK = { -60, 0, 0 } },
+					follow = { Root = { 4, 0, 0, 0, 0.55, 0 }, Waist = { 8, 0, 0 }, Neck = { 44, 0, 0 }, RS = { 188, 0, 10 }, RE = { 0, 0, 0 }, RW = { 90, 0, 0 }, LS = { 188, 0, -10 }, LE = { 0, 0, 0 }, LW = { 90, 0, 0 }, RH = { 40, 0, 12 }, RK = { -70, 0, 0 }, LH = { 40, 0, -12 }, LK = { -70, 0, 0 } },
+					hold = 0.2, spin = { axis = "y", degrees = 1440 }, trail = "prop", windupFx = { "super", { "symbols", symbols = { "🌪️", "♪" }, count = 4, radius = 3, color = CORDE } },
+					fx = { { "pillar", color = CORDE, height = 24, width = 7, at = "front" }, { "ring", color = JAUNE, radius = 8, at = "feet" }, { "particles", tex = "smoke", color = BLANC, dir = "up", at = "root", time = 0.6, speed = 20, size = 1, rate = 100 }, { "shake", amount = 0.4 } },
+					text = "TORNADE !", hitText = "ASPIRÉ !",
+				},
+				-- ↓Y : toile de corde, elle tisse une toile de corde au ras du sol sur tout le couloir : tout le monde est ficelé et ne bouge plus
+				SUPER_down = {
+					label = "Toile de corde !", startup = 0.4, active = 0.24, recovery = 0.72,
+					damage = 22, hitbox = box(14, 5, 7, 0.5), kbBase = 20, kbGrowth = 30, kbAngle = 70,
+					status = { name = "rooted", duration = 2.5 },
+					windup = { Root = { 6, -40, 0, 0, -0.5, 0.1 }, Waist = { 10, -44, 0 }, Neck = { 6, 30, 0 }, RS = { 150, 0, 60 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -40 }, LE = { 60, 0, 0 } },
+					strike = { Root = { 8, 40, 0, 0, -0.95, -0.2 }, Waist = { 12, 44, 0 }, Neck = { 6, -28, 0 }, RS = { 40, 0, -30 }, RE = { 0, 0, 0 }, RW = { -40, 0, 0 }, LS = { 40, 0, -80 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					follow = { Root = { 8, -40, 0, 0, -0.95, -0.22 }, Waist = { 12, -44, 0 }, Neck = { 6, 28, 0 }, RS = { 40, 0, 80 }, RE = { 0, 0, 0 }, RW = { -40, 0, 0 }, LS = { 40, 0, 30 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					hold = 0.3, wobble = true, trail = "prop", windupFx = { "super", { "text", text = "ON TISSE…", color = CORDE } },
+					fx = { { "beam", color = CORDE, length = 16, width = 4, at = "feet" }, { "ring", color = CORDE, radius = 8, at = "front" }, { "symbols", symbols = { "🪢", "🕸️", "🪢" }, count = 8, radius = 4, at = "front", color = CORDE }, { "shake", amount = 0.3 } },
+					text = "TOILE !", hitText = "FICELÉ !",
+				},
+			},
+			links = {
+				P_neutral = { P = "P_side", K = "K_neutral", S = "S_neutral" },
+				P_side = { P = "P_up", K = "K_side", S = "S_side" },
+				P_down = { P = "P_neutral", K = "K_down", S = "S_down" },
+				K_neutral = { P = "P_neutral", K = "K_side", S = "S_neutral" },
+				K_side = { P = "P_up", K = "K_up", S = "S_side" },
+				P_dash = { P = "P_side", K = "K_side", S = "S_side" },
+				K_dash = { P = "P_up", S = "S_up" },
+			},
+		},
+	},
 
 	look = {
 		body = {
@@ -512,6 +980,22 @@ local data = {
 			hold = 0.4, windupFx = { "super", { "text", text = "PRIIIT !", color = JAUNE } },
 			fx = { { "symbols", symbols = { "♪", "♫", "💃" }, count = 12, radius = 8, color = ROSE }, { "ring", color = JAUNE, radius = 12 }, { "ring", color = CYAN, radius = 18, time = 0.5 }, { "pillar", color = ROSE, height = 14, width = 3 } },
 			text = "COURS COLLECTIF !", hitText = "ET ON DANSE !",
+		},
+		-- Mur de son (→Y) : un genou au sol, elle pose l'enceinte devant elle, tourne le volume à fond d'un grand geste de DJ…
+		-- et un mur de basses roule sur tout le couloir : tout le monde part en arrière, les oreilles qui sifflent
+		SUPER_side = {
+			label = "Mur de son !", kind = "projectile", startup = 0.4, active = 0, recovery = 0.7,
+			damage = 26, kbBase = 50, kbGrowth = 100, kbAngle = 28,
+			status = { name = "stunned", duration = 0.5 },
+			projectile = { speed = 62, angle = 0, gravity = 0, lifetime = 1.0, size = 5, color = CYAN, pierce = true, from = "feet",
+				visual = { shape = "disc", size = 5, color = CYAN, neon = true, transparency = 0.3, text = "♫", spin = 0, trail = false,
+					parts = { { "disc", Vector3.new(0.25, 3.2, 3.2), Vector3.new(0.6, 0, 0), ROSE }, { "disc", Vector3.new(0.25, 1.6, 1.6), Vector3.new(1.2, 0, 0), JAUNE } } } },
+			windup = { Root = { -4, -10, 0, 0, -0.6, 0.15 }, Waist = { -6, -12, 0 }, Neck = { 6, 8, 0 }, RS = { 70, 0, 20 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, -30 }, LE = { 20, 0, 0 }, LW = { 0, 0, 30 } },
+			strike = { Root = { 6, 6, 0, 0, -0.65, 0.25 }, Waist = { 8, 8, 0 }, Neck = { 16, 0, 0 }, RS = { 90, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 100, 0, 30 }, LE = { 110, 0, 0 }, LW = { 0, 0, 60 } },
+			follow = { Root = { 10, 6, 0, 0, -0.6, 0.35 }, Waist = { 12, 8, 0 }, Neck = { 20, 0, 0 }, RS = { 94, 0, 0 }, RE = { 0, 0, 0 }, RW = { 6, 0, 0 }, LS = { 170, 0, -20 }, LE = { 10, 0, 0 }, LW = { 0, 0, 0 } },
+			hold = 0.3, shake = true, trail = "prop", windupFx = { "super", { "symbols", symbols = { "🔊", "♪", "♫" }, count = 6, radius = 3, color = ROSE, at = "hand" } },
+			fx = { { "ring", color = CYAN, radius = 6, at = "front" }, { "beam", color = CYAN, length = 16, width = 6, at = "feet" }, { "screen", color = CYAN, alpha = 0.2 }, { "shake", amount = 0.5 } },
+			text = "VOLUME À FOND !", hitText = "WOOOMP !",
 		},
 		-- Hélico grand écart (Y↑) : l'enceinte braquée vers le sol la propulse en vrille vers le ciel, jambes écartées à
 		-- l'horizontale : un hélicoptère disco qui remonte le couloir et emporte tout ce qu'il y a dedans vers le plafond
