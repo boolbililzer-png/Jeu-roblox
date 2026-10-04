@@ -187,6 +187,10 @@ Config.FORCE_TOUCH_UI = false -- affiche les boutons tactiles même sur PC
 Config.SOUNDS = true
 Config.TURN_TO_CAMERA = 0.36 -- les persos se tournent un peu vers la caméra (0 = profil strict) pour qu'on voie bras et bouteille
 Config.CAMERA_SHAKE = true
+-- Caméra : elle suit uniquement le perso que l'on contrôle
+Config.CAMERA_DISTANCE = 34 -- recul (plus grand = on voit plus loin autour de soi)
+Config.CAMERA_FOLLOW = 9 -- vitesse de suivi
+Config.CAMERA_LOOKAHEAD = 4 -- avance (studs) dans le sens de la course
 Config.HITSTOP = true -- micro-arrêt sur image à l'impact
 
 return Config
