@@ -31,11 +31,507 @@ local SNOWBALL = { shape = "ball", size = 2.2, color = SNOW, spin = 6, parts = {
 } }
 local _ICE_CUBE = { shape = "block", size = 0.9, color = ICE, material = "Ice", spin = 10 }
 
+local WATER = Color3.fromRGB(90, 180, 255) -- eau du pistolet (arme n° 2)
+local PISTOL = Color3.fromRGB(255, 140, 40) -- plastique orange du pistolet à eau
+local SURF = Color3.fromRGB(60, 200, 190) -- planche de surf (arme n° 3)
+local SURF_STRIPE = Color3.fromRGB(255, 120, 60) -- rayure de la planche
+local DUNE = Color3.fromRGB(235, 205, 140) -- sable de plage
+
 local data = {
 	id = "Bob",
 	name = "Gros Bob",
 	costume = "Bob",
 	style = "yeti",
+
+	------------------------------------------------------------------ Les 3 armes de la Caisse Bizarre (une au hasard)
+	-- n° 1 : la glacière et les tongs (ses coups sont ceux de moves). n° 2 : le pistolet à eau géant, tout en projectiles, rapide,
+	-- qui trempe l'adversaire. n° 3 : la planche de surf, lourde et lente, qui éjecte très loin et le fait glisser plus vite.
+	weapons = {
+		{ id = "glaciere", name = "Glacière & tongs", icon = "🧊",
+			ability = { knockback = 1.2, text = "Ses coups éjectent 20 % plus loin" } },
+		{ id = "pistolet", name = "Pistolet à eau géant", icon = "💦",
+			prop = { name = "PropPistolet", hand = "Right", pieces = {
+				{ "Poignee", "", "block", Vector3.new(0.32, 0.7, 0.4), Vector3.new(0, -0.15, 0.1), Vector3.new(0, 0, 0), PISTOL, "SmoothPlastic" },
+				{ "Corps", "", "block", Vector3.new(0.45, 0.5, 1.5), Vector3.new(0, 0.35, -0.5), Vector3.new(0, 0, 0), PISTOL, "SmoothPlastic" },
+				{ "Reservoir", "", "cyl", Vector3.new(1.0, 0.8, 0.8), Vector3.new(0, 0.9, -0.3), Vector3.new(0, 0, 0), WATER, "Glass", { axis = "z", transparency = 0.35 } },
+				{ "Canon", "", "cyl", Vector3.new(1.3, 0.24, 0.24), Vector3.new(0, 0.4, -1.8), Vector3.new(0, 0, 0), TONG, "SmoothPlastic", { axis = "z" } },
+				{ "Pompe", "", "block", Vector3.new(0.3, 0.3, 0.6), Vector3.new(0, 0.05, -1.3), Vector3.new(0, 0, 0), YELLOW, "SmoothPlastic" },
+				{ "Goutte", "", "ball", Vector3.new(0.3, 0.3, 0.3), Vector3.new(0, 0.4, -2.5), Vector3.new(0, 0, 0), WATER, "Glass", { transparency = 0.2 } },
+			} },
+			ability = { status = { name = "wet", duration = 2 }, text = "Ses spéciaux trempent l'adversaire" },
+			moves = {
+				-- J : pschitt, petit jet sec du bout du canon, comme pour embêter un chat
+				P_neutral = {
+					label = "Pschitt", kind = "projectile", startup = 0.07, active = 0, recovery = 0.14,
+					damage = 5, kbBase = 18, kbGrowth = 22, kbAngle = 25,
+					projectile = { speed = 70, angle = 0, gravity = 10, lifetime = 0.2, size = 1.1, color = WATER, visual = "water", aim = false },
+					windup = { Root = { 4, -14, 0, 0, -0.2, 0.1 }, Waist = { 6, -16, 0 }, Neck = { 2, 10, 0 }, RS = { 70, 0, 10 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -40 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -6, 10, 0, 0, -0.25, -0.2 }, Waist = { -6, 12, 0 }, Neck = { -2, -6, 0 }, RS = { 92, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -50 }, LE = { 70, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.25 } },
+					follow = { Root = { -6, 12, 0, 0, -0.25, -0.22 }, Waist = { -6, 14, 0 }, Neck = { -2, -8, 0 }, RS = { 90, 0, 2 }, RE = { 4, 0, 0 }, RW = { -8, 0, 0 }, LS = { 28, 0, -52 }, LE = { 70, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.26 } },
+					fx = { { "particles", tex = "smoke", color = WATER, at = "hand", dir = "front", time = 0.1, speed = 10 } }, hitText = "PSCHITT !",
+				},
+				-- →J : jet tendu, il avance d'un pas et vise à deux mains comme un cow-boy de piscine
+				P_side = {
+					label = "Jet tendu", kind = "projectile", startup = 0.1, active = 0, recovery = 0.2,
+					damage = 7, kbBase = 22, kbGrowth = 30, kbAngle = 22,
+					projectile = { speed = 85, angle = 0, gravity = 0, lifetime = 0.3, size = 1.4, color = WATER, visual = "water", aim = false },
+					windup = { Root = { 6, 0, 0, 0, -0.2, 0.15 }, Waist = { 8, 0, 0 }, Neck = { 4, 0, 0 }, RS = { 60, 0, 20 }, RE = { 70, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -20 }, LE = { 80, 0, 0 }, LW = { 0, 0, 0 } },
+					strike = { Root = { -10, 0, 0, 0, -0.3, -0.3 }, Waist = { -10, 0, 0 }, Neck = { -4, 0, 0 }, RS = { 94, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, -10 }, LE = { 20, 0, 0 }, LW = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.35 } },
+					follow = { Root = { -12, 0, 0, 0, -0.32, -0.34 }, Waist = { -12, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 96, 0, 0 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 92, 0, -10 }, LE = { 20, 0, 0 }, LW = { -10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.38 } },
+					fx = { { "particles", tex = "smoke", color = WATER, at = "hand", dir = "front", time = 0.15, speed = 14 } }, hitText = "SPLASH !",
+				},
+				-- ↓J : arrosage des pieds, accroupi, il vise les tongs de l'adversaire et le fait sautiller
+				P_down = {
+					label = "Arrosage des pieds", kind = "projectile", startup = 0.1, active = 0, recovery = 0.2,
+					damage = 6, kbBase = 22, kbGrowth = 26, kbAngle = 75,
+					projectile = { speed = 60, angle = -25, gravity = 0, lifetime = 0.25, size = 1.3, color = WATER, visual = "water", aim = false },
+					windup = { Root = { 10, 0, 0, 0, -0.6, 0.1 }, Waist = { 16, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 40, 0, 20 }, RE = { 80, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -30 }, LE = { 60, 0, 0 }, RH = { 60, 0, 10 }, RK = { -90, 0, 0 }, LH = { 60, 0, -10 }, LK = { -90, 0, 0 } },
+					strike = { Root = { 6, 0, 0, 0, -0.7, -0.15 }, Waist = { 12, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 60, 0, 0 }, RE = { 0, 0, 0 }, RW = { 30, 0, 0 }, LS = { 30, 0, -40 }, LE = { 60, 0, 0 }, RH = { 70, 0, 10 }, RK = { -100, 0, 0 }, LH = { 70, 0, -10 }, LK = { -100, 0, 0 } },
+					follow = { Root = { 6, 0, 0, 0, -0.72, -0.18 }, Waist = { 12, 0, 0 }, Neck = { 22, 0, 0 }, RS = { 56, 0, 2 }, RE = { 4, 0, 0 }, RW = { 36, 0, 0 }, LS = { 28, 0, -42 }, LE = { 60, 0, 0 }, RH = { 72, 0, 10 }, RK = { -102, 0, 0 }, LH = { 72, 0, -10 }, LK = { -102, 0, 0 } },
+					fx = { { "puddle", color = WATER, width = 4 } }, hitText = "PLIC PLOC !",
+				},
+				-- ↑J : jet au plafond, canon pointé vers le ciel, il arrose ce qui lui tombe dessus
+				P_up = {
+					label = "Jet au plafond", kind = "projectile", startup = 0.1, active = 0, recovery = 0.2,
+					damage = 7, kbBase = 24, kbGrowth = 30, kbAngle = 85,
+					projectile = { speed = 70, angle = 75, gravity = 0, lifetime = 0.25, size = 1.4, color = WATER, visual = "water", aim = false },
+					windup = { Root = { 4, 0, 0, 0, -0.3, 0 }, Waist = { 6, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 60, 0, 20 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -30 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -4, 0, 0, 0, 0.05, -0.05 }, Waist = { -8, 0, 0 }, Neck = { -28, 0, 0 }, RS = { 165, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -50 }, LE = { 60, 0, 0 } },
+					follow = { Root = { -6, 0, 0, 0, 0.06, -0.06 }, Waist = { -10, 0, 0 }, Neck = { -30, 0, 0 }, RS = { 170, 0, 12 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 36, 0, -52 }, LE = { 60, 0, 0 } },
+					fx = { { "rain", shape = "ball", color = WATER, count = 4, radius = 2, size = 0.3 } }, hitText = "SPLOUTCH !",
+				},
+				-- J en l'air : pschitt en l'air, il tire vers le bas en avant tout en repliant les genoux
+				P_air = {
+					label = "Pschitt plongeant", kind = "projectile", startup = 0.09, active = 0, recovery = 0.18,
+					damage = 6, kbBase = 20, kbGrowth = 28, kbAngle = -30,
+					projectile = { speed = 70, angle = -35, gravity = 0, lifetime = 0.25, size = 1.3, color = WATER, visual = "water", aim = false },
+					windup = { Root = { 8, 0, 0 }, Waist = { 10, 0, 0 }, Neck = { 8, 0, 0 }, RS = { 60, 0, 20 }, RE = { 80, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -40 }, LE = { 60, 0, 0 }, RH = { 50, 0, 0 }, RK = { -80, 0, 0 }, LH = { 50, 0, 0 }, LK = { -80, 0, 0 } },
+					strike = { Root = { -14, 0, 0 }, Waist = { -14, 0, 0 }, Neck = { 18, 0, 0 }, RS = { 60, 0, 0 }, RE = { 0, 0, 0 }, RW = { 10, 0, 0 }, LS = { 40, 0, -60 }, LE = { 50, 0, 0 }, RH = { 70, 0, 5 }, RK = { -100, 0, 0 }, LH = { 70, 0, -5 }, LK = { -100, 0, 0 } },
+					follow = { Root = { -16, 0, 0 }, Waist = { -16, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 56, 0, 2 }, RE = { 4, 0, 0 }, RW = { 4, 0, 0 }, LS = { 36, 0, -62 }, LE = { 50, 0, 0 }, RH = { 72, 0, 5 }, RK = { -102, 0, 0 }, LH = { 72, 0, -5 }, LK = { -102, 0, 0 } },
+					fx = { { "particles", tex = "smoke", color = WATER, at = "hand", dir = "down", time = 0.12, speed = 10 } }, hitText = "SPLATCH !",
+				},
+				-- dash J : coup de crosse, il fonce et cogne avec le réservoir du pistolet, de l'eau partout
+				P_dash = {
+					label = "Coup de crosse", startup = 0.08, active = 0.12, recovery = 0.22,
+					damage = 8, hitbox = box(5, 4, 3, 0.5), kbBase = 26, kbGrowth = 40, kbAngle = 30, selfVelocity = Vector2.new(36, 0),
+					windup = { Root = { -8, 20, 0, 0, -0.3, 0.1 }, Waist = { -6, 24, 0 }, Neck = { 0, -16, 0 }, RS = { 40, 0, 40 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -30 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -16, -20, 0, 0, -0.4, -0.35 }, Waist = { -10, -24, 0 }, Neck = { -6, 16, 0 }, RS = { 90, 0, -30 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -60 }, LE = { 60, 0, 0 } },
+					follow = { Root = { -18, -24, 0, 0, -0.42, -0.4 }, Waist = { -12, -28, 0 }, Neck = { -8, 18, 0 }, RS = { 86, 0, -36 }, RE = { 24, 0, 0 }, RW = { -10, 0, 0 }, LS = { 16, 0, -64 }, LE = { 60, 0, 0 } },
+					trail = "prop", fx = { "dust", { "burst", color = WATER, size = 1.5, at = "hand" } }, text = "POUSSEZ-VOUS !", hitText = "BONK !",
+				},
+				-- K : pompage, trois coups de pompe frénétiques puis un gros jet qui part en vibrant
+				K_neutral = {
+					label = "Pompage", kind = "projectile", startup = 0.18, active = 0, recovery = 0.3,
+					damage = 10, kbBase = 26, kbGrowth = 50, kbAngle = 28,
+					projectile = { speed = 80, angle = 0, gravity = 0, lifetime = 0.4, size = 2, color = WATER, visual = "water", aim = false },
+					windup = { Root = { 6, 0, 0, 0, -0.25, 0.1 }, Waist = { 8, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 70, 0, 10 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 80, 0, -10 }, LE = { 110, 0, 0 }, LW = { 0, 0, 0 } },
+					strike = { Root = { -10, 0, 0, 0, -0.3, -0.25 }, Waist = { -12, 0, 0 }, Neck = { -4, 0, 0 }, RS = { 94, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -20 }, LE = { 40, 0, 0 }, LW = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					follow = { Root = { -12, 0, 0, 0, -0.32, -0.3 }, Waist = { -14, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 98, 0, 0 }, RE = { 0, 0, 0 }, RW = { -12, 0, 0 }, LS = { 46, 0, -22 }, LE = { 40, 0, 0 }, LW = { -10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.32 } },
+					shake = true, windupFx = { { "text", text = "POMP-POMP-POMP", color = WATER } },
+					fx = { { "burst", color = WATER, size = 2, at = "hand" }, { "particles", tex = "smoke", color = WATER, at = "hand", dir = "front", time = 0.2, speed = 16, rate = 70 } }, hitText = "SPLAAASH !",
+				},
+				-- →K : coup de tong trempée, il trempe sa tong dans le réservoir et la claque en pleine figure
+				K_side = {
+					label = "Tong trempée", startup = 0.16, active = 0.12, recovery = 0.3,
+					damage = 11, hitbox = box(6, 4, 3.5, 0.5), kbBase = 28, kbGrowth = 60, kbAngle = 35,
+					windup = { Root = { 6, 24, 0, 0, -0.3, 0.1 }, Waist = { 8, 28, 0 }, Neck = { 4, -20, 0 }, RS = { 60, 0, 30 }, RE = { 80, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -30 }, LE = { 50, 0, 0 }, RH = { 40, 0, 10 }, RK = { -80, 0, 0 }, FR = { 0, 0, 0, 0, 0.3, 0 } },
+					strike = { Root = { -12, -10, 0, 0, -0.35, -0.3 }, Waist = { -12, -14, 0 }, Neck = { -4, 8, 0 }, RS = { 40, 0, 50 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { -30, 0, -30 }, LE = { 20, 0, 0 }, RH = { 95, 0, 6 }, RK = { -5, 0, 0 }, RA = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.1 } },
+					follow = { Root = { -14, -14, 0, 0, -0.38, -0.34 }, Waist = { -14, -18, 0 }, Neck = { -6, 10, 0 }, RS = { 36, 0, 54 }, RE = { 60, 0, 0 }, RW = { -8, 0, 0 }, LS = { -34, 0, -32 }, LE = { 20, 0, 0 }, RH = { 100, 0, 6 }, RK = { -5, 0, 0 }, RA = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.12 } },
+					trail = "rightFoot", fx = { { "burst", color = WATER, size = 2, at = "front" } }, text = "CLAC !", hitText = "SPLATCH-CLAC !",
+				},
+				-- ↓K : flaque, accroupi, il vide le réservoir au sol d'un coup et tape des deux tongs dans la flaque
+				K_down = {
+					label = "Flaque", startup = 0.16, active = 0.2, recovery = 0.3,
+					damage = 9, hitbox = box(7, 2.5, 2.5, -1.6), kbBase = 26, kbGrowth = 50, kbAngle = 70,
+					windup = { Root = { 10, 0, 0, 0, -0.55, 0.1 }, Waist = { 16, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 60, 0, 20 }, RE = { 80, 0, 0 }, RW = { 60, 0, 0 }, LS = { 40, 0, -40 }, LE = { 60, 0, 0 }, RH = { 60, 0, 10 }, RK = { -90, 0, 0 }, LH = { 60, 0, -10 }, LK = { -90, 0, 0 } },
+					strike = { Root = { 4, 0, 0, 0, -0.35, -0.1 }, Waist = { 6, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 20, 0, 30 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -30 }, LE = { 40, 0, 0 }, RH = { 20, 0, 20 }, RK = { -20, 0, 0 }, LH = { 20, 0, -20 }, LK = { -20, 0, 0 }, FR = { 0, 0, 0, 0, 0, -0.3 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					follow = { Root = { 4, 0, 0, 0, -0.38, -0.12 }, Waist = { 6, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 16, 0, 32 }, RE = { 40, 0, 0 }, RW = { -8, 0, 0 }, LS = { 16, 0, -32 }, LE = { 40, 0, 0 }, RH = { 22, 0, 20 }, RK = { -22, 0, 0 }, LH = { 22, 0, -20 }, LK = { -22, 0, 0 }, FR = { 0, 0, 0, 0, 0, -0.32 }, FL = { 0, 0, 0, 0, 0, -0.32 } },
+					fx = { { "puddle", color = WATER, width = 7 }, { "ring", color = WATER, radius = 3.5, at = "feet" }, { "rain", shape = "ball", color = WATER, count = 6, radius = 3, size = 0.3 } }, hitText = "FLOTCH !",
+				},
+				-- ↑K : geyser, il coince le pistolet entre ses genoux, tire vers le haut et fait un petit saut dessus
+				K_up = {
+					label = "Geyser", kind = "projectile", startup = 0.16, active = 0, recovery = 0.3,
+					damage = 10, kbBase = 28, kbGrowth = 55, kbAngle = 88,
+					projectile = { speed = 72, angle = 85, gravity = 0, lifetime = 0.35, size = 2.2, color = WATER, visual = "water", aim = false, from = "feet" },
+					windup = { Root = { 10, 0, 0, 0, -0.5, 0 }, Waist = { 16, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 30, 0, 20 }, RE = { 90, 0, 0 }, RW = { 60, 0, 0 }, LS = { 30, 0, -20 }, LE = { 90, 0, 0 }, RH = { 50, 0, 10 }, RK = { -80, 0, 0 }, LH = { 50, 0, -10 }, LK = { -80, 0, 0 } },
+					strike = { Root = { -6, 0, 0, 0, 0.2, 0 }, Waist = { -10, 0, 0 }, Neck = { -24, 0, 0 }, RS = { 150, 0, 40 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, -40 }, LE = { 10, 0, 0 }, RH = { 30, 0, 20 }, RK = { -60, 0, 0 }, LH = { 30, 0, -20 }, LK = { -60, 0, 0 } },
+					follow = { Root = { -8, 0, 0, 0, 0.24, 0 }, Waist = { -12, 0, 0 }, Neck = { -28, 0, 0 }, RS = { 156, 0, 44 }, RE = { 10, 0, 0 }, RW = { -10, 0, 0 }, LS = { 156, 0, -44 }, LE = { 10, 0, 0 }, RH = { 34, 0, 20 }, RK = { -64, 0, 0 }, LH = { 34, 0, -20 }, LK = { -64, 0, 0 } },
+					fx = { { "pillar", color = WATER, height = 8, width = 2, at = "feet" }, { "rain", shape = "ball", color = WATER, count = 6, radius = 3, size = 0.35 } }, text = "YOUPI !", hitText = "SPLOOOSH !",
+				},
+				-- K en l'air : double jet, bras et jambe tendus en croix, il tire un gros jet en avant et un vers le bas
+				K_air = {
+					label = "Double jet", kind = "projectile", startup = 0.14, active = 0, recovery = 0.26,
+					damage = 10, kbBase = 26, kbGrowth = 50, kbAngle = 30,
+					projectile = { speed = 78, angle = -10, gravity = 0, lifetime = 0.35, size = 1.8, color = WATER, visual = "water", aim = false, fan = { count = 2, from = -45, to = 0 } },
+					windup = { Root = { 6, 0, 0 }, Waist = { 8, 0, 0 }, Neck = { 4, 0, 0 }, RS = { 60, 0, 30 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -30 }, LE = { 90, 0, 0 }, RH = { 40, 0, 10 }, RK = { -70, 0, 0 }, LH = { 40, 0, -10 }, LK = { -70, 0, 0 } },
+					strike = { Root = { -10, 0, 0 }, Waist = { -12, 0, 0 }, Neck = { -4, 0, 0 }, RS = { 92, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -80 }, LE = { 0, 0, 0 }, RH = { 80, 0, 10 }, RK = { -10, 0, 0 }, RA = { 20, 0, 0 }, LH = { -20, 0, -10 }, LK = { -20, 0, 0 } },
+					follow = { Root = { -12, 0, 0 }, Waist = { -14, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 96, 0, 0 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 16, 0, -84 }, LE = { 0, 0, 0 }, RH = { 84, 0, 10 }, RK = { -10, 0, 0 }, RA = { 20, 0, 0 }, LH = { -24, 0, -10 }, LK = { -20, 0, 0 } },
+					fx = { { "burst", color = WATER, size = 1.8, at = "hand" } }, hitText = "SPLASH-SPLASH !",
+				},
+				-- dash K : arrosage en courant, il galope en tongs et arrose devant lui sans viser
+				K_dash = {
+					label = "Arrosage au galop", kind = "projectile", startup = 0.1, active = 0, recovery = 0.3,
+					damage = 10, kbBase = 26, kbGrowth = 50, kbAngle = 32, selfVelocity = Vector2.new(40, 0),
+					projectile = { speed = 76, angle = 5, gravity = 0, lifetime = 0.4, size = 1.8, color = WATER, visual = "water", aim = false },
+					windup = { Root = { -10, 0, 0, 0, -0.3, 0.1 }, Waist = { -8, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 60, 0, 20 }, RE = { 80, 0, 0 }, RW = { 0, 0, 0 }, LS = { -30, 0, -20 }, LE = { 60, 0, 0 }, RH = { 40, 0, 6 }, RK = { -60, 0, 0 }, LH = { -30, 0, -6 }, LK = { -10, 0, 0 } },
+					strike = { Root = { -18, 0, 0, 0, -0.35, -0.3 }, Waist = { -12, 0, 0 }, Neck = { 2, 0, 0 }, RS = { 96, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -40, 0, -30 }, LE = { 70, 0, 0 }, RH = { -30, 0, 6 }, RK = { -20, 0, 0 }, LH = { 50, 0, -6 }, LK = { -70, 0, 0 } },
+					follow = { Root = { -20, 0, 0, 0, -0.38, -0.34 }, Waist = { -14, 0, 0 }, Neck = { 0, 0, 0 }, RS = { 98, 0, 0 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { -44, 0, -32 }, LE = { 70, 0, 0 }, RH = { -34, 0, 6 }, RK = { -20, 0, 0 }, LH = { 54, 0, -6 }, LK = { -74, 0, 0 } },
+					fx = { "dust", { "particles", tex = "smoke", color = WATER, at = "hand", dir = "front", time = 0.2, speed = 14, rate = 60 } }, text = "FLIP-FLOP-FLIP !", hitText = "SPLATCH !",
+				},
+				-- L : jet haute pression, il pompe comme un fou, serre les dents, et un jet dur comme une barre traverse tout le couloir
+				S_neutral = {
+					label = "Jet haute pression", kind = "projectile", startup = 0.22, active = 0, recovery = 0.46,
+					damage = 13, kbBase = 28, kbGrowth = 58, kbAngle = 24,
+					projectile = { speed = 95, angle = 0, gravity = 0, lifetime = 0.6, size = 2.4, color = WATER, visual = "water", pierce = true },
+					windup = { Root = { 8, 0, 0, 0, -0.25, 0.2 }, Waist = { 10, 0, 0 }, Neck = { 8, 0, 0 }, RS = { 70, 0, 10 }, RE = { 70, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, -10 }, LE = { 110, 0, 0 }, LW = { 0, 0, 0 } },
+					strike = { Root = { -14, 0, 0, 0, -0.35, -0.3 }, Waist = { -16, 0, 0 }, Neck = { -4, 0, 0 }, RS = { 96, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, -8 }, LE = { 10, 0, 0 }, LW = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { -16, 0, 0, 0, -0.38, -0.36 }, Waist = { -18, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 98, 0, 0 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 92, 0, -8 }, LE = { 10, 0, 0 }, LW = { -10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.44 } },
+					shake = true, windupFx = { { "text", text = "POMP-POMP-POMP-POMP", color = WATER } },
+					fx = { { "beam", color = WATER, length = 16, width = 2, at = "hand" }, { "particles", tex = "smoke", color = WATER, at = "hand", dir = "front", time = 0.3, speed = 22, rate = 100 }, { "burst", color = WATER, size = 2.5, at = "hand" } },
+					text = "HAUTE PRESSION !", hitText = "SPLAAAAASH !",
+				},
+				-- →L : canon à eau, il s'assoit par terre, cale le pistolet entre ses tongs et tire une énorme boule d'eau qui vise
+				S_side = {
+					label = "Canon à eau", kind = "projectile", startup = 0.24, active = 0, recovery = 0.5,
+					damage = 15, kbBase = 30, kbGrowth = 70, kbAngle = 30,
+					projectile = { speed = 70, angle = 0, gravity = 0, lifetime = 0.8, size = 3.4, color = WATER,
+						visual = { shape = "ball", size = 3, color = WATER, transparency = 0.25, spin = 6, parts = {
+							{ "ball", Vector3.new(1.0, 1.0, 1.0), Vector3.new(1.1, 0.8, 0), ICE },
+							{ "ball", Vector3.new(0.7, 0.7, 0.7), Vector3.new(-1.0, -0.9, 0.5), SNOW },
+						} } },
+					windup = { Root = { 10, 0, 0, 0, -0.9, 0.1 }, Waist = { 14, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 60, 0, 10 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -10 }, LE = { 60, 0, 0 }, RH = { 85, 0, 12 }, RK = { -20, 0, 0 }, RA = { 20, 0, 0 }, LH = { 85, 0, -12 }, LK = { -20, 0, 0 }, LA = { 20, 0, 0 } },
+					strike = { Root = { -10, 0, 0, 0, -0.95, -0.1 }, Waist = { -14, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 92, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 92, 0, -4 }, LE = { 0, 0, 0 }, RH = { 80, 0, 12 }, RK = { -10, 0, 0 }, RA = { 20, 0, 0 }, LH = { 80, 0, -12 }, LK = { -10, 0, 0 }, LA = { 20, 0, 0 } },
+					follow = { Root = { -14, 0, 0, 0, -0.95, -0.14 }, Waist = { -18, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 96, 0, 0 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 96, 0, -4 }, LE = { 0, 0, 0 }, RH = { 76, 0, 12 }, RK = { -10, 0, 0 }, RA = { 20, 0, 0 }, LH = { 76, 0, -12 }, LK = { -10, 0, 0 }, LA = { 20, 0, 0 } },
+					shake = true, fx = { { "burst", color = WATER, size = 3.5, at = "hand" }, { "ring", color = ICE, radius = 3, at = "hand" }, { "shake", amount = 0.3 } },
+					text = "BOULET D'EAU !", hitText = "SPLOOOOSH !",
+				},
+				-- ↓L : tuyau d'arrosage, il tire au ras du sol : une vague roule sur tout le couloir et emporte les tongs de l'adversaire
+				S_down = {
+					label = "Vague d'arrosage", startup = 0.22, active = 0.16, recovery = 0.48,
+					damage = 12, hitbox = box(14, 4, 7, -1), kbBase = 30, kbGrowth = 52, kbAngle = 45,
+					windup = { Root = { 10, 0, 0, 0, -0.55, 0.1 }, Waist = { 16, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 40, 0, 20 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -20 }, LE = { 90, 0, 0 }, RH = { 60, 0, 10 }, RK = { -90, 0, 0 }, LH = { 60, 0, -10 }, LK = { -90, 0, 0 } },
+					strike = { Root = { 4, 0, 0, 0, -0.65, -0.15 }, Waist = { 10, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 50, 0, 0 }, RE = { 0, 0, 0 }, RW = { 40, 0, 0 }, LS = { 50, 0, -6 }, LE = { 0, 0, 0 }, LW = { 40, 0, 0 }, RH = { 70, 0, 10 }, RK = { -100, 0, 0 }, LH = { 70, 0, -10 }, LK = { -100, 0, 0 } },
+					follow = { Root = { 4, 0, 0, 0, -0.68, -0.18 }, Waist = { 10, 0, 0 }, Neck = { 18, 0, 0 }, RS = { 46, 0, 0 }, RE = { 4, 0, 0 }, RW = { 46, 0, 0 }, LS = { 46, 0, -6 }, LE = { 4, 0, 0 }, LW = { 46, 0, 0 }, RH = { 72, 0, 10 }, RK = { -102, 0, 0 }, LH = { 72, 0, -10 }, LK = { -102, 0, 0 } },
+					shake = true, fx = { { "beam", color = WATER, length = 16, width = 3, at = "feet" }, { "puddle", color = WATER, width = 14 }, { "particles", tex = "smoke", color = WATER, at = "front", dir = "front", time = 0.35, speed = 18, rate = 100 } },
+					text = "VAGUE !", hitText = "EMPORTÉ PAR L'EAU !",
+				},
+				-- ↑L : propulsion hydraulique, pistolet pointé vers le sol entre ses pieds, il tire à fond et décolle en diagonale sur le jet
+				S_up = {
+					label = "Propulsion hydraulique", startup = 0.15, active = 0.3, recovery = 0.45,
+					damage = 13, hitbox = box(10, 11, 3, 4), kbBase = 32, kbGrowth = 46, kbAngle = 80, selfVelocity = Vector2.new(42, 80),
+					windup = { Root = { 10, 0, 0, 0, -0.8, 0.1 }, Waist = { 14, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 20, 0, 10 }, RE = { 30, 0, 0 }, RW = { 60, 0, 0 }, LS = { 20, 0, -30 }, LE = { 40, 0, 0 } },
+					strike = { Root = { -40, 0, 0, 0, 0.3, 0 }, Waist = { -8, 0, 0 }, Neck = { 28, 0, 0 }, RS = { -30, 0, 10 }, RE = { 10, 0, 0 }, RW = { 70, 0, 0 }, LS = { 170, 0, -30 }, LE = { 0, 0, 0 }, RH = { -20, 0, 6 }, RK = { -30, 0, 0 }, RA = { -30, 0, 0 }, LH = { -30, 0, -6 }, LK = { -40, 0, 0 }, LA = { -30, 0, 0 } },
+					follow = { Root = { -44, 0, 0, 0, 0.35, 0 }, Waist = { -10, 0, 0 }, Neck = { 32, 0, 0 }, RS = { -34, 0, 12 }, RE = { 10, 0, 0 }, RW = { 74, 0, 0 }, LS = { 174, 0, -32 }, LE = { 0, 0, 0 }, RH = { -24, 0, 8 }, RK = { -36, 0, 0 }, RA = { -30, 0, 0 }, LH = { -34, 0, -8 }, LK = { -46, 0, 0 }, LA = { -30, 0, 0 } },
+					trail = "body", fx = { { "burst", color = WATER, size = 3.5, at = "feet" }, { "pillar", color = WATER, height = 10, width = 3, at = "feet" }, { "particles", tex = "smoke", color = WATER, at = "feet", dir = "down", time = 0.4, speed = 18, rate = 110 } },
+					text = "JETPACK À EAU !", hitText = "ARROSÉ !",
+				},
+				-- L en l'air : pluie d'été, il tire en l'air à la verticale et trois paquets d'eau retombent sur l'adversaire
+				S_air = {
+					label = "Pluie d'été", kind = "projectile", startup = 0.18, active = 0, recovery = 0.42,
+					damage = 12, kbBase = 26, kbGrowth = 52, kbAngle = -40,
+					projectile = { speed = 68, gravity = 0, lifetime = 0.9, size = 2, color = WATER, visual = "water", rain = { count = 3, spread = 5, ahead = 7, height = 16 } },
+					windup = { Root = { 6, 0, 0 }, Waist = { 8, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 150, 0, 20 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -40 }, LE = { 50, 0, 0 }, RH = { 40, 0, 0 }, RK = { -70, 0, 0 }, LH = { 40, 0, 0 }, LK = { -70, 0, 0 } },
+					strike = { Root = { -6, 0, 0 }, Waist = { -8, 0, 0 }, Neck = { -30, 0, 0 }, RS = { 178, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -60 }, LE = { 40, 0, 0 }, RH = { 30, 0, 0 }, RK = { -50, 0, 0 }, LH = { 30, 0, 0 }, LK = { -50, 0, 0 } },
+					follow = { Root = { -8, 0, 0 }, Waist = { -10, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 170, 0, 14 }, RE = { 4, 0, 0 }, RW = { -10, 0, 0 }, LS = { 36, 0, -62 }, LE = { 40, 0, 0 }, RH = { 26, 0, 0 }, RK = { -46, 0, 0 }, LH = { 26, 0, 0 }, LK = { -46, 0, 0 } },
+					fx = { { "rain", shape = "ball", color = WATER, count = 8, radius = 5, size = 0.4 }, { "burst", color = WATER, size = 2, at = "hand" } }, text = "IL PLEUT !", hitText = "PLOC PLOC PLOC !",
+				},
+				-- Y : lance à incendie, il ouvre le réservoir à fond, le pistolet rue comme un cheval et un torrent traverse le couloir
+				SUPER = {
+					label = "Lance à incendie !", kind = "projectile", startup = 0.4, active = 0, recovery = 0.7,
+					damage = 26, kbBase = 44, kbGrowth = 90, kbAngle = 28,
+					projectile = { speed = 90, angle = 0, gravity = 0, lifetime = 0.9, size = 4, color = WATER, visual = "water", pierce = true },
+					windup = { Root = { 10, 0, 0, 0, -0.3, 0.2 }, Waist = { 14, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 70, 0, 10 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, -10 }, LE = { 90, 0, 0 }, LW = { 0, 0, 0 } },
+					strike = { Root = { 12, 0, 0, 0, -0.4, 0.3 }, Waist = { 10, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 94, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 94, 0, -6 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+					follow = { Root = { 16, 0, 0, 0, -0.45, 0.4 }, Waist = { 14, 0, 0 }, Neck = { -14, 0, 0 }, RS = { 100, 0, 4 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 100, 0, -10 }, LE = { 0, 0, 0 }, LW = { -10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.55 } },
+					hold = 0.2, shake = true, windupFx = { "super", { "text", text = "PRESSION MAXIMALE", color = WATER } },
+					fx = { { "beam", color = WATER, length = 18, width = 4, at = "hand" }, { "burst", color = WATER, size = 4, at = "hand" }, { "particles", tex = "smoke", color = WATER, at = "hand", dir = "front", time = 0.6, speed = 26, rate = 130 }, { "shake", amount = 0.6 } },
+					text = "LANCE À INCENDIE !", hitText = "SPLAAAAAAASH !",
+				},
+				-- →Y : bombes à eau, il sort trois ballons gonflés à bloc de son short et les lance en éventail, tongs écartées
+				SUPER_side = {
+					label = "Bombes à eau !", kind = "projectile", startup = 0.4, active = 0, recovery = 0.7,
+					damage = 22, kbBase = 40, kbGrowth = 75, kbAngle = 35,
+					projectile = { speed = 62, angle = 8, gravity = 25, lifetime = 1.1, size = 2.6, color = PINK, pierce = true, fan = { count = 3, from = -14, to = 14 },
+						visual = { shape = "ball", size = 2.2, color = PINK, spin = 4, parts = {
+							{ "ball", Vector3.new(0.5, 0.5, 0.5), Vector3.new(0, -1.2, 0), YELLOW },
+						} } },
+					windup = { Root = { 8, 30, 0, 0, -0.3, 0.2 }, Waist = { 10, 34, 0 }, Neck = { 6, -24, 0 }, RS = { -40, 0, 40 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -40 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -14, -20, 0, 0, -0.4, -0.4 }, Waist = { -16, -24, 0 }, Neck = { -6, 16, 0 }, RS = { 120, 0, -10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -70 }, LE = { 40, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+					follow = { Root = { -16, -24, 0, 0, -0.42, -0.45 }, Waist = { -18, -28, 0 }, Neck = { -8, 18, 0 }, RS = { 110, 0, -14 }, RE = { 6, 0, 0 }, RW = { -20, 0, 0 }, LS = { 16, 0, -74 }, LE = { 40, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.52 } },
+					hold = 0.2, shake = true, hideProp = "pistolet", windupFx = { "super", { "symbols", symbols = { "🎈", "💧", "🎈" }, color = PINK, count = 6, radius = 3 } },
+					fx = { { "burst", color = PINK, size = 3, at = "hand" }, { "rain", shape = "ball", color = WATER, count = 8, radius = 5, size = 0.4 }, { "shake", amount = 0.4 } },
+					text = "BATAILLE D'EAU !", hitText = "SPLOTCH-SPLOTCH-SPLOTCH !",
+				},
+				-- ↑Y : geyser géant, il plante le canon dans le sol, tire à fond, et tout le couloir jaillit en colonne d'eau, Bob assis au sommet
+				SUPER_up = {
+					label = "Geyser géant !", startup = 0.35, active = 0.3, recovery = 0.75,
+					damage = 24, hitbox = box(14, 12, 7, 5), kbBase = 44, kbGrowth = 92, kbAngle = 88, invuln = 0.3, selfVelocity = Vector2.new(0, 55),
+					windup = { Root = { 14, 0, 0, 0, -0.6, 0.2 }, Waist = { 20, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 40, 0, 10 }, RE = { 20, 0, 0 }, RW = { 60, 0, 0 }, LS = { 40, 0, -10 }, LE = { 20, 0, 0 }, LW = { 60, 0, 0 }, RH = { 60, 0, 10 }, RK = { -90, 0, 0 }, LH = { 60, 0, -10 }, LK = { -90, 0, 0 } },
+					strike = { Root = { 10, 0, 0, 0, 0.5, 0 }, Waist = { 8, 0, 0 }, Neck = { 26, 0, 0 }, RS = { 170, 0, 40 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 170, 0, -40 }, LE = { 10, 0, 0 }, RH = { 85, 0, 10 }, RK = { -20, 0, 0 }, RA = { 20, 0, 0 }, LH = { 85, 0, -10 }, LK = { -20, 0, 0 }, LA = { 20, 0, 0 } },
+					follow = { Root = { 12, 0, 0, 0, 0.55, 0 }, Waist = { 10, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 176, 0, 44 }, RE = { 10, 0, 0 }, RW = { -10, 0, 0 }, LS = { 176, 0, -44 }, LE = { 10, 0, 0 }, RH = { 88, 0, 10 }, RK = { -20, 0, 0 }, RA = { 20, 0, 0 }, LH = { 88, 0, -10 }, LK = { -20, 0, 0 }, LA = { 20, 0, 0 } },
+					hold = 0.2, shake = true, windupFx = { "super" },
+					fx = { { "pillar", color = WATER, height = 24, width = 5, at = "front" }, { "beam", color = WATER, length = 18, width = 5, at = "front" }, { "rain", shape = "ball", color = WATER, count = 16, radius = 9, size = 0.5 }, { "puddle", color = WATER, width = 14 }, { "shake", amount = 0.6 } },
+					text = "GEYSEEEER !", hitText = "SPLOOOOOOSH !",
+				},
+				-- ↓Y : inondation, il dévisse le réservoir et le vide d'un coup : une marée roule sur tout le couloir, l'adversaire nage sur place
+				SUPER_down = {
+					label = "Inondation !", startup = 0.4, active = 0.2, recovery = 0.7,
+					damage = 22, hitbox = box(16, 5, 8, -0.5), kbBase = 38, kbGrowth = 70, kbAngle = 40,
+					status = { name = "slowed", duration = 2.5 },
+					windup = { Root = { 8, 0, 0, 0, -0.2, 0.15 }, Waist = { 12, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 120, 0, 20 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 120, 0, -20 }, LE = { 90, 0, 0 }, LW = { 0, 0, 0 } },
+					strike = { Root = { -16, 0, 0, 0, -0.7, -0.35 }, Waist = { -28, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 40, 0, 10 }, RE = { 0, 0, 0 }, RW = { 60, 0, 0 }, LS = { 40, 0, -10 }, LE = { 0, 0, 0 }, LW = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+					follow = { Root = { -18, 0, 0, 0, -0.74, -0.4 }, Waist = { -30, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 34, 0, 12 }, RE = { 0, 0, 0 }, RW = { 66, 0, 0 }, LS = { 34, 0, -12 }, LE = { 0, 0, 0 }, LW = { 66, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.48 } },
+					hold = 0.3, shake = true, windupFx = { "super", { "text", text = "GLOU GLOU GLOU", color = WATER } },
+					fx = { { "beam", color = WATER, length = 18, width = 5, at = "feet" }, { "puddle", color = WATER, width = 18, time = 2 }, { "particles", tex = "smoke", color = WATER, at = "front", dir = "front", time = 0.6, speed = 20, rate = 130 }, { "symbols", symbols = { "🌊", "🐟", "🦀" }, color = WATER, count = 8, radius = 5, at = "front" }, { "shake", amount = 0.5 } },
+					text = "INONDATION !", hitText = "GLOU GLOU !",
+				},
+			},
+			links = {
+				P_neutral = { P = "P_side", K = "K_neutral", S = "S_neutral" },
+				P_side = { P = "P_up", K = "K_side", S = "S_side" },
+				P_down = { P = "P_up", K = "K_down", S = "S_down" },
+				K_neutral = { P = "P_neutral", K = "K_side", S = "S_neutral" },
+				K_side = { P = "P_down", K = "K_up", S = "S_side" },
+				P_dash = { P = "P_side", K = "K_neutral", S = "S_neutral" },
+				K_dash = { P = "P_up", K = "K_up", S = "S_up" },
+			},
+		},
+		{ id = "surf", name = "Planche de surf", icon = "🏄",
+			prop = { name = "PropSurf", hand = "Right", pieces = {
+				{ "Planche", "", "block", Vector3.new(1.2, 4.6, 0.2), Vector3.new(0, -1.7, 0.35), Vector3.new(0, 0, 0), SURF, "SmoothPlastic" },
+				{ "Rayure", "", "block", Vector3.new(0.4, 4.5, 0.22), Vector3.new(0, -1.7, 0.35), Vector3.new(0, 0, 0), SURF_STRIPE, "SmoothPlastic" },
+				{ "Fleur", "", "ball", Vector3.new(0.5, 0.5, 0.08), Vector3.new(0, -0.6, 0.22), Vector3.new(0, 0, 0), PINK, "SmoothPlastic" },
+				{ "Aileron", "", "block", Vector3.new(0.12, 0.7, 0.6), Vector3.new(0, -3.5, 0.7), Vector3.new(0, 0, 0), WHITE, "SmoothPlastic" },
+				{ "Leash", "", "cyl", Vector3.new(1.2, 0.08, 0.08), Vector3.new(0.3, 0.3, 0.2), Vector3.new(0, 0, 30), BLACK, "SmoothPlastic", { axis = "y" } },
+			} },
+			ability = { speed = 1.2, text = "Il glisse 20 % plus vite, la planche sous le bras" },
+			moves = {
+				-- J : coup de planche, il la balance de côté comme une porte qui claque
+				P_neutral = {
+					label = "Coup de planche", startup = 0.12, active = 0.1, recovery = 0.2,
+					damage = 8, hitbox = box(5.5, 4, 3, 0.6), kbBase = 26, kbGrowth = 36, kbAngle = 30,
+					windup = { Root = { 4, -30, 0, 0, -0.2, 0.15 }, Waist = { 6, -34, 0 }, Neck = { 4, 24, 0 }, RS = { 60, 0, 60 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -40 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -8, 20, 0, 0, -0.28, -0.3 }, Waist = { -10, 24, 0 }, Neck = { -4, -14, 0 }, RS = { 80, 0, -30 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -60 }, LE = { 50, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					follow = { Root = { -10, 24, 0, 0, -0.3, -0.34 }, Waist = { -12, 28, 0 }, Neck = { -6, -16, 0 }, RS = { 76, 0, -36 }, RE = { 14, 0, 0 }, RW = { -10, 0, 0 }, LS = { 16, 0, -64 }, LE = { 50, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.32 } },
+					trail = "prop", hitText = "PLAC !",
+				},
+				-- →J : planche en avant, il la tient à plat devant lui et pousse de tout son ventre
+				P_side = {
+					label = "Poussée de planche", startup = 0.12, active = 0.1, recovery = 0.22,
+					damage = 9, hitbox = box(6, 4, 3.5, 0.5), kbBase = 28, kbGrowth = 42, kbAngle = 20, selfVelocity = Vector2.new(14, 0),
+					windup = { Root = { 6, 0, 0, 0, -0.25, 0.2 }, Waist = { 10, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 40, 0, 20 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -20 }, LE = { 110, 0, 0 }, LW = { 0, 0, 0 } },
+					strike = { Root = { -12, 0, 0, 0, -0.35, -0.4 }, Waist = { -14, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 90, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, -10 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { -14, 0, 0, 0, -0.36, -0.45 }, Waist = { -16, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 94, 0, 10 }, RE = { 0, 0, 0 }, RW = { -8, 0, 0 }, LS = { 94, 0, -10 }, LE = { 0, 0, 0 }, LW = { -8, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+					trail = "prop", hitText = "BLAM !",
+				},
+				-- ↓J : planche plantée, il la plante dans le sable devant lui, le nez de la planche cueille le menton
+				P_down = {
+					label = "Planche plantée", startup = 0.12, active = 0.1, recovery = 0.24,
+					damage = 7, hitbox = box(4.5, 3, 2.8, -1), kbBase = 26, kbGrowth = 30, kbAngle = 80,
+					windup = { Root = { 6, 0, 0, 0, -0.3, 0.1 }, Waist = { 10, 0, 0 }, Neck = { 8, 0, 0 }, RS = { 150, 0, 20 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -30 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -12, 0, 0, 0, -0.75, -0.2 }, Waist = { -24, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 50, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -40 }, LE = { 60, 0, 0 }, RH = { 40, 0, 10 }, RK = { -70, 0, 0 }, LH = { 40, 0, -10 }, LK = { -70, 0, 0 } },
+					follow = { Root = { -14, 0, 0, 0, -0.8, -0.24 }, Waist = { -26, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 44, 0, 10 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 26, 0, -42 }, LE = { 60, 0, 0 }, RH = { 42, 0, 10 }, RK = { -72, 0, 0 }, LH = { 42, 0, -10 }, LK = { -72, 0, 0 } },
+					trail = "prop", fx = { "dust" }, hitText = "TCHAC !",
+				},
+				-- ↑J : planche levée, il la hisse à deux mains au-dessus de sa tête comme un trophée, nez vers le ciel
+				P_up = {
+					label = "Planche levée", startup = 0.12, active = 0.12, recovery = 0.24,
+					damage = 8, hitbox = box(4.5, 6, 1.5, 3.5), kbBase = 28, kbGrowth = 36, kbAngle = 85,
+					windup = { Root = { 6, 0, 0, 0, -0.4, 0.1 }, Waist = { 10, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 30, 0, 30 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -30 }, LE = { 100, 0, 0 }, LW = { 0, 0, 0 } },
+					strike = { Root = { -6, 0, 0, 0, 0.1, -0.1 }, Waist = { -10, 0, 0 }, Neck = { -26, 0, 0 }, RS = { 175, 0, 10 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 175, 0, -10 }, LE = { 10, 0, 0 }, LW = { 0, 0, 0 } },
+					follow = { Root = { -8, 0, 0, 0, 0.12, -0.12 }, Waist = { -12, 0, 0 }, Neck = { -30, 0, 0 }, RS = { 180, 0, 12 }, RE = { 10, 0, 0 }, RW = { -10, 0, 0 }, LS = { 180, 0, -12 }, LE = { 10, 0, 0 }, LW = { -10, 0, 0 } },
+					trail = "prop", fx = { { "burst", color = SURF, size = 1.5, at = "above" } }, hitText = "TOC !",
+				},
+				-- J en l'air : surf aérien, il saute sur sa planche en plein vol et surfe sur rien, bras écartés
+				P_air = {
+					label = "Surf aérien", startup = 0.1, active = 0.14, recovery = 0.2,
+					damage = 9, hitbox = box(6, 3.5, 1, -1.5), kbBase = 26, kbGrowth = 44, kbAngle = -35,
+					windup = { Root = { 8, 0, 0 }, Waist = { 10, 0, 0 }, RS = { 60, 0, 20 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -40 }, LE = { 60, 0, 0 }, RH = { 60, 0, 10 }, RK = { -100, 0, 0 }, LH = { 60, 0, -10 }, LK = { -100, 0, 0 } },
+					strike = { Root = { -6, 40, 0 }, Waist = { -8, 30, 0 }, Neck = { 6, -30, 0 }, RS = { 20, 0, 80 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -80 }, LE = { 0, 0, 0 }, RH = { 30, 0, 20 }, RK = { -40, 0, 0 }, RA = { 20, 0, 0 }, LH = { 30, 0, -20 }, LK = { -40, 0, 0 }, LA = { 20, 0, 0 } },
+					follow = { Root = { -8, 44, 0 }, Waist = { -10, 34, 0 }, Neck = { 8, -34, 0 }, RS = { 16, 0, 84 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 16, 0, -84 }, LE = { 0, 0, 0 }, RH = { 34, 0, 20 }, RK = { -44, 0, 0 }, RA = { 20, 0, 0 }, LH = { 34, 0, -20 }, LK = { -44, 0, 0 }, LA = { 20, 0, 0 } },
+					trail = "prop", fx = { { "ring", color = WATER, radius = 3, at = "feet" } }, text = "COWABUNGA !", hitText = "BONK !",
+				},
+				-- dash J : glisse de planche, il se jette à plat ventre sur la planche et glisse comme sur une vague
+				P_dash = {
+					label = "Glisse de planche", startup = 0.08, active = 0.16, recovery = 0.26,
+					damage = 10, hitbox = box(6, 3.5, 3, -0.5), kbBase = 30, kbGrowth = 52, kbAngle = 30, selfVelocity = Vector2.new(46, 0),
+					windup = { Root = { -14, 0, 0, 0, -0.4, 0 }, Waist = { -8, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 60, 0, 10 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -20 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -75, 0, 0, 0, -1.3, -0.4 }, Waist = { 6, 0, 0 }, Neck = { 36, 0, 0 }, RS = { 170, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 170, 0, -10 }, LE = { 0, 0, 0 }, RH = { -6, 0, 4 }, RK = { -5, 0, 0 }, RA = { 20, 0, 0 }, LH = { -6, 0, -4 }, LK = { -5, 0, 0 }, LA = { 20, 0, 0 } },
+					follow = { Root = { -78, 0, 0, 0, -1.3, -0.45 }, Waist = { 8, 0, 0 }, Neck = { 38, 0, 0 }, RS = { 174, 0, 12 }, RE = { 0, 0, 0 }, RW = { -8, 0, 0 }, LS = { 174, 0, -12 }, LE = { 0, 0, 0 }, RH = { -8, 0, 4 }, RK = { -10, 0, 0 }, RA = { 20, 0, 0 }, LH = { -8, 0, -4 }, LK = { -10, 0, 0 }, LA = { 20, 0, 0 } },
+					trail = "prop", fx = { "dust", { "particles", tex = "smoke", color = DUNE, at = "root", dir = "front", time = 0.3, speed = 12, rate = 70 } }, text = "YIHAAA !", hitText = "BOUM !",
+				},
+				-- K : planche-batte, il prend la planche à deux mains comme une batte et frappe un grand coup lent et terrible
+				K_neutral = {
+					label = "Planche-batte", startup = 0.24, active = 0.12, recovery = 0.36,
+					damage = 13, hitbox = box(7, 4.5, 4, 0.8), kbBase = 34, kbGrowth = 82, kbAngle = 35,
+					windup = { Root = { 6, -50, 0, 0, -0.3, 0.2 }, Waist = { 8, -54, 0 }, Neck = { 4, 40, 0 }, RS = { 70, 0, 70 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, 50 }, LE = { 80, 0, 0 }, LW = { 0, 0, 0 } },
+					strike = { Root = { -12, 40, 0, 0, -0.4, -0.4 }, Waist = { -14, 44, 0 }, Neck = { -6, -30, 0 }, RS = { 90, 0, -40 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, -60 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { -14, 46, 0, 0, -0.42, -0.45 }, Waist = { -16, 50, 0 }, Neck = { -8, -34, 0 }, RS = { 86, 0, -46 }, RE = { 4, 0, 0 }, RW = { -10, 0, 0 }, LS = { 86, 0, -66 }, LE = { 4, 0, 0 }, LW = { -10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+					trail = "prop", shake = true, fx = { { "burst", color = SURF, size = 2.5, at = "front" }, { "shake", amount = 0.25 } }, text = "HOME RUN !", hitText = "KRAAAK !",
+				},
+				-- →K : pelle de surf, il tient la planche à plat comme une pelle et soulève l'adversaire de bas en haut
+				K_side = {
+					label = "Pelle de surf", startup = 0.2, active = 0.12, recovery = 0.34,
+					damage = 12, hitbox = box(6, 5, 3.5, 1), kbBase = 32, kbGrowth = 70, kbAngle = 60,
+					windup = { Root = { 12, 0, 0, 0, -0.5, 0.2 }, Waist = { 20, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 30, 0, 20 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -20 }, LE = { 40, 0, 0 }, LW = { 0, 0, 0 }, RH = { 50, 0, 10 }, RK = { -80, 0, 0 }, LH = { 50, 0, -10 }, LK = { -80, 0, 0 } },
+					strike = { Root = { -16, 0, 0, 0, -0.2, -0.3 }, Waist = { -24, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 140, 0, 10 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 140, 0, -10 }, LE = { 10, 0, 0 }, LW = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					follow = { Root = { -18, 0, 0, 0, -0.18, -0.34 }, Waist = { -26, 0, 0 }, Neck = { -24, 0, 0 }, RS = { 150, 0, 12 }, RE = { 10, 0, 0 }, RW = { -10, 0, 0 }, LS = { 150, 0, -12 }, LE = { 10, 0, 0 }, LW = { -10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.32 } },
+					trail = "prop", fx = { "dust" }, text = "ET HOP !", hitText = "SOULEVÉ !",
+				},
+				-- ↓K : raclette de sable, accroupi, il racle le sol avec le bord de la planche et envoie une gerbe de sable
+				K_down = {
+					label = "Raclette de sable", startup = 0.16, active = 0.2, recovery = 0.32,
+					damage = 10, hitbox = box(7.5, 2.5, 3.5, -1.6), kbBase = 28, kbGrowth = 55, kbAngle = 70,
+					windup = { Root = { 10, -30, 0, 0, -0.6, 0.1 }, Waist = { 16, -34, 0 }, Neck = { 12, 24, 0 }, RS = { 60, 0, 50 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -30 }, LE = { 60, 0, 0 }, RH = { 60, 0, 10 }, RK = { -90, 0, 0 }, LH = { 60, 0, -10 }, LK = { -90, 0, 0 } },
+					strike = { Root = { 6, 30, 0, 0, -0.7, -0.15 }, Waist = { 10, 34, 0 }, Neck = { 12, -24, 0 }, RS = { 30, 0, -30 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -50 }, LE = { 60, 0, 0 }, RH = { 70, 0, 10 }, RK = { -100, 0, 0 }, LH = { 70, 0, -10 }, LK = { -100, 0, 0 } },
+					follow = { Root = { 6, 36, 0, 0, -0.72, -0.18 }, Waist = { 10, 40, 0 }, Neck = { 14, -28, 0 }, RS = { 26, 0, -36 }, RE = { 14, 0, 0 }, RW = { -10, 0, 0 }, LS = { 26, 0, -54 }, LE = { 60, 0, 0 }, RH = { 72, 0, 10 }, RK = { -102, 0, 0 }, LH = { 72, 0, -10 }, LK = { -102, 0, 0 } },
+					trail = "prop", fx = { "dust", { "particles", tex = "smoke", color = DUNE, at = "front", dir = "front", time = 0.25, speed = 14, rate = 70 } }, hitText = "DU SABLE DANS LES YEUX !",
+				},
+				-- ↑K : planche-catapulte, la planche posée sur son genou, il appuie sur le bout : elle bascule et catapulte vers le ciel
+				K_up = {
+					label = "Planche-catapulte", startup = 0.18, active = 0.12, recovery = 0.34,
+					damage = 12, hitbox = box(5, 6.5, 2, 3), kbBase = 34, kbGrowth = 72, kbAngle = 86,
+					windup = { Root = { 8, 0, 0, 0, -0.35, 0.1 }, Waist = { 12, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 40, 0, 20 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -30 }, LE = { 70, 0, 0 }, RH = { 70, 0, 8 }, RK = { -90, 0, 0 }, FR = { 0, 0, 0, 0, 0.4, 0 } },
+					strike = { Root = { -8, 0, 0, 0, 0.0, -0.1 }, Waist = { -14, 0, 0 }, Neck = { -26, 0, 0 }, RS = { 160, 0, 30 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 120, 0, -20 }, LE = { 20, 0, 0 }, RH = { 40, 0, 8 }, RK = { -60, 0, 0 }, FR = { 0, 0, 0, 0, 0.3, 0 } },
+					follow = { Root = { -10, 0, 0, 0, 0.04, -0.12 }, Waist = { -16, 0, 0 }, Neck = { -30, 0, 0 }, RS = { 166, 0, 34 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 126, 0, -22 }, LE = { 20, 0, 0 }, RH = { 36, 0, 8 }, RK = { -56, 0, 0 }, FR = { 0, 0, 0, 0, 0.26, 0 } },
+					trail = "prop", fx = { { "burst", color = SURF, size = 2, at = "above" } }, text = "ET VOILÀ !", hitText = "CATAPULTÉ !",
+				},
+				-- K en l'air : planche sous les pieds, il saute dessus et pique vers le sol, nez de la planche en bas, comme un plongeoir cassé
+				K_air = {
+					label = "Piqué de planche", startup = 0.14, active = 0.16, recovery = 0.26,
+					damage = 12, hitbox = box(5, 5, 1, -2), kbBase = 28, kbGrowth = 62, kbAngle = -50, selfVelocity = Vector2.new(10, -40),
+					windup = { Root = { 10, 0, 0 }, Waist = { 12, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 170, 0, 20 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 170, 0, -20 }, LE = { 20, 0, 0 }, RH = { 60, 0, 10 }, RK = { -100, 0, 0 }, LH = { 60, 0, -10 }, LK = { -100, 0, 0 } },
+					strike = { Root = { 30, 0, 0 }, Waist = { 10, 0, 0 }, Neck = { -20, 0, 0 }, RS = { -40, 0, 20 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { -40, 0, -20 }, LE = { 10, 0, 0 }, RH = { 20, 0, 10 }, RK = { -20, 0, 0 }, RA = { 30, 0, 0 }, LH = { 20, 0, -10 }, LK = { -20, 0, 0 }, LA = { 30, 0, 0 } },
+					follow = { Root = { 34, 0, 0 }, Waist = { 12, 0, 0 }, Neck = { -24, 0, 0 }, RS = { -44, 0, 22 }, RE = { 10, 0, 0 }, RW = { -10, 0, 0 }, LS = { -44, 0, -22 }, LE = { 10, 0, 0 }, RH = { 22, 0, 10 }, RK = { -22, 0, 0 }, RA = { 30, 0, 0 }, LH = { 22, 0, -10 }, LK = { -22, 0, 0 }, LA = { 30, 0, 0 } },
+					trail = "prop", fx = { { "burst", color = SURF, size = 2, at = "feet" } }, text = "BOMBE !", hitText = "KRAK !",
+				},
+				-- dash K : surf sur sable, debout sur la planche, il dévale la dune en faisant coucou, la planche fauche tout
+				K_dash = {
+					label = "Surf sur sable", startup = 0.1, active = 0.24, recovery = 0.32,
+					damage = 11, hitbox = box(6, 4, 3, -0.5), kbBase = 30, kbGrowth = 62, kbAngle = 38, selfVelocity = Vector2.new(48, 0),
+					windup = { Root = { -8, 0, 0, 0, -0.3, 0.1 }, Waist = { -6, 0, 0 }, Neck = { 4, 0, 0 }, RS = { 60, 0, 10 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -20 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -10, 70, 0, 0, -0.45, -0.3 }, Waist = { -6, 20, 0 }, Neck = { 4, -60, 0 }, RS = { 30, 0, 80 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 160, 0, -30 }, LE = { 40, 0, 0 }, LW = { -40, 0, 0 }, RH = { 40, 0, 20 }, RK = { -50, 0, 0 }, RA = { 10, 0, 0 }, LH = { 40, 0, -20 }, LK = { -50, 0, 0 }, LA = { 10, 0, 0 } },
+					follow = { Root = { -12, 74, 0, 0, -0.48, -0.34 }, Waist = { -8, 24, 0 }, Neck = { 6, -64, 0 }, RS = { 26, 0, 84 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 166, 0, -34 }, LE = { 40, 0, 0 }, LW = { -50, 0, 0 }, RH = { 44, 0, 20 }, RK = { -54, 0, 0 }, RA = { 10, 0, 0 }, LH = { 44, 0, -20 }, LK = { -54, 0, 0 }, LA = { 10, 0, 0 } },
+					trail = "prop", fx = { "dust", { "particles", tex = "smoke", color = DUNE, at = "feet", dir = "front", time = 0.35, speed = 14, rate = 80 } }, text = "COUCOU !", hitText = "FAUCHÉ !",
+				},
+				-- L : grosse vague, il brandit la planche à bout de bras et l'abat d'un grand coup qui déroule sur tout le couloir
+				S_neutral = {
+					label = "Grosse vague", startup = 0.24, active = 0.16, recovery = 0.5,
+					damage = 15, hitbox = box(14, 6, 7, 1), kbBase = 34, kbGrowth = 70, kbAngle = 35,
+					windup = { Root = { 10, 0, 0, 0, -0.25, 0.2 }, Waist = { 16, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 185, 0, 20 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 185, 0, -20 }, LE = { 30, 0, 0 }, LW = { 0, 0, 0 } },
+					strike = { Root = { -16, 0, 0, 0, -0.45, -0.4 }, Waist = { -28, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 70, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, -10 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+					follow = { Root = { -18, 0, 0, 0, -0.5, -0.45 }, Waist = { -32, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 60, 0, 12 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 60, 0, -12 }, LE = { 0, 0, 0 }, LW = { -10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.48 } },
+					trail = "prop", shake = true, fx = { { "beam", color = WATER, length = 16, width = 4, at = "front" }, { "particles", tex = "smoke", color = SNOW, at = "front", dir = "front", time = 0.4, speed = 20, rate = 110 }, { "shake", amount = 0.35 } },
+					text = "GROSSE VAGUE !", hitText = "SPLAAAF !",
+				},
+				-- →L : rouleau, couché sur la planche, il traverse tout le couloir comme sur une vague géante, les tongs qui dépassent
+				S_side = {
+					label = "Rouleau", startup = 0.18, active = 0.4, recovery = 0.5,
+					damage = 14, hitbox = box(14, 6, 7, 0), kbBase = 32, kbGrowth = 70, kbAngle = 30, selfVelocity = Vector2.new(62, 0),
+					windup = { Root = { -10, 0, 0, 0, -0.5, 0.1 }, Waist = { -10, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 40, 0, 20 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -20 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -70, 0, 0, 0, -1.2, -0.4 }, Waist = { 8, 0, 0 }, Neck = { 40, 0, 0 }, RS = { 20, 0, 40 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -40 }, LE = { 60, 0, 0 }, RH = { -10, 0, 4 }, RK = { -40, 0, 0 }, RA = { 20, 0, 0 }, LH = { -10, 0, -4 }, LK = { -40, 0, 0 }, LA = { 20, 0, 0 } },
+					follow = { Root = { -72, 0, 0, 0, -1.2, -0.45 }, Waist = { 10, 0, 0 }, Neck = { 42, 0, 0 }, RS = { 16, 0, 44 }, RE = { 60, 0, 0 }, RW = { -8, 0, 0 }, LS = { 16, 0, -44 }, LE = { 60, 0, 0 }, RH = { -12, 0, 4 }, RK = { -44, 0, 0 }, RA = { 20, 0, 0 }, LH = { -12, 0, -4 }, LK = { -44, 0, 0 }, LA = { 20, 0, 0 } },
+					trail = "prop", fx = { { "beam", color = WATER, length = 14, width = 3, at = "root" }, { "puddle", color = WATER, width = 12 }, { "particles", tex = "smoke", color = SNOW, at = "root", dir = "front", time = 0.4, speed = 14, rate = 90 } },
+					text = "ROULEAU !", hitText = "SCHLAAAF !",
+				},
+				-- ↓L : planche abattue, il saute, la planche à deux mains au-dessus de la tête, et l'écrase à plat sur le sol : onde de choc tout le couloir
+				S_down = {
+					label = "Planche abattue", startup = 0.24, active = 0.16, recovery = 0.5,
+					damage = 14, hitbox = box(14, 4, 7, -1), kbBase = 32, kbGrowth = 68, kbAngle = 55,
+					windup = { Root = { -4, 0, 0, 0, 0.3, 0 }, Waist = { -8, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 185, 0, 16 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 185, 0, -16 }, LE = { 20, 0, 0 }, FR = { 0, 0, 0, 0, 0.3, 0 }, FL = { 0, 0, 0, 0, 0.3, 0 } },
+					strike = { Root = { -20, 0, 0, 0, -0.8, -0.35 }, Waist = { -34, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 40, 0, 12 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -12 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 }, RH = { 40, 0, 10 }, RK = { -60, 0, 0 }, LH = { 40, 0, -10 }, LK = { -60, 0, 0 } },
+					follow = { Root = { -22, 0, 0, 0, -0.85, -0.4 }, Waist = { -36, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 34, 0, 12 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 34, 0, -12 }, LE = { 0, 0, 0 }, LW = { -10, 0, 0 }, RH = { 42, 0, 10 }, RK = { -62, 0, 0 }, LH = { 42, 0, -10 }, LK = { -62, 0, 0 } },
+					trail = "prop", shake = true, fx = { { "beam", color = DUNE, length = 16, width = 3, at = "feet" }, { "ring", color = DUNE, radius = 6, at = "feet" }, { "particles", tex = "smoke", color = DUNE, at = "front", dir = "front", time = 0.35, speed = 18, rate = 100 }, { "shake", amount = 0.4 } },
+					text = "À PLAT !", hitText = "KRAKABOUM !",
+				},
+				-- ↑L : décollage de vague, il fait un aerial : la planche sous les pieds, il part en diagonale vers le ciel sur une vague imaginaire
+				S_up = {
+					label = "Aerial", startup = 0.15, active = 0.3, recovery = 0.45,
+					damage = 13, hitbox = box(10, 11, 3, 4), kbBase = 32, kbGrowth = 48, kbAngle = 80, selfVelocity = Vector2.new(42, 80),
+					windup = { Root = { 10, 0, 0, 0, -0.85, 0.1 }, Waist = { 14, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 20, 0, 30 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -30 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -30, 40, 0, 0, 0.3, 0 }, Waist = { -6, 20, 0 }, Neck = { 26, -30, 0 }, RS = { 150, 0, 50 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -80 }, LE = { 0, 0, 0 }, RH = { 40, 0, 20 }, RK = { -60, 0, 0 }, RA = { 10, 0, 0 }, LH = { 40, 0, -20 }, LK = { -60, 0, 0 }, LA = { 10, 0, 0 } },
+					follow = { Root = { -34, 44, 0, 0, 0.35, 0 }, Waist = { -8, 24, 0 }, Neck = { 30, -34, 0 }, RS = { 156, 0, 54 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 36, 0, -84 }, LE = { 0, 0, 0 }, RH = { 44, 0, 20 }, RK = { -64, 0, 0 }, RA = { 10, 0, 0 }, LH = { 44, 0, -20 }, LK = { -64, 0, 0 }, LA = { 10, 0, 0 } },
+					trail = "prop", fx = { { "burst", color = WATER, size = 3.5, at = "feet" }, { "pillar", color = WATER, height = 10, width = 3, at = "feet" }, { "particles", tex = "smoke", color = SNOW, at = "feet", dir = "down", time = 0.4, speed = 16, rate = 100 } },
+					text = "AERIAL !", hitText = "SURFÉ !",
+				},
+				-- L en l'air : planche piquée, il lâche la planche nez en bas : elle tombe comme une flèche droit sur l'adversaire
+				S_air = {
+					label = "Planche-flèche", kind = "projectile", startup = 0.18, active = 0, recovery = 0.44,
+					damage = 14, kbBase = 28, kbGrowth = 58, kbAngle = -50, selfVelocity = Vector2.new(0, 14),
+					projectile = { speed = 64, angle = -65, gravity = 50, lifetime = 0.8, size = 2.6, color = SURF,
+						visual = { shape = "block", size = 0.3, color = SURF, spin = 2, parts = {
+							{ "block", Vector3.new(1.2, 4.6, 0.2), Vector3.new(0, 0, 0), SURF },
+							{ "block", Vector3.new(0.4, 4.5, 0.22), Vector3.new(0, 0, 0), SURF_STRIPE },
+							{ "block", Vector3.new(0.12, 0.7, 0.6), Vector3.new(0, -1.8, 0.35), WHITE },
+						} } },
+					windup = { Root = { 10, 0, 0 }, Waist = { 14, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 185, 0, 14 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 185, 0, -14 }, LE = { 30, 0, 0 }, RH = { 50, 0, 0 }, RK = { -90, 0, 0 }, LH = { 50, 0, 0 }, LK = { -90, 0, 0 } },
+					strike = { Root = { -14, 0, 0 }, Waist = { -28, 0, 0 }, Neck = { 26, 0, 0 }, RS = { 30, 0, 14 }, RE = { 0, 0, 0 }, RW = { -30, 0, 0 }, LS = { 30, 0, -14 }, LE = { 0, 0, 0 }, LW = { -30, 0, 0 }, RH = { 20, 0, 0 }, RK = { -40, 0, 0 }, LH = { 30, 0, 0 }, LK = { -60, 0, 0 } },
+					follow = { Root = { -18, 0, 0 }, Waist = { -32, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 24, 0, 16 }, RE = { 4, 0, 0 }, RW = { -40, 0, 0 }, LS = { 24, 0, -16 }, LE = { 4, 0, 0 }, LW = { -40, 0, 0 }, RH = { 16, 0, 0 }, RK = { -36, 0, 0 }, LH = { 26, 0, 0 }, LK = { -56, 0, 0 } },
+					hideProp = "surf", fx = { { "burst", color = SURF, size = 2, at = "hand" } }, text = "LARGAGE !", hitText = "TCHAAAC !",
+				},
+				-- Y : tsunami, il frappe le sol de la planche, une vague haute comme une maison déroule sur tout le couloir, Bob debout dessus
+				SUPER = {
+					label = "Tsunami !", startup = 0.4, active = 0.3, recovery = 0.7,
+					damage = 26, hitbox = box(16, 10, 8, 3), kbBase = 46, kbGrowth = 96, kbAngle = 40, armor = true,
+					windup = { Root = { 10, 0, 0, 0, -0.3, 0.2 }, Waist = { 16, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 190, 0, 20 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 190, 0, -20 }, LE = { 30, 0, 0 }, LW = { 0, 0, 0 } },
+					strike = { Root = { -10, 60, 0, 0, 0.3, -0.3 }, Waist = { -8, 30, 0 }, Neck = { 6, -50, 0 }, RS = { 40, 0, 80 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -80 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0.3, -0.4 }, FR = { 0, 0, 0, 0, 0.3, 0 } },
+					follow = { Root = { -12, 64, 0, 0, 0.34, -0.34 }, Waist = { -10, 34, 0 }, Neck = { 8, -54, 0 }, RS = { 36, 0, 84 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 36, 0, -84 }, LE = { 0, 0, 0 }, LW = { -10, 0, 0 }, FL = { 0, 0, 0, 0, 0.32, -0.42 }, FR = { 0, 0, 0, 0, 0.32, 0 } },
+					hold = 0.25, shake = true, trail = "prop", windupFx = { "super", { "text", text = "ÇA MONTE…", color = WATER } },
+					fx = { { "beam", color = WATER, length = 18, width = 6, at = "front" }, { "pillar", color = WATER, height = 14, width = 8, at = "front" }, { "rain", shape = "ball", color = WATER, count = 16, radius = 9, size = 0.5 }, { "puddle", color = WATER, width = 18, time = 2 }, { "symbols", symbols = { "🌊", "🏄", "🐚" }, color = WATER, count = 8, radius = 5, at = "front" }, { "shake", amount = 0.6 } },
+					text = "TSUNAMIIII !", hitText = "ENGLOUTI !",
+				},
+				-- →Y : planche-boomerang, il fait tournoyer la planche comme une hélice et la lance : elle traverse tout le couloir et revient dans sa main
+				SUPER_side = {
+					label = "Planche-boomerang !", kind = "projectile", startup = 0.4, active = 0, recovery = 0.7,
+					damage = 24, kbBase = 44, kbGrowth = 88, kbAngle = 32,
+					projectile = { speed = 80, angle = 0, gravity = 0, lifetime = 0.9, size = 3.6, color = SURF, pierce = true,
+						visual = { shape = "block", size = 0.3, color = SURF, spin = 16, parts = {
+							{ "block", Vector3.new(4.6, 1.2, 0.2), Vector3.new(0, 0, 0), SURF },
+							{ "block", Vector3.new(4.5, 0.4, 0.22), Vector3.new(0, 0, 0), SURF_STRIPE },
+							{ "ball", Vector3.new(0.5, 0.5, 0.26), Vector3.new(1.0, 0, 0), PINK },
+						} } },
+					windup = { Root = { 6, -40, 0, 0, -0.3, 0.2 }, Waist = { 8, -44, 0 }, Neck = { 4, 34, 0 }, RS = { 90, 0, 90 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -40 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -14, 30, 0, 0, -0.4, -0.4 }, Waist = { -16, 34, 0 }, Neck = { -6, -24, 0 }, RS = { 96, 0, -20 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -70 }, LE = { 40, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+					follow = { Root = { -16, 34, 0, 0, -0.42, -0.45 }, Waist = { -18, 38, 0 }, Neck = { -8, -26, 0 }, RS = { 92, 0, -24 }, RE = { 6, 0, 0 }, RW = { -10, 0, 0 }, LS = { 16, 0, -74 }, LE = { 40, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.52 } },
+					hold = 0.2, shake = true, spin = { axis = "y", degrees = 360 }, hideProp = "surf", windupFx = { "super", { "ring", color = SURF, radius = 4, at = "hand" } },
+					fx = { { "burst", color = SURF, size = 4, at = "hand" }, { "beam", color = SURF_STRIPE, length = 16, width = 3, at = "hand" }, { "shake", amount = 0.4 } },
+					text = "ET ÇA REVIENT !", hitText = "WHAP-WHAP-WHAP !",
+				},
+				-- ↑Y : vague géante, il prend son élan sur la planche et remonte une vague verticale, Bob tout en haut en faisant le signe du surfeur
+				SUPER_up = {
+					label = "Vague verticale !", startup = 0.35, active = 0.3, recovery = 0.75,
+					damage = 24, hitbox = box(14, 12, 7, 5), kbBase = 46, kbGrowth = 94, kbAngle = 86, invuln = 0.3, selfVelocity = Vector2.new(0, 62),
+					windup = { Root = { 14, 0, 0, 0, -0.7, 0.1 }, Waist = { 20, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 40, 0, 30 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -30 }, LE = { 60, 0, 0 }, RH = { 70, 0, 10 }, RK = { -100, 0, 0 }, LH = { 70, 0, -10 }, LK = { -100, 0, 0 } },
+					strike = { Root = { -10, 50, 0, 0, 0.5, 0 }, Waist = { -6, 30, 0 }, Neck = { 20, -40, 0 }, RS = { 170, 0, 50 }, RE = { 0, 0, 0 }, RW = { 60, 0, 0 }, LS = { 40, 0, -80 }, LE = { 0, 0, 0 }, RH = { 40, 0, 20 }, RK = { -60, 0, 0 }, RA = { 10, 0, 0 }, LH = { 40, 0, -20 }, LK = { -60, 0, 0 }, LA = { 10, 0, 0 } },
+					follow = { Root = { -12, 54, 0, 0, 0.55, 0 }, Waist = { -8, 34, 0 }, Neck = { 24, -44, 0 }, RS = { 176, 0, 54 }, RE = { 0, 0, 0 }, RW = { 60, 0, 0 }, LS = { 36, 0, -84 }, LE = { 0, 0, 0 }, RH = { 44, 0, 20 }, RK = { -64, 0, 0 }, RA = { 10, 0, 0 }, LH = { 44, 0, -20 }, LK = { -64, 0, 0 }, LA = { 10, 0, 0 } },
+					hold = 0.2, shake = true, trail = "prop", windupFx = { "super" },
+					fx = { { "pillar", color = WATER, height = 24, width = 6, at = "front" }, { "beam", color = WATER, length = 18, width = 5, at = "front" }, { "rain", shape = "ball", color = WATER, count = 14, radius = 9, size = 0.5 }, { "burst", color = SNOW, size = 4, at = "feet" }, { "shake", amount = 0.6 } },
+					text = "SHAKA !", hitText = "AU SOMMET DE LA VAGUE !",
+				},
+				-- ↓Y : enterré dans le sable, il creuse à toute vitesse avec la planche comme une pelle : l'adversaire finit enterré jusqu'au cou
+				SUPER_down = {
+					label = "Enterré dans le sable !", startup = 0.4, active = 0.2, recovery = 0.7,
+					damage = 22, hitbox = box(16, 5, 8, -0.5), kbBase = 36, kbGrowth = 66, kbAngle = 60,
+					status = { name = "rooted", duration = 2.5 },
+					windup = { Root = { 12, 0, 0, 0, -0.55, 0.1 }, Waist = { 18, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 100, 0, 30 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 100, 0, -30 }, LE = { 60, 0, 0 }, RH = { 60, 0, 10 }, RK = { -90, 0, 0 }, LH = { 60, 0, -10 }, LK = { -90, 0, 0 } },
+					strike = { Root = { -18, -30, 0, 0, -0.7, -0.3 }, Waist = { -30, -34, 0 }, Neck = { -8, 24, 0 }, RS = { 30, 0, 50 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -10 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 }, RH = { 70, 0, 10 }, RK = { -100, 0, 0 }, LH = { 70, 0, -10 }, LK = { -100, 0, 0 } },
+					follow = { Root = { -20, 30, 0, 0, -0.74, -0.34 }, Waist = { -32, 34, 0 }, Neck = { -10, -24, 0 }, RS = { 30, 0, -40 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 30, 0, -60 }, LE = { 0, 0, 0 }, LW = { -10, 0, 0 }, RH = { 72, 0, 10 }, RK = { -102, 0, 0 }, LH = { 72, 0, -10 }, LK = { -102, 0, 0 } },
+					hold = 0.3, shake = true, trail = "prop", windupFx = { "super", { "text", text = "CREUSE CREUSE CREUSE", color = DUNE } },
+					fx = { { "beam", color = DUNE, length = 18, width = 5, at = "feet" }, { "particles", tex = "smoke", color = DUNE, at = "front", dir = "all", time = 0.6, speed = 20, rate = 140 }, { "symbols", symbols = { "🏖️", "🦀", "🪣" }, color = YELLOW, count = 8, radius = 5, at = "front" }, { "ring", color = DUNE, radius = 8, at = "feet" }, { "shake", amount = 0.5 } },
+					text = "ENTERRÉ !", hitText = "JUSQU'AU COU !",
+				},
+			},
+			links = {
+				P_neutral = { P = "P_side", K = "K_neutral", S = "S_neutral" },
+				P_side = { P = "P_up", K = "K_side", S = "S_side" },
+				P_down = { P = "P_neutral", K = "K_down", S = "S_down" },
+				K_neutral = { P = "P_neutral", K = "K_side", S = "S_side" },
+				K_side = { P = "P_up", K = "K_up", S = "S_up" },
+				P_dash = { P = "P_side", K = "K_side", S = "S_side" },
+				K_dash = { P = "P_up", K = "K_up", S = "S_up" },
+			},
+		},
+	},
 
 	look = {
 		body = { head = FUR, upper = SHIRT, lower = SHORTS, arms = SHIRT, hands = FACE, legs = FUR, feet = FUR,
@@ -543,6 +1039,25 @@ local data = {
 			follow = { Root = { -18, 0, 0, 0, -0.65, -0.45 }, Waist = { -34, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 55, 0, 15 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 55, 0, -15 }, LE = { 0, 0, 0 } },
 			hold = 0.2, shake = true, windupFx = { "super" }, fx = { { "shake", amount = 0.6 }, { "particles", tex = "smoke", color = SNOW, at = "feet", dir = "all", time = 0.6, speed = 14, rate = 100 } },
 			text = "AVALAAANCHE !", hitText = "BRRRRR !",
+		},
+		-- Super → : Crème solaire indice 1000 ! Il sort un tube de crème gros comme lui, le coince sous son bras et s'assoit dessus :
+		-- un geyser de crème blanche traverse tout le couloir, l'adversaire en ressort tartiné, aveuglé par la crème dans les yeux et glissant partout
+		SUPER_side = {
+			label = "Crème solaire indice 1000 !", kind = "projectile", startup = 0.4, active = 0, recovery = 0.7,
+			damage = 24, kbBase = 40, kbGrowth = 70, kbAngle = 20,
+			projectile = { speed = 78, angle = 0, gravity = 0, lifetime = 0.9, size = 4, color = WHITE, pierce = true,
+				visual = { shape = "ball", size = 3.6, color = WHITE, spin = 5, parts = {
+					{ "ball", Vector3.new(1.4, 1.4, 1.4), Vector3.new(1.4, 0.9, 0), WHITE },
+					{ "ball", Vector3.new(1.1, 1.1, 1.1), Vector3.new(-1.2, -1.0, 0), SNOW },
+					{ "ball", Vector3.new(0.9, 0.9, 0.9), Vector3.new(0.2, -1.5, 0.8), WHITE },
+				} } },
+			status = { name = "slippery", duration = 3 },
+			windup = { Root = { 8, 0, 0, 0, -0.2, 0.2 }, Waist = { 12, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 70, 0, -40 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, 40 }, LE = { 110, 0, 0 }, LW = { 0, 0, 0 } },
+			strike = { Root = { 14, 0, 0, 0, -1.0, 0.1 }, Waist = { 10, 0, 0 }, Neck = { -14, 0, 0 }, RS = { 40, 0, 40 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -40 }, LE = { 60, 0, 0 }, LW = { 0, 0, 0 }, RH = { 90, 0, 14 }, RK = { -90, 0, 0 }, RA = { 10, 0, 0 }, LH = { 90, 0, -14 }, LK = { -90, 0, 0 }, LA = { 10, 0, 0 } },
+			follow = { Root = { 16, 0, 0, 0, -1.05, 0.12 }, Waist = { 12, 0, 0 }, Neck = { -18, 0, 0 }, RS = { 36, 0, 44 }, RE = { 60, 0, 0 }, RW = { -10, 0, 0 }, LS = { 36, 0, -44 }, LE = { 60, 0, 0 }, LW = { -10, 0, 0 }, RH = { 92, 0, 14 }, RK = { -92, 0, 0 }, RA = { 10, 0, 0 }, LH = { 92, 0, -14 }, LK = { -92, 0, 0 }, LA = { 10, 0, 0 } },
+			hold = 0.25, shake = true, windupFx = { "super", { "text", text = "INDICE 1000", color = WHITE } },
+			fx = { { "burst", color = WHITE, size = 4, at = "front" }, { "beam", color = WHITE, length = 16, width = 4, at = "front" }, { "particles", tex = "smoke", color = SNOW, at = "front", dir = "front", time = 0.5, speed = 20, rate = 120 }, { "puddle", color = WHITE, width = 12 }, { "symbols", symbols = { "🧴", "☀️", "🕶️" }, color = YELLOW, count = 6, radius = 4, at = "front" }, { "shake", amount = 0.5 } },
+			text = "TARTINÉ !", hitText = "SPLOTCH ! ÇA GLISSE !",
 		},
 		-- Super ↑ : il abat la glacière sur le sol : un iceberg entier jaillit sur toute la longueur du couloir et emporte l'adversaire au ciel,
 		-- Bob assis au sommet, bras en l'air comme sur un télésiège
