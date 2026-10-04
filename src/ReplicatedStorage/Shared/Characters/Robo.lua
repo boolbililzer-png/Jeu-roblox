@@ -47,6 +47,212 @@ local data = {
 	costume = "Robo",
 	style = "robot",
 
+	------------------------------------------------------------------ Mains nues (sans Caisse Bizarre) : protocole d'autodéfense
+	-- Ses propres J / K et ses combos sans arme (les L et les Y restent ceux de moves). Sans tuyau, R-0B0 se bat comme
+	-- un robot de démonstration : bras-vérins qui se déplient par crans, coups d'antenne, pas de robot, toupie de
+	-- diagnostic, et ses combos finissent par un redémarrage forcé ou un coup de foudre sur l'antenne.
+	bare = {
+		moves = {
+			-- J : bras-vérin, le poing droit se déplie d'un cran sec, coude à 90° puis tout droit, « BIP »
+			P_neutral = {
+				label = "Bras-vérin", startup = 0.07, active = 0.08, recovery = 0.14,
+				damage = 5, hitbox = box(4, 3, 2.8, 0.8), kbBase = 18, kbGrowth = 22, kbAngle = 22,
+				windup = { Root = { 0, 15, 0, 0, -0.2, 0.1 }, Waist = { 0, 10, 0 }, Neck = { 0, -15, 0 }, RS = { 90, 0, 0 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, -10 }, LE = { 90, 0, 0 } },
+				strike = { Root = { -4, -10, 0, 0, -0.2, -0.2 }, Waist = { 0, -10, 0 }, Neck = { 0, 0, 0 }, RS = { 90, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, -10 }, LE = { 90, 0, 0 } },
+				follow = { Root = { -4, -10, 0, 0, -0.2, -0.22 }, Waist = { 0, -10, 0 }, Neck = { 0, 0, 0 }, RS = { 90, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, -10 }, LE = { 90, 0, 0 } },
+				trail = "rightHand", fx = { { "text", text = "BIP", color = CYAN, at = "head" } }, hitText = "TCHAK !",
+			},
+			-- J J : le vérin gauche prend le relais, le buste pivote d'un cran pile de 30°
+			P_combo2 = {
+				label = "Vérin gauche", startup = 0.06, active = 0.08, recovery = 0.14,
+				damage = 5, hitbox = box(4, 3, 2.9, 0.8), kbBase = 18, kbGrowth = 22, kbAngle = 25,
+				windup = { Root = { 0, -15, 0, 0, -0.2, 0.05 }, Waist = { 0, -15, 0 }, Neck = { 0, 15, 0 }, RS = { 90, 0, 10 }, RE = { 90, 0, 0 }, LS = { 90, 0, 0 }, LE = { 90, 0, 0 }, LW = { 0, 0, 0 } },
+				strike = { Root = { -4, 30, 0, 0, -0.2, -0.25 }, Waist = { 0, 15, 0 }, Neck = { 0, 0, 0 }, RS = { 90, 0, 10 }, RE = { 90, 0, 0 }, LS = { 90, 0, 0 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+				follow = { Root = { -4, 30, 0, 0, -0.2, -0.28 }, Waist = { 0, 15, 0 }, Neck = { 0, 0, 0 }, RS = { 90, 0, 10 }, RE = { 90, 0, 0 }, LS = { 90, 0, 0 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+				trail = "leftHand", fx = { { "text", text = "BIP BIP", color = CYAN, at = "head" } }, hitText = "TCHAK-TCHAK !",
+			},
+			-- J J K : redémarrage forcé : il s'éteint d'un coup, tête tombée… puis se rallume bras en V et l'onde éjecte (finition)
+			PPK_combo = {
+				label = "Redémarrage forcé", startup = 0.14, active = 0.12, recovery = 0.3,
+				damage = 9, hitbox = box(6, 5, 1.5, 1), kbBase = 30, kbGrowth = 60, kbAngle = 45,
+				windup = { Root = { -10, 0, 0, 0, -0.6, 0.1 }, Waist = { -30, 0, 0 }, Neck = { -40, 0, 0 }, RS = { -10, 0, 5 }, RE = { 0, 0, 0 }, LS = { -10, 0, -5 }, LE = { 0, 0, 0 } },
+				strike = { Root = { 6, 0, 0, 0, 0.1, 0 }, Waist = { 6, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 150, 0, 40 }, RE = { 0, 0, 0 }, LS = { 150, 0, -40 }, LE = { 0, 0, 0 } },
+				follow = { Root = { 6, 0, 0, 0, 0.12, 0 }, Waist = { 6, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 150, 0, 42 }, RE = { 0, 0, 0 }, LS = { 150, 0, -42 }, LE = { 0, 0, 0 } },
+				hold = 0.12, shake = true,
+				windupFx = { { "text", text = "ARRÊT…", color = RED, at = "head" } },
+				fx = { { "ring", color = CYAN, radius = 6, at = "root" }, { "text", text = "REBOOT !", color = GREEN, at = "head" } },
+				hitText = "BZZZT !",
+			},
+			-- →J : coude en équerre, le bras plié à 90° tourne d'un bloc comme une barrière de péage
+			P_side = {
+				label = "Coude en équerre", startup = 0.09, active = 0.1, recovery = 0.18,
+				damage = 7, hitbox = box(5, 3, 2.8, 0.8), kbBase = 22, kbGrowth = 35, kbAngle = 28, selfVelocity = Vector2.new(16, 0),
+				windup = { Root = { 0, 45, 0, 0, -0.25, 0.15 }, Waist = { 0, 30, 0 }, Neck = { 0, -30, 0 }, RS = { 90, 0, 90 }, RE = { 90, 0, 0 }, LS = { 30, 0, -10 }, LE = { 90, 0, 0 } },
+				strike = { Root = { -4, -30, 0, 0, -0.25, -0.3 }, Waist = { 0, -30, 0 }, Neck = { 0, 15, 0 }, RS = { 90, 0, -10 }, RE = { 90, 0, 0 }, LS = { 30, 0, -10 }, LE = { 90, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+				follow = { Root = { -4, -45, 0, 0, -0.25, -0.34 }, Waist = { 0, -30, 0 }, Neck = { 0, 15, 0 }, RS = { 90, 0, -15 }, RE = { 90, 0, 0 }, LS = { 30, 0, -10 }, LE = { 90, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.32 } },
+				trail = "rightHand", hitText = "CLONK !",
+			},
+			-- ↓J : capteur de vide : plié pile à 90°, il tapote le sol (et les tibias) du bout des doigts, tac-tac
+			P_down = {
+				label = "Capteur de vide", startup = 0.07, active = 0.12, recovery = 0.18,
+				damage = 5, hits = 2, hitbox = box(4.5, 2, 2.6, -1.4), kbBase = 18, kbGrowth = 22, kbAngle = 60,
+				windup = { Root = { -20, 0, 0, 0, -0.5, 0.1 }, Waist = { -45, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 60, 0, 10 }, RE = { 90, 0, 0 }, LS = { 60, 0, -10 }, LE = { 90, 0, 0 } },
+				strike = { Root = { -30, 0, 0, 0, -0.6, -0.15 }, Waist = { -60, 0, 0 }, Neck = { 45, 0, 0 }, RS = { 30, 0, 10 }, RE = { 0, 0, 0 }, RW = { -30, 0, 0 }, LS = { 50, 0, -10 }, LE = { 45, 0, 0 } },
+				follow = { Root = { -30, 0, 0, 0, -0.6, -0.15 }, Waist = { -60, 0, 0 }, Neck = { 45, 0, 0 }, RS = { 50, 0, 10 }, RE = { 45, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -10 }, LE = { 0, 0, 0 }, LW = { -30, 0, 0 } },
+				trail = "bothHands", fx = { { "text", text = "VIDE ?", color = YELLOW, at = "head" } }, hitText = "TAC-TAC !",
+			},
+			-- ↑J : bras-cric : les deux bras montent par crans, coudes à 90°, et soulèvent l'adversaire comme une voiture
+			P_up = {
+				label = "Bras-cric", startup = 0.08, active = 0.1, recovery = 0.2,
+				damage = 6, hitbox = box(4, 5, 1.5, 3), kbBase = 22, kbGrowth = 38, kbAngle = 85,
+				windup = { Root = { 0, 0, 0, 0, -0.45, 0.1 }, Waist = { 0, 0, 0 }, Neck = { -15, 0, 0 }, RS = { 0, 0, 20 }, RE = { 90, 0, 0 }, LS = { 0, 0, -20 }, LE = { 90, 0, 0 } },
+				strike = { Root = { 0, 0, 0, 0, 0.1, 0 }, Waist = { 0, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 180, 0, 15 }, RE = { 0, 0, 0 }, LS = { 180, 0, -15 }, LE = { 0, 0, 0 } },
+				follow = { Root = { 0, 0, 0, 0, 0.12, 0 }, Waist = { 0, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 180, 0, 15 }, RE = { 0, 0, 0 }, LS = { 180, 0, -15 }, LE = { 0, 0, 0 } },
+				trail = "bothHands", fx = { { "particles", tex = "smoke", color = WHITE, dir = "up", at = "feet", time = 0.2, speed = 6, size = 0.6, rate = 60 } },
+				hitText = "CRIC-CRAC !",
+			},
+			-- J en l'air : marteau-pilon : les deux poings joints s'abattent en deux crans nets
+			P_air = {
+				label = "Marteau-pilon", startup = 0.1, active = 0.12, recovery = 0.18,
+				damage = 7, hitbox = box(4.5, 4, 1.5, -1), kbBase = 20, kbGrowth = 32, kbAngle = -40,
+				windup = { Root = { 10, 0, 0 }, Waist = { 10, 0, 0 }, Neck = { 0, 0, 0 }, RS = { 180, 0, -10 }, RE = { 0, 0, 0 }, LS = { 180, 0, 10 }, LE = { 0, 0, 0 }, RH = { 90, 0, 0 }, RK = { -90, 0, 0 }, LH = { 90, 0, 0 }, LK = { -90, 0, 0 } },
+				strike = { Root = { -20, 0, 0 }, Waist = { -20, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 45, 0, -10 }, RE = { 0, 0, 0 }, LS = { 45, 0, 10 }, LE = { 0, 0, 0 }, RH = { 90, 0, 0 }, RK = { -90, 0, 0 }, LH = { 90, 0, 0 }, LK = { -90, 0, 0 } },
+				follow = { Root = { -22, 0, 0 }, Waist = { -22, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 30, 0, -10 }, RE = { 0, 0, 0 }, LS = { 30, 0, 10 }, LE = { 0, 0, 0 }, RH = { 90, 0, 0 }, RK = { -90, 0, 0 }, LH = { 90, 0, 0 }, LK = { -90, 0, 0 } },
+				trail = "bothHands", hitText = "KLANG !",
+			},
+			-- dash J : prise de courant : lancé, deux doigts tendus devant comme une fiche, il « se branche » sur l'adversaire
+			P_dash = {
+				label = "Prise de courant", startup = 0.08, active = 0.16, recovery = 0.24,
+				damage = 7, hitbox = box(5, 3, 3, 0.8), kbBase = 24, kbGrowth = 38, kbAngle = 30, selfVelocity = Vector2.new(36, 0),
+				windup = { Root = { -10, 0, 0, 0, -0.3, 0.15 }, Waist = { -10, 0, 0 }, Neck = { 0, 0, 0 }, RS = { 45, 0, 0 }, RE = { 90, 0, 0 }, LS = { 45, 0, 0 }, LE = { 90, 0, 0 } },
+				strike = { Root = { -20, 0, 0, 0, -0.35, -0.4 }, Waist = { -10, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 90, 0, -5 }, RE = { 0, 0, 0 }, LS = { 90, 0, 5 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+				follow = { Root = { -20, 0, 0, 0, -0.35, -0.42 }, Waist = { -10, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 90, 0, -5 }, RE = { 0, 0, 0 }, LS = { 90, 0, 5 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+				trail = "bothHands",
+				fx = { { "particles", tex = "spark", color = YELLOW, dir = "front", at = "hand", time = 0.15, speed = 10, size = 0.4, rate = 80 } },
+				hitText = "BZZT !",
+			},
+			-- K : genou hydraulique : le genou monte en trois crans, pschhh, et cogne à la fin
+			K_neutral = {
+				label = "Genou hydraulique", startup = 0.12, active = 0.1, recovery = 0.24,
+				damage = 8, hitbox = box(4, 3, 2.3, 0.2), kbBase = 24, kbGrowth = 45, kbAngle = 50,
+				windup = { Root = { 0, 0, 0, 0, -0.15, 0.1 }, Waist = { 0, 0, 0 }, RS = { 0, 0, 10 }, RE = { 90, 0, 0 }, LS = { 0, 0, -10 }, LE = { 90, 0, 0 }, RH = { 45, 0, 0 }, RK = { -45, 0, 0 } },
+				strike = { Root = { 0, 0, 0, 0, 0, -0.1 }, Waist = { 0, 0, 0 }, RS = { -20, 0, 10 }, RE = { 90, 0, 0 }, LS = { -20, 0, -10 }, LE = { 90, 0, 0 }, RH = { 110, 0, 0 }, RK = { -90, 0, 0 } },
+				follow = { Root = { 0, 0, 0, 0, 0, -0.12 }, Waist = { 0, 0, 0 }, RS = { -20, 0, 10 }, RE = { 90, 0, 0 }, LS = { -20, 0, -10 }, LE = { 90, 0, 0 }, RH = { 110, 0, 0 }, RK = { -90, 0, 0 } },
+				hold = 0.06, trail = "rightLeg",
+				fx = { { "particles", tex = "smoke", color = WHITE, dir = "up", at = "feet", time = 0.2, speed = 5, size = 0.6, rate = 60 } },
+				hitText = "PSCHHH-TONK !",
+			},
+			-- K K : pas de robot : grand pas raide, la jambe tendue s'abat comme un tampon encreur
+			K_combo2 = {
+				label = "Pas de robot", startup = 0.1, active = 0.1, recovery = 0.22,
+				damage = 7, hitbox = box(4.5, 3, 2.8, -0.6), kbBase = 22, kbGrowth = 40, kbAngle = 35, selfVelocity = Vector2.new(12, 0),
+				windup = { Root = { 0, 0, 0, 0, 0.1, 0.1 }, Waist = { 0, 0, 0 }, Neck = { 0, 0, 0 }, RS = { -30, 0, 0 }, RE = { 90, 0, 0 }, LS = { 30, 0, 0 }, LE = { 90, 0, 0 }, RH = { 90, 0, 0 }, RK = { 0, 0, 0 } },
+				strike = { Root = { 0, 0, 0, 0, -0.1, -0.3 }, Waist = { 0, 0, 0 }, Neck = { 0, 0, 0 }, RS = { 30, 0, 0 }, RE = { 90, 0, 0 }, LS = { -30, 0, 0 }, LE = { 90, 0, 0 }, RH = { 30, 0, 0 }, RK = { 0, 0, 0 }, RA = { 0, 0, 0 } },
+				follow = { Root = { 0, 0, 0, 0, -0.12, -0.32 }, Waist = { 0, 0, 0 }, Neck = { 0, 0, 0 }, RS = { 30, 0, 0 }, RE = { 90, 0, 0 }, LS = { -30, 0, 0 }, LE = { 90, 0, 0 }, RH = { 25, 0, 0 }, RK = { 0, 0, 0 }, RA = { 0, 0, 0 } },
+				trail = "rightFoot", fx = { "dust" }, hitText = "KLONK !",
+			},
+			-- K K K : vibreur : il appuie sur son bouton marche, tout son châssis tremble et martèle l'adversaire (2 touches)
+			K_combo3 = {
+				label = "Mode vibreur", startup = 0.12, active = 0.22, recovery = 0.3,
+				damage = 9, hits = 2, hitbox = box(4.5, 4, 2, 0.4), kbBase = 28, kbGrowth = 55, kbAngle = 40,
+				windup = { Root = { 0, 0, 0, 0, -0.2, 0.1 }, Waist = { 0, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 20, 0, 20 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 0, 0, -20 }, LE = { 90, 0, 0 } },
+				strike = { Root = { -6, 0, 0, 0, -0.25, -0.25 }, Waist = { 0, 0, 0 }, Neck = { 0, 0, 0 }, RS = { 90, 0, 45 }, RE = { 90, 0, 0 }, LS = { 90, 0, -45 }, LE = { 90, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.2 }, FR = { 0, 0, 0, 0, 0, 0.1 } },
+				follow = { Root = { -6, 0, 0, 0, -0.25, -0.27 }, Waist = { 0, 0, 0 }, Neck = { 0, 0, 0 }, RS = { 90, 0, 45 }, RE = { 90, 0, 0 }, LS = { 90, 0, -45 }, LE = { 90, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.2 }, FR = { 0, 0, 0, 0, 0, 0.1 } },
+				hold = 0.1, wobble = true, trail = "body",
+				fx = { { "ring", color = YELLOW, radius = 3, at = "root" } },
+				text = "BRRRRR", hitText = "BZZZZ !",
+			},
+			-- K J : toupie de diagnostic : bras en équerre, le bassin tourne d'un tour complet comme une tourelle (2 touches)
+			KP_combo = {
+				label = "Toupie de diagnostic", startup = 0.1, active = 0.2, recovery = 0.26,
+				damage = 8, hits = 2, hitbox = box(6, 3.5, 1, 0.6), kbBase = 24, kbGrowth = 45, kbAngle = 35,
+				windup = { Root = { 0, 30, 0, 0, -0.2, 0.1 }, Waist = { 0, 15, 0 }, Neck = { 0, -30, 0 }, RS = { 90, 0, 90 }, RE = { 90, 0, 0 }, LS = { 90, 0, -90 }, LE = { 90, 0, 0 } },
+				strike = { Root = { 0, 0, 0, 0, -0.2, -0.1 }, Waist = { 0, 0, 0 }, Neck = { 0, 0, 0 }, RS = { 90, 0, 90 }, RE = { 0, 0, 0 }, LS = { 90, 0, -90 }, LE = { 0, 0, 0 } },
+				follow = { Root = { 0, -15, 0, 0, -0.2, -0.12 }, Waist = { 0, 0, 0 }, Neck = { 0, 15, 0 }, RS = { 90, 0, 90 }, RE = { 0, 0, 0 }, LS = { 90, 0, -90 }, LE = { 0, 0, 0 } },
+				spin = { axis = "y", degrees = 360 }, trail = "bothHands",
+				fx = { { "text", text = "DIAGNOSTIC…", color = CYAN, at = "head" } }, hitText = "TCHAK-TCHAK !",
+			},
+			-- K J K : paratonnerre : il lève l'antenne, un éclair la frappe et il assène un coup de tête électrisé (finition)
+			KPK_combo = {
+				label = "Antenne-paratonnerre", startup = 0.14, active = 0.12, recovery = 0.32,
+				damage = 10, hitbox = box(4.5, 4, 2.4, 1.6), kbBase = 30, kbGrowth = 60, kbAngle = 40, selfVelocity = Vector2.new(14, 0),
+				windup = { Root = { 10, 0, 0, 0, 0, 0.2 }, Waist = { 15, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 0, 0, 30 }, RE = { 90, 0, 0 }, LS = { 0, 0, -30 }, LE = { 90, 0, 0 } },
+				strike = { Root = { -15, 0, 0, 0, -0.2, -0.4 }, Waist = { -20, 0, 0 }, Neck = { -30, 0, 0 }, RS = { -30, 0, 20 }, RE = { 0, 0, 0 }, LS = { -30, 0, -20 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+				follow = { Root = { -16, 0, 0, 0, -0.22, -0.42 }, Waist = { -20, 0, 0 }, Neck = { -30, 0, 0 }, RS = { -30, 0, 20 }, RE = { 0, 0, 0 }, LS = { -30, 0, -20 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+				shake = true, trail = "head",
+				windupFx = { { "pillar", color = YELLOW, height = 10, width = 1, at = "above" } },
+				fx = { { "particles", tex = "spark", color = YELLOW, dir = "all", at = "head", time = 0.25, speed = 10, size = 0.4, rate = 90 } },
+				hitText = "ZZZAP !",
+			},
+			-- →K : jambe-compas : de profil, la jambe raide pivote sur la hanche et trace un arc parfait
+			K_side = {
+				label = "Jambe-compas", startup = 0.13, active = 0.12, recovery = 0.26,
+				damage = 9, hitbox = box(6, 3, 3.4, 0.2), kbBase = 26, kbGrowth = 50, kbAngle = 30, selfVelocity = Vector2.new(12, 0),
+				windup = { Root = { 0, 90, 0, 0, -0.2, 0.15 }, Waist = { 0, 0, 0 }, Neck = { 0, -90, 0 }, RS = { 0, 0, 30 }, RE = { 90, 0, 0 }, LS = { 0, 0, -30 }, LE = { 90, 0, 0 }, RH = { 0, 0, 20 } },
+				strike = { Root = { 0, 90, 20, 0, -0.1, -0.1 }, Waist = { 0, 0, 0 }, Neck = { 0, -90, 0 }, RS = { 0, 0, 60 }, RE = { 90, 0, 0 }, LS = { 0, 0, -60 }, LE = { 90, 0, 0 }, RH = { 0, 0, 90 }, RK = { 0, 0, 0 } },
+				follow = { Root = { 0, 90, 22, 0, -0.1, -0.12 }, Waist = { 0, 0, 0 }, Neck = { 0, -90, 0 }, RS = { 0, 0, 60 }, RE = { 90, 0, 0 }, LS = { 0, 0, -60 }, LE = { 90, 0, 0 }, RH = { 0, 0, 92 }, RK = { 0, 0, 0 } },
+				trail = "rightLeg", hitText = "ZIIING !",
+			},
+			-- ↓K : chute de tension : il s'éteint et s'effondre raide comme une planche sur les tibias adverses
+			K_down = {
+				label = "Chute de tension", startup = 0.12, active = 0.14, recovery = 0.32,
+				damage = 8, hitbox = box(6, 2, 3, -1.4), kbBase = 26, kbGrowth = 45, kbAngle = 70,
+				windup = { Root = { 0, 0, 0, 0, -0.1, 0 }, Waist = { 0, 0, 0 }, Neck = { -30, 0, 0 }, RS = { 0, 0, 5 }, RE = { 0, 0, 0 }, LS = { 0, 0, -5 }, LE = { 0, 0, 0 } },
+				strike = { Root = { -70, 0, 0, 0, -1.2, -0.8 }, Waist = { 0, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 180, 0, 5 }, RE = { 0, 0, 0 }, LS = { 180, 0, -5 }, LE = { 0, 0, 0 } },
+				follow = { Root = { -75, 0, 0, 0, -1.25, -0.85 }, Waist = { 0, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 180, 0, 5 }, RE = { 0, 0, 0 }, LS = { 180, 0, -5 }, LE = { 0, 0, 0 } },
+				trail = "body", fx = { "dust", { "text", text = "BATTERIE 0 %", color = RED, at = "head" } }, hitText = "BLONG !",
+			},
+			-- ↑K : barrière de parking : la jambe tendue se lève d'un bloc jusqu'à la verticale, bip, ça passe
+			K_up = {
+				label = "Barrière de parking", startup = 0.13, active = 0.12, recovery = 0.3,
+				damage = 9, hitbox = box(4, 6, 1.4, 3.2), kbBase = 26, kbGrowth = 55, kbAngle = 88,
+				windup = { Root = { 0, 0, 0, 0, -0.2, 0.15 }, Waist = { 0, 0, 0 }, RS = { 0, 0, 40 }, RE = { 90, 0, 0 }, LS = { 0, 0, -40 }, LE = { 90, 0, 0 }, RH = { 0, 0, 0 }, RK = { 0, 0, 0 } },
+				strike = { Root = { 15, 0, 0, 0, -0.1, 0.1 }, Waist = { 10, 0, 0 }, RS = { -30, 0, 45 }, RE = { 0, 0, 0 }, LS = { -30, 0, -45 }, LE = { 0, 0, 0 }, RH = { 170, 0, 0 }, RK = { 0, 0, 0 }, RA = { 0, 0, 0 } },
+				follow = { Root = { 15, 0, 0, 0, -0.1, 0.12 }, Waist = { 10, 0, 0 }, RS = { -30, 0, 45 }, RE = { 0, 0, 0 }, LS = { -30, 0, -45 }, LE = { 0, 0, 0 }, RH = { 172, 0, 0 }, RK = { 0, 0, 0 }, RA = { 0, 0, 0 } },
+				hold = 0.05, trail = "rightFoot", fx = { { "text", text = "BIP", color = GREEN, at = "head" } }, hitText = "BARRIÈRE !",
+			},
+			-- K en l'air : ciseaux binaires : les jambes raides s'ouvrent et se ferment, 0, 1, 0, 1 (2 touches)
+			K_air = {
+				label = "Ciseaux binaires", startup = 0.1, active = 0.2, recovery = 0.2,
+				damage = 8, hits = 2, hitbox = box(5, 3.5, 2.2, -0.6), kbBase = 22, kbGrowth = 40, kbAngle = 38,
+				windup = { Root = { 0, 0, 0 }, Waist = { 0, 0, 0 }, RS = { 90, 0, 30 }, RE = { 90, 0, 0 }, LS = { 90, 0, -30 }, LE = { 90, 0, 0 }, RH = { 0, 0, 0 }, RK = { 0, 0, 0 }, LH = { 0, 0, 0 }, LK = { 0, 0, 0 } },
+				strike = { Root = { 10, 0, 0 }, Waist = { 0, 0, 0 }, RS = { 90, 0, 30 }, RE = { 90, 0, 0 }, LS = { 90, 0, -30 }, LE = { 90, 0, 0 }, RH = { 90, 0, 0 }, RK = { 0, 0, 0 }, LH = { -20, 0, 0 }, LK = { 0, 0, 0 } },
+				follow = { Root = { 10, 0, 0 }, Waist = { 0, 0, 0 }, RS = { 90, 0, 30 }, RE = { 90, 0, 0 }, LS = { 90, 0, -30 }, LE = { 90, 0, 0 }, RH = { -20, 0, 0 }, RK = { 0, 0, 0 }, LH = { 90, 0, 0 }, LK = { 0, 0, 0 } },
+				trail = "rightFoot", fx = { { "text", text = "0101", color = GREEN, at = "head" } }, hitText = "CLIC-CLAC !",
+			},
+			-- dash K : il marche sur son propre cordon, glisse et part raide comme une planche, pieds devant
+			K_dash = {
+				label = "Pris dans le cordon", startup = 0.1, active = 0.24, recovery = 0.3,
+				damage = 9, hitbox = box(6, 2.5, 3, -0.8), kbBase = 28, kbGrowth = 55, kbAngle = 40, selfVelocity = Vector2.new(48, 8),
+				windup = { Root = { 0, 0, 0, 0, -0.1, 0 }, Waist = { 0, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 45, 0, 30 }, RE = { 90, 0, 0 }, LS = { 45, 0, -30 }, LE = { 90, 0, 0 } },
+				strike = { Root = { 60, 0, 0, 0, -0.9, 0.2 }, Waist = { 0, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 180, 0, 20 }, RE = { 0, 0, 0 }, LS = { 180, 0, -20 }, LE = { 0, 0, 0 }, RH = { 30, 0, 0 }, RK = { 0, 0, 0 }, LH = { 30, 0, 0 }, LK = { 0, 0, 0 } },
+				follow = { Root = { 62, 0, 0, 0, -0.92, 0.22 }, Waist = { 0, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 180, 0, 20 }, RE = { 0, 0, 0 }, LS = { 180, 0, -20 }, LE = { 0, 0, 0 }, RH = { 30, 0, 0 }, RK = { 0, 0, 0 }, LH = { 30, 0, 0 }, LK = { 0, 0, 0 } },
+				trail = "bothFeet", fx = { "dust" }, hitText = "ERREUR !",
+			},
+		},
+		-- Combos à mains nues : J J K (vérins puis redémarrage forcé), K K K (pas de robot puis vibreur),
+		-- K J K (toupie puis paratonnerre). Un L pour finir envoie le spécial du perso (ses L restent les siens).
+		links = {
+			P_neutral = { P = "P_combo2", K = "K_side", S = "S_neutral" },
+			P_combo2 = { K = "PPK_combo", P = "P_side", down_K = "K_down", S = "S_side" },
+			PPK_combo = { S = "S_neutral" },
+			K_neutral = { K = "K_combo2", P = "KP_combo", S = "S_down" },
+			K_combo2 = { K = "K_combo3", up_P = "P_up", S = "S_side" },
+			K_combo3 = { P = "P_up", S = "S_up" },
+			KP_combo = { K = "KPK_combo", P = "P_side", S = "S_neutral" },
+			KPK_combo = { S = "S_up" },
+			P_side = { K = "K_combo2", P = "P_neutral", S = "S_side" },
+			P_down = { P = "P_up", K = "K_down", S = "S_down" },
+			P_up = { K = "K_up", S = "S_up" },
+			K_side = { P = "KP_combo", S = "S_side" },
+			K_down = { P = "P_up", K = "K_up", S = "S_down" },
+			K_up = { S = "S_up" },
+			P_dash = { P = "P_combo2", K = "K_side", S = "S_side" },
+			K_dash = { K = "K_up", P = "P_up", S = "S_up" },
+			P_air = { K = "K_air", S = "S_air" },
+			K_air = { P = "P_air", S = "S_air" },
+		},
+	},
 	------------------------------------------------------------------ Les 3 armes de la Caisse Bizarre (une au hasard)
 	-- n° 1 : le tuyau et sa brosse (ses coups sont ceux de moves). n° 2 : la serpillière industrielle à vapeur, lourde et lente,
 	-- grands balayages qui éjectent loin et savonnent le sol. n° 3 : le canon à chaussettes perdues, tout en projectiles rapides

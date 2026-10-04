@@ -63,6 +63,211 @@ local data = {
 	costume = "Pigeon",
 	style = "pigeon",
 	flying = true, -- sait voler : un saut en l\'air de plus, plané, et un ↑L très puissant
+	------------------------------------------------------------------ Mains nues (sans Caisse Bizarre) : bagarre de parvis
+	-- Ses propres J / K et ses combos sans arme (les L et les Y restent ceux de moves). Sans baguette, le Roi se bat
+	-- comme le pigeon qu'il est au fond : hochements de cou, claques d'ailes, jabot bombé, coups de croupion,
+	-- grattage de pavé ; ses combos finissent en roucoulade assourdissante ou en grand ébrouement de plumes.
+	bare = {
+		moves = {
+			-- J : coup de couronne : le cou part en avant comme un pigeon qui marche, la capsule-couronne cogne du front
+			P_neutral = {
+				label = "Coup de couronne", startup = 0.07, active = 0.08, recovery = 0.14,
+				damage = 5, hitbox = box(4, 3, 2.6, 1.3), kbBase = 18, kbGrowth = 22, kbAngle = 25,
+				windup = { Root = { 4, 0, 0, 0, -0.1, 0.12 }, Waist = { 10, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 20, 0, 40 }, RE = { 60, 0, 0 }, LS = { 20, 0, -40 }, LE = { 60, 0, 0 }, LW = { 0, 0, -30 } },
+				strike = { Root = { -8, 0, 0, 0, -0.15, -0.25 }, Waist = { -10, 0, 0 }, Neck = { -35, 0, 0 }, RS = { -10, 0, 50 }, RE = { 50, 0, 0 }, LS = { -10, 0, -50 }, LE = { 50, 0, 0 }, LW = { 0, 0, -30 }, FL = { 0, 0, 0, 0, 0, -0.2 } },
+				follow = { Root = { -8, 0, 0, 0, -0.15, -0.27 }, Waist = { -10, 0, 0 }, Neck = { -38, 0, 0 }, RS = { -12, 0, 52 }, RE = { 50, 0, 0 }, LS = { -12, 0, -52 }, LE = { 50, 0, 0 }, LW = { 0, 0, -30 }, FL = { 0, 0, 0, 0, 0, -0.22 } },
+				trail = "head", hitText = "TOC !",
+			},
+			-- J J : claque d'aile : le bras-aile droit se déplie d'un coup et gifle en revers, plumes au vent
+			P_combo2 = {
+				label = "Claque d'aile", startup = 0.06, active = 0.08, recovery = 0.14,
+				damage = 5, hitbox = box(4.5, 3.5, 2.6, 0.8), kbBase = 18, kbGrowth = 22, kbAngle = 30,
+				windup = { Root = { 0, 30, 0, 0, -0.1, 0.1 }, Waist = { 0, 20, 0 }, Neck = { 10, -20, 0 }, RS = { 40, 0, -30 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -50 }, LE = { 40, 0, 0 }, LW = { 0, 0, -30 } },
+				strike = { Root = { -4, -25, 0, 0, -0.15, -0.25 }, Waist = { -6, -20, 0 }, Neck = { 0, 15, 0 }, RS = { 90, 0, 80 }, RE = { 10, 0, 0 }, RW = { 0, 0, 20 }, LS = { 20, 0, -50 }, LE = { 40, 0, 0 }, LW = { 0, 0, -30 }, FL = { 0, 0, 0, 0, 0, -0.25 } },
+				follow = { Root = { -4, -30, 0, 0, -0.15, -0.27 }, Waist = { -6, -24, 0 }, Neck = { 0, 18, 0 }, RS = { 85, 0, 95 }, RE = { 10, 0, 0 }, RW = { 0, 0, 30 }, LS = { 20, 0, -50 }, LE = { 40, 0, 0 }, LW = { 0, 0, -30 }, FL = { 0, 0, 0, 0, 0, -0.27 } },
+				trail = "rightHand", fx = { { "particles", tex = "smoke", color = FEATHER, dir = "front", at = "hand", time = 0.15, speed = 8, size = 0.5, rate = 60 } },
+				hitText = "FLAP !",
+			},
+			-- J K : coup de croupion : il fait volte-face, queue de cape en l'air, et percute du derrière emplumé
+			PK_combo = {
+				label = "Coup de croupion", startup = 0.1, active = 0.1, recovery = 0.22,
+				damage = 7, hitbox = box(4.5, 3, 2, 0.2), kbBase = 24, kbGrowth = 40, kbAngle = 32, selfVelocity = Vector2.new(10, 0),
+				windup = { Root = { 0, 90, 0, 0, -0.15, 0.1 }, Waist = { 10, 30, 0 }, Neck = { 10, -60, 0 }, RS = { 40, 0, 50 }, RE = { 40, 0, 0 }, LS = { 40, 0, -50 }, LE = { 40, 0, 0 } },
+				strike = { Root = { 25, 180, 0, 0, -0.3, -0.2 }, Waist = { 20, 0, 0 }, Neck = { 30, -120, 0 }, RS = { -40, 0, 60 }, RE = { 20, 0, 0 }, LS = { -40, 0, -60 }, LE = { 20, 0, 0 } },
+				follow = { Root = { 28, 180, 0, 0, -0.32, -0.22 }, Waist = { 22, 0, 0 }, Neck = { 30, -120, 0 }, RS = { -45, 0, 62 }, RE = { 20, 0, 0 }, LS = { -45, 0, -62 }, LE = { 20, 0, 0 } },
+				wobble = true, trail = "body",
+				fx = { { "particles", tex = "smoke", color = FEATHER, dir = "all", at = "root", time = 0.2, speed = 8 } },
+				hitText = "POUF !",
+			},
+			-- J K K : roucoulade assourdissante : il gonfle le cou, le jabot enfle… ROUCOUUU, l'onde éjecte (finition)
+			PKK_combo = {
+				label = "Roucoulade assourdissante", startup = 0.14, active = 0.12, recovery = 0.32,
+				damage = 10, hitbox = box(6, 4.5, 2.4, 1), kbBase = 30, kbGrowth = 60, kbAngle = 38,
+				windup = { Root = { 10, 0, 0, 0, -0.1, 0.2 }, Waist = { 20, 0, 0 }, Neck = { 35, 0, 0 }, RS = { 10, 0, 30 }, RE = { 100, 0, 0 }, LS = { 10, 0, -30 }, LE = { 100, 0, 0 } },
+				strike = { Root = { -10, 0, 0, 0, 0, -0.3 }, Waist = { -14, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 60, 0, 90 }, RE = { 0, 0, 0 }, LS = { 60, 0, -90 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+				follow = { Root = { -10, 0, 0, 0, 0, -0.32 }, Waist = { -14, 0, 0 }, Neck = { -22, 0, 0 }, RS = { 62, 0, 92 }, RE = { 0, 0, 0 }, LS = { 62, 0, -92 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.32 } },
+				hold = 0.12, shake = true,
+				fx = { { "ring", color = NECK, radius = 6, at = "front" }, { "text", text = "ROUCOUUUU !", color = NECK, at = "head" } },
+				hitText = "BROUOUOU !",
+			},
+			-- →J : jabot bombé : torse gonflé, ailes rejetées en arrière, il bouscule l'adversaire du poitrail
+			P_side = {
+				label = "Jabot bombé", startup = 0.09, active = 0.12, recovery = 0.18,
+				damage = 7, hitbox = box(4.5, 3.5, 2.4, 0.8), kbBase = 22, kbGrowth = 35, kbAngle = 28, selfVelocity = Vector2.new(20, 0),
+				windup = { Root = { 10, 0, 0, 0, -0.1, 0.2 }, Waist = { 15, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 20, 0, 30 }, RE = { 60, 0, 0 }, LS = { 20, 0, -30 }, LE = { 60, 0, 0 } },
+				strike = { Root = { 10, 0, 0, 0, -0.05, -0.4 }, Waist = { 20, 0, 0 }, Neck = { 25, 0, 0 }, RS = { -50, 0, 30 }, RE = { 10, 0, 0 }, LS = { -50, 0, -30 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+				follow = { Root = { 10, 0, 0, 0, -0.05, -0.42 }, Waist = { 22, 0, 0 }, Neck = { 26, 0, 0 }, RS = { -55, 0, 32 }, RE = { 10, 0, 0 }, LS = { -55, 0, -32 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+				trail = "body", hitText = "BOMF !",
+			},
+			-- ↓J : picorage de miettes : plié en deux, le cou plonge vers le sol et picore deux fois les orteils adverses
+			P_down = {
+				label = "Picorage de miettes", startup = 0.07, active = 0.12, recovery = 0.18,
+				damage = 5, hits = 2, hitbox = box(4, 2, 2.6, -1.3), kbBase = 18, kbGrowth = 22, kbAngle = 60,
+				windup = { Root = { -10, 0, 0, 0, -0.4, 0.1 }, Waist = { -30, 0, 0 }, Neck = { 0, 0, 0 }, RS = { -20, 0, 40 }, RE = { 40, 0, 0 }, LS = { -20, 0, -40 }, LE = { 40, 0, 0 } },
+				strike = { Root = { -20, 0, 0, 0, -0.5, -0.15 }, Waist = { -45, 0, 0 }, Neck = { -40, 0, 0 }, RS = { -40, 0, 50 }, RE = { 30, 0, 0 }, LS = { -40, 0, -50 }, LE = { 30, 0, 0 } },
+				follow = { Root = { -18, 0, 0, 0, -0.48, -0.15 }, Waist = { -40, 0, 0 }, Neck = { -20, 0, 0 }, RS = { -40, 0, 50 }, RE = { 30, 0, 0 }, LS = { -40, 0, -50 }, LE = { 30, 0, 0 } },
+				wobble = true, trail = "head", fx = { { "toss", shape = "ball", color = CRUMB, count = 4, size = 0.25, speed = 10 } },
+				hitText = "PIC-PIC !",
+			},
+			-- ↑J : plumes hérissées : il s'ébouriffe d'un coup, ailes dressées au ciel, toutes les plumes en pointe
+			P_up = {
+				label = "Plumes hérissées", startup = 0.08, active = 0.1, recovery = 0.2,
+				damage = 6, hitbox = box(4.5, 5, 1.4, 3), kbBase = 22, kbGrowth = 38, kbAngle = 85,
+				windup = { Root = { 0, 0, 0, 0, -0.35, 0.05 }, Waist = { -10, 0, 0 }, Neck = { -20, 0, 0 }, RS = { -10, 0, 20 }, RE = { 90, 0, 0 }, LS = { -10, 0, -20 }, LE = { 90, 0, 0 } },
+				strike = { Root = { 6, 0, 0, 0, 0.1, 0 }, Waist = { 6, 0, 0 }, Neck = { 15, 0, 0 }, RS = { 160, 0, 40 }, RE = { 10, 0, 0 }, LS = { 160, 0, -40 }, LE = { 10, 0, 0 } },
+				follow = { Root = { 6, 0, 0, 0, 0.12, 0 }, Waist = { 6, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 165, 0, 45 }, RE = { 10, 0, 0 }, LS = { 165, 0, -45 }, LE = { 10, 0, 0 } },
+				shake = true, trail = "bothHands",
+				fx = { { "particles", tex = "smoke", color = FEATHER, dir = "up", at = "root", time = 0.25, speed = 10, size = 0.6, rate = 70 } },
+				hitText = "FRRRT !",
+			},
+			-- J en l'air : gifle de rémige : une aile part d'en haut et gifle en diagonale vers le bas
+			P_air = {
+				label = "Gifle de rémige", startup = 0.09, active = 0.12, recovery = 0.18,
+				damage = 7, hitbox = box(5, 4, 2, -0.6), kbBase = 20, kbGrowth = 32, kbAngle = -35,
+				windup = { Root = { 10, 20, 0 }, Waist = { 10, 15, 0 }, Neck = { 0, -10, 0 }, RS = { 170, 0, 60 }, RE = { 10, 0, 0 }, LS = { 60, 0, -60 }, LE = { 20, 0, 0 }, RH = { 30, 0, 0 }, RK = { -60, 0, 0 }, LH = { 10, 0, 0 }, LK = { -30, 0, 0 } },
+				strike = { Root = { -15, -15, 0 }, Waist = { -15, -15, 0 }, Neck = { -10, 10, 0 }, RS = { 40, 0, 10 }, RE = { 10, 0, 0 }, LS = { 60, 0, -60 }, LE = { 20, 0, 0 }, RH = { 40, 0, 0 }, RK = { -70, 0, 0 }, LH = { 20, 0, 0 }, LK = { -40, 0, 0 } },
+				follow = { Root = { -17, -18, 0 }, Waist = { -16, -18, 0 }, Neck = { -10, 12, 0 }, RS = { 25, 0, 0 }, RE = { 14, 0, 0 }, LS = { 60, 0, -60 }, LE = { 20, 0, 0 }, RH = { 40, 0, 0 }, RK = { -70, 0, 0 }, LH = { 20, 0, 0 }, LK = { -40, 0, 0 } },
+				trail = "rightHand", hitText = "SCHLAF !",
+			},
+			-- dash J : pigeon pressé : il fonce en dodelinant de la tête et percute du crâne, cou tendu à l'horizontale
+			P_dash = {
+				label = "Pigeon pressé", startup = 0.08, active = 0.16, recovery = 0.24,
+				damage = 7, hitbox = box(5, 3, 3, 1), kbBase = 24, kbGrowth = 38, kbAngle = 30, selfVelocity = Vector2.new(36, 0),
+				windup = { Root = { -10, 0, 0, 0, -0.2, 0.15 }, Waist = { -10, 0, 0 }, Neck = { 25, 0, 0 }, RS = { -30, 0, 30 }, RE = { 30, 0, 0 }, LS = { -30, 0, -30 }, LE = { 30, 0, 0 } },
+				strike = { Root = { -25, 0, 0, 0, -0.3, -0.4 }, Waist = { -20, 0, 0 }, Neck = { -30, 0, 0 }, RS = { -60, 0, 40 }, RE = { 10, 0, 0 }, LS = { -60, 0, -40 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+				follow = { Root = { -26, 0, 0, 0, -0.3, -0.42 }, Waist = { -20, 0, 0 }, Neck = { -32, 0, 0 }, RS = { -62, 0, 42 }, RE = { 10, 0, 0 }, LS = { -62, 0, -42 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+				wobble = true, trail = "head", fx = { "dust" }, hitText = "POUSSE-TOI !",
+			},
+			-- K : grattage de pavé : la patte gratte le sol vers l'avant et envoie gravillons et miettes dans les tibias
+			K_neutral = {
+				label = "Grattage de pavé", startup = 0.11, active = 0.1, recovery = 0.24,
+				damage = 8, hitbox = box(4.5, 2.5, 2.6, -0.9), kbBase = 24, kbGrowth = 45, kbAngle = 35,
+				windup = { Root = { 6, 0, 0, 0, -0.15, 0.15 }, Waist = { 10, 0, 0 }, Neck = { 25, 0, 0 }, RS = { 20, 0, 40 }, RE = { 50, 0, 0 }, LS = { 20, 0, -40 }, LE = { 50, 0, 0 }, RH = { -20, 0, 0 }, RK = { -70, 0, 0 }, RA = { -20, 0, 0 } },
+				strike = { Root = { -4, 0, 0, 0, -0.2, -0.1 }, Waist = { 0, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 10, 0, 50 }, RE = { 50, 0, 0 }, LS = { 10, 0, -50 }, LE = { 50, 0, 0 }, RH = { 55, 0, 0 }, RK = { -15, 0, 0 }, RA = { 20, 0, 0 } },
+				follow = { Root = { -4, 0, 0, 0, -0.2, -0.12 }, Waist = { 0, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 10, 0, 52 }, RE = { 50, 0, 0 }, LS = { 10, 0, -52 }, LE = { 50, 0, 0 }, RH = { 60, 0, 0 }, RK = { -10, 0, 0 }, RA = { 25, 0, 0 } },
+				trail = "rightFoot", fx = { { "toss", shape = "ball", color = FEATHER_DARK, count = 5, size = 0.25, speed = 16 } },
+				hitText = "GRAT-GRAT !",
+			},
+			-- K K : petit trot royal : deux petits coups de patte rapides, le cou qui dodeline à chaque pas (2 touches)
+			K_combo2 = {
+				label = "Petit trot royal", startup = 0.08, active = 0.16, recovery = 0.2,
+				damage = 7, hits = 2, hitbox = box(4.5, 2.5, 2.6, -0.8), kbBase = 20, kbGrowth = 35, kbAngle = 35, selfVelocity = Vector2.new(10, 0),
+				windup = { Root = { 0, 0, 0, 0, 0, 0.1 }, Waist = { 6, 0, 0 }, Neck = { 25, 0, 0 }, RS = { -20, 0, 40 }, RE = { 40, 0, 0 }, LS = { -20, 0, -40 }, LE = { 40, 0, 0 }, RH = { 40, 0, 0 }, RK = { -60, 0, 0 } },
+				strike = { Root = { -4, 0, 0, 0, -0.1, -0.2 }, Waist = { 0, 0, 0 }, Neck = { -20, 0, 0 }, RS = { -30, 0, 45 }, RE = { 40, 0, 0 }, LS = { -30, 0, -45 }, LE = { 40, 0, 0 }, RH = { 60, 0, 0 }, RK = { -10, 0, 0 }, LH = { 30, 0, 0 }, LK = { -50, 0, 0 } },
+				follow = { Root = { -4, 0, 0, 0, -0.1, -0.22 }, Waist = { 0, 0, 0 }, Neck = { 20, 0, 0 }, RS = { -30, 0, 45 }, RE = { 40, 0, 0 }, LS = { -30, 0, -45 }, LE = { 40, 0, 0 }, RH = { 20, 0, 0 }, RK = { -40, 0, 0 }, LH = { 60, 0, 0 }, LK = { -10, 0, 0 } },
+				trail = "bothFeet", hitText = "TIP-TAP !",
+			},
+			-- K K K : ébrouement royal : il s'ébroue de la couronne aux pattes, les plumes giclent et l'adversaire avec (finition)
+			K_combo3 = {
+				label = "Ébrouement royal", startup = 0.13, active = 0.2, recovery = 0.32,
+				damage = 10, hits = 2, hitbox = box(6, 4.5, 1.5, 0.8), kbBase = 30, kbGrowth = 60, kbAngle = 45,
+				windup = { Root = { 0, 0, 0, 0, -0.3, 0.1 }, Waist = { 10, 0, 0 }, Neck = { 30, 0, 0 }, RS = { -10, 0, 10 }, RE = { 100, 0, 0 }, LS = { -10, 0, -10 }, LE = { 100, 0, 0 }, RH = { 10, 0, 0 }, RK = { -20, 0, 0 } },
+				strike = { Root = { 0, 20, 10, 0, -0.1, -0.1 }, Waist = { -6, 20, 10 }, Neck = { -10, -30, 10 }, RS = { 110, 0, 90 }, RE = { 20, 0, 0 }, LS = { 110, 0, -90 }, LE = { 20, 0, 0 }, RH = { 0, 0, 30 }, RK = { 0, 0, 0 } },
+				follow = { Root = { 0, -20, -10, 0, -0.1, -0.1 }, Waist = { -6, -20, -10 }, Neck = { -10, 30, -10 }, RS = { 100, 0, 95 }, RE = { 20, 0, 0 }, LS = { 100, 0, -95 }, LE = { 20, 0, 0 }, RH = { 0, 0, 20 }, RK = { 0, 0, 0 } },
+				hold = 0.08, wobble = true, trail = "body",
+				fx = { { "particles", tex = "smoke", color = FEATHER, dir = "all", at = "root", time = 0.35, speed = 12, size = 0.7, rate = 90 }, { "symbols", symbols = { "👑" } } },
+				hitText = "FRRROUF !",
+			},
+			-- K J : ailes en ciseaux : les deux bras-ailes s'ouvrent grand puis se referment devant lui comme une paire de ciseaux
+			KP_combo = {
+				label = "Ailes en ciseaux", startup = 0.1, active = 0.1, recovery = 0.24,
+				damage = 8, hitbox = box(4.5, 3.5, 2.4, 0.9), kbBase = 24, kbGrowth = 45, kbAngle = 35,
+				windup = { Root = { 6, 0, 0, 0, -0.1, 0.15 }, Waist = { 10, 0, 0 }, Neck = { 15, 0, 0 }, RS = { 80, 0, 100 }, RE = { 10, 0, 0 }, LS = { 80, 0, -100 }, LE = { 10, 0, 0 } },
+				strike = { Root = { -6, 0, 0, 0, -0.15, -0.25 }, Waist = { -8, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 90, 0, -20 }, RE = { 0, 0, 0 }, LS = { 90, 0, 20 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.25 } },
+				follow = { Root = { -6, 0, 0, 0, -0.15, -0.27 }, Waist = { -8, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 90, 0, -28 }, RE = { 0, 0, 0 }, LS = { 90, 0, 28 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.27 } },
+				trail = "bothHands", fx = { { "swarm", shape = "ball", color = FEATHER, count = 2, distance = 4, size = 0.5, height = 2 } },
+				hitText = "CLAP-CLAP !",
+			},
+			-- →K : patte de flamant raté : debout sur une patte, il détend l'autre sur le côté, ailes en balancier
+			K_side = {
+				label = "Patte de flamant", startup = 0.13, active = 0.12, recovery = 0.28,
+				damage = 9, hitbox = box(5.5, 3, 3.2, 0.2), kbBase = 26, kbGrowth = 50, kbAngle = 30, selfVelocity = Vector2.new(14, 0),
+				windup = { Root = { 0, 80, 0, 0, -0.1, 0.15 }, Waist = { 0, 0, -10 }, Neck = { 10, -70, 0 }, RS = { 60, 0, 100 }, RE = { 10, 0, 0 }, LS = { 60, 0, -100 }, LE = { 10, 0, 0 }, RH = { 50, 0, 0 }, RK = { -100, 0, 0 } },
+				strike = { Root = { 0, 90, 20, 0, -0.05, -0.1 }, Waist = { 0, 0, -10 }, Neck = { 10, -80, 0 }, RS = { 120, 0, 100 }, RE = { 10, 0, 0 }, LS = { 20, 0, -100 }, LE = { 10, 0, 0 }, RH = { 10, 0, 80 }, RK = { -5, 0, 0 }, RA = { -20, 0, 0 } },
+				follow = { Root = { 0, 90, 22, 0, -0.05, -0.12 }, Waist = { 0, 0, -10 }, Neck = { 10, -80, 0 }, RS = { 124, 0, 100 }, RE = { 10, 0, 0 }, LS = { 16, 0, -100 }, LE = { 10, 0, 0 }, RH = { 10, 0, 84 }, RK = { -2, 0, 0 }, RA = { -20, 0, 0 } },
+				trail = "rightFoot", hitText = "ROUCOUP !",
+			},
+			-- ↓K : couvée royale : il s'assoit de tout son poids comme sur un œuf, l'adversaire en dessous
+			K_down = {
+				label = "Couvée royale", startup = 0.12, active = 0.14, recovery = 0.3,
+				damage = 8, hitbox = box(5, 2, 1.5, -1.5), kbBase = 26, kbGrowth = 45, kbAngle = 70,
+				windup = { Root = { 0, 0, 0, 0, 0.3, 0 }, Waist = { 10, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 40, 0, 60 }, RE = { 30, 0, 0 }, LS = { 40, 0, -60 }, LE = { 30, 0, 0 } },
+				strike = { Root = { 10, 0, 0, 0, -1.1, 0 }, Waist = { 10, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 10, 0, 40 }, RE = { 60, 0, 0 }, LS = { 10, 0, -40 }, LE = { 60, 0, 0 }, RH = { 90, 0, 20 }, RK = { -90, 0, 0 }, LH = { 90, 0, -20 }, LK = { -90, 0, 0 } },
+				follow = { Root = { 10, 0, 0, 0, -1.12, 0 }, Waist = { 12, 0, 0 }, Neck = { 32, 0, 0 }, RS = { 8, 0, 42 }, RE = { 60, 0, 0 }, LS = { 8, 0, -42 }, LE = { 60, 0, 0 }, RH = { 90, 0, 22 }, RK = { -90, 0, 0 }, LH = { 90, 0, -22 }, LK = { -90, 0, 0 } },
+				hold = 0.1, trail = "body", fx = { "dust", { "symbols", symbols = { "🥚" } } }, hitText = "COUVÉ !",
+			},
+			-- ↑K : décollage raté : grands battements d'ailes, il décolle de vingt centimètres et ses pattes fouettent le ciel
+			K_up = {
+				label = "Décollage raté", startup = 0.13, active = 0.12, recovery = 0.3,
+				damage = 9, hitbox = box(4.5, 6, 1, 3.3), kbBase = 26, kbGrowth = 55, kbAngle = 87,
+				windup = { Root = { 0, 0, 0, 0, -0.35, 0.1 }, Waist = { 10, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 150, 0, 60 }, RE = { 10, 0, 0 }, LS = { 150, 0, -60 }, LE = { 10, 0, 0 }, RH = { 30, 0, 0 }, RK = { -60, 0, 0 } },
+				strike = { Root = { 25, 0, 0, 0, 0.5, 0.1 }, Waist = { 10, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 20, 0, 70 }, RE = { 10, 0, 0 }, LS = { 20, 0, -70 }, LE = { 10, 0, 0 }, RH = { 150, 0, 0 }, RK = { -5, 0, 0 }, RA = { 10, 0, 0 }, LH = { 30, 0, 0 }, LK = { -40, 0, 0 } },
+				follow = { Root = { 27, 0, 0, 0, 0.5, 0.12 }, Waist = { 10, 0, 0 }, Neck = { -22, 0, 0 }, RS = { 10, 0, 72 }, RE = { 10, 0, 0 }, LS = { 10, 0, -72 }, LE = { 10, 0, 0 }, RH = { 156, 0, 0 }, RK = { -2, 0, 0 }, RA = { 10, 0, 0 }, LH = { 32, 0, 0 }, LK = { -40, 0, 0 } },
+				trail = "rightFoot", fx = { { "particles", tex = "smoke", color = FEATHER, dir = "down", at = "root", time = 0.2, speed = 8, size = 0.5, rate = 60 } },
+				hitText = "PFFIOU !",
+			},
+			-- K en l'air : freinage d'atterrissage : ailes ouvertes en parachute, les deux pattes tendues devant pour se poser… sur lui
+			K_air = {
+				label = "Freinage d'atterrissage", startup = 0.1, active = 0.18, recovery = 0.2,
+				damage = 8, hitbox = box(5, 3.5, 2.2, -0.8), kbBase = 22, kbGrowth = 40, kbAngle = 35,
+				windup = { Root = { 10, 0, 0 }, Waist = { 10, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 100, 0, 80 }, RE = { 10, 0, 0 }, LS = { 100, 0, -80 }, LE = { 10, 0, 0 }, RH = { 80, 0, 0 }, RK = { -100, 0, 0 }, LH = { 80, 0, 0 }, LK = { -100, 0, 0 } },
+				strike = { Root = { 20, 0, 0 }, Waist = { 10, 0, 0 }, Neck = { 0, 0, 0 }, RS = { 150, 0, 90 }, RE = { 10, 0, 0 }, LS = { 150, 0, -90 }, LE = { 10, 0, 0 }, RH = { 75, 0, 10 }, RK = { -5, 0, 0 }, RA = { 20, 0, 0 }, LH = { 75, 0, -10 }, LK = { -5, 0, 0 }, LA = { 20, 0, 0 } },
+				follow = { Root = { 22, 0, 0 }, Waist = { 10, 0, 0 }, Neck = { 0, 0, 0 }, RS = { 154, 0, 92 }, RE = { 10, 0, 0 }, LS = { 154, 0, -92 }, LE = { 10, 0, 0 }, RH = { 78, 0, 12 }, RK = { -2, 0, 0 }, RA = { 20, 0, 0 }, LH = { 78, 0, -12 }, LK = { -2, 0, 0 }, LA = { 20, 0, 0 } },
+				trail = "bothFeet", hitText = "PAF-PAF !",
+			},
+			-- dash K : rase-mottes : il plane au ras des pavés, ailes en flèche, et fauche des deux pattes
+			K_dash = {
+				label = "Rase-mottes", startup = 0.1, active = 0.24, recovery = 0.3,
+				damage = 9, hitbox = box(6, 2.5, 3, -0.8), kbBase = 28, kbGrowth = 55, kbAngle = 40, selfVelocity = Vector2.new(48, 8),
+				windup = { Root = { -10, 0, 0, 0, -0.3, 0.1 }, Waist = { -10, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 60, 0, 90 }, RE = { 10, 0, 0 }, LS = { 60, 0, -90 }, LE = { 10, 0, 0 } },
+				strike = { Root = { 30, 0, 0, 0, -0.8, 0.1 }, Waist = { 0, 0, 0 }, Neck = { -20, 0, 0 }, RS = { -30, 0, 70 }, RE = { 0, 0, 0 }, LS = { -30, 0, -70 }, LE = { 0, 0, 0 }, RH = { 80, 0, 0 }, RK = { 0, 0, 0 }, RA = { 10, 0, 0 }, LH = { 70, 0, 0 }, LK = { -10, 0, 0 } },
+				follow = { Root = { 32, 0, 0, 0, -0.82, 0.12 }, Waist = { 0, 0, 0 }, Neck = { -20, 0, 0 }, RS = { -32, 0, 72 }, RE = { 0, 0, 0 }, LS = { -32, 0, -72 }, LE = { 0, 0, 0 }, RH = { 84, 0, 0 }, RK = { 0, 0, 0 }, RA = { 10, 0, 0 }, LH = { 74, 0, 0 }, LK = { -10, 0, 0 } },
+				trail = "bothFeet", fx = { "dust" }, hitText = "VRRROUCOU !",
+			},
+		},
+		-- Combos à mains nues : J J (couronne, claque d'aile), J K K (croupion puis roucoulade assourdissante),
+		-- K K K (grattage, petit trot, ébrouement), K J (ailes en ciseaux). Un L pour finir envoie le spécial du perso.
+		links = {
+			P_neutral = { P = "P_combo2", K = "PK_combo", S = "S_neutral" },
+			P_combo2 = { P = "P_side", K = "PK_combo", down_P = "P_down", S = "S_side" },
+			PK_combo = { K = "PKK_combo", P = "P_up", S = "S_neutral" },
+			PKK_combo = { S = "S_up" },
+			K_neutral = { K = "K_combo2", P = "KP_combo", S = "S_down" },
+			K_combo2 = { K = "K_combo3", P = "KP_combo", S = "S_side" },
+			K_combo3 = { S = "S_neutral" },
+			KP_combo = { P = "P_up", K = "K_up", S = "S_side" },
+			P_side = { P = "P_combo2", K = "K_side", S = "S_side" },
+			P_down = { P = "P_up", K = "K_down", S = "S_down" },
+			P_up = { K = "K_up", S = "S_up" },
+			K_side = { P = "PK_combo", S = "S_side" },
+			K_down = { P = "P_down", K = "K_up", S = "S_down" },
+			K_up = { S = "S_up" },
+			P_dash = { P = "P_combo2", K = "K_side", S = "S_side" },
+			K_dash = { P = "P_up", S = "S_up" },
+			P_air = { K = "K_air", S = "S_air" },
+			K_air = { P = "P_air", S = "S_air" },
+		},
+	},
 	------------------------------------------------------------------ Les 3 armes de la Caisse Bizarre (une au hasard)
 	-- n° 1 : la baguette de pain (ses coups sont ceux de moves). n° 2 : le sceptre à perchoir, lourd et lent, qui encaisse pendant les
 	-- spéciaux et éjecte loin. n° 3 : l'ombrelle de cour, rapide et courte, escrime précieuse et envols à la Poppins.

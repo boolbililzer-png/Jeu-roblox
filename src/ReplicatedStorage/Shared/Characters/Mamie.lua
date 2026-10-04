@@ -48,6 +48,188 @@ local data = {
 	costume = "Mamie",
 	style = "granny",
 	flying = true, -- sait voler : un saut en l\'air de plus, plané, et un ↑L très puissant
+	------------------------------------------------------------------ Mains nues (sans Caisse Bizarre) : la mémé du marché
+	-- Ses propres J / K et ses combos sans arme (les L et les Y restent ceux de moves). Sans sac ni canne, Mamie
+	-- joue des coudes pointus, du chignon, du dentier qui claque, de la hanche en titane et des bisous baveux.
+	-- Combos : J J K (coudes puis morsure), K J K (bisous puis tape dans le dos), K K (rock'n'roll), ↓J ↑J.
+	bare = {
+		moves = {
+			-- J : coude pointu planté entre les côtes, voûtée, l'autre main sur les reins
+			P_neutral = {
+				label = "Coude pointu", startup = 0.07, active = 0.08, recovery = 0.14,
+				damage = 5, hitbox = box(3.6, 3, 2.2, 0.6), kbBase = 16, kbGrowth = 22, kbAngle = 22,
+				windup = { Root = { -6, 22, 0, 0, -0.15, 0.12 }, Waist = { -16, 26, 0 }, Neck = { 14, -16, 0 }, RS = { 40, 0, 10 }, RE = { 140, 0, 0 }, LS = { -30, 0, -20 }, LE = { 90, 0, 0 } },
+				strike = { Root = { -10, -18, 0, 0, -0.18, -0.2 }, Waist = { -18, -26, 0 }, Neck = { 16, 14, 0 }, RS = { 95, 0, -40 }, RE = { 150, 0, 0 }, LS = { -32, 0, -22 }, LE = { 95, 0, 0 } },
+				follow = { Root = { -10, -22, 0, 0, -0.2, -0.24 }, Waist = { -20, -30, 0 }, Neck = { 18, 18, 0 }, RS = { 92, 0, -48 }, RE = { 150, 0, 0 }, LS = { -32, 0, -22 }, LE = { 95, 0, 0 } },
+				trail = "rightHand", hitText = "POC !",
+			},
+			-- J J : l'autre coude, elle se tortille comme pour se faufiler à la caisse du marché
+			P_combo2 = {
+				label = "Coude de la file d'attente", startup = 0.06, active = 0.08, recovery = 0.14,
+				damage = 5, hitbox = box(3.6, 3, 2.4, 0.6), kbBase = 16, kbGrowth = 22, kbAngle = 28,
+				windup = { Root = { -6, -22, 0, 0, -0.15, 0.1 }, Waist = { -16, -26, 0 }, Neck = { 14, 16, 0 }, RS = { -20, 0, 20 }, RE = { 80, 0, 0 }, LS = { 40, 0, -10 }, LE = { 140, 0, 0 } },
+				strike = { Root = { -10, 18, 0, 0, -0.18, -0.22 }, Waist = { -18, 28, 0 }, Neck = { 16, -12, 0 }, RS = { -24, 0, 22 }, RE = { 85, 0, 0 }, LS = { 95, 0, 40 }, LE = { 150, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.25 } },
+				follow = { Root = { -12, 24, 0, 0, -0.2, -0.26 }, Waist = { -20, 32, 0 }, Neck = { 18, -16, 0 }, RS = { -26, 0, 24 }, RE = { 85, 0, 0 }, LS = { 92, 0, 48 }, LE = { 150, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.28 } },
+				trail = "bothHands", text = "PARDON !", hitText = "POC-POC !",
+			},
+			-- J J K : elle claque du dentier deux fois sur le nez de l'adversaire (finition)
+			PPK_combo = {
+				label = "Clac du dentier", startup = 0.11, active = 0.16, recovery = 0.3,
+				damage = 9, hits = 2, hitbox = box(3.5, 3, 2.2, 1.4), kbBase = 28, kbGrowth = 55, kbAngle = 40, selfVelocity = Vector2.new(10, 0),
+				windup = { Root = { 6, 0, 0, 0, -0.1, 0.2 }, Waist = { 10, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 20, 0, 40 }, RE = { 60, 0, 0 }, LS = { 20, 0, -40 }, LE = { 60, 0, 0 } },
+				strike = { Root = { -14, 0, 0, 0, -0.15, -0.35 }, Waist = { -24, 0, 0 }, Neck = { -20, 0, 0 }, RS = { -30, 0, 30 }, RE = { 20, 0, 0 }, LS = { -30, 0, -30 }, LE = { 20, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.35 } },
+				follow = { Root = { -16, 0, 0, 0, -0.16, -0.4 }, Waist = { -26, 0, 0 }, Neck = { -8, 0, 0 }, RS = { -34, 0, 34 }, RE = { 20, 0, 0 }, LS = { -34, 0, -34 }, LE = { 20, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+				hold = 0.08, trail = "head", fx = { { "symbols", symbols = { "🦷", "🦷" }, color = WHITE, count = 4, radius = 2 } }, hitText = "CLAC CLAC !",
+			},
+			-- K : coup de hanche en titane, elle se déhanche d'un coup sec
+			K_neutral = {
+				label = "Hanche en titane", startup = 0.11, active = 0.1, recovery = 0.24,
+				damage = 7, hitbox = box(4, 3, 2, 0), kbBase = 22, kbGrowth = 40, kbAngle = 30,
+				windup = { Root = { -4, 40, 6, 0.3, -0.2, 0.1 }, Waist = { -10, 20, 0 }, Neck = { 12, -30, 0 }, RS = { 30, 0, 50 }, RE = { 90, 0, 0 }, LS = { 30, 0, -50 }, LE = { 90, 0, 0 }, RH = { 10, 0, 0 }, RK = { -20, 0, 0 } },
+				strike = { Root = { -4, 80, -14, -0.4, -0.2, -0.2 }, Waist = { -12, 30, 10 }, Neck = { 14, -60, 0 }, RS = { 20, 0, 70 }, RE = { 100, 0, 0 }, LS = { 20, 0, -70 }, LE = { 100, 0, 0 }, LH = { 10, 0, -10 }, LK = { -20, 0, 0 } },
+				follow = { Root = { -4, 84, -16, -0.45, -0.2, -0.22 }, Waist = { -12, 32, 12 }, Neck = { 14, -64, 0 }, RS = { 18, 0, 72 }, RE = { 100, 0, 0 }, LS = { 18, 0, -72 }, LE = { 100, 0, 0 }, LH = { 12, 0, -12 }, LK = { -22, 0, 0 } },
+				wobble = true, trail = "body", hitText = "CRAC !",
+			},
+			-- K K : rock'n'roll de 1958, coup de hanche de l'autre côté avec un petit saut
+			K_combo2 = {
+				label = "Rock'n'roll de 1958", startup = 0.1, active = 0.12, recovery = 0.26,
+				damage = 8, hitbox = box(4.5, 3, 2.2, 0.2), kbBase = 24, kbGrowth = 44, kbAngle = 38,
+				windup = { Root = { -4, -40, -6, -0.3, -0.25, 0.1 }, Waist = { -10, -20, 0 }, Neck = { 12, 30, 0 }, RS = { 120, 0, 40 }, RE = { 60, 0, 0 }, LS = { 20, 0, -40 }, LE = { 90, 0, 0 }, LH = { 20, 0, 0 }, LK = { -60, 0, 0 } },
+				strike = { Root = { -2, -80, 14, 0.4, 0.1, -0.2 }, Waist = { -8, -30, -10 }, Neck = { 12, 60, 0 }, RS = { 160, 0, 30 }, RE = { 20, 0, 0 }, LS = { 30, 0, -60 }, LE = { 80, 0, 0 }, RH = { 20, 0, 0 }, RK = { -50, 0, 0 } },
+				follow = { Root = { -2, -84, 16, 0.45, 0, -0.22 }, Waist = { -8, -32, -12 }, Neck = { 12, 64, 0 }, RS = { 165, 0, 34 }, RE = { 20, 0, 0 }, LS = { 30, 0, -62 }, LE = { 80, 0, 0 }, RH = { 10, 0, 0 }, RK = { -30, 0, 0 } },
+				fx = { { "symbols", symbols = { "♪", "♫" }, color = SHAWL, count = 4, radius = 3 } }, trail = "body", hitText = "BE-BOP !",
+			},
+			-- K J : gros bisous baveux sur les deux joues, elle tient la tête à deux mains
+			KP_combo = {
+				label = "Bisous forcés", startup = 0.09, active = 0.16, recovery = 0.22,
+				damage = 6, hits = 2, hitbox = box(3.5, 3.5, 2, 1), kbBase = 16, kbGrowth = 26, kbAngle = 35,
+				windup = { Root = { -4, 0, 0, 0, -0.1, 0.1 }, Waist = { -8, 0, 0 }, Neck = { 8, 0, 0 }, RS = { 70, 0, 50 }, RE = { 70, 0, 0 }, LS = { 70, 0, -50 }, LE = { 70, 0, 0 } },
+				strike = { Root = { -10, 14, 0, 0, 0.05, -0.25 }, Waist = { -14, 10, 0 }, Neck = { -16, 20, 0 }, RS = { 100, 0, 15 }, RE = { 50, 0, 0 }, LS = { 100, 0, -15 }, LE = { 50, 0, 0 }, FR = { 0, 0, 0, 0, 0.15, 0 }, FL = { 0, 0, 0, 0, 0.15, 0 } },
+				follow = { Root = { -10, -14, 0, 0, 0.05, -0.25 }, Waist = { -14, -10, 0 }, Neck = { -16, -20, 0 }, RS = { 100, 0, 15 }, RE = { 50, 0, 0 }, LS = { 100, 0, -15 }, LE = { 50, 0, 0 }, FR = { 0, 0, 0, 0, 0.15, 0 }, FL = { 0, 0, 0, 0, 0.15, 0 } },
+				fx = { { "symbols", symbols = { "💋", "💋" }, color = SLIPPER, count = 3, radius = 2 } }, hitText = "SMOUAC SMOUAC !",
+			},
+			-- K J K : la grande tape dans le dos qui « remet d'aplomb » (finition qui éjecte)
+			KPK_combo = {
+				label = "Tape dans le dos", startup = 0.13, active = 0.1, recovery = 0.32,
+				damage = 10, hitbox = box(4.5, 3.5, 2.6, 0.8), kbBase = 30, kbGrowth = 62, kbAngle = 42, selfVelocity = Vector2.new(12, 0),
+				windup = { Root = { 6, 30, 0, 0, -0.05, 0.25 }, Waist = { 8, 34, 0 }, Neck = { 20, -20, 0 }, RS = { 170, 0, 60 }, RE = { 50, 0, 0 }, LS = { 30, 0, -30 }, LE = { 60, 0, 0 } },
+				strike = { Root = { -16, -20, 0, 0, -0.35, -0.4 }, Waist = { -28, -26, 0 }, Neck = { 24, 14, 0 }, RS = { 60, 0, -10 }, RE = { 0, 0, 0 }, RW = { -30, 0, 0 }, LS = { 20, 0, -40 }, LE = { 70, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+				follow = { Root = { -18, -24, 0, 0, -0.4, -0.44 }, Waist = { -30, -30, 0 }, Neck = { 26, 18, 0 }, RS = { 40, 0, -14 }, RE = { 5, 0, 0 }, RW = { -40, 0, 0 }, LS = { 20, 0, -42 }, LE = { 70, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.44 } },
+				trail = "rightHand", fx = { { "burst", color = SHAWL, size = 2.5, at = "front" } }, text = "TIENS-TOI DROIT !", hitText = "VLAN !",
+			},
+			-- →J : coup de chignon, elle fonce tête baissée et le chignon fait bélier
+			P_side = {
+				label = "Chignon-bélier", startup = 0.1, active = 0.1, recovery = 0.2,
+				damage = 7, hitbox = box(4, 3, 2.8, 1.2), kbBase = 22, kbGrowth = 36, kbAngle = 26, selfVelocity = Vector2.new(20, 0),
+				windup = { Root = { 8, 0, 0, 0, -0.1, 0.2 }, Waist = { 10, 0, 0 }, Neck = { 20, 0, 0 }, RS = { -30, 0, 20 }, RE = { 60, 0, 0 }, LS = { -30, 0, -20 }, LE = { 60, 0, 0 } },
+				strike = { Root = { -20, 0, 0, 0, -0.25, -0.4 }, Waist = { -26, 0, 0 }, Neck = { -30, 0, 0 }, RS = { -50, 0, 30 }, RE = { 30, 0, 0 }, LS = { -50, 0, -30 }, LE = { 30, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+				follow = { Root = { -22, 0, 0, 0, -0.28, -0.45 }, Waist = { -28, 0, 0 }, Neck = { -34, 0, 0 }, RS = { -54, 0, 34 }, RE = { 30, 0, 0 }, LS = { -54, 0, -34 }, LE = { 30, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+				trail = "head", fx = { { "burst", color = HAIR, size = 2, at = "front" } }, hitText = "BONK !",
+			},
+			-- ↓J : « on ne touche pas ! », tape sèche sur les doigts, accroupie
+			P_down = {
+				label = "Tape sur les doigts", startup = 0.07, active = 0.08, recovery = 0.18,
+				damage = 5, hitbox = box(4, 2, 2.4, -1.4), kbBase = 18, kbGrowth = 24, kbAngle = 60,
+				windup = { Root = { -10, 10, 0, 0, -0.7, 0.1 }, Waist = { -24, 10, 0 }, Neck = { 22, -10, 0 }, RS = { 130, 0, 20 }, RE = { 40, 0, 0 }, RW = { 30, 0, 0 }, LS = { -20, 0, -20 }, LE = { 80, 0, 0 } },
+				strike = { Root = { -14, -6, 0, 0, -0.8, -0.15 }, Waist = { -34, -6, 0 }, Neck = { 26, 6, 0 }, RS = { 40, 0, 0 }, RE = { 10, 0, 0 }, RW = { -30, 0, 0 }, LS = { -20, 0, -22 }, LE = { 85, 0, 0 } },
+				follow = { Root = { -14, -8, 0, 0, -0.8, -0.18 }, Waist = { -34, -8, 0 }, Neck = { 26, 8, 0 }, RS = { 34, 0, 2 }, RE = { 14, 0, 0 }, RW = { -40, 0, 0 }, LS = { -20, 0, -22 }, LE = { 85, 0, 0 } },
+				trail = "rightHand", text = "ON NE TOUCHE PAS !", hitText = "TAP !",
+			},
+			-- ↑J : « Seigneur ! », elle lève les bras au ciel d'un coup et cogne le menton
+			P_up = {
+				label = "Bras au ciel", startup = 0.08, active = 0.1, recovery = 0.2,
+				damage = 6, hitbox = box(4, 5, 1.4, 3), kbBase = 22, kbGrowth = 36, kbAngle = 84,
+				windup = { Root = { -8, 0, 0, 0, -0.4, 0 }, Waist = { -20, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 10, 0, 30 }, RE = { 120, 0, 0 }, LS = { 10, 0, -30 }, LE = { 120, 0, 0 } },
+				strike = { Root = { 4, 0, 0, 0, 0.05, 0 }, Waist = { 10, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 165, 0, 35 }, RE = { 10, 0, 0 }, LS = { 165, 0, -35 }, LE = { 10, 0, 0 }, FR = { 0, 0, 0, 0, 0.1, 0 }, FL = { 0, 0, 0, 0, 0.1, 0 } },
+				follow = { Root = { 6, 0, 0, 0, 0.08, 0 }, Waist = { 12, 0, 0 }, Neck = { 34, 0, 0 }, RS = { 172, 0, 40 }, RE = { 14, 0, 0 }, LS = { 172, 0, -40 }, LE = { 14, 0, 0 }, FR = { 0, 0, 0, 0, 0.12, 0 }, FL = { 0, 0, 0, 0, 0.12, 0 } },
+				trail = "bothHands", text = "SEIGNEUR !", hitText = "POUF !",
+			},
+			-- J en l'air : chignon en piqué, elle plonge tête la première, le châle en cape
+			P_air = {
+				label = "Chignon en piqué", startup = 0.1, active = 0.14, recovery = 0.18,
+				damage = 7, hitbox = box(3.5, 3.5, 1.2, -1.2), kbBase = 20, kbGrowth = 34, kbAngle = -45,
+				windup = { Root = { 20, 0, 0 }, Waist = { 14, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 60, 0, 60 }, RE = { 40, 0, 0 }, LS = { 60, 0, -60 }, LE = { 40, 0, 0 }, RH = { 40, 0, 0 }, RK = { -90, 0, 0 }, LH = { 40, 0, 0 }, LK = { -90, 0, 0 } },
+				strike = { Root = { -60, 0, 0 }, Waist = { -20, 0, 0 }, Neck = { -20, 0, 0 }, RS = { -40, 0, 20 }, RE = { 10, 0, 0 }, LS = { -40, 0, -20 }, LE = { 10, 0, 0 }, RH = { -20, 0, 0 }, RK = { -30, 0, 0 }, LH = { -20, 0, 0 }, LK = { -30, 0, 0 } },
+				follow = { Root = { -66, 0, 0 }, Waist = { -22, 0, 0 }, Neck = { -24, 0, 0 }, RS = { -44, 0, 22 }, RE = { 10, 0, 0 }, LS = { -44, 0, -22 }, LE = { 10, 0, 0 }, RH = { -24, 0, 0 }, RK = { -34, 0, 0 }, LH = { -24, 0, 0 }, LK = { -34, 0, 0 } },
+				trail = "head", hitText = "PLONK !",
+			},
+			-- dash J : elle accourt bras ouverts et lèvres en cul-de-poule : le bisou d'accueil
+			P_dash = {
+				label = "Bisou d'accueil", startup = 0.08, active = 0.18, recovery = 0.24,
+				damage = 7, hitbox = box(4.5, 3.5, 2.4, 0.8), kbBase = 22, kbGrowth = 36, kbAngle = 30, selfVelocity = Vector2.new(32, 0),
+				windup = { Root = { -8, 0, 0, 0, -0.15, 0.15 }, Waist = { -14, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 30, 0, 80 }, RE = { 20, 0, 0 }, LS = { 30, 0, -80 }, LE = { 20, 0, 0 } },
+				strike = { Root = { -16, 0, 0, 0, -0.2, -0.35 }, Waist = { -20, 0, 0 }, Neck = { -14, 0, 0 }, RS = { 85, 0, 60 }, RE = { 30, 0, 0 }, LS = { 85, 0, -60 }, LE = { 30, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+				follow = { Root = { -18, 0, 0, 0, -0.22, -0.4 }, Waist = { -22, 0, 0 }, Neck = { -16, 0, 0 }, RS = { 90, 0, 40 }, RE = { 50, 0, 0 }, LS = { 90, 0, -40 }, LE = { 50, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+				fx = { { "symbols", symbols = { "💋" }, color = SLIPPER, count = 2, radius = 2 } }, text = "VIENS VOIR MAMIE !", hitText = "SMACK !",
+			},
+			-- →K : pas chassé du thé dansant, la jambe part sur le côté avec une élégance douteuse
+			K_side = {
+				label = "Pas chassé du thé dansant", startup = 0.13, active = 0.12, recovery = 0.28,
+				damage = 8, hitbox = box(5.5, 2.6, 3.2, 0), kbBase = 24, kbGrowth = 46, kbAngle = 30, selfVelocity = Vector2.new(14, 0),
+				windup = { Root = { -4, 60, 0, 0, -0.1, 0.1 }, Waist = { -8, 20, 0 }, Neck = { 14, -60, 0 }, RS = { 100, 0, 80 }, RE = { 30, 0, 0 }, LS = { 100, 0, -80 }, LE = { 30, 0, 0 }, RH = { 40, 0, 20 }, RK = { -90, 0, 0 } },
+				strike = { Root = { 6, 80, 10, 0, -0.05, -0.15 }, Waist = { 6, 20, 0 }, Neck = { 14, -80, 0 }, RS = { 110, 0, 85 }, RE = { 10, 0, 0 }, LS = { 110, 0, -85 }, LE = { 10, 0, 0 }, RH = { 20, 0, 80 }, RK = { -6, 0, 0 }, RA = { -20, 0, 0 } },
+				follow = { Root = { 8, 82, 12, 0, -0.05, -0.18 }, Waist = { 8, 22, 0 }, Neck = { 14, -82, 0 }, RS = { 112, 0, 88 }, RE = { 10, 0, 0 }, LS = { 112, 0, -88 }, LE = { 10, 0, 0 }, RH = { 22, 0, 86 }, RK = { 0, 0, 0 }, RA = { -24, 0, 0 } },
+				trail = "rightLeg", hitText = "OLÉ !",
+			},
+			-- ↓K : écrase-orteils, elle lève le genou et talonne le pied de l'adversaire
+			K_down = {
+				label = "Écrase-orteils", startup = 0.1, active = 0.1, recovery = 0.26,
+				damage = 7, hitbox = box(4, 1.8, 2, -2), kbBase = 22, kbGrowth = 38, kbAngle = 70,
+				windup = { Root = { -6, 10, 0, 0, 0.05, 0.05 }, Waist = { -16, 10, 0 }, Neck = { 30, 0, 0 }, RS = { 30, 0, 40 }, RE = { 60, 0, 0 }, LS = { 30, 0, -40 }, LE = { 60, 0, 0 }, RH = { 90, 0, 0 }, RK = { -90, 0, 0 } },
+				strike = { Root = { -14, 0, 0, 0, -0.3, -0.15 }, Waist = { -26, 0, 0 }, Neck = { 36, 0, 0 }, RS = { 20, 0, 50 }, RE = { 40, 0, 0 }, LS = { 20, 0, -50 }, LE = { 40, 0, 0 }, RH = { 30, 0, 0 }, RK = { -10, 0, 0 }, RA = { 20, 0, 0 } },
+				follow = { Root = { -14, 0, 0, 0, -0.32, -0.16 }, Waist = { -28, 0, 0 }, Neck = { 38, 0, 0 }, RS = { 18, 0, 52 }, RE = { 40, 0, 0 }, LS = { 18, 0, -52 }, LE = { 40, 0, 0 }, RH = { 28, 0, 0 }, RK = { -8, 0, 0 }, RA = { 24, 0, 0 } },
+				trail = "rightFoot", fx = { { "particles", tex = "smoke", color = Color3.fromRGB(210, 200, 180), dir = "up", at = "feet", time = 0.2, speed = 6 } }, hitText = "ÉCRABOUILLE !",
+			},
+			-- ↑K : french cancan de sa jeunesse, la jambe monte jusqu'au ciel (et le dos craque)
+			K_up = {
+				label = "French cancan", startup = 0.13, active = 0.12, recovery = 0.3,
+				damage = 8, hitbox = box(4, 6, 1.2, 3.2), kbBase = 26, kbGrowth = 50, kbAngle = 86,
+				windup = { Root = { -6, 0, 0, 0, -0.3, 0.05 }, Waist = { -14, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 20, 0, 70 }, RE = { 40, 0, 0 }, LS = { 20, 0, -70 }, LE = { 40, 0, 0 }, RH = { 50, 0, 0 }, RK = { -100, 0, 0 } },
+				strike = { Root = { 14, 0, 0, 0, 0.05, 0.1 }, Waist = { 12, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 60, 0, 90 }, RE = { 10, 0, 0 }, LS = { 60, 0, -90 }, LE = { 10, 0, 0 }, RH = { 165, 0, 0 }, RK = { -4, 0, 0 }, RA = { -30, 0, 0 } },
+				follow = { Root = { 16, 0, 0, 0, 0.05, 0.12 }, Waist = { 14, 0, 0 }, Neck = { 8, 0, 0 }, RS = { 62, 0, 92 }, RE = { 10, 0, 0 }, LS = { 62, 0, -92 }, LE = { 10, 0, 0 }, RH = { 170, 0, 0 }, RK = { 0, 0, 0 }, RA = { -34, 0, 0 } },
+				trail = "rightLeg", fx = { { "symbols", symbols = { "♪" }, color = WOOL, count = 3, radius = 3 } }, hitText = "HOP LÀ !",
+			},
+			-- K en l'air : genoux qui craquent, elle remonte les deux genoux l'un après l'autre
+			K_air = {
+				label = "Genoux qui craquent", startup = 0.1, active = 0.2, recovery = 0.2,
+				damage = 7, hits = 2, hitbox = box(4, 3.5, 1.8, -0.6), kbBase = 20, kbGrowth = 36, kbAngle = 50,
+				windup = { Root = { -6, 0, 0 }, Waist = { -10, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 40, 0, 60 }, RE = { 60, 0, 0 }, LS = { 40, 0, -60 }, LE = { 60, 0, 0 }, RH = { 10, 0, 0 }, RK = { -40, 0, 0 }, LH = { 10, 0, 0 }, LK = { -40, 0, 0 } },
+				strike = { Root = { -10, 0, 0 }, Waist = { -14, 0, 0 }, Neck = { 18, 0, 0 }, RS = { 30, 0, 70 }, RE = { 70, 0, 0 }, LS = { 30, 0, -70 }, LE = { 70, 0, 0 }, RH = { 110, 0, 0 }, RK = { -120, 0, 0 }, LH = { 20, 0, 0 }, LK = { -50, 0, 0 } },
+				follow = { Root = { -10, 0, 0 }, Waist = { -14, 0, 0 }, Neck = { 18, 0, 0 }, RS = { 30, 0, 70 }, RE = { 70, 0, 0 }, LS = { 30, 0, -70 }, LE = { 70, 0, 0 }, RH = { 20, 0, 0 }, RK = { -50, 0, 0 }, LH = { 110, 0, 0 }, LK = { -120, 0, 0 } },
+				trail = "rightLeg", hitText = "CRIC CRAC !",
+			},
+			-- dash K : valse lancée, elle tourne sur elle-même la jambe tendue comme au bal du 14 juillet
+			K_dash = {
+				label = "Valse du 14 juillet", startup = 0.1, active = 0.22, recovery = 0.3,
+				damage = 8, hitbox = box(5.5, 3, 2.4, 0), kbBase = 26, kbGrowth = 48, kbAngle = 34, selfVelocity = Vector2.new(30, 0),
+				windup = { Root = { -6, -20, 0, 0, -0.15, 0.1 }, Waist = { -10, -10, 0 }, Neck = { 16, 10, 0 }, RS = { 90, 0, 90 }, RE = { 20, 0, 0 }, LS = { 90, 0, -90 }, LE = { 20, 0, 0 } },
+				strike = { Root = { -4, 0, 0, 0, -0.1, -0.2 }, Waist = { -6, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 95, 0, 95 }, RE = { 10, 0, 0 }, LS = { 95, 0, -95 }, LE = { 10, 0, 0 }, RH = { 10, 0, 60 }, RK = { -4, 0, 0 } },
+				follow = { Root = { -4, 0, 0, 0, -0.1, -0.22 }, Waist = { -6, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 96, 0, 96 }, RE = { 10, 0, 0 }, LS = { 96, 0, -96 }, LE = { 10, 0, 0 }, RH = { 12, 0, 64 }, RK = { 0, 0, 0 } },
+				spin = { axis = "y", degrees = 360 }, trail = "rightFoot", fx = { { "symbols", symbols = { "♫" }, color = SHAWL, count = 3, radius = 3 } }, hitText = "TOURNEZ !",
+			},
+		},
+		-- Combos à mains nues : J J K (coudes puis clac du dentier), K J K (bisous forcés puis tape dans le dos),
+		-- K K (hanche puis rock'n'roll), ↓J puis ↑J, →J puis ↓K. Un S pour finir envoie le spécial du perso.
+		links = {
+			P_neutral = { P = "P_combo2", K = "K_neutral", S = "S_side" },
+			P_combo2 = { K = "PPK_combo", P = "P_side", S = "S_neutral" },
+			PPK_combo = { S = "S_neutral" },
+			K_neutral = { P = "KP_combo", K = "K_combo2", S = "S_down" },
+			KP_combo = { K = "KPK_combo", P = "P_up", S = "S_side" },
+			KPK_combo = { S = "S_up" },
+			K_combo2 = { P = "P_side", K = "K_up", S = "S_neutral" },
+			P_side = { K = "K_down", P = "P_combo2", S = "S_side" },
+			P_down = { P = "P_up", K = "K_down", S = "S_down" },
+			P_up = { K = "K_up", S = "S_up" },
+			K_down = { P = "P_up", K = "K_side", S = "S_down" },
+			K_side = { P = "KP_combo", S = "S_side" },
+			K_up = { S = "S_up" },
+			P_dash = { P = "KP_combo", K = "K_side", S = "S_side" },
+			K_dash = { P = "P_combo2", K = "K_combo2", S = "S_neutral" },
+			P_air = { K = "K_air", S = "S_air" },
+			K_air = { P = "P_air", S = "S_air" },
+		},
+	},
 	------------------------------------------------------------------ Les 3 armes de la Caisse Bizarre (une au hasard)
 	-- n° 1 : le sac à main et la canne (ses coups sont ceux de moves). n° 2 : les aiguilles à tricoter géantes, jeu de
 	-- piqueuse à longue portée et pelote-boomerang. n° 3 : le fer à repasser à vapeur, lourd et lent, qui aplatit et

@@ -54,6 +54,196 @@ local data = {
 	name = "Sumo Gélatine",
 	costume = "Sumo",
 	style = "jelly",
+	------------------------------------------------------------------ Mains nues (sans Caisse Bizarre) : la gelée qui tremblote
+	-- Ses propres J / K et ses combos sans gants : Sumo fait onduler sa gelée, claque des bajoues, pince son canard en
+	-- plastique pour le faire couiner, s'assoit en flan et rebondit sur les fesses.
+	bare = {
+		moves = {
+			-- J : pichenette tremblotante, l'index part tout seul et la gelée du bras ondule derrière
+			P_neutral = {
+				label = "Pichenette tremblotante", startup = 0.08, active = 0.08, recovery = 0.16,
+				damage = 5, hitbox = box(4, 3, 2.8, 0.8), kbBase = 18, kbGrowth = 22, kbAngle = 22,
+				windup = { Root = { 0, -10, 0, 0, -0.35, 0.1 }, Waist = { 0, -12, 0 }, RS = { 50, 0, 30 }, RE = { 110, 0, 0 }, RW = { 30, 0, 0 }, LS = { 30, 0, -40 }, LE = { 50, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+				strike = { Root = { -4, 8, 0, 0, -0.38, -0.2 }, Waist = { -4, 10, 0 }, RS = { 88, 0, 0 }, RE = { 0, 0, 0 }, RW = { 20, 0, 0 }, LS = { 25, 0, -45 }, LE = { 55, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+				follow = { Root = { -5, 10, 0, 0, -0.4, -0.24 }, Waist = { -5, 12, 0 }, RS = { 90, 0, -6 }, RE = { 6, 0, 0 }, RW = { -20, 0, 0 }, LS = { 24, 0, -46 }, LE = { 56, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+				wobble = true, trail = "rightHand", hitText = "PIOUNG !",
+			},
+			-- J J : il secoue la tête d'un coup sec et ses bajoues de gelée giflent l'adversaire
+			P_combo2 = {
+				label = "Gifle de bajoues", startup = 0.07, active = 0.1, recovery = 0.16,
+				damage = 6, hitbox = box(4, 3, 2.4, 1.5), kbBase = 20, kbGrowth = 24, kbAngle = 30,
+				windup = { Root = { 0, 20, 0, 0, -0.3, 0.05 }, Waist = { 0, 18, 0 }, Neck = { 0, 40, 0 }, RS = { 20, 0, 50 }, RE = { 30, 0, 0 }, LS = { 20, 0, -50 }, LE = { 30, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+				strike = { Root = { -6, -16, 0, 0, -0.32, -0.25 }, Waist = { -6, -18, 0 }, Neck = { -10, -50, 10 }, RS = { 10, 0, 60 }, RE = { 20, 0, 0 }, LS = { 10, 0, -60 }, LE = { 20, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+				follow = { Root = { -7, -20, 0, 0, -0.33, -0.28 }, Waist = { -7, -22, 0 }, Neck = { -12, -58, 14 }, RS = { 8, 0, 64 }, RE = { 20, 0, 0 }, LS = { 8, 0, -64 }, LE = { 20, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+				wobble = true, trail = "head", hitText = "FLAP-FLAP !",
+			},
+			-- J J J : il presse son ventre à deux mains, le canard en plastique couine et l'onde de gelée repousse tout
+			P_combo3 = {
+				label = "Couin du canard", startup = 0.12, active = 0.12, recovery = 0.28,
+				damage = 8, hitbox = box(6, 4, 2.2, 0.4), kbBase = 28, kbGrowth = 48, kbAngle = 30,
+				windup = { Root = { 6, 0, 0, 0, -0.3, 0.15 }, Waist = { 10, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 40, 0, 60 }, RE = { 40, 0, 0 }, LS = { 40, 0, -60 }, LE = { 40, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+				strike = { Root = { -10, 0, 0, 0, -0.5, -0.1 }, Waist = { -14, 0, 0 }, Neck = { -14, 0, 0 }, RS = { 30, 0, 10 }, RE = { 110, 0, 0 }, LS = { 30, 0, -10 }, LE = { 110, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+				follow = { Root = { -12, 0, 0, 0, -0.52, -0.12 }, Waist = { -16, 0, 0 }, Neck = { -18, 0, 0 }, RS = { 28, 0, 8 }, RE = { 116, 0, 0 }, LS = { 28, 0, -8 }, LE = { 116, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+				wobble = true, fx = { { "ring", color = DUCK, radius = 5, at = "front" }, { "text", text = "COUIN !", color = DUCK, at = "head" } }, hitText = "COUIIIN !",
+			},
+			-- J K : son ventre colle à l'adversaire comme une ventouse, puis se décolle d'un coup
+			PK_combo = {
+				label = "Bidon-ventouse", startup = 0.1, active = 0.12, recovery = 0.24,
+				damage = 7, hitbox = box(4.5, 4, 2.2, 0.2), kbBase = 24, kbGrowth = 40, kbAngle = 35, selfVelocity = Vector2.new(-10, 0),
+				windup = { Root = { 10, 0, 0, 0, -0.35, -0.3 }, Waist = { 14, 0, 0 }, Neck = { -10, 0, 0 }, RS = { -20, 0, 40 }, RE = { 30, 0, 0 }, LS = { -20, 0, -40 }, LE = { 30, 0, 0 }, FR = WIDE_R, FL = { 0, 0, 0, -0.35, 0, -0.35 } },
+				strike = { Root = { -14, 0, 0, 0, -0.3, 0.3 }, Waist = { -18, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 60, 0, 70 }, RE = { 20, 0, 0 }, LS = { 60, 0, -70 }, LE = { 20, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+				follow = { Root = { -16, 0, 0, 0, -0.3, 0.35 }, Waist = { -20, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 64, 0, 74 }, RE = { 20, 0, 0 }, LS = { 64, 0, -74 }, LE = { 20, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+				wobble = true, fx = { { "ring", color = JELLY_DARK, radius = 3, at = "front" } }, hitText = "SCHLOURP !",
+			},
+			-- K K : il plante un pied gluant droit devant, la gelée s'étire et claque en revenant
+			K_combo2 = {
+				label = "Pied-guimauve tendu", startup = 0.1, active = 0.12, recovery = 0.26,
+				damage = 7, hitbox = box(5.5, 3, 3.2, -0.4), kbBase = 24, kbGrowth = 42, kbAngle = 28,
+				windup = { Root = { -6, 0, 0, 0, -0.3, 0.2 }, Waist = { -8, 0, 0 }, RS = { 30, 0, 60 }, RE = { 50, 0, 0 }, LS = { 30, 0, -60 }, LE = { 50, 0, 0 }, RH = { 70, 0, 0 }, RK = { -100, 0, 0 } },
+				strike = { Root = { 12, 0, 0, 0, -0.25, -0.15 }, Waist = { 10, 0, 0 }, RS = { 50, 0, 80 }, RE = { 10, 0, 0 }, LS = { 50, 0, -80 }, LE = { 10, 0, 0 }, RH = { 88, 0, 0 }, RK = { -4, 0, 0 }, RA = { 30, 0, 0 } },
+				follow = { Root = { 14, 0, 0, 0, -0.25, -0.18 }, Waist = { 12, 0, 0 }, RS = { 54, 0, 84 }, RE = { 10, 0, 0 }, LS = { 54, 0, -84 }, LE = { 10, 0, 0 }, RH = { 92, 0, 0 }, RK = { 0, 0, 0 }, RA = { 34, 0, 0 } },
+				wobble = true, trail = "rightFoot", hitText = "SPLONK !",
+			},
+			-- K J : il lève les deux mains au-dessus de la tête de l'adversaire et le moule comme un flan (clap vers le bas)
+			KP_combo = {
+				label = "Moule à flan", startup = 0.12, active = 0.1, recovery = 0.26,
+				damage = 8, hitbox = box(4.5, 4, 2.4, 1.2), kbBase = 26, kbGrowth = 44, kbAngle = -20,
+				windup = { Root = { 6, 0, 0, 0, -0.1, 0.1 }, Waist = { 8, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 170, 0, 30 }, RE = { 20, 0, 0 }, LS = { 170, 0, -30 }, LE = { 20, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+				strike = { Root = { -12, 0, 0, 0, -0.45, -0.25 }, Waist = { -16, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 80, 0, 10 }, RE = { 20, 0, 0 }, LS = { 80, 0, -10 }, LE = { 20, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+				follow = { Root = { -14, 0, 0, 0, -0.5, -0.28 }, Waist = { -18, 0, 0 }, Neck = { -12, 0, 0 }, RS = { 70, 0, 8 }, RE = { 24, 0, 0 }, LS = { 70, 0, -8 }, LE = { 24, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+				trail = "bothHands", fx = { { "puddle", color = JELLY, width = 5 } }, hitText = "FLANNN !",
+			},
+			-- K K J : grand tremblement de flan, tout son corps vibre et rebondit deux fois sur l'adversaire (finition)
+			KKP_combo = {
+				label = "Tremblement de flan", startup = 0.12, active = 0.22, recovery = 0.34,
+				damage = 10, hits = 2, hitbox = box(6, 4.5, 2, 0.5), kbBase = 30, kbGrowth = 58, kbAngle = 40,
+				windup = { Root = { 0, 0, 0, 0, -0.7, 0.1 }, Waist = { 10, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 20, 0, 80 }, RE = { 60, 0, 0 }, LS = { 20, 0, -80 }, LE = { 60, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+				strike = { Root = { -6, 0, 8, 0, -0.2, -0.3 }, Waist = { -8, 0, -10 }, Neck = { -6, 0, 12 }, RS = { 40, 0, 110 }, RE = { 10, 0, 0 }, LS = { 40, 0, -110 }, LE = { 10, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+				follow = { Root = { -6, 0, -8, 0, -0.25, -0.32 }, Waist = { -8, 0, 10 }, Neck = { -6, 0, -12 }, RS = { 44, 0, 114 }, RE = { 10, 0, 0 }, LS = { 44, 0, -114 }, LE = { 10, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+				hold = 0.12, wobble = true, fx = { { "ring", color = JELLY, radius = 6, at = "root" }, { "shake", amount = 0.4 } }, trail = "body", hitText = "BLOBLOBLOB !",
+			},
+			-- →J : son bras se change en nouille de gelée et fouette de côté sur toute sa longueur
+			P_side = {
+				label = "Bras-nouille", startup = 0.1, active = 0.12, recovery = 0.2,
+				damage = 7, hitbox = box(6, 3, 3.5, 0.8), kbBase = 22, kbGrowth = 34, kbAngle = 25, selfVelocity = Vector2.new(10, 0),
+				windup = { Root = { 0, 34, 0, 0, -0.35, 0.15 }, Waist = { 0, 30, 0 }, RS = { 70, 0, 100 }, RE = { 30, 0, 0 }, RW = { 40, 0, 0 }, LS = { 30, 0, -30 }, LE = { 60, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+				strike = { Root = { -6, -26, 0, 0, -0.38, -0.3 }, Waist = { -6, -28, 0 }, RS = { 92, 0, -10 }, RE = { 0, 0, 0 }, RW = { -40, 0, 0 }, LS = { 20, 0, -40 }, LE = { 60, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+				follow = { Root = { -8, -32, 0, 0, -0.4, -0.34 }, Waist = { -8, -36, 0 }, RS = { 88, 0, -30 }, RE = { 30, 0, 0 }, RW = { -60, 0, 0 }, LS = { 18, 0, -42 }, LE = { 62, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+				wobble = true, trail = "rightHand", hitText = "FOUITCH !",
+			},
+			-- ↓J : accroupi, il tape la flaque de gelée sous ses pieds qui éclabousse les chevilles
+			P_down = {
+				label = "Tape-flaque", startup = 0.08, active = 0.1, recovery = 0.2,
+				damage = 5, hitbox = box(5, 2, 2.4, -1.4), kbBase = 20, kbGrowth = 24, kbAngle = 70,
+				windup = { Root = { 10, 0, 0, 0, -0.8, 0.05 }, Waist = { 14, 0, 0 }, RS = { 120, 0, 20 }, RE = { 40, 0, 0 }, LS = { 120, 0, -20 }, LE = { 40, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+				strike = { Root = { 18, 0, 0, 0, -0.95, -0.15 }, Waist = { 24, 0, 0 }, RS = { 40, 0, 20 }, RE = { 10, 0, 0 }, RW = { 30, 0, 0 }, LS = { 40, 0, -20 }, LE = { 10, 0, 0 }, LW = { 30, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+				follow = { Root = { 20, 0, 0, 0, -0.98, -0.18 }, Waist = { 26, 0, 0 }, RS = { 36, 0, 22 }, RE = { 10, 0, 0 }, RW = { 40, 0, 0 }, LS = { 36, 0, -22 }, LE = { 10, 0, 0 }, LW = { 40, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+				trail = "bothHands", fx = { { "puddle", color = JELLY, width = 6 } }, hitText = "PLATCH !",
+			},
+			-- ↑J : il applaudit au-dessus de sa tête, la gelée de ses paumes gicle vers le ciel
+			P_up = {
+				label = "Clap gluant", startup = 0.09, active = 0.1, recovery = 0.22,
+				damage = 6, hitbox = box(4, 5, 0.8, 3.4), kbBase = 24, kbGrowth = 36, kbAngle = 88,
+				windup = { Root = { 0, 0, 0, 0, -0.55, 0 }, Waist = { 6, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 120, 0, 70 }, RE = { 30, 0, 0 }, LS = { 120, 0, -70 }, LE = { 30, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+				strike = { Root = { -6, 0, 0, 0, -0.1, 0 }, Waist = { -10, 0, 0 }, Neck = { -24, 0, 0 }, RS = { 176, 0, 4 }, RE = { 0, 0, 0 }, LS = { 176, 0, -4 }, LE = { 0, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+				follow = { Root = { -8, 0, 0, 0, -0.08, 0 }, Waist = { -12, 0, 0 }, Neck = { -28, 0, 0 }, RS = { 178, 0, 2 }, RE = { 6, 0, 0 }, LS = { 178, 0, -2 }, LE = { 6, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+				trail = "bothHands", fx = { { "toss", shape = "ball", color = JELLY, size = 0.4, count = 4, speed = 16 } }, hitText = "CLAPOUCH !",
+			},
+			-- J en l'air : il fait la méduse, bras et jambes ouverts, puis tout se referme d'un coup sous lui
+			P_air = {
+				label = "Méduse", startup = 0.1, active = 0.14, recovery = 0.2,
+				damage = 7, hitbox = box(5, 4, 0.5, -1.2), kbBase = 20, kbGrowth = 32, kbAngle = -50,
+				windup = { Root = { -6, 0, 0 }, Waist = { -6, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 120, 0, 110 }, RE = { 10, 0, 0 }, LS = { 120, 0, -110 }, LE = { 10, 0, 0 }, RH = { 20, 0, 40 }, RK = { -30, 0, 0 }, LH = { 20, 0, -40 }, LK = { -30, 0, 0 } },
+				strike = { Root = { 10, 0, 0 }, Waist = { 8, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 20, 0, 10 }, RE = { 20, 0, 0 }, LS = { 20, 0, -10 }, LE = { 20, 0, 0 }, RH = { 0, 0, 4 }, RK = { -10, 0, 0 }, LH = { 0, 0, -4 }, LK = { -10, 0, 0 } },
+				follow = { Root = { 12, 0, 0 }, Waist = { 10, 0, 0 }, Neck = { 8, 0, 0 }, RS = { 14, 0, 8 }, RE = { 24, 0, 0 }, LS = { 14, 0, -8 }, LE = { 24, 0, 0 }, RH = { -4, 0, 2 }, RK = { -6, 0, 0 }, LH = { -4, 0, -2 }, LK = { -6, 0, 0 } },
+				wobble = true, trail = "body", hitText = "BLOUP !",
+			},
+			-- dash J : il court les lèvres en avant et plaque un gros bisou-ventouse
+			P_dash = {
+				label = "Bisou-ventouse", startup = 0.08, active = 0.16, recovery = 0.24,
+				damage = 7, hitbox = box(4.5, 3, 2.6, 1.4), kbBase = 24, kbGrowth = 36, kbAngle = 30, selfVelocity = Vector2.new(32, 0),
+				windup = { Root = { -6, 0, 0, 0, -0.3, 0.15 }, Waist = { -8, 0, 0 }, Neck = { -16, 0, 0 }, RS = { -30, 0, 30 }, RE = { 20, 0, 0 }, LS = { -30, 0, -30 }, LE = { 20, 0, 0 } },
+				strike = { Root = { 14, 0, 0, 0, -0.3, -0.35 }, Waist = { 16, 0, 0 }, Neck = { 24, 0, 0 }, RS = { -50, 0, 40 }, RE = { 10, 0, 0 }, LS = { -50, 0, -40 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, -0.35, 0, -0.4 } },
+				follow = { Root = { 16, 0, 0, 0, -0.3, -0.38 }, Waist = { 18, 0, 0 }, Neck = { 28, 0, 0 }, RS = { -54, 0, 44 }, RE = { 10, 0, 0 }, LS = { -54, 0, -44 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, -0.35, 0, -0.42 } },
+				trail = "head", fx = { { "symbols", symbols = { "💋", "💚" }, color = PINK, count = 4, radius = 3 } }, hitText = "SMOUTCH !",
+			},
+			-- K : pied-flanby, un coup de pied tout mou dont la jambe ondule jusqu'à la cible
+			K_neutral = {
+				label = "Pied-flanby", startup = 0.1, active = 0.1, recovery = 0.22,
+				damage = 7, hitbox = box(4.5, 3, 2.8, -0.3), kbBase = 22, kbGrowth = 40, kbAngle = 35,
+				windup = { Root = { -4, 10, 0, 0, -0.3, 0.1 }, Waist = { -6, 8, 0 }, RS = { 30, 0, 70 }, RE = { 40, 0, 0 }, LS = { 30, 0, -70 }, LE = { 40, 0, 0 }, RH = { 40, 0, 20 }, RK = { -90, 0, 0 } },
+				strike = { Root = { 8, -6, 0, 0, -0.25, -0.1 }, Waist = { 6, -6, 0 }, RS = { 40, 0, 90 }, RE = { 20, 0, 0 }, LS = { 40, 0, -90 }, LE = { 20, 0, 0 }, RH = { 80, 0, 10 }, RK = { -20, 0, 0 }, RA = { 20, 0, 0 } },
+				follow = { Root = { 10, -8, 0, 0, -0.25, -0.12 }, Waist = { 8, -8, 0 }, RS = { 44, 0, 94 }, RE = { 20, 0, 0 }, LS = { 44, 0, -94 }, LE = { 20, 0, 0 }, RH = { 84, 0, 6 }, RK = { -8, 0, 0 }, RA = { 30, 0, 0 } },
+				wobble = true, trail = "rightLeg", hitText = "FLOUBI !",
+			},
+			-- →K : il fait volte-face et donne un grand coup de fesses en gelée qui rebondit
+			K_side = {
+				label = "Fessée de gelée", startup = 0.12, active = 0.12, recovery = 0.26,
+				damage = 8, hitbox = box(5, 3.5, 2.6, 0.2), kbBase = 26, kbGrowth = 46, kbAngle = 30, selfVelocity = Vector2.new(14, 0),
+				windup = { Root = { 0, 90, 0, 0, -0.35, 0.1 }, Waist = { 0, 40, 0 }, Neck = { 0, -60, 0 }, RS = { 30, 0, 50 }, RE = { 60, 0, 0 }, LS = { 30, 0, -50 }, LE = { 60, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+				strike = { Root = { 20, 170, 0, 0, -0.5, -0.4 }, Waist = { 14, 10, 0 }, Neck = { -10, -80, 0 }, RS = { 60, 0, 70 }, RE = { 20, 0, 0 }, LS = { 60, 0, -70 }, LE = { 20, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+				follow = { Root = { 22, 175, 0, 0, -0.52, -0.44 }, Waist = { 16, 10, 0 }, Neck = { -12, -84, 0 }, RS = { 64, 0, 74 }, RE = { 20, 0, 0 }, LS = { 64, 0, -74 }, LE = { 20, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+				wobble = true, trail = "body", hitText = "POUF-POUF !",
+			},
+			-- ↓K : il se laisse tomber assis comme un flan démoulé, l'onde de gelée fauche les jambes autour
+			K_down = {
+				label = "Flan démoulé", startup = 0.12, active = 0.12, recovery = 0.3,
+				damage = 8, hitbox = box(7, 2, 1.5, -1.5), kbBase = 26, kbGrowth = 44, kbAngle = 75,
+				windup = { Root = { 0, 0, 0, 0, 0.2, 0 }, Waist = { -6, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 140, 0, 40 }, RE = { 20, 0, 0 }, LS = { 140, 0, -40 }, LE = { 20, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+				strike = { Root = { -14, 0, 0, 0, -1.1, 0.1 }, Waist = { -6, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 60, 0, 70 }, RE = { 10, 0, 0 }, LS = { 60, 0, -70 }, LE = { 10, 0, 0 }, RH = { 80, 0, 30 }, RK = { -30, 0, 0 }, LH = { 80, 0, -30 }, LK = { -30, 0, 0 } },
+				follow = { Root = { -16, 0, 0, 0, -1.1, 0.1 }, Waist = { -8, 0, 0 }, Neck = { 18, 0, 0 }, RS = { 56, 0, 74 }, RE = { 10, 0, 0 }, LS = { 56, 0, -74 }, LE = { 10, 0, 0 }, RH = { 84, 0, 32 }, RK = { -26, 0, 0 }, LH = { 84, 0, -32 }, LK = { -26, 0, 0 } },
+				wobble = true, fx = { { "ring", color = JELLY, radius = 5, at = "feet" } }, hitText = "FLOMP !",
+			},
+			-- ↑K : chandelle molle, la jambe monte tout droit en s'étirant comme du caramel
+			K_up = {
+				label = "Chandelle caramel", startup = 0.14, active = 0.12, recovery = 0.3,
+				damage = 9, hitbox = box(4, 6, 1.2, 3.4), kbBase = 26, kbGrowth = 52, kbAngle = 86,
+				windup = { Root = { 6, 0, 0, 0, -0.5, 0.1 }, Waist = { 8, 0, 0 }, RS = { 40, 0, 70 }, RE = { 40, 0, 0 }, LS = { 40, 0, -70 }, LE = { 40, 0, 0 }, RH = { 30, 0, 0 }, RK = { -90, 0, 0 } },
+				strike = { Root = { -16, 0, 0, 0, -0.2, 0.1 }, Waist = { -14, 0, 0 }, Neck = { -16, 0, 0 }, RS = { 20, 0, 90 }, RE = { 10, 0, 0 }, LS = { 20, 0, -90 }, LE = { 10, 0, 0 }, RH = { 160, 0, 0 }, RK = { -4, 0, 0 }, RA = { 30, 0, 0 } },
+				follow = { Root = { -18, 0, 0, 0, -0.2, 0.1 }, Waist = { -16, 0, 0 }, Neck = { -18, 0, 0 }, RS = { 18, 0, 94 }, RE = { 10, 0, 0 }, LS = { 18, 0, -94 }, LE = { 10, 0, 0 }, RH = { 166, 0, 0 }, RK = { -10, 0, 0 }, RA = { 34, 0, 0 } },
+				wobble = true, trail = "rightFoot", hitText = "STRETCH !",
+			},
+			-- K en l'air : jambes spaghetti, elles moulinent dans tous les sens et tapent deux fois
+			K_air = {
+				label = "Jambes spaghetti", startup = 0.1, active = 0.2, recovery = 0.22,
+				damage = 8, hits = 2, hitbox = box(5, 4, 1.8, -0.8), kbBase = 22, kbGrowth = 38, kbAngle = 35,
+				windup = { Root = { -8, 0, 0 }, Waist = { -6, 0, 0 }, RS = { 90, 0, 90 }, RE = { 30, 0, 0 }, LS = { 90, 0, -90 }, LE = { 30, 0, 0 }, RH = { 40, 0, 30 }, RK = { -90, 0, 0 }, LH = { 70, 0, -30 }, LK = { -20, 0, 0 } },
+				strike = { Root = { 6, 0, 10 }, Waist = { 6, 0, 0 }, RS = { 100, 0, 100 }, RE = { 20, 0, 0 }, LS = { 100, 0, -100 }, LE = { 20, 0, 0 }, RH = { 100, 0, -10 }, RK = { -10, 0, 0 }, LH = { 10, 0, -40 }, LK = { -100, 0, 0 } },
+				follow = { Root = { 8, 0, -10 }, Waist = { 8, 0, 0 }, RS = { 96, 0, 96 }, RE = { 20, 0, 0 }, LS = { 96, 0, -96 }, LE = { 20, 0, 0 }, RH = { 20, 0, 40 }, RK = { -80, 0, 0 }, LH = { 100, 0, 10 }, LK = { -10, 0, 0 } },
+				wobble = true, trail = "leftFoot", hitText = "GLOUBI !",
+			},
+			-- dash K : il saute et atterrit sur les fesses, rebondit en avant comme un ballon sauteur
+			K_dash = {
+				label = "Fesses-sauteuses", startup = 0.1, active = 0.22, recovery = 0.3,
+				damage = 9, hitbox = box(5, 3.5, 2, -0.4), kbBase = 28, kbGrowth = 52, kbAngle = 50, selfVelocity = Vector2.new(40, 14),
+				windup = { Root = { 0, 0, 0, 0, -0.7, 0.1 }, Waist = { 10, 0, 0 }, RS = { 20, 0, 60 }, RE = { 60, 0, 0 }, LS = { 20, 0, -60 }, LE = { 60, 0, 0 } },
+				strike = { Root = { -20, 0, 0, 0, -0.6, -0.3 }, Waist = { -10, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 120, 0, 60 }, RE = { 10, 0, 0 }, LS = { 120, 0, -60 }, LE = { 10, 0, 0 }, RH = { 90, 0, 20 }, RK = { -10, 0, 0 }, LH = { 90, 0, -20 }, LK = { -10, 0, 0 } },
+				follow = { Root = { -22, 0, 0, 0, -0.62, -0.34 }, Waist = { -12, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 124, 0, 64 }, RE = { 10, 0, 0 }, LS = { 124, 0, -64 }, LE = { 10, 0, 0 }, RH = { 94, 0, 22 }, RK = { -6, 0, 0 }, LH = { 94, 0, -22 }, LK = { -6, 0, 0 } },
+				wobble = true, trail = "body", fx = { { "ring", color = JELLY, radius = 4, at = "feet" } }, hitText = "BOÏNG-BOÏNG !",
+			},
+		},
+		-- Combos à mains nues : J J J (pichenette, bajoues, couin du canard), J K K J (ventouse, pied tendu, flan),
+		-- K J (moule à flan), ↓J ↓K (flaque puis flan démoulé). Un S pour finir envoie le spécial du perso.
+		links = {
+			P_neutral = { P = "P_combo2", K = "PK_combo", S = "S_side" },
+			P_combo2 = { P = "P_combo3", down_K = "K_down", S = "S_neutral" },
+			P_combo3 = { S = "S_down" },
+			PK_combo = { K = "K_combo2", up_P = "P_up", S = "S_neutral" },
+			K_neutral = { K = "K_combo2", P = "KP_combo", S = "S_down" },
+			K_combo2 = { P = "KKP_combo", S = "S_side" },
+			KP_combo = { P = "P_combo3", K = "K_up", S = "S_up" },
+			KKP_combo = { S = "S_neutral" },
+			P_side = { K = "PK_combo", S = "S_side" },
+			P_down = { K = "K_down", P = "P_up", S = "S_down" },
+			K_down = { P = "KP_combo", S = "S_down" },
+			P_up = { K = "K_up", S = "S_up" },
+			K_side = { P = "P_combo2", S = "S_side" },
+			P_dash = { P = "P_combo2", K = "K_combo2", S = "S_side" },
+			K_dash = { K = "K_up", S = "S_up" },
+			P_air = { K = "K_air", S = "S_air" },
+			K_air = { P = "P_air", S = "S_air" },
+		},
+	},
 	------------------------------------------------------------------ Les 3 armes de la Caisse Bizarre (une au hasard)
 	-- n° 1 : les gants en guimauve (ses coups sont ceux de moves). n° 2 : le sac de sel du dohyo, jeu de projectiles
 	-- qui aveuglent et font glisser. n° 3 : la marmite de chanko, lourde, brûlante, qui le remplume à chaque coup.
