@@ -65,6 +65,196 @@ local data = {
 	costume = "Gege",
 	style = "drunk",
 	holdsBottle = true, -- la bouteille pend au bout du bras quand aucun coup ne la tient autrement
+	------------------------------------------------------------------ Mains nues (sans Caisse Bizarre) : bagarre de comptoir
+	-- Ses propres J / K et ses combos sans arme (les L et les Y restent ceux de moves). Gégé titube, gifle mou,
+	-- donne des coups de boule et de bedaine ; ses combos finissent en roulade ou en « câlin » d'ivrogne.
+	bare = {
+		moves = {
+			-- J : gifle molle du revers, le poignet qui pendouille
+			P_neutral = {
+				label = "Gifle molle", startup = 0.07, active = 0.08, recovery = 0.14,
+				damage = 5, hitbox = box(4, 3, 2.6, 0.8), kbBase = 18, kbGrowth = 22, kbAngle = 25,
+				windup = { Root = { 4, 18, 0, 0, -0.1, 0.12 }, Waist = { 4, 22, 0 }, RS = { 60, 0, 60 }, RE = { 70, 0, 0 }, RW = { 30, 0, 0 }, LS = { 30, 0, -20 }, LE = { 60, 0, 0 } },
+				strike = { Root = { -6, -16, 0, 0, -0.18, -0.25 }, Waist = { -6, -24, 0 }, RS = { 95, 0, -20 }, RE = { 10, 0, 0 }, RW = { -30, 0, 0 }, LS = { 25, 0, -25 }, LE = { 70, 0, 0 } },
+				follow = { Root = { -8, -22, 0, 0, -0.2, -0.3 }, Waist = { -8, -30, 0 }, RS = { 90, 0, -36 }, RE = { 14, 0, 0 }, RW = { -50, 0, 0 }, LS = { 22, 0, -28 }, LE = { 72, 0, 0 } },
+				trail = "rightHand", hitText = "PFLAC !",
+			},
+			-- J J : deuxième gifle, de l'autre main, il manque de tomber en avant
+			P_combo2 = {
+				label = "Aller-retour", startup = 0.06, active = 0.08, recovery = 0.14,
+				damage = 5, hitbox = box(4, 3, 2.8, 0.8), kbBase = 18, kbGrowth = 22, kbAngle = 30,
+				windup = { Root = { 4, -18, 0, 0, -0.1, 0.1 }, Waist = { 4, -22, 0 }, RS = { 30, 0, 20 }, RE = { 60, 0, 0 }, LS = { 60, 0, -60 }, LE = { 70, 0, 0 }, LW = { 30, 0, 0 } },
+				strike = { Root = { -8, 16, 0, 0, -0.22, -0.3 }, Waist = { -8, 24, 0 }, RS = { 25, 0, 25 }, RE = { 70, 0, 0 }, LS = { 95, 0, 20 }, LE = { 10, 0, 0 }, LW = { -30, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+				follow = { Root = { -12, 20, 0, 0, -0.28, -0.4 }, Waist = { -12, 28, 0 }, RS = { 20, 0, 28 }, RE = { 72, 0, 0 }, LS = { 92, 0, 34 }, LE = { 14, 0, 0 }, LW = { -50, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.35 } },
+				trail = "bothHands", hitText = "PFLIC !",
+			},
+			-- J J J : coup de boule titubant, il s'élance tête la première
+			P_combo3 = {
+				label = "Coup de boule titubant", startup = 0.12, active = 0.1, recovery = 0.26,
+				damage = 8, hitbox = box(4.5, 3, 2.8, 1.5), kbBase = 26, kbGrowth = 45, kbAngle = 35, selfVelocity = Vector2.new(18, 0),
+				windup = { Root = { -14, 0, 0, 0, -0.1, 0.25 }, Waist = { -18, 0, 0 }, Neck = { -25, 0, 0 }, RS = { -20, 0, 30 }, RE = { 40, 0, 0 }, LS = { -20, 0, -30 }, LE = { 40, 0, 0 } },
+				strike = { Root = { 22, 0, 0, 0, -0.25, -0.45 }, Waist = { 24, 0, 0 }, Neck = { 30, 0, 0 }, RS = { -30, 0, 40 }, RE = { 20, 0, 0 }, LS = { -30, 0, -40 }, LE = { 20, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+				follow = { Root = { 26, 0, 0, 0, -0.3, -0.5 }, Waist = { 26, 0, 0 }, Neck = { 34, 0, 0 }, RS = { -36, 0, 46 }, RE = { 20, 0, 0 }, LS = { -36, 0, -46 }, LE = { 20, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+				fx = { "headStar" }, trail = "head", hitText = "BOING !",
+			},
+			-- J K : il trébuche et donne un coup de bedaine en se rattrapant
+			PK_combo = {
+				label = "Bedaine de rattrapage", startup = 0.1, active = 0.1, recovery = 0.22,
+				damage = 7, hitbox = box(4.5, 3.5, 2.4, 0.3), kbBase = 24, kbGrowth = 40, kbAngle = 30, selfVelocity = Vector2.new(14, 0),
+				windup = { Root = { -10, 0, 0, 0, -0.05, 0.2 }, Waist = { -16, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 40, 0, 50 }, RE = { 30, 0, 0 }, LS = { 40, 0, -50 }, LE = { 30, 0, 0 } },
+				strike = { Root = { -16, 0, 0, 0, -0.15, -0.35 }, Waist = { -26, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 60, 0, 80 }, RE = { 10, 0, 0 }, LS = { 60, 0, -80 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+				follow = { Root = { -18, 0, 0, 0, -0.18, -0.4 }, Waist = { -28, 0, 0 }, Neck = { 18, 0, 0 }, RS = { 64, 0, 84 }, RE = { 10, 0, 0 }, LS = { 64, 0, -84 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+				fx = { "burp" }, hitText = "BLOMF !",
+			},
+			-- K K : coup de pied qui part trop haut, il pivote sur lui-même
+			K_combo2 = {
+				label = "Pied qui s'emballe", startup = 0.12, active = 0.12, recovery = 0.26,
+				damage = 8, hitbox = box(5, 3, 3, 0.8), kbBase = 26, kbGrowth = 45, kbAngle = 40,
+				windup = { Root = { 6, 30, 0, 0, -0.15, 0.1 }, Waist = { 6, 36, 0 }, RS = { 40, 0, 50 }, RE = { 40, 0, 0 }, LS = { 40, 0, -50 }, LE = { 40, 0, 0 }, RH = { -20, 0, 10 }, RK = { -60, 0, 0 } },
+				strike = { Root = { 10, -40, 0, 0, -0.1, -0.1 }, Waist = { 10, -50, 0 }, RS = { 70, 0, 70 }, RE = { 20, 0, 0 }, LS = { 70, 0, -70 }, LE = { 20, 0, 0 }, RH = { 110, 0, 20 }, RK = { -6, 0, 0 }, RA = { 10, 0, 0 } },
+				follow = { Root = { 12, -60, 0, 0, -0.1, -0.12 }, Waist = { 12, -70, 0 }, RS = { 74, 0, 74 }, RE = { 20, 0, 0 }, LS = { 74, 0, -74 }, LE = { 20, 0, 0 }, RH = { 116, 0, 24 }, RK = { 0, 0, 0 }, RA = { 14, 0, 0 } },
+				spin = { axis = "y", degrees = 360 }, trail = "rightFoot", hitText = "WOUPS !",
+			},
+			-- K J : roulade d'ivrogne en avant, il fauche les jambes au passage
+			KP_combo = {
+				label = "Roulade d'ivrogne", startup = 0.1, active = 0.24, recovery = 0.3,
+				damage = 9, hitbox = box(5, 2.5, 2, -0.8), kbBase = 28, kbGrowth = 50, kbAngle = 70, selfVelocity = Vector2.new(36, 0),
+				windup = { Root = { 30, 0, 0, 0, -0.6, 0.1 }, Waist = { 30, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 120, 0, 20 }, RE = { 60, 0, 0 }, LS = { 120, 0, -20 }, LE = { 60, 0, 0 }, RH = { 60, 0, 0 }, RK = { -100, 0, 0 }, LH = { 60, 0, 0 }, LK = { -100, 0, 0 } },
+				strike = { Root = { 60, 0, 0, 0, -0.9, -0.2 }, Waist = { 40, 0, 0 }, Neck = { 40, 0, 0 }, RS = { 140, 0, 30 }, RE = { 90, 0, 0 }, LS = { 140, 0, -30 }, LE = { 90, 0, 0 }, RH = { 100, 0, 0 }, RK = { -130, 0, 0 }, LH = { 100, 0, 0 }, LK = { -130, 0, 0 } },
+				follow = { Root = { 64, 0, 0, 0, -0.9, -0.24 }, Waist = { 42, 0, 0 }, Neck = { 42, 0, 0 }, RS = { 144, 0, 32 }, RE = { 92, 0, 0 }, LS = { 144, 0, -32 }, LE = { 92, 0, 0 }, RH = { 104, 0, 0 }, RK = { -134, 0, 0 }, LH = { 104, 0, 0 }, LK = { -134, 0, 0 } },
+				spin = { axis = "x", degrees = 360 }, trail = "body", fx = { "dust" }, hitText = "ROULÉ-BOULÉ !",
+			},
+			-- K K J : le « câlin » d'ivrogne : il serre l'adversaire et le secoue (finition du combo)
+			KKP_combo = {
+				label = "Câlin d'ivrogne", startup = 0.12, active = 0.2, recovery = 0.32,
+				damage = 10, hits = 2, hitbox = box(4, 3.5, 2.2, 0.8), kbBase = 30, kbGrowth = 60, kbAngle = 45,
+				windup = { Root = { -6, 0, 0, 0, -0.1, 0.1 }, Waist = { -8, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 80, 0, 80 }, RE = { 20, 0, 0 }, LS = { 80, 0, -80 }, LE = { 20, 0, 0 } },
+				strike = { Root = { 8, 0, 0, 0, -0.15, -0.3 }, Waist = { 10, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 90, 0, 10 }, RE = { 90, 0, 0 }, LS = { 90, 0, -10 }, LE = { 90, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+				follow = { Root = { 10, 0, 0, 0, -0.15, -0.32 }, Waist = { 12, 0, 0 }, Neck = { 22, 0, 0 }, RS = { 94, 0, 8 }, RE = { 94, 0, 0 }, LS = { 94, 0, -8 }, LE = { 94, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.32 } },
+				hold = 0.15, wobble = true, fx = { "hug" }, hitText = "T'ES MON POTE !",
+			},
+			-- →J : crochet titubant, le bras fait un grand arc avant de toucher
+			P_side = {
+				label = "Crochet titubant", startup = 0.1, active = 0.1, recovery = 0.18,
+				damage = 7, hitbox = box(5, 3, 3, 0.8), kbBase = 22, kbGrowth = 35, kbAngle = 28, selfVelocity = Vector2.new(18, 0),
+				windup = { Root = { 6, 30, 0, 0, -0.2, 0.2 }, Waist = { 6, 36, 0 }, RS = { 80, 0, 80 }, RE = { 40, 0, 0 }, LS = { 40, 0, -20 }, LE = { 70, 0, 0 } },
+				strike = { Root = { -10, -24, 0, 0, -0.3, -0.4 }, Waist = { -10, -30, 0 }, RS = { 95, 0, -30 }, RE = { 30, 0, 0 }, LS = { 30, 0, -30 }, LE = { 80, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+				follow = { Root = { -12, -30, 0, 0, -0.32, -0.46 }, Waist = { -12, -36, 0 }, RS = { 90, 0, -44 }, RE = { 34, 0, 0 }, LS = { 26, 0, -32 }, LE = { 82, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+				wobble = true, trail = "rightHand", hitText = "SPLONK !",
+			},
+			-- ↓J : accroupi, il pince le mollet de l'adversaire
+			P_down = {
+				label = "Pinçon au mollet", startup = 0.07, active = 0.08, recovery = 0.18,
+				damage = 5, hitbox = box(4, 2, 2.6, -1.3), kbBase = 20, kbGrowth = 25, kbAngle = 65,
+				windup = { Root = { 10, 10, 0, 0, -0.85, 0.1 }, Waist = { 20, 10, 0 }, RS = { 40, 0, 20 }, RE = { 90, 0, 0 }, LS = { 30, 0, -30 }, LE = { 90, 0, 0 } },
+				strike = { Root = { 16, -10, 0, 0, -0.95, -0.2 }, Waist = { 26, -12, 0 }, RS = { 70, 0, 0 }, RE = { 10, 0, 0 }, RW = { -20, 0, 0 }, LS = { 30, 0, -30 }, LE = { 90, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+				follow = { Root = { 18, -12, 0, 0, -0.95, -0.24 }, Waist = { 28, -14, 0 }, RS = { 66, 0, 2 }, RE = { 14, 0, 0 }, RW = { -30, 0, 0 }, LS = { 30, 0, -32 }, LE = { 90, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.32 } },
+				hitText = "AÏE !",
+			},
+			-- ↑J : il lève les bras pour trinquer… sans verre, et cogne le menton
+			P_up = {
+				label = "Santé sans verre", startup = 0.08, active = 0.1, recovery = 0.2,
+				damage = 6, hitbox = box(4, 5, 1.5, 3), kbBase = 22, kbGrowth = 38, kbAngle = 85,
+				windup = { Root = { 6, 0, 0, 0, -0.3, 0.1 }, Waist = { 8, 0, 0 }, RS = { 30, 0, 20 }, RE = { 110, 0, 0 }, LS = { 30, 0, -20 }, LE = { 110, 0, 0 } },
+				strike = { Root = { -8, 0, 0, 0, 0.1, -0.1 }, Waist = { -12, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 172, 0, 10 }, RE = { 10, 0, 0 }, LS = { 172, 0, -10 }, LE = { 10, 0, 0 } },
+				follow = { Root = { -10, 0, 0, 0, 0.12, -0.12 }, Waist = { -14, 0, 0 }, Neck = { -24, 0, 0 }, RS = { 178, 0, 14 }, RE = { 10, 0, 0 }, LS = { 178, 0, -14 }, LE = { 10, 0, 0 } },
+				trail = "bothHands", hitText = "SANTÉ !",
+			},
+			-- J en l'air : il retombe à plat ventre sur l'adversaire
+			P_air = {
+				label = "Plat ventre", startup = 0.1, active = 0.14, recovery = 0.18,
+				damage = 7, hitbox = box(5, 3.5, 1, -1.5), kbBase = 20, kbGrowth = 32, kbAngle = -40,
+				windup = { Root = { -20, 0, 0 }, Waist = { -10, 0, 0 }, RS = { 160, 0, 30 }, RE = { 30, 0, 0 }, LS = { 160, 0, -30 }, LE = { 30, 0, 0 }, RH = { 40, 0, 0 }, RK = { -80, 0, 0 }, LH = { 40, 0, 0 }, LK = { -80, 0, 0 } },
+				strike = { Root = { 50, 0, 0 }, Waist = { 10, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 120, 0, 60 }, RE = { 0, 0, 0 }, LS = { 120, 0, -60 }, LE = { 0, 0, 0 }, RH = { -10, 0, 10 }, RK = { -10, 0, 0 }, LH = { -10, 0, -10 }, LK = { -10, 0, 0 } },
+				follow = { Root = { 56, 0, 0 }, Waist = { 12, 0, 0 }, Neck = { -24, 0, 0 }, RS = { 124, 0, 64 }, RE = { 0, 0, 0 }, LS = { 124, 0, -64 }, LE = { 0, 0, 0 }, RH = { -14, 0, 12 }, RK = { -12, 0, 0 }, LH = { -14, 0, -12 }, LK = { -12, 0, 0 } },
+				trail = "body", hitText = "SPLAF !",
+			},
+			-- dash J : il court bras tendus comme pour embrasser tout le monde
+			P_dash = {
+				label = "Accolade de comptoir", startup = 0.08, active = 0.18, recovery = 0.24,
+				damage = 7, hitbox = box(5, 3.5, 2.5, 0.8), kbBase = 24, kbGrowth = 38, kbAngle = 32, selfVelocity = Vector2.new(34, 0),
+				windup = { Root = { 10, 0, 0, 0, -0.15, 0.2 }, Waist = { 10, 0, 0 }, RS = { 40, 0, 60 }, RE = { 30, 0, 0 }, LS = { 40, 0, -60 }, LE = { 30, 0, 0 } },
+				strike = { Root = { 16, 0, 0, 0, -0.2, -0.3 }, Waist = { 12, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 90, 0, 40 }, RE = { 10, 0, 0 }, LS = { 90, 0, -40 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+				follow = { Root = { 18, 0, 0, 0, -0.22, -0.34 }, Waist = { 14, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 94, 0, 30 }, RE = { 20, 0, 0 }, LS = { 94, 0, -30 }, LE = { 20, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+				fx = { "dust" }, hitText = "VIENS LÀ !",
+			},
+			-- K : coup de genou bancal, il perd l'équilibre en arrière
+			K_neutral = {
+				label = "Genou bancal", startup = 0.12, active = 0.1, recovery = 0.24,
+				damage = 8, hitbox = box(4, 3, 2.4, 0.2), kbBase = 24, kbGrowth = 45, kbAngle = 45,
+				windup = { Root = { 8, -8, 0, 0, -0.1, 0.1 }, Waist = { 8, -6, 0 }, RS = { 40, 0, 40 }, RE = { 60, 0, 0 }, LS = { 40, 0, -40 }, LE = { 60, 0, 0 }, RH = { 30, 0, 0 }, RK = { -80, 0, 0 } },
+				strike = { Root = { -12, 4, 0, 0, -0.05, 0.05 }, Waist = { -14, 4, 0 }, RS = { 60, 0, 60 }, RE = { 30, 0, 0 }, LS = { 60, 0, -60 }, LE = { 30, 0, 0 }, RH = { 100, 0, 0 }, RK = { -100, 0, 0 } },
+				follow = { Root = { -16, 6, 0, 0, -0.05, 0.08 }, Waist = { -18, 6, 0 }, RS = { 64, 0, 64 }, RE = { 30, 0, 0 }, LS = { 64, 0, -64 }, LE = { 30, 0, 0 }, RH = { 104, 0, 0 }, RK = { -104, 0, 0 } },
+				wobble = true, trail = "rightLeg", hitText = "TONK !",
+			},
+			-- →K : savate envoyée trop loin : la chaussure part et revient presque
+			K_side = {
+				label = "Savate perdue", startup = 0.14, active = 0.12, recovery = 0.28,
+				damage = 9, hitbox = box(6, 3, 3.5, 0.3), kbBase = 26, kbGrowth = 50, kbAngle = 32, selfVelocity = Vector2.new(16, 0),
+				windup = { Root = { 6, -12, 0, 0, -0.15, 0.15 }, Waist = { 6, -10, 0 }, RS = { 30, 0, 40 }, RE = { 50, 0, 0 }, LS = { 40, 0, -40 }, LE = { 50, 0, 0 }, RH = { 80, 0, 0 }, RK = { -110, 0, 0 } },
+				strike = { Root = { 14, -4, 0, 0, -0.1, 0.05 }, Waist = { 16, 0, 0 }, RS = { 55, 0, 58 }, RE = { 30, 0, 0 }, LS = { 62, 0, -58 }, LE = { 30, 0, 0 }, RH = { 100, 0, 0 }, RK = { -6, 0, 0 }, RA = { 20, 0, 0 } },
+				follow = { Root = { 18, -2, 0, 0, -0.1, 0.1 }, Waist = { 20, 0, 0 }, RS = { 60, 0, 65 }, RE = { 25, 0, 0 }, LS = { 68, 0, -65 }, LE = { 25, 0, 0 }, RH = { 108, 0, 0 }, RK = { 0, 0, 0 }, RA = { 24, 0, 0 } },
+				trail = "rightFoot", fx = { "slipper" }, hitText = "FLOP !",
+			},
+			-- ↓K : il glisse, tombe sur les fesses et fauche avec les deux jambes
+			K_down = {
+				label = "Chute fauchante", startup = 0.12, active = 0.14, recovery = 0.3,
+				damage = 8, hitbox = box(6, 2, 3, -1.5), kbBase = 26, kbGrowth = 45, kbAngle = 75,
+				windup = { Root = { -10, 0, 0, 0, -0.3, 0 }, Waist = { -10, 0, 0 }, RS = { 60, 0, 40 }, RE = { 30, 0, 0 }, LS = { 60, 0, -40 }, LE = { 30, 0, 0 } },
+				strike = { Root = { -30, 0, 0, 0, -1.0, -0.1 }, Waist = { -10, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 20, 0, 50 }, RE = { 10, 0, 0 }, LS = { 20, 0, -50 }, LE = { 10, 0, 0 }, RH = { 80, 0, 10 }, RK = { -4, 0, 0 }, LH = { 80, 0, -10 }, LK = { -4, 0, 0 } },
+				follow = { Root = { -32, 0, 0, 0, -1.0, -0.12 }, Waist = { -12, 0, 0 }, Neck = { 22, 0, 0 }, RS = { 16, 0, 54 }, RE = { 10, 0, 0 }, LS = { 16, 0, -54 }, LE = { 10, 0, 0 }, RH = { 86, 0, 12 }, RK = { 0, 0, 0 }, LH = { 86, 0, -12 }, LK = { 0, 0, 0 } },
+				trail = "rightFoot", fx = { "dust", "thud" }, hitText = "BADABOUM !",
+			},
+			-- ↑K : coup de pied retourné raté qui touche quand même, il finit à la renverse
+			K_up = {
+				label = "Ciseau raté", startup = 0.14, active = 0.12, recovery = 0.3,
+				damage = 9, hitbox = box(4.5, 6, 1, 3.5), kbBase = 26, kbGrowth = 55, kbAngle = 88,
+				windup = { Root = { 10, 0, 0, 0, -0.3, 0.1 }, Waist = { 12, 0, 0 }, RS = { 60, 0, 40 }, RE = { 40, 0, 0 }, LS = { 60, 0, -40 }, LE = { 40, 0, 0 }, RH = { -20, 0, 0 }, RK = { -60, 0, 0 } },
+				strike = { Root = { -30, 0, 0, 0, 0.1, -0.1 }, Waist = { -20, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 20, 0, 60 }, RE = { 20, 0, 0 }, LS = { 20, 0, -60 }, LE = { 20, 0, 0 }, RH = { 150, 0, 0 }, RK = { -6, 0, 0 }, RA = { 20, 0, 0 } },
+				follow = { Root = { -34, 0, 0, 0, 0.12, -0.12 }, Waist = { -22, 0, 0 }, Neck = { -24, 0, 0 }, RS = { 16, 0, 64 }, RE = { 20, 0, 0 }, LS = { 16, 0, -64 }, LE = { 20, 0, 0 }, RH = { 156, 0, 0 }, RK = { 0, 0, 0 }, RA = { 24, 0, 0 } },
+				trail = "rightFoot", hitText = "OUPS-BAM !",
+			},
+			-- K en l'air : pédalage maladroit des deux jambes
+			K_air = {
+				label = "Pédalo", startup = 0.1, active = 0.2, recovery = 0.2,
+				damage = 8, hits = 2, hitbox = box(5, 3.5, 2.4, -0.5), kbBase = 22, kbGrowth = 40, kbAngle = 40,
+				windup = { Root = { -10, 0, 0 }, Waist = { -8, 0, 0 }, RS = { 120, 0, 40 }, RE = { 40, 0, 0 }, LS = { 120, 0, -40 }, LE = { 40, 0, 0 }, RH = { 60, 0, 0 }, RK = { -100, 0, 0 }, LH = { -20, 0, 0 }, LK = { -40, 0, 0 } },
+				strike = { Root = { -6, 0, 0 }, Waist = { 6, 0, 0 }, RS = { 124, 0, 42 }, RE = { 30, 0, 0 }, LS = { 124, 0, -42 }, LE = { 30, 0, 0 }, RH = { 90, 0, 0 }, RK = { -6, 0, 0 }, LH = { 70, 0, 0 }, LK = { -110, 0, 0 } },
+				follow = { Root = { -4, 0, 0 }, Waist = { 8, 0, 0 }, RS = { 126, 0, 44 }, RE = { 30, 0, 0 }, LS = { 126, 0, -44 }, LE = { 30, 0, 0 }, RH = { 20, 0, 0 }, RK = { -60, 0, 0 }, LH = { 95, 0, 0 }, LK = { -4, 0, 0 } },
+				trail = "rightFoot", hitText = "PÉDALE !",
+			},
+			-- dash K : il glisse sur une flaque imaginaire, pieds devant
+			K_dash = {
+				label = "Glissade de bistrot", startup = 0.1, active = 0.24, recovery = 0.3,
+				damage = 9, hitbox = box(6, 2.5, 3, -0.8), kbBase = 28, kbGrowth = 55, kbAngle = 40, selfVelocity = Vector2.new(50, 10),
+				windup = { Root = { -8, 0, 0, 0, -0.4, 0 }, Waist = { -10, 0, 0 }, RS = { 60, 0, 40 }, RE = { 60, 0, 0 }, LS = { 50, 0, -40 } },
+				strike = { Root = { 20, 0, 0, 0, -0.7, 0.2 }, Waist = { 10, 0, 0 }, RS = { 150, 0, 50 }, RE = { 20, 0, 0 }, LS = { 150, 0, -50 }, LE = { 20, 0, 0 }, RH = { 85, 0, 0 }, RK = { 0, 0, 0 }, RA = { 10, 0, 0 }, LH = { 80, 0, 0 }, LK = { -10, 0, 0 } },
+				follow = { Root = { 24, 0, 0, 0, -0.72, 0.24 }, Waist = { 12, 0, 0 }, RS = { 156, 0, 55 }, RE = { 20, 0, 0 }, LS = { 156, 0, -55 }, LE = { 20, 0, 0 }, RH = { 90, 0, 0 }, RK = { 0, 0, 0 }, RA = { 14, 0, 0 }, LH = { 85, 0, 0 }, LK = { -10, 0, 0 } },
+				trail = "rightFoot", fx = { "dust" }, hitText = "WAAAH !",
+			},
+		},
+		-- Combos à mains nues : J J J (gifles puis coup de boule), J K (bedaine), K K J (câlin), K J (roulade).
+		-- Un S pour finir envoie le spécial du perso (ses L restent les siens).
+		links = {
+			P_neutral = { P = "P_combo2", K = "PK_combo", S = "S_neutral" },
+			P_combo2 = { P = "P_combo3", K = "PK_combo", S = "S_side" },
+			P_combo3 = { K = "K_up", S = "S_neutral" },
+			PK_combo = { P = "P_up", K = "K_combo2", S = "S_down" },
+			K_neutral = { K = "K_combo2", P = "KP_combo", S = "S_side" },
+			K_combo2 = { P = "KKP_combo", K = "K_up", S = "S_neutral" },
+			KP_combo = { P = "P_up", K = "K_up", S = "S_up" },
+			KKP_combo = { S = "S_neutral" },
+			P_side = { P = "P_combo2", K = "K_side", S = "S_side" },
+			P_down = { P = "P_up", K = "K_down", S = "S_down" },
+			P_up = { K = "K_up", S = "S_up" },
+			K_side = { P = "PK_combo", S = "S_side" },
+			K_down = { P = "P_up", S = "S_down" },
+			P_dash = { P = "P_combo2", K = "K_side", S = "S_side" },
+			K_dash = { P = "P_up", S = "S_up" },
+			P_air = { K = "K_air", S = "S_air" },
+			K_air = { P = "P_air", S = "S_air" },
+		},
+	},
 	------------------------------------------------------------------ Les 3 armes de la Caisse Bizarre (une au hasard)
 	-- n° 1 : la bouteille (ses coups sont ceux de moves). n° 2 : le pack de canettes, jeu de projectiles à portée.
 	-- n° 3 : le tonneau de soda, lourd et lent, qui encaisse pendant les spéciaux et éjecte loin.

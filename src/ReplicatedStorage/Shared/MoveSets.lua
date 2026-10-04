@@ -59,11 +59,26 @@ local function merge(base, over)
 	return { moves = moves, links = links }
 end
 
--- generic = { bare = BareMoves } ; data.weaponMoves.bare peut remplacer quelques coups à mains nues ;
--- data.weapons[2..] : les armes à coups propres
+-- Les mains nues ne gardent que les coups P_ / K_ : sans arme, les L et les Y restent ceux du perso
+local function onlyPunchesAndKicks(set)
+	if not set then
+		return nil
+	end
+	local moves = {}
+	for key, move in pairs(set.moves) do
+		local prefix = string.sub(key, 1, 2)
+		if prefix == "P_" or prefix == "K_" or string.find(key, "combo", 1, true) then
+			moves[key] = move
+		end
+	end
+	return { moves = moves, links = set.links }
+end
+
+-- generic = { bare = BareMoves } (secours) ; data.bare = { moves, links } : les coups et combos à mains nues
+-- PROPRES au perso (ils remplacent ceux de BareMoves) ; data.weapons[2..] : les armes à coups propres
 function MoveSets.install(data, generic)
-	local own = data.weaponMoves or {}
-	installSet(data, MoveSets.BARE, merge(generic.bare, own.bare))
+	local own = data.bare or (data.weaponMoves and data.weaponMoves.bare)
+	installSet(data, MoveSets.BARE, onlyPunchesAndKicks(merge(generic.bare, own)))
 	data.weaponById = {}
 	for index, weapon in ipairs(data.weapons or {}) do
 		data.weaponById[weapon.id] = weapon

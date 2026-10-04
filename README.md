@@ -76,8 +76,8 @@ On ne combine jamais deux boutons : la direction tenue au moment de l'appui choi
 - **Jeter son arme** : avec la caisse ouverte, ✋ lance l'arme sur l'adversaire, même pendant qu'on se fait
   frapper ; ça casse alors le combo adverse (0,5 s d'invulnérabilité). On repasse à mains nues, et l'arme
   retombe en Caisse Bizarre que n'importe qui peut reprendre.
-- **Caisse Bizarre** 📦 : on entre à mains nues : P et K sont des coups communs à tous, mais les L, les Y, la saisie,
-  les fatals et la mécanique restent ceux du perso. Ouvrir une caisse avec ✋ sort **une de ses 3 armes, au hasard** ;
+- **Caisse Bizarre** 📦 : on entre à mains nues : J et K sont les coups à mains nues du perso, avec ses propres
+  combos, et les L, les Y, la saisie, les fatals et la mécanique restent les siens. Ouvrir une caisse avec ✋ sort **une de ses 3 armes, au hasard** ;
   chaque arme a ses propres J / K / L / Y et une **capacité** (vitesse, portée, soin, armure…). Ouvrir une autre
   caisse change d'arme. L'arme est perdue à l'éjection.
 - **Jauge de dégâts** : elle passe au rouge à 150 %. Un adversaire sur sa dernière vie et dans le rouge

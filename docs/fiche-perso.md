@@ -9,9 +9,10 @@ dans la variable `LUAU`). Le script contrôle la fiche et joue toutes ses animat
 
 ## Caisse Bizarre : mains nues, puis une des 3 armes du perso
 
-- **Sans caisse** : P et K sont les coups à mains nues communs à tous (`BareMoves.lua`), mais les **L restent
-  ceux du perso** (ses `S_…` non préfixés : portée supérieure aux J / K), ainsi que ses 4 Supers (Y), sa saisie,
-  ses fatals et sa mécanique. Les dégâts sont réduits (`Config.UNARMED_DAMAGE`).
+- **Sans caisse** : J et K sont les **coups à mains nues du perso** (`bare` dans la fiche), avec ses propres combos,
+  différents de ceux de ses armes et de ceux des autres persos. Les **L restent ceux du perso** (ses `S_…` non
+  préfixés : portée supérieure aux J / K), ainsi que ses 4 Supers (Y), sa saisie, ses fatals et sa mécanique.
+  Les dégâts sont réduits (`Config.UNARMED_DAMAGE`). `BareMoves.lua` ne sert plus que de secours.
 - **L maintenu** (au sol : L, →L, ↓L) : le même spécial part au relâchement avec une portée allongée, jusqu'à
   +80 % (`Config.S_HOLD_RANGE`) : couloir plus long, projectile qui vole plus loin, élan plus grand.
 - **La Caisse Bizarre** 📦 tombe dans l'arène. Celui qui l'ouvre (✋) sort **une de ses 3 armes, au hasard**
@@ -19,6 +20,21 @@ dans la variable `LUAU`). Le script contrôle la fiche et joue toutes ses animat
   change d'arme. L'arme est perdue à l'éjection (ou jetée avec ✋).
 - Les 4 Supers (Y, →Y, ↑Y, ↓Y) existent dans chaque jeu : ceux du perso (`SUPER…` non préfixés) sans arme et
   avec l'arme n° 1, ceux de l'arme avec les armes n° 2 et 3.
+
+## Mains nues (`bare`)
+
+```lua
+bare = {
+	moves = { P_neutral = { … }, P_combo2 = { … }, …, K_dash = { … } },
+	links = { P_neutral = { P = "P_combo2", K = "PK_combo", S = "S_neutral" }, … },
+},
+```
+
+Coups obligatoires : `P_neutral, P_side, P_down, P_up, P_air, P_dash, K_neutral, K_side, K_down, K_up, K_air,
+K_dash`, plus au moins 4 coups de combo (clés contenant `combo` : `P_combo2`, `PK_combo`, `KKP_combo`…). Seulement
+des coups P / K (pas de S_ ni de SUPER). Les `links` font les combos ; une suite vers un `S_…` envoie le spécial du
+perso. Le geste est celui du perso **sans son arme** (Gégé gifle, donne des coups de boule et de bedaine) : il doit
+être différent de ses coups armés et de ceux des autres persos. Voir `bare` dans `Gege.lua`.
 
 ## Les 3 armes (`weapons`)
 
@@ -107,6 +123,7 @@ end
 local data = {
 	id = "Mamie", name = "Mamie Tricot", costume = "Mamie", style = "granny",
 	look = { … },        -- costume (voir plus bas)
+	bare = { … },        -- coups et combos à mains nues (voir plus haut)
 	weapons = { … },     -- les 3 armes de la Caisse Bizarre (voir plus haut)
 	moves = { … },       -- coups (arme n° 1 ; les L et les Y servent aussi sans arme)
 	fatals = { … },      -- 3 coups fatals avec leur scène

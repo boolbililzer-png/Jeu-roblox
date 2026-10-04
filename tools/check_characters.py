@@ -128,6 +128,11 @@ local REQUIRED_WEAPON = {
 	"S_neutral", "S_side", "S_down", "S_up", "S_air",
 	"SUPER", "SUPER_side", "SUPER_up", "SUPER_down",
 }
+-- coups à mains nues propres à chaque perso (data.bare)
+local REQUIRED_BARE = {
+	"P_neutral", "P_side", "P_down", "P_up", "P_air", "P_dash",
+	"K_neutral", "K_side", "K_down", "K_up", "K_air", "K_dash",
+}
 local ABILITIES = { speed = true, jumps = true, damage = true, knockback = true, reach = true, superCooldown = true,
 	heal = true, armor = true, status = true, text = true }
 local KINDS = { melee = true, projectile = true, self = true, grab = true, throw = true, item = true,
@@ -284,10 +289,36 @@ for _, id in ipairs(Roster.ORDER) do
 					end
 				end
 			end
+			-- mains nues : ses propres coups et combos (data.bare)
+			local bare = data.bare
+			if type(bare) ~= "table" or type(bare.moves) ~= "table" then err(id, "bare = { moves = …, links = … } manquant (coups à mains nues du perso)") else
+				for _, key in ipairs(REQUIRED_BARE) do
+					if not bare.moves[key] then err(id, "bare : coup obligatoire manquant : " .. key) end
+				end
+				local combos = 0
+				for key in pairs(bare.moves) do
+					local prefix = string.sub(key, 1, 2)
+					if prefix ~= "P_" and prefix ~= "K_" and not string.find(key, "combo", 1, true) then err(id, "bare : seulement des coups P_ / K_ (" .. key .. ")") end
+					if string.find(key, "combo", 1, true) then combos += 1 end
+				end
+				if combos < 4 then err(id, "bare : il faut au moins 4 coups de combo (P_combo2…), il y en a " .. combos) end
+				if type(bare.links) ~= "table" then err(id, "bare.links manquant (les combos à mains nues)") else
+					for key, links in pairs(bare.links) do
+						if not bare.moves[key] then err(id, "bare.links." .. key .. " : coup inconnu") end
+						for button, target in pairs(links) do
+							if not bare.moves[target] and not moves[target] then err(id, "bare.links." .. key .. "." .. button .. " → " .. tostring(target) .. " n'existe pas") end
+						end
+					end
+				end
+				for key, m in pairs(bare.moves) do
+					local copy = moves["bare." .. key]
+					if not copy or copy.label ~= m.label then err(id, "bare." .. key .. " pas installé") end
+				end
+			end
 			local own = 0
 			for key, m in pairs(moves) do
 				local weapon = string.match(key, "^([%a_]+)%.")
-				if (weapon == nil or (weaponIds[weapon] and weapon ~= "bare")) and string.sub(key, 1, 5) ~= "ITEM_" then
+				if (weapon == nil or weaponIds[weapon] or (weapon == "bare" and data.bare)) and string.sub(key, 1, 5) ~= "ITEM_" then
 					own += 1
 					local where = key
 					if type(m.label) ~= "string" then err(id, where .. " : label manquant") end
