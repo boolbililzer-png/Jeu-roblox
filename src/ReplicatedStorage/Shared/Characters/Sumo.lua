@@ -33,11 +33,505 @@ local DUCK_SHOT = { shape = "ball", size = 1.4, color = DUCK, spin = 0, parts = 
 	{ "ball", Vector3.new(0.18, 0.18, 0.18), Vector3.new(0.65, 1.0, -0.3), HAIR },
 } }
 
+local BURLAP = Color3.fromRGB(200, 175, 120) -- sac de sel (arme n° 2)
+local IRON = Color3.fromRGB(60, 60, 65) -- marmite de chanko (arme n° 3)
+local BROTH = Color3.fromRGB(225, 150, 70)
+local MEATBALL = Color3.fromRGB(190, 120, 80)
+
+-- poignée de sel (projectiles du sac de sel)
+local SALT_SHOT = { shape = "ball", size = 0.9, color = SALT, spin = 8 }
+-- boulette de viande du chanko
+local MEATBALL_SHOT = { shape = "ball", size = 1.1, color = MEATBALL, spin = 6, parts = { { "ball", Vector3.new(0.3, 0.3, 0.3), Vector3.new(0.5, 0.3, 0), Color3.fromRGB(110, 170, 60) } } }
+-- le canard géant du →Y, gonflé à bloc
+local DUCK_GIANT = { shape = "ball", size = 4, color = DUCK, spin = 0, parts = {
+	{ "ball", Vector3.new(2.6, 2.6, 2.6), Vector3.new(1.2, 2.3, 0), DUCK },
+	{ "block", Vector3.new(1.5, 0.5, 1.2), Vector3.new(2.6, 2.1, 0), BEAK },
+	{ "ball", Vector3.new(0.5, 0.5, 0.5), Vector3.new(1.9, 2.9, -0.9), HAIR },
+	{ "ball", Vector3.new(0.5, 0.5, 0.5), Vector3.new(1.9, 2.9, 0.9), HAIR },
+} }
 local data = {
 	id = "Sumo",
 	name = "Sumo Gélatine",
 	costume = "Sumo",
 	style = "jelly",
+	------------------------------------------------------------------ Les 3 armes de la Caisse Bizarre (une au hasard)
+	-- n° 1 : les gants en guimauve (ses coups sont ceux de moves). n° 2 : le sac de sel du dohyo, jeu de projectiles
+	-- qui aveuglent et font glisser. n° 3 : la marmite de chanko, lourde, brûlante, qui le remplume à chaque coup.
+	weapons = {
+		{ id = "gants", name = "Gants en guimauve", icon = "🍬",
+			ability = { armor = true, text = "Les spéciaux encaissent sans broncher (gelée blindée)" } },
+		{ id = "sel", name = "Sac de sel du dohyo", icon = "🧂",
+			prop = { name = "PropSel", hand = "Right", pieces = {
+				{ "Sac", "", "ball", Vector3.new(0.95, 1.15, 0.95), Vector3.new(0, -0.75, 0), Vector3.zero, BURLAP, "Fabric" },
+				{ "Ficelle", "", "cyl", Vector3.new(0.14, 0.55, 0.55), Vector3.new(0, -0.18, 0), Vector3.zero, Color3.fromRGB(120, 90, 50), "Fabric" },
+				{ "Sel", "", "ball", Vector3.new(0.5, 0.3, 0.5), Vector3.new(0, 0.02, 0), Vector3.zero, SALT, "Sand" },
+				{ "Grain", "", "ball", Vector3.new(0.22, 0.22, 0.22), Vector3.new(0.35, -1.25, -0.2), Vector3.zero, SALT, "Sand" },
+			} },
+			ability = { reach = 1.2, text = "Portée +20 % : le sel vole loin" },
+			moves = {
+				-- J : il claque le sac de sel sur le nez de l'adversaire, un petit nuage blanc en sort
+				P_neutral = {
+					label = "Claque au sac", startup = 0.08, active = 0.08, recovery = 0.15,
+					damage = 6, hitbox = box(4.5, 3, 2.8, 0.6), kbBase = 20, kbGrowth = 25, kbAngle = 25,
+					windup = { Root = { 2, -18, 0, 0, -0.35, 0.15 }, Waist = { 0, -16, 0 }, RS = { 60, 0, 40 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -30 }, LE = { 70, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+					strike = { Root = { -8, 14, 0, 0, -0.42, -0.3 }, Waist = { -6, 18, 0 }, RS = { 94, 0, 4 }, RE = { 6, 0, 0 }, RW = { -20, 0, 0 }, LS = { 30, 0, -40 }, LE = { 80, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+					follow = { Root = { -9, 18, 0, 0, -0.44, -0.35 }, Waist = { -7, 22, 0 }, RS = { 90, 0, -2 }, RE = { 12, 0, 0 }, RW = { -40, 0, 0 }, LS = { 28, 0, -42 }, LE = { 80, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+					trail = "prop", fx = { { "burst", color = SALT, size = 1.2, at = "hand" } }, hitText = "POF !",
+				},
+				-- →J : une pincée de sel jetée à bout portant dans les yeux (petit projectile court, aveugle)
+				P_side = {
+					label = "Pincée dans les yeux", kind = "projectile", startup = 0.1, active = 0, recovery = 0.2,
+					damage = 6, kbBase = 20, kbGrowth = 30, kbAngle = 30,
+					projectile = { speed = 65, angle = 4, gravity = 30, lifetime = 0.3, size = 1.2, color = SALT, visual = SALT_SHOT, aim = false },
+					status = { name = "blinded", duration = 1 },
+					windup = { Root = { 4, -24, 0, 0, -0.35, 0.2 }, Waist = { 4, -26, 0 }, Neck = { 0, 14, 0 }, RS = { 40, 0, 20 }, RE = { 120, 0, 0 }, RW = { 20, 0, 0 }, LS = { 70, 0, -20 }, LE = { 60, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+					strike = { Root = { -10, 18, 0, 0, -0.42, -0.3 }, Waist = { -10, 24, 0 }, Neck = { 0, -12, 0 }, RS = { 92, 0, 0 }, RE = { 0, 0, 0 }, RW = { 30, 0, 0 }, LS = { 40, 0, -40 }, LE = { 60, 0, 0 }, FR = WIDE_R, FL = { 0, 0, 0, -0.35, 0, -0.4 } },
+					follow = { Root = { -12, 22, 0, 0, -0.44, -0.35 }, Waist = { -12, 28, 0 }, Neck = { 0, -16, 0 }, RS = { 96, 0, 6 }, RE = { 4, 0, 0 }, RW = { 40, 0, 0 }, LS = { 36, 0, -44 }, LE = { 60, 0, 0 }, FR = WIDE_R, FL = { 0, 0, 0, -0.35, 0, -0.42 } },
+					fx = { { "particles", tex = "spark", color = SALT, dir = "front", at = "hand", time = 0.2, speed = 14, size = 0.3, rate = 60 } }, hitText = "ÇA PIQUE !",
+				},
+				-- ↓J : accroupi, il verse une ligne de sel sur les orteils de l'adversaire, qui glisse dessus
+				P_down = {
+					label = "Sel sur les orteils", startup = 0.1, active = 0.12, recovery = 0.2,
+					damage = 6, hitbox = box(6, 2, 3.5, -1.5), kbBase = 20, kbGrowth = 26, kbAngle = 70,
+					status = { name = "slippery", duration = 1 },
+					windup = { Root = { 8, 0, 0, 0, -0.85, 0.1 }, Waist = { 16, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 110, 0, 20 }, RE = { 70, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -30 }, LE = { 90, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+					strike = { Root = { 14, 0, 0, 0, -1.0, -0.2 }, Waist = { 24, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 40, 0, 20 }, RE = { 0, 0, 0 }, RW = { 90, 0, 0 }, LS = { 40, 0, -30 }, LE = { 90, 0, 0 }, FR = WIDE_R, FL = { 0, 0, 0, -0.35, 0, -0.3 } },
+					follow = { Root = { 16, -10, 0, 0, -1.0, -0.24 }, Waist = { 26, -12, 0 }, Neck = { 18, 0, 0 }, RS = { 32, 0, 30 }, RE = { 0, 0, 0 }, RW = { 100, 0, 0 }, LS = { 44, 0, -32 }, LE = { 90, 0, 0 }, FR = WIDE_R, FL = { 0, 0, 0, -0.35, 0, -0.32 } },
+					fx = { { "beam", color = SALT, length = 6, width = 0.6, at = "feet" } }, hitText = "CRISSS !",
+				},
+				-- ↑J : il lance le sac en l'air sous le menton et le rattrape (anti-air)
+				P_up = {
+					label = "Sac au menton", startup = 0.1, active = 0.1, recovery = 0.22,
+					damage = 7, hitbox = box(4, 5.5, 1.5, 3.2), kbBase = 24, kbGrowth = 38, kbAngle = 86,
+					windup = { Root = { 6, 0, 0, 0, -0.6, 0.1 }, Waist = { 10, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 30, 0, 20 }, RE = { 120, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -20 }, LE = { 100, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+					strike = { Root = { -8, 0, 0, 0, -0.1, -0.1 }, Waist = { -12, 0, 0 }, Neck = { -24, 0, 0 }, RS = { 172, 0, 10 }, RE = { 6, 0, 0 }, RW = { -30, 0, 0 }, LS = { 60, 0, -30 }, LE = { 80, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+					follow = { Root = { -10, 0, 0, 0, -0.05, -0.12 }, Waist = { -14, 0, 0 }, Neck = { -28, 0, 0 }, RS = { 180, 0, 12 }, RE = { 6, 0, 0 }, RW = { -40, 0, 0 }, LS = { 64, 0, -32 }, LE = { 80, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+					trail = "prop", fx = { { "rain", shape = "ball", color = SALT, count = 6, radius = 2, size = 0.2 } }, hitText = "HOP !",
+				},
+				-- J en l'air : il saupoudre tout ce qui passe sous lui, le sac retourné
+				P_air = {
+					label = "Saupoudrage", startup = 0.1, active = 0.14, recovery = 0.16,
+					damage = 7, hitbox = box(5, 4, 1.5, -1.5), kbBase = 20, kbGrowth = 32, kbAngle = -35,
+					windup = { Root = { 8, 0, 0 }, Waist = { 14, 0, 0 }, RS = { 170, 0, 20 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -40 }, LE = { 50, 0, 0 }, RH = { 40, 0, 0 }, RK = { -80, 0, 0 }, LH = { 60, 0, 0 }, LK = { -90, 0, 0 } },
+					strike = { Root = { -12, 0, 0 }, Waist = { -26, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 30, 0, 10 }, RE = { 0, 0, 0 }, RW = { 90, 0, 0 }, LS = { -20, 0, -45 }, LE = { 20, 0, 0 }, RH = { 15, 0, 0 }, RK = { -35, 0, 0 }, LH = { 35, 0, 0 }, LK = { -70, 0, 0 } },
+					follow = { Root = { -16, 0, 0 }, Waist = { -32, 0, 0 }, Neck = { 34, 0, 0 }, RS = { 22, 0, 12 }, RE = { 6, 0, 0 }, RW = { 100, 0, 0 }, LS = { -30, 0, -50 }, LE = { 20, 0, 0 }, RH = { 5, 0, 0 }, RK = { -30, 0, 0 }, LH = { 30, 0, 0 }, LK = { -65, 0, 0 } },
+					trail = "prop", fx = { { "rain", shape = "ball", color = SALT, count = 8, radius = 3, size = 0.2 } }, hitText = "PSSSHT !",
+				},
+				-- dash J : en courant, il balance le sac à bout de bras comme une masse d'armes
+				P_dash = {
+					label = "Sac en bélier", startup = 0.09, active = 0.16, recovery = 0.24,
+					damage = 9, hitbox = box(5.5, 4, 3, 0.5), kbBase = 30, kbGrowth = 52, kbAngle = 28, selfVelocity = Vector2.new(42, 0),
+					windup = { Root = { -8, -30, 0, 0, -0.5, 0.2 }, Waist = { -10, -30, 0 }, Neck = { 10, 20, 0 }, RS = { -30, 0, 40 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -30 }, LE = { 80, 0, 0 } },
+					strike = { Root = { -18, 20, 0, 0, -0.5, -0.4 }, Waist = { -14, 24, 0 }, Neck = { 14, -14, 0 }, RS = { 96, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -50 }, LE = { 70, 0, 0 } },
+					follow = { Root = { -20, 26, 0, 0, -0.52, -0.46 }, Waist = { -16, 30, 0 }, Neck = { 16, -18, 0 }, RS = { 100, 0, 14 }, RE = { 4, 0, 0 }, RW = { -10, 0, 0 }, LS = { 26, 0, -54 }, LE = { 70, 0, 0 } },
+					trail = "prop", fx = { "dust" }, text = "DOSUKOI !", hitText = "BOUM !",
+				},
+				-- K : Shiko salé, il lève la jambe très haut et l'écrase : le sel du sac saute en l'air
+				K_neutral = {
+					label = "Shiko salé", startup = 0.22, active = 0.1, recovery = 0.32,
+					damage = 12, hitbox = box(7, 2.5, 2, -1.6), kbBase = 32, kbGrowth = 68, kbAngle = 72,
+					windup = { Root = { 0, 0, -14, -0.3, -0.2, 0 }, Waist = { 4, 0, -10 }, Neck = { 0, 0, 10 }, RS = { 10, 0, 40 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 10, 0, -30 }, LE = { 60, 0, 0 }, RH = { 30, 0, 70 }, RK = { -30, 0, 0 }, FL = WIDE_L },
+					strike = { Root = { 6, 0, 2, 0, -0.65, 0 }, Waist = { 10, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 60, 0, 30 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -30 }, LE = { 100, 0, 0 }, FR = { 0, 0, 0, 0.45, 0, 0 }, FL = WIDE_L },
+					follow = { Root = { 8, 0, 0, 0, -0.7, 0 }, Waist = { 12, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 64, 0, 32 }, RE = { 90, 0, 0 }, RW = { -10, 0, 0 }, LS = { 28, 0, -32 }, LE = { 105, 0, 0 }, FR = { 0, 0, 0, 0.45, 0, 0 }, FL = WIDE_L },
+					hold = 0.08, trail = "rightFoot", fx = { { "ring", color = SALT, radius = 6, at = "feet" }, { "toss", shape = "ball", color = SALT, size = 0.3, count = 8, speed = 18 }, { "shake", amount = 0.4 } }, text = "DOSUKOI !", hitText = "BOUM !",
+				},
+				-- →K : coup de pied retourné, le sac tendu à l'opposé sert de contrepoids
+				K_side = {
+					label = "Retourné au sac", startup = 0.18, active = 0.12, recovery = 0.32,
+					damage = 12, hitbox = box(6, 3.5, 3.5, 0.5), kbBase = 32, kbGrowth = 70, kbAngle = 35, selfVelocity = Vector2.new(22, 0),
+					windup = { Root = { 6, 30, 0, 0, -0.3, 0.1 }, Waist = { 8, 40, 0 }, RS = { 120, 0, 60 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -40 }, LE = { 70, 0, 0 }, RH = { -20, 0, 10 }, RK = { -50, 0, 0 }, FL = WIDE_L },
+					strike = { Root = { 10, -40, 0, 0, -0.15, -0.1 }, Waist = { 10, -50, 0 }, RS = { 80, 0, 80 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -50 }, LE = { 40, 0, 0 }, RH = { 100, 0, 20 }, RK = { -6, 0, 0 }, RA = { 10, 0, 0 }, FL = WIDE_L },
+					follow = { Root = { 12, -50, 0, 0, -0.15, -0.14 }, Waist = { 12, -60, 0 }, RS = { 84, 0, 84 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 64, 0, -54 }, LE = { 40, 0, 0 }, RH = { 108, 0, 24 }, RK = { 0, 0, 0 }, RA = { 14, 0, 0 }, FL = WIDE_L },
+					spin = { axis = "y", degrees = 360 }, trail = "rightFoot", hitText = "VLAN !",
+				},
+				-- ↓K : balayette basse, le sac posé par terre pour s'appuyer dessus, une traînée de sel derrière le pied
+				K_down = {
+					label = "Balayette salée", startup = 0.15, active = 0.14, recovery = 0.3,
+					damage = 10, hitbox = box(7, 2, 3.5, -1.6), kbBase = 28, kbGrowth = 50, kbAngle = 75,
+					status = { name = "slippery", duration = 1 },
+					windup = { Root = { 12, 10, 0, 0, -0.85, 0.1 }, Waist = { 16, 14, 0 }, RS = { 60, 0, 30 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -40 }, LE = { 80, 0, 0 }, LH = { -30, 0, 0 }, LK = { -40, 0, 0 }, FR = WIDE_R },
+					strike = { Root = { 16, -20, 0, 0, -0.95, -0.1 }, Waist = { 20, -26, 0 }, RS = { 50, 0, 40 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -40 }, LE = { 80, 0, 0 }, LH = { 50, 0, -20 }, LK = { -4, 0, 0 }, LA = { 20, 0, 0 }, FR = WIDE_R },
+					follow = { Root = { 18, -26, 0, 0, -0.95, -0.14 }, Waist = { 22, -32, 0 }, RS = { 52, 0, 42 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 34, 0, -42 }, LE = { 80, 0, 0 }, LH = { 56, 0, -24 }, LK = { 0, 0, 0 }, LA = { 24, 0, 0 }, FR = WIDE_R },
+					trail = "leftFoot", fx = { "dust", { "beam", color = SALT, length = 6, width = 0.5, at = "feet" } }, hitText = "FAUCHÉ !",
+				},
+				-- ↑K : coup de pied monté, et le sac lâché retombe en pluie blanche
+				K_up = {
+					label = "Pied et pluie de sel", startup = 0.16, active = 0.12, recovery = 0.32,
+					damage = 11, hitbox = box(4.5, 6, 1.5, 3.5), kbBase = 30, kbGrowth = 64, kbAngle = 88,
+					windup = { Root = { 10, 0, 0, 0, -0.3, 0.1 }, Waist = { 14, 0, 0 }, RS = { 100, 0, 40 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -40 }, LE = { 60, 0, 0 }, RH = { -20, 0, 0 }, RK = { -60, 0, 0 }, FL = WIDE_L },
+					strike = { Root = { -16, 0, 0, 0, 0.05, -0.1 }, Waist = { -20, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 160, 0, 20 }, RE = { 20, 0, 0 }, RW = { -30, 0, 0 }, LS = { 30, 0, -50 }, LE = { 30, 0, 0 }, RH = { 140, 0, 0 }, RK = { -6, 0, 0 }, RA = { 20, 0, 0 }, FL = WIDE_L },
+					follow = { Root = { -18, 0, 0, 0, 0.08, -0.12 }, Waist = { -22, 0, 0 }, Neck = { -24, 0, 0 }, RS = { 166, 0, 22 }, RE = { 20, 0, 0 }, RW = { -36, 0, 0 }, LS = { 34, 0, -52 }, LE = { 30, 0, 0 }, RH = { 148, 0, 0 }, RK = { 0, 0, 0 }, RA = { 24, 0, 0 }, FL = WIDE_L },
+					trail = "rightFoot", fx = { { "rain", shape = "ball", color = SALT, count = 10, radius = 3, size = 0.25 } }, hitText = "TCHAC !",
+				},
+				-- K en l'air : roulé en boule, le sac serré contre le ventre, il percute en salto
+				K_air = {
+					label = "Boulet de sel", startup = 0.16, active = 0.16, recovery = 0.26,
+					damage = 12, hitbox = box(5, 5, 1.8, -0.5), kbBase = 30, kbGrowth = 68, kbAngle = 35,
+					windup = { Root = { -10, 0, 0 }, Waist = { -16, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 150, 0, 40 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, -40 }, LE = { 30, 0, 0 }, RH = { 40, 0, 10 }, RK = { -60, 0, 0 }, LH = { 40, 0, -10 }, LK = { -60, 0, 0 } },
+					strike = { Root = { -20, 0, 0 }, Waist = { -35, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 60, 0, -10 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, 10 }, LE = { 110, 0, 0 }, RH = { 120, 0, 5 }, RK = { -140, 0, 0 }, LH = { 120, 0, -5 }, LK = { -140, 0, 0 } },
+					follow = { Root = { -22, 0, 0 }, Waist = { -36, 0, 0 }, Neck = { -22, 0, 0 }, RS = { 62, 0, -12 }, RE = { 112, 0, 0 }, RW = { 0, 0, 0 }, LS = { 62, 0, 12 }, LE = { 112, 0, 0 }, RH = { 122, 0, 5 }, RK = { -140, 0, 0 }, LH = { 122, 0, -5 }, LK = { -140, 0, 0 } },
+					spin = { axis = "x", degrees = 360 }, trail = "body", hitText = "BLOMP !",
+				},
+				-- dash K : glissade pieds devant sur une traînée de sel, le sac vidé derrière lui
+				K_dash = {
+					label = "Glissade salée", startup = 0.1, active = 0.26, recovery = 0.3,
+					damage = 11, hitbox = box(6, 3, 3, -0.8), kbBase = 30, kbGrowth = 64, kbAngle = 38, selfVelocity = Vector2.new(55, 12),
+					status = { name = "slippery", duration = 1.5 },
+					windup = { Root = { -8, 0, 0, 0, -0.45, 0 }, Waist = { -10, 0, 0 }, RS = { 60, 0, 40 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -40 } },
+					strike = { Root = { 20, 0, 0, 0, -0.7, 0.2 }, Waist = { 10, 0, 0 }, RS = { -40, 0, 50 }, RE = { 20, 0, 0 }, RW = { 60, 0, 0 }, LS = { 70, 0, -40 }, LE = { 30, 0, 0 }, RH = { 85, 0, 0 }, RK = { 0, 0, 0 }, RA = { 10, 0, 0 }, LH = { 80, 0, 0 }, LK = { -10, 0, 0 } },
+					follow = { Root = { 24, 0, 0, 0, -0.72, 0.24 }, Waist = { 12, 0, 0 }, RS = { -46, 0, 55 }, RE = { 20, 0, 0 }, RW = { 70, 0, 0 }, LS = { 75, 0, -45 }, LE = { 30, 0, 0 }, RH = { 90, 0, 0 }, RK = { 0, 0, 0 }, RA = { 14, 0, 0 }, LH = { 85, 0, 0 }, LK = { -10, 0, 0 } },
+					trail = "bothFeet", fx = { { "puddle", color = SALT, width = 8 }, "dust" }, hitText = "SKRRRT !",
+				},
+				-- L : pluie purificatrice, il jette une grande poignée de sel au ciel, elle retombe sur l'adversaire où qu'il soit
+				S_neutral = {
+					label = "Pluie purificatrice", kind = "projectile", startup = 0.24, active = 0, recovery = 0.45,
+					damage = 7, kbBase = 22, kbGrowth = 38, kbAngle = 60,
+					projectile = { speed = 60, gravity = 0, lifetime = 0.8, size = 1.3, color = SALT, visual = SALT_SHOT, rain = { count = 6, spread = 7, ahead = 9, height = 20 } },
+					status = { name = "blinded", duration = 2 },
+					windup = { Root = { 8, 0, 0, 0, -0.75, 0.1 }, Waist = { 14, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 20, 0, 30 }, RE = { 120, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -30 }, LE = { 110, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+					strike = { Root = { -6, 0, 0, 0, 0.05, 0 }, Waist = { -10, 0, 0 }, Neck = { -26, 0, 0 }, RS = { 176, 0, 24 }, RE = { 0, 0, 0 }, RW = { -30, 0, 0 }, LS = { 40, 0, -40 }, LE = { 70, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+					follow = { Root = { -8, 0, 0, 0, 0.08, 0 }, Waist = { -12, 0, 0 }, Neck = { -30, 0, 0 }, RS = { 184, 0, 30 }, RE = { 0, 0, 0 }, RW = { -50, 0, 0 }, LS = { 44, 0, -44 }, LE = { 70, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+					hold = 0.1, trail = "prop", fx = { { "burst", color = SALT, size = 2.5, at = "above" }, { "symbols", symbols = { "🧂", "✨" }, color = SALT, count = 4, radius = 3, at = "above" } },
+					text = "PURIFICATION !", hitText = "AVEUGLÉ !",
+				},
+				-- →L : le rituel : grand pas en avant et une poignée géante de sel qui traverse tout le couloir comme un boulet blanc
+				S_side = {
+					label = "Rituel du dohyo", kind = "projectile", startup = 0.24, active = 0, recovery = 0.5,
+					damage = 14, kbBase = 32, kbGrowth = 60, kbAngle = 35,
+					projectile = { speed = 85, angle = 0, gravity = 0, lifetime = 0.7, size = 2.4, color = SALT, pierce = true, visual = { shape = "ball", size = 2.2, color = SALT, spin = 10 } },
+					status = { name = "blinded", duration = 2 },
+					windup = { Root = { 6, -36, 0, 0, -0.4, 0.3 }, Waist = { 8, -38, 0 }, Neck = { 4, 22, 0 }, RS = { -20, 0, 50 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 80, 0, -10 }, LE = { 40, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+					strike = { Root = { -14, 24, 0, 0, -0.45, -0.5 }, Waist = { -16, 28, 0 }, Neck = { -4, -16, 0 }, RS = { 94, 0, -4 }, RE = { 0, 0, 0 }, RW = { 40, 0, 0 }, LS = { 30, 0, -50 }, LE = { 60, 0, 0 }, FR = WIDE_R, FL = { 0, 0, 0, -0.35, 0, -0.6 } },
+					follow = { Root = { -16, 28, 0, 0, -0.47, -0.56 }, Waist = { -20, 32, 0 }, Neck = { -6, -18, 0 }, RS = { 98, 0, -6 }, RE = { 4, 0, 0 }, RW = { 50, 0, 0 }, LS = { 26, 0, -54 }, LE = { 60, 0, 0 }, FR = WIDE_R, FL = { 0, 0, 0, -0.35, 0, -0.65 } },
+					fx = { { "burst", color = SALT, size = 3, at = "hand" }, { "beam", color = SALT, length = 12, width = 1.5, at = "hand" } }, text = "SEL !", hitText = "BLANCHI !",
+				},
+				-- ↓L : le cercle de sel : il trace une ligne de sel sur tout le couloir ; qui marche dessus glisse et valdingue
+				S_down = {
+					label = "Ligne de sel", kind = "trap", startup = 0.22, active = 0.12, recovery = 0.45,
+					damage = 12, kbBase = 28, kbGrowth = 40, kbAngle = 80,
+					status = { name = "slippery", duration = 2 },
+					trap = { size = Vector3.new(16, 2, 6), offset = 8, lifetime = 7, max = 1, color = SALT,
+						visual = { shape = "ball", size = 0.6, color = SALT, trail = false, parts = {
+							{ "block", Vector3.new(15, 0.12, 1.2), Vector3.new(0, -0.3, 0), SALT },
+							{ "ball", Vector3.new(0.8, 0.3, 0.8), Vector3.new(-5, -0.2, 0.3), SALT },
+							{ "ball", Vector3.new(0.7, 0.3, 0.7), Vector3.new(2, -0.2, -0.3), SALT },
+							{ "ball", Vector3.new(0.9, 0.3, 0.9), Vector3.new(6, -0.2, 0.2), SALT },
+						} } },
+					windup = { Root = { 10, 0, 0, 0, -0.9, 0.1 }, Waist = { 18, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 110, 0, 20 }, RE = { 70, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -30 }, LE = { 90, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+					strike = { Root = { 16, -30, 0, 0, -1.0, -0.2 }, Waist = { 26, -34, 0 }, Neck = { 16, 20, 0 }, RS = { 40, 0, 50 }, RE = { 0, 0, 0 }, RW = { 90, 0, 0 }, LS = { 40, 0, -30 }, LE = { 90, 0, 0 }, FR = WIDE_R, FL = { 0, 0, 0, -0.35, 0, -0.3 } },
+					follow = { Root = { 16, 30, 0, 0, -1.0, -0.22 }, Waist = { 26, 34, 0 }, Neck = { 16, -20, 0 }, RS = { 40, 0, -30 }, RE = { 0, 0, 0 }, RW = { 100, 0, 0 }, LS = { 44, 0, -32 }, LE = { 90, 0, 0 }, FR = WIDE_R, FL = { 0, 0, 0, -0.35, 0, -0.32 } },
+					trail = "prop", fx = { { "beam", color = SALT, length = 16, width = 1, at = "feet" }, { "toss", shape = "ball", color = SALT, size = 0.3, count = 6, speed = 14 } }, text = "ON NE PASSE PAS !", hitText = "GLISSÉ !",
+				},
+				-- ↑L : fusée de sel : il vide le sac sous ses pieds, le sel crisse, et il décolle en diagonale, le sac brandi comme une torche
+				S_up = {
+					label = "Fusée de sel", startup = 0.14, active = 0.3, recovery = 0.42,
+					damage = 13, hitbox = box(10, 11, 3, 4), kbBase = 32, kbGrowth = 50, kbAngle = 74, selfVelocity = Vector2.new(42, 82),
+					windup = { Root = { 4, 0, 0, 0, -0.9, 0.1 }, Waist = { -12, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 30, 0, 30 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -30 }, LE = { 110, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+					strike = { Root = { -42, 0, 0, 0, 0.4, -0.2 }, Waist = { -6, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 176, 0, 14 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -40, 0, -50 }, LE = { 10, 0, 0 }, RH = { -25, 0, 5 }, RK = { -30, 0, 0 }, LH = { -15, 0, -5 }, LK = { -50, 0, 0 } },
+					follow = { Root = { -46, 0, 0, 0, 0.45, -0.25 }, Waist = { -8, 0, 0 }, Neck = { 34, 0, 0 }, RS = { 182, 0, 16 }, RE = { 0, 0, 0 }, RW = { -8, 0, 0 }, LS = { -46, 0, -55 }, LE = { 10, 0, 0 }, RH = { -30, 0, 6 }, RK = { -35, 0, 0 }, LH = { -20, 0, -6 }, LK = { -55, 0, 0 } },
+					wobble = true, trail = "body", fx = { { "particles", tex = "spark", color = SALT, dir = "down", at = "feet", time = 0.5, speed = 18, size = 0.5, rate = 90 }, { "ring", color = SALT, radius = 5, at = "feet" } },
+					text = "DÉCOLLAGE SALÉ !", hitText = "CRISSS !",
+				},
+				-- L en l'air : avalanche de sel lâchée sous lui, qui s'abat sur l'adversaire
+				S_air = {
+					label = "Avalanche de sel", kind = "projectile", startup = 0.16, active = 0, recovery = 0.4,
+					damage = 7, kbBase = 24, kbGrowth = 42, kbAngle = -40,
+					projectile = { speed = 60, angle = -70, gravity = 40, lifetime = 0.7, size = 1.3, color = SALT, visual = SALT_SHOT, rain = { count = 5, spread = 6 } },
+					status = { name = "slippery", duration = 1.5 },
+					windup = { Root = { 10, 0, 0 }, Waist = { 14, 0, 0 }, RS = { 170, 0, 20 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 170, 0, -20 }, LE = { 60, 0, 0 }, RH = { 40, 0, 0 }, RK = { -80, 0, 0 }, LH = { 50, 0, 0 }, LK = { -90, 0, 0 } },
+					strike = { Root = { -14, 0, 0 }, Waist = { -28, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 20, 0, 10 }, RE = { 0, 0, 0 }, RW = { 90, 0, 0 }, LS = { 20, 0, -10 }, LE = { 0, 0, 0 }, LW = { -40, 0, 0 }, RH = { 20, 0, 0 }, RK = { -40, 0, 0 }, LH = { 30, 0, 0 }, LK = { -60, 0, 0 } },
+					follow = { Root = { -18, 0, 0 }, Waist = { -32, 0, 0 }, Neck = { 34, 0, 0 }, RS = { 16, 0, 12 }, RE = { 4, 0, 0 }, RW = { 100, 0, 0 }, LS = { 16, 0, -12 }, LE = { 4, 0, 0 }, LW = { -50, 0, 0 }, RH = { 16, 0, 0 }, RK = { -36, 0, 0 }, LH = { 26, 0, 0 }, LK = { -56, 0, 0 } },
+					fx = { { "burst", color = SALT, size = 2, at = "feet" } }, text = "LÂCHER !", hitText = "ENSEVELI !",
+				},
+				-- Y : tempête de sel, il tourne sur lui-même en vidant le sac : un éventail de boulets blancs file sur l'adversaire
+				SUPER = {
+					label = "Tempête de sel !", kind = "projectile", startup = 0.36, active = 0, recovery = 0.65,
+					damage = 5, kbBase = 26, kbGrowth = 42, kbAngle = 40,
+					projectile = { speed = 75, angle = 0, gravity = 0, lifetime = 1.0, size = 1.5, color = SALT, visual = SALT_SHOT, fan = { count = 8, from = -20, to = 40 } },
+					status = { name = "blinded", duration = 3 },
+					windup = { Root = { 0, -40, 0, 0, -0.6, 0.1 }, Waist = { -6, -40, 0 }, Neck = { 0, 30, 0 }, RS = { 90, 0, 70 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -60 }, LE = { 60, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+					strike = { Root = { 0, 0, 0, 0, -0.4, 0 }, Waist = { 0, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 90, 0, 88 }, RE = { 0, 0, 0 }, RW = { 60, 0, 0 }, LS = { 90, 0, -88 }, LE = { 0, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+					follow = { Root = { 0, 0, 0, 0, -0.4, 0 }, Waist = { 0, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 90, 0, 90 }, RE = { 0, 0, 0 }, RW = { 70, 0, 0 }, LS = { 90, 0, -90 }, LE = { 0, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+					spin = { axis = "y", degrees = 720 }, shake = true, windupFx = { "super" }, fx = { { "ring", color = SALT, radius = 6, at = "root" }, { "screen", color = SALT, alpha = 0.25 }, { "shake", amount = 0.4 } },
+					text = "TEMPÊTE DE SEL !", hitText = "AVEUGLÉ !",
+				},
+				-- →Y : lancer de marteau, il fait tournoyer le sac à bout de bras et balaie tout le couloir d'une seule rotation géante
+				SUPER_side = {
+					label = "Lancer de marteau !", startup = 0.4, active = 0.3, recovery = 0.7,
+					damage = 24, hitbox = box(14, 6, 7, 1), kbBase = 48, kbGrowth = 98, kbAngle = 32, armor = true,
+					windup = { Root = { 0, -50, 0, 0, -0.5, 0.2 }, Waist = { -4, -40, 0 }, Neck = { 0, 30, 0 }, RS = { 40, 0, 88 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, 20 }, LE = { 80, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+					strike = { Root = { -10, 20, 0, 0, -0.45, -0.3 }, Waist = { -8, 20, 0 }, Neck = { 0, -14, 0 }, RS = { 94, 0, 60 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -60 }, LE = { 40, 0, 0 }, FR = WIDE_R, FL = { 0, 0, 0, -0.35, 0, -0.5 } },
+					follow = { Root = { -12, 60, 0, 0, -0.45, -0.35 }, Waist = { -10, 50, 0 }, Neck = { 0, -30, 0 }, RS = { 90, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, -70 }, LE = { 40, 0, 0 }, FR = WIDE_R, FL = { 0, 0, 0, -0.35, 0, -0.5 } },
+					spin = { axis = "y", degrees = 1080 }, trail = "prop", windupFx = { "super", { "symbols", symbols = { "🧂" }, count = 6, radius = 3, color = SALT } },
+					fx = { { "ring", color = SALT, radius = 8, at = "root" }, { "burst", color = SALT, size = 4, at = "front" }, { "shake", amount = 0.5 } },
+					text = "LANCER DE MARTEAU !", hitText = "ENVOYÉ AU GRENIER !",
+				},
+				-- ↑Y : geyser de sel, il plante le sac au sol et saute dessus : une colonne de sel jaillit et emporte tout au plafond
+				SUPER_up = {
+					label = "Geyser de sel !", startup = 0.36, active = 0.3, recovery = 0.7,
+					damage = 24, hitbox = box(14, 14, 7, 6), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3, selfVelocity = Vector2.new(0, 52),
+					status = { name = "blinded", duration = 2 },
+					windup = { Root = { 6, 0, 0, 0, 0.3, 0.1 }, Waist = { 10, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 185, 0, 20 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 185, 0, -20 }, LE = { 10, 0, 0 }, FR = { 0, 0, 0, 0.35, 0.3, 0 }, FL = { 0, 0, 0, -0.35, 0.3, 0 } },
+					strike = { Root = { 10, 0, 0, 0, -0.9, 0 }, Waist = { 16, 0, 0 }, Neck = { -14, 0, 0 }, RS = { 40, 0, 20 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -20 }, LE = { 0, 0, 0 }, FR = { 0, 0, 0, 0.5, 0, 0 }, FL = { 0, 0, 0, -0.5, 0, 0 } },
+					follow = { Root = { 4, 0, 0, 0, 0.5, 0 }, Waist = { 10, 0, 0 }, Neck = { 40, 0, 0 }, RS = { 150, 0, 70 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, -70 }, LE = { 10, 0, 0 }, RH = { 40, 0, 20 }, RK = { -90, 0, 0 }, LH = { 40, 0, -20 }, LK = { -90, 0, 0 } },
+					hold = 0.2, shake = true, wobble = true, windupFx = { "super" },
+					fx = { { "pillar", color = SALT, height = 22, width = 4, at = "front" }, { "rain", shape = "ball", color = SALT, count = 14, radius = 6, size = 0.3 }, { "ring", color = SALT, radius = 7, at = "feet" }, { "shake", amount = 0.7 } },
+					text = "GEYSER DE SEL !", hitText = "AU PLAFOND !",
+				},
+				-- ↓Y : la patinoire, il vide tout le sac par terre d'un grand geste et plonge dessus : tout le couloir glisse
+				SUPER_down = {
+					label = "Patinoire de sel !", startup = 0.36, active = 0.35, recovery = 0.7,
+					damage = 22, hitbox = box(16, 4, 8, -0.5), kbBase = 44, kbGrowth = 90, kbAngle = 62, selfVelocity = Vector2.new(40, 0),
+					status = { name = "slippery", duration = 3 },
+					windup = { Root = { 10, -30, 0, 0, -0.5, 0.2 }, Waist = { 16, -30, 0 }, Neck = { 10, 20, 0 }, RS = { 60, 0, 70 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -30 }, LE = { 80, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+					strike = { Root = { -72, 0, 0, 0, -1.5, -0.3 }, Waist = { 0, 0, 0 }, Neck = { 40, 0, 0 }, RS = { 175, 0, 15 }, RE = { 0, 0, 0 }, RW = { 90, 0, 0 }, LS = { 175, 0, -15 }, LE = { 0, 0, 0 }, RH = { -5, 0, 5 }, RK = { -20, 0, 0 }, LH = { -5, 0, -5 }, LK = { -25, 0, 0 } },
+					follow = { Root = { -76, 0, 0, 0, -1.55, -0.35 }, Waist = { 0, 0, 0 }, Neck = { 42, 0, 0 }, RS = { 178, 0, 18 }, RE = { 0, 0, 0 }, RW = { 100, 0, 0 }, LS = { 178, 0, -18 }, LE = { 0, 0, 0 }, RH = { -5, 0, 8 }, RK = { -25, 0, 0 }, LH = { -5, 0, -8 }, LK = { -30, 0, 0 } },
+					hold = 0.15, wobble = true, trail = "body", windupFx = { "super" },
+					fx = { { "puddle", color = SALT, width = 16, time = 2 }, { "beam", color = SALT, length = 16, width = 3, at = "feet" }, { "toss", shape = "ball", color = SALT, size = 0.4, count = 10, speed = 22 }, { "shake", amount = 0.4 } },
+					text = "PATINOIRE !", hitText = "GLISSÉ !",
+				},
+			},
+			links = {
+				P_neutral = { P = "P_side", K = "K_neutral", S = "S_neutral" },
+				P_side = { P = "P_up", K = "K_side", S = "S_side" },
+				P_down = { P = "P_up", K = "K_down", S = "S_down" },
+				K_neutral = { P = "P_neutral", K = "K_side", S = "S_side" },
+				K_side = { P = "P_up", K = "K_up", S = "S_neutral" },
+				P_dash = { P = "P_side", K = "K_side", S = "S_side" },
+				K_dash = { P = "P_up", S = "S_up" },
+			},
+		},
+		{ id = "chanko", name = "Marmite de chanko", icon = "🍲",
+			prop = { name = "PropChanko", hand = "Right", pieces = {
+				{ "Marmite", "", "cyl", Vector3.new(1.2, 1.6, 1.6), Vector3.new(0, -0.95, 0), Vector3.zero, IRON, "Metal" },
+				{ "Bouillon", "", "cyl", Vector3.new(0.12, 1.45, 1.45), Vector3.new(0, -0.3, 0), Vector3.zero, BROTH, "SmoothPlastic" },
+				{ "AnseD", "", "cyl", Vector3.new(0.5, 0.14, 0.14), Vector3.new(0.9, -0.6, 0), Vector3.zero, IRON, "Metal", { axis = "x" } },
+				{ "AnseG", "", "cyl", Vector3.new(0.5, 0.14, 0.14), Vector3.new(-0.9, -0.6, 0), Vector3.zero, IRON, "Metal", { axis = "x" } },
+				{ "Louche", "", "cyl", Vector3.new(1.4, 0.1, 0.1), Vector3.new(0.35, 0.1, -0.3), Vector3.new(0, 0, 30), Color3.fromRGB(200, 200, 210), "Metal" },
+				{ "Boulette", "", "ball", Vector3.new(0.4, 0.4, 0.4), Vector3.new(0.3, -0.2, 0.25), Vector3.zero, MEATBALL, "SmoothPlastic" },
+			} },
+			ability = { heal = 0.3, text = "30 % des dégâts infligés le remplument" },
+			moves = {
+				-- J : coup de louche sec sur le crâne, comme pour chasser un gourmand de la marmite
+				P_neutral = {
+					label = "Coup de louche", startup = 0.1, active = 0.08, recovery = 0.18,
+					damage = 7, hitbox = box(4.5, 3.5, 2.8, 0.8), kbBase = 22, kbGrowth = 28, kbAngle = 30,
+					windup = { Root = { 6, -14, 0, 0, -0.35, 0.15 }, Waist = { 8, -16, 0 }, Neck = { 6, 0, 0 }, RS = { 160, 0, 20 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -30 }, LE = { 90, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+					strike = { Root = { -10, 12, 0, 0, -0.45, -0.3 }, Waist = { -14, 16, 0 }, Neck = { -6, 0, 0 }, RS = { 70, 0, 4 }, RE = { 10, 0, 0 }, RW = { 20, 0, 0 }, LS = { 30, 0, -40 }, LE = { 90, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+					follow = { Root = { -12, 14, 0, 0, -0.47, -0.34 }, Waist = { -16, 18, 0 }, Neck = { -8, 0, 0 }, RS = { 50, 0, 6 }, RE = { 14, 0, 0 }, RW = { 30, 0, 0 }, LS = { 28, 0, -42 }, LE = { 90, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+					trail = "prop", hitText = "TOC !",
+				},
+				-- →J : balayage de la marmite à deux mains, le bouillon fait une vague dedans
+				P_side = {
+					label = "Balayage de marmite", startup = 0.14, active = 0.12, recovery = 0.26,
+					damage = 9, hitbox = box(6, 3.5, 3.5, 0.6), kbBase = 26, kbGrowth = 40, kbAngle = 28, selfVelocity = Vector2.new(14, 0),
+					windup = { Root = { 6, 40, 0, 0, -0.4, 0.2 }, Waist = { 8, 44, 0 }, Neck = { 0, -30, 0 }, RS = { 70, 0, 60 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, 20 }, LE = { 60, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+					strike = { Root = { -8, -30, 0, 0, -0.45, -0.35 }, Waist = { -10, -36, 0 }, Neck = { 0, 24, 0 }, RS = { 90, 0, -30 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, -60 }, LE = { 10, 0, 0 }, FR = WIDE_R, FL = { 0, 0, 0, -0.35, 0, -0.4 } },
+					follow = { Root = { -10, -40, 0, 0, -0.47, -0.4 }, Waist = { -12, -46, 0 }, Neck = { 0, 32, 0 }, RS = { 94, 0, -36 }, RE = { 10, 0, 0 }, RW = { -10, 0, 0 }, LS = { 94, 0, -66 }, LE = { 10, 0, 0 }, FR = WIDE_R, FL = { 0, 0, 0, -0.35, 0, -0.42 } },
+					trail = "prop", fx = { { "toss", shape = "ball", color = BROTH, size = 0.4, count = 3, speed = 12 } }, hitText = "BLAM !",
+				},
+				-- ↓J : accroupi, il renverse une louchée de bouillon bouillant sur les pieds de l'adversaire
+				P_down = {
+					label = "Louchée sur les pieds", startup = 0.12, active = 0.12, recovery = 0.24,
+					damage = 7, hitbox = box(6, 2, 3.5, -1.5), kbBase = 22, kbGrowth = 30, kbAngle = 72, burn = true,
+					windup = { Root = { 10, 0, 0, 0, -0.85, 0.1 }, Waist = { 18, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 120, 0, 20 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -30 }, LE = { 90, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+					strike = { Root = { 16, 0, 0, 0, -1.0, -0.2 }, Waist = { 26, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 40, 0, 20 }, RE = { 0, 0, 0 }, RW = { 90, 0, 0 }, LS = { 40, 0, -30 }, LE = { 90, 0, 0 }, FR = WIDE_R, FL = { 0, 0, 0, -0.35, 0, -0.3 } },
+					follow = { Root = { 18, 0, 0, 0, -1.0, -0.24 }, Waist = { 28, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 30, 0, 22 }, RE = { 0, 0, 0 }, RW = { 100, 0, 0 }, LS = { 44, 0, -32 }, LE = { 90, 0, 0 }, FR = WIDE_R, FL = { 0, 0, 0, -0.35, 0, -0.32 } },
+					fx = { { "puddle", color = BROTH, width = 5 }, { "particles", tex = "smoke", color = Color3.fromRGB(240, 240, 240), dir = "up", at = "front", time = 0.3, speed = 6, size = 0.6 } }, hitText = "ÇA BRÛLE !",
+				},
+				-- ↑J : il soulève la marmite à bout de bras, le fond cogne le menton
+				P_up = {
+					label = "Marmite au menton", startup = 0.13, active = 0.12, recovery = 0.26,
+					damage = 8, hitbox = box(4.5, 5.5, 1.5, 3), kbBase = 26, kbGrowth = 44, kbAngle = 86,
+					windup = { Root = { 10, 0, 0, 0, -0.5, 0.1 }, Waist = { 14, 0, 0 }, RS = { 30, 0, 10 }, RE = { 120, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -10 }, LE = { 120, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+					strike = { Root = { -12, 0, 0, 0, 0.0, -0.1 }, Waist = { -16, 0, 0 }, Neck = { -22, 0, 0 }, RS = { 172, 0, 8 }, RE = { 6, 0, 0 }, RW = { 0, 0, 0 }, LS = { 172, 0, -8 }, LE = { 6, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+					follow = { Root = { -14, 0, 0, 0, 0.05, -0.12 }, Waist = { -18, 0, 0 }, Neck = { -26, 0, 0 }, RS = { 178, 0, 10 }, RE = { 6, 0, 0 }, RW = { -10, 0, 0 }, LS = { 178, 0, -10 }, LE = { 6, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+					trail = "prop", hitText = "KLONK !",
+				},
+				-- J en l'air : il lâche la marmite sous lui et se rattrape dessus, assis
+				P_air = {
+					label = "Marmite tombante", startup = 0.12, active = 0.14, recovery = 0.18,
+					damage = 9, hitbox = box(4.5, 4, 1, -1.8), kbBase = 24, kbGrowth = 40, kbAngle = -45,
+					windup = { Root = { 8, 0, 0 }, Waist = { 14, 0, 0 }, RS = { 185, 0, 10 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 185, 0, -10 }, LE = { 40, 0, 0 }, RH = { 40, 0, 0 }, RK = { -80, 0, 0 }, LH = { 60, 0, 0 }, LK = { -90, 0, 0 } },
+					strike = { Root = { -10, 0, 0 }, Waist = { -28, 0, 0 }, RS = { 40, 0, 5 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -5 }, LE = { 0, 0, 0 }, RH = { 90, 0, 10 }, RK = { -40, 0, 0 }, LH = { 90, 0, -10 }, LK = { -40, 0, 0 } },
+					follow = { Root = { -14, 0, 0 }, Waist = { -32, 0, 0 }, RS = { 20, 0, 5 }, RE = { 8, 0, 0 }, RW = { -20, 0, 0 }, LS = { 20, 0, -5 }, LE = { 8, 0, 0 }, RH = { 95, 0, 10 }, RK = { -36, 0, 0 }, LH = { 95, 0, -10 }, LK = { -36, 0, 0 } },
+					trail = "prop", hitText = "BLAM !",
+				},
+				-- dash J : service express, il charge la marmite devant lui comme un plateau de cantine
+				P_dash = {
+					label = "Service express", startup = 0.1, active = 0.2, recovery = 0.3,
+					damage = 10, hitbox = box(6, 4, 3, 0.5), kbBase = 30, kbGrowth = 54, kbAngle = 30, selfVelocity = Vector2.new(46, 0), armor = true,
+					windup = { Root = { 10, -20, 0, 0, -0.45, 0.2 }, Waist = { 12, -24, 0 }, RS = { 80, 0, 10 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 80, 0, -10 }, LE = { 100, 0, 0 } },
+					strike = { Root = { 16, 10, 0, 0, -0.5, -0.3 }, Waist = { 14, 14, 0 }, Neck = { -10, 0, 0 }, RS = { 96, 0, 4 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 92, 0, -4 }, LE = { 20, 0, 0 } },
+					follow = { Root = { 18, 12, 0, 0, -0.52, -0.36 }, Waist = { 16, 16, 0 }, Neck = { -12, 0, 0 }, RS = { 100, 0, 6 }, RE = { 20, 0, 0 }, RW = { -10, 0, 0 }, LS = { 96, 0, -6 }, LE = { 20, 0, 0 } },
+					trail = "prop", fx = { "dust" }, text = "À TABLE !", hitText = "SERVI !",
+				},
+				-- K : il pose la marmite et lui donne un grand coup de pied : elle roule sur l'adversaire
+				K_neutral = {
+					label = "Marmite roulante", startup = 0.2, active = 0.2, recovery = 0.35,
+					damage = 12, hitbox = box(8, 3.5, 4.5, 0), kbBase = 32, kbGrowth = 70, kbAngle = 32,
+					windup = { Root = { 8, -10, 0, 0, -0.3, 0.1 }, Waist = { 8, -8, 0 }, RS = { 40, 0, 30 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -40 }, LE = { 55, 0, 0 }, RH = { -30, 0, 0 }, RK = { -60, 0, 0 }, FL = WIDE_L },
+					strike = { Root = { 12, 0, 0, 0, -0.25, 0.05 }, Waist = { 14, 0, 0 }, RS = { 60, 0, 55 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, -55 }, LE = { 30, 0, 0 }, RH = { 95, 0, 0 }, RK = { -4, 0, 0 }, RA = { 10, 0, 0 }, FL = WIDE_L },
+					follow = { Root = { 16, 0, 0, 0, -0.25, 0.1 }, Waist = { 18, 0, 0 }, RS = { 64, 0, 60 }, RE = { 25, 0, 0 }, RW = { 0, 0, 0 }, LS = { 74, 0, -60 }, LE = { 25, 0, 0 }, RH = { 104, 0, 0 }, RK = { 0, 0, 0 }, RA = { 15, 0, 0 }, FL = WIDE_L },
+					trail = "rightFoot", fx = { { "toss", shape = "cyl", color = IRON, size = 1.4, count = 1, speed = 24 }, "dust" }, hitText = "ROULE-BOULE !",
+				},
+				-- →K : il pêche une boulette de viande à la louche et l'expédie d'un grand coup de pied
+				K_side = {
+					label = "Boulette shootée", kind = "projectile", startup = 0.18, active = 0, recovery = 0.3,
+					damage = 10, kbBase = 28, kbGrowth = 55, kbAngle = 30,
+					projectile = { speed = 80, angle = 10, gravity = 60, lifetime = 0.45, size = 1.4, color = MEATBALL, visual = MEATBALL_SHOT, aim = false },
+					windup = { Root = { 6, -10, 0, 0, -0.3, 0.1 }, Waist = { 6, -8, 0 }, RS = { 120, 0, 30 }, RE = { 50, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -40 }, LE = { 50, 0, 0 }, RH = { -30, 0, 0 }, RK = { -60, 0, 0 }, FL = WIDE_L },
+					strike = { Root = { 10, 0, 0, 0, -0.2, 0.05 }, Waist = { 12, 0, 0 }, RS = { 60, 0, 55 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, -55 }, LE = { 30, 0, 0 }, RH = { 95, 0, 0 }, RK = { -4, 0, 0 }, RA = { 10, 0, 0 }, FL = WIDE_L },
+					follow = { Root = { 14, 0, 0, 0, -0.2, 0.1 }, Waist = { 16, 0, 0 }, RS = { 64, 0, 60 }, RE = { 25, 0, 0 }, RW = { 0, 0, 0 }, LS = { 74, 0, -60 }, LE = { 25, 0, 0 }, RH = { 104, 0, 0 }, RK = { 0, 0, 0 }, RA = { 15, 0, 0 }, FL = WIDE_L },
+					trail = "rightFoot", hitText = "PÉNO !",
+				},
+				-- ↓K : assis sur la marmite, il balaie des deux jambes au ras du sol
+				K_down = {
+					label = "Balayage assis", startup = 0.16, active = 0.16, recovery = 0.34,
+					damage = 10, hitbox = box(7, 2.2, 3.5, -1.6), kbBase = 28, kbGrowth = 52, kbAngle = 76,
+					windup = { Root = { 6, 0, 0, 0, -0.6, 0.1 }, Waist = { 10, 0, 0 }, RS = { 40, 0, 30 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -30 }, LE = { 60, 0, 0 }, RH = { 40, 0, 0 }, RK = { -60, 0, 0 }, LH = { 40, 0, 0 }, LK = { -60, 0, 0 } },
+					strike = { Root = { 14, 0, 0, 0, -0.8, -0.15 }, Waist = { 18, 0, 0 }, RS = { 50, 0, 40 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -40 }, LE = { 30, 0, 0 }, RH = { 90, 0, 10 }, RK = { -4, 0, 0 }, RA = { 20, 0, 0 }, LH = { 90, 0, -10 }, LK = { -4, 0, 0 }, LA = { 20, 0, 0 } },
+					follow = { Root = { 16, 0, 0, 0, -0.82, -0.18 }, Waist = { 20, 0, 0 }, RS = { 54, 0, 44 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 54, 0, -44 }, LE = { 30, 0, 0 }, RH = { 96, 0, 12 }, RK = { 0, 0, 0 }, RA = { 24, 0, 0 }, LH = { 96, 0, -12 }, LK = { 0, 0, 0 }, LA = { 24, 0, 0 } },
+					trail = "bothFeet", fx = { "dust" }, hitText = "FAUCHÉ !",
+				},
+				-- ↑K : il balance la marmite en l'air et la suit d'un coup de pied monté, le bouillon pleut
+				K_up = {
+					label = "Marmite envoyée", startup = 0.18, active = 0.14, recovery = 0.34,
+					damage = 12, hitbox = box(5, 6, 1.5, 3.5), kbBase = 32, kbGrowth = 68, kbAngle = 88, burn = true,
+					windup = { Root = { 10, 0, 0, 0, -0.45, 0.1 }, Waist = { 14, 0, 0 }, RS = { 60, 0, 10 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -10 }, LE = { 110, 0, 0 }, RH = { -20, 0, 0 }, RK = { -60, 0, 0 }, FL = WIDE_L },
+					strike = { Root = { -16, 0, 0, 0, 0.05, -0.1 }, Waist = { -20, 0, 0 }, Neck = { -22, 0, 0 }, RS = { 170, 0, 10 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 170, 0, -10 }, LE = { 10, 0, 0 }, RH = { 140, 0, 0 }, RK = { -6, 0, 0 }, RA = { 20, 0, 0 }, FL = WIDE_L },
+					follow = { Root = { -18, 0, 0, 0, 0.08, -0.12 }, Waist = { -22, 0, 0 }, Neck = { -26, 0, 0 }, RS = { 176, 0, 12 }, RE = { 10, 0, 0 }, RW = { -10, 0, 0 }, LS = { 176, 0, -12 }, LE = { 10, 0, 0 }, RH = { 148, 0, 0 }, RK = { 0, 0, 0 }, RA = { 24, 0, 0 }, FL = WIDE_L },
+					trail = "rightFoot", fx = { { "rain", shape = "ball", color = BROTH, count = 8, radius = 3, size = 0.4 } }, hitText = "ET HOP !",
+				},
+				-- K en l'air : assis dans la marmite comme dans un bain, il tombe de tout son poids, fesses les premières
+				K_air = {
+					label = "Bain de chanko", startup = 0.16, active = 0.16, recovery = 0.26,
+					damage = 12, hitbox = box(5.5, 4, 1.5, -1.5), kbBase = 30, kbGrowth = 68, kbAngle = -40,
+					windup = { Root = { -8, 0, 0 }, Waist = { -14, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 160, 0, 30 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 160, 0, -30 }, LE = { 20, 0, 0 }, RH = { 60, 0, 10 }, RK = { -90, 0, 0 }, LH = { 60, 0, -10 }, LK = { -90, 0, 0 } },
+					strike = { Root = { 14, 0, 0 }, Waist = { 20, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 60, 0, 60 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -60 }, LE = { 60, 0, 0 }, RH = { 100, 0, 25 }, RK = { -110, 0, 0 }, LH = { 100, 0, -25 }, LK = { -110, 0, 0 } },
+					follow = { Root = { 16, 0, 0 }, Waist = { 22, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 64, 0, 64 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 64, 0, -64 }, LE = { 60, 0, 0 }, RH = { 104, 0, 28 }, RK = { -112, 0, 0 }, LH = { 104, 0, -28 }, LK = { -112, 0, 0 } },
+					trail = "body", fx = { { "symbols", symbols = { "🍲", "♨️" }, color = BROTH, count = 3, radius = 2, at = "feet" } }, text = "PLOUF !", hitText = "ÉBOUILLANTÉ !",
+				},
+				-- dash K : il s'assoit dans la marmite et la chevauche comme une luge le long du sol
+				K_dash = {
+					label = "Marmite-luge", startup = 0.12, active = 0.3, recovery = 0.34,
+					damage = 13, hitbox = box(6, 4, 3, -0.5), kbBase = 32, kbGrowth = 66, kbAngle = 40, selfVelocity = Vector2.new(52, 14), armor = true,
+					windup = { Root = { -8, 0, 0, 0, -0.5, 0 }, Waist = { -10, 0, 0 }, RS = { 60, 0, 30 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -30 }, LE = { 60, 0, 0 } },
+					strike = { Root = { 14, 0, 0, 0, -0.75, 0.1 }, Waist = { 16, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 40, 0, 60 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -60 }, LE = { 60, 0, 0 }, RH = { 95, 0, 15 }, RK = { -20, 0, 0 }, RA = { 10, 0, 0 }, LH = { 95, 0, -15 }, LK = { -20, 0, 0 }, LA = { 10, 0, 0 } },
+					follow = { Root = { 16, 0, 0, 0, -0.78, 0.14 }, Waist = { 18, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 44, 0, 64 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 44, 0, -64 }, LE = { 60, 0, 0 }, RH = { 100, 0, 15 }, RK = { -16, 0, 0 }, RA = { 14, 0, 0 }, LH = { 100, 0, -15 }, LK = { -16, 0, 0 }, LA = { 14, 0, 0 } },
+					trail = "body", fx = { "dust", { "particles", tex = "spark", color = IRON, dir = "front", at = "feet", time = 0.3, speed = 10, size = 0.4 } }, text = "YAHOU !", hitText = "ÉCRASÉ !",
+				},
+				-- L : rafale de boulettes, il puise à la louche et les expédie une à une sur l'adversaire
+				S_neutral = {
+					label = "Rafale de boulettes", kind = "projectile", startup = 0.22, active = 0, recovery = 0.45,
+					damage = 6, kbBase = 24, kbGrowth = 40, kbAngle = 30,
+					projectile = { speed = 80, angle = 0, gravity = 0, lifetime = 0.6, size = 1.4, color = MEATBALL, visual = MEATBALL_SHOT, fan = { count = 3, from = -8, to = 8, gap = 0.08 } },
+					windup = { Root = { 6, -20, 0, 0, -0.4, 0.2 }, Waist = { 8, -24, 0 }, Neck = { 4, 16, 0 }, RS = { 120, 0, 30 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, -10 }, LE = { 60, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+					strike = { Root = { -12, 18, 0, 0, -0.45, -0.35 }, Waist = { -14, 24, 0 }, Neck = { 0, -12, 0 }, RS = { 96, 0, 0 }, RE = { 0, 0, 0 }, RW = { 20, 0, 0 }, LS = { 60, 0, -40 }, LE = { 60, 0, 0 }, FR = WIDE_R, FL = { 0, 0, 0, -0.35, 0, -0.4 } },
+					follow = { Root = { -14, 22, 0, 0, -0.47, -0.42 }, Waist = { -18, 28, 0 }, Neck = { 0, -16, 0 }, RS = { 100, 0, 6 }, RE = { 6, 0, 0 }, RW = { 30, 0, 0 }, LS = { 55, 0, -45 }, LE = { 60, 0, 0 }, FR = WIDE_R, FL = { 0, 0, 0, -0.35, 0, -0.45 } },
+					shake = true, trail = "prop", fx = { { "burst", color = BROTH, size = 2, at = "hand" } }, text = "SERVEZ-VOUS !", hitText = "MIAM !",
+				},
+				-- →L : la vague de bouillon : il renverse la marmite d'un coup et une vague brûlante déferle sur tout le couloir
+				S_side = {
+					label = "Vague de bouillon", startup = 0.24, active = 0.22, recovery = 0.5,
+					damage = 15, hitbox = box(14, 5, 7, 0.8), kbBase = 30, kbGrowth = 55, kbAngle = 38, burn = true,
+					windup = { Root = { 8, 30, 0, 0, -0.45, 0.2 }, Waist = { 10, 34, 0 }, Neck = { 0, -20, 0 }, RS = { 120, 0, 50 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 110, 0, 10 }, LE = { 40, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+					strike = { Root = { -14, -20, 0, 0, -0.5, -0.4 }, Waist = { -18, -24, 0 }, Neck = { 0, 16, 0 }, RS = { 90, 0, -10 }, RE = { 0, 0, 0 }, RW = { 120, 0, 0 }, LS = { 90, 0, -30 }, LE = { 0, 0, 0 }, FR = WIDE_R, FL = { 0, 0, 0, -0.35, 0, -0.5 } },
+					follow = { Root = { -16, -24, 0, 0, -0.52, -0.46 }, Waist = { -20, -28, 0 }, Neck = { 0, 18, 0 }, RS = { 86, 0, -14 }, RE = { 4, 0, 0 }, RW = { 130, 0, 0 }, LS = { 86, 0, -34 }, LE = { 4, 0, 0 }, FR = WIDE_R, FL = { 0, 0, 0, -0.35, 0, -0.52 } },
+					hold = 0.1, trail = "prop", fx = { { "beam", color = BROTH, length = 14, width = 3, at = "feet" }, { "puddle", color = BROTH, width = 12 }, { "particles", tex = "smoke", color = Color3.fromRGB(240, 240, 240), dir = "up", at = "front", time = 0.4, speed = 8, size = 0.8 } },
+					text = "SOUPE !", hitText = "ÉBOUILLANTÉ !",
+				},
+				-- ↓L : il pose la marmite par terre et la pousse du pied : elle roule sur tout le couloir en débordant
+				S_down = {
+					label = "Marmite roulée", kind = "projectile", startup = 0.22, active = 0, recovery = 0.5,
+					damage = 13, kbBase = 30, kbGrowth = 55, kbAngle = 40,
+					projectile = { speed = 55, angle = 0, gravity = 0, lifetime = 0.9, size = 2.4, color = IRON, pierce = true, from = "feet", aim = false,
+						visual = { shape = "cyl", size = 2.2, color = IRON, spin = 8, parts = { { "ball", Vector3.new(1.2, 0.6, 1.2), Vector3.new(0, 1.2, 0), BROTH } } } },
+					burn = true,
+					windup = { Root = { 12, 0, 0, 0, -0.9, 0.1 }, Waist = { 20, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 60, 0, 20 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -20 }, LE = { 30, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+					strike = { Root = { 6, 0, 0, 0, -0.45, -0.1 }, Waist = { 8, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 30, 0, 40 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -50 }, LE = { 40, 0, 0 }, RH = { 80, 0, 0 }, RK = { -6, 0, 0 }, RA = { 10, 0, 0 }, FL = WIDE_L },
+					follow = { Root = { 8, 0, 0, 0, -0.45, -0.12 }, Waist = { 10, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 28, 0, 42 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 54, 0, -52 }, LE = { 40, 0, 0 }, RH = { 86, 0, 0 }, RK = { 0, 0, 0 }, RA = { 14, 0, 0 }, FL = WIDE_L },
+					trail = "rightFoot", fx = { "dust", { "toss", shape = "ball", color = BROTH, size = 0.5, count = 4, speed = 14 } }, text = "ROULE !", hitText = "ÉCRABOUILLÉ !",
+				},
+				-- ↑L : vapeur de chanko : il souffle sur la marmite, la vapeur le soulève et il décolle en diagonale, la marmite au-dessus de la tête
+				S_up = {
+					label = "Vapeur de chanko", startup = 0.14, active = 0.3, recovery = 0.42,
+					damage = 14, hitbox = box(10, 11, 3, 4), kbBase = 32, kbGrowth = 50, kbAngle = 76, selfVelocity = Vector2.new(42, 82), burn = true,
+					windup = { Root = { 8, 0, 0, 0, -0.9, 0.1 }, Waist = { 10, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 60, 0, 20 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -20 }, LE = { 110, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+					strike = { Root = { -40, 0, 0, 0, 0.4, -0.2 }, Waist = { -4, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 185, 0, 10 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 185, 0, -10 }, LE = { 10, 0, 0 }, RH = { -25, 0, 5 }, RK = { -30, 0, 0 }, LH = { -15, 0, -5 }, LK = { -50, 0, 0 } },
+					follow = { Root = { -44, 0, 0, 0, 0.45, -0.25 }, Waist = { -6, 0, 0 }, Neck = { 34, 0, 0 }, RS = { 190, 0, 12 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 190, 0, -12 }, LE = { 10, 0, 0 }, RH = { -30, 0, 6 }, RK = { -35, 0, 0 }, LH = { -20, 0, -6 }, LK = { -55, 0, 0 } },
+					wobble = true, trail = "body", fx = { { "particles", tex = "smoke", color = Color3.fromRGB(245, 245, 245), dir = "down", at = "feet", time = 0.5, speed = 16, size = 1, rate = 90 }, { "ring", color = BROTH, radius = 5, at = "feet" } },
+					text = "À LA VAPEUR !", hitText = "FUMANT !",
+				},
+				-- L en l'air : pluie de boulettes lâchées sous lui, qui tombent sur l'adversaire
+				S_air = {
+					label = "Pluie de boulettes", kind = "projectile", startup = 0.15, active = 0, recovery = 0.4,
+					damage = 6, kbBase = 24, kbGrowth = 44, kbAngle = -40,
+					projectile = { speed = 60, angle = -70, gravity = 40, lifetime = 0.7, size = 1.3, color = MEATBALL, visual = MEATBALL_SHOT, rain = { count = 4, spread = 6 } },
+					windup = { Root = { 10, 0, 0 }, Waist = { 14, 0, 0 }, RS = { 170, 0, 20 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 170, 0, -20 }, LE = { 60, 0, 0 }, RH = { 40, 0, 0 }, RK = { -80, 0, 0 }, LH = { 50, 0, 0 }, LK = { -90, 0, 0 } },
+					strike = { Root = { -14, 0, 0 }, Waist = { -28, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 20, 0, 10 }, RE = { 0, 0, 0 }, RW = { 90, 0, 0 }, LS = { 20, 0, -10 }, LE = { 0, 0, 0 }, LW = { -40, 0, 0 }, RH = { 20, 0, 0 }, RK = { -40, 0, 0 }, LH = { 30, 0, 0 }, LK = { -60, 0, 0 } },
+					follow = { Root = { -18, 0, 0 }, Waist = { -32, 0, 0 }, Neck = { 34, 0, 0 }, RS = { 16, 0, 12 }, RE = { 4, 0, 0 }, RW = { 100, 0, 0 }, LS = { 16, 0, -12 }, LE = { 4, 0, 0 }, LW = { -50, 0, 0 }, RH = { 16, 0, 0 }, RK = { -36, 0, 0 }, LH = { 26, 0, 0 }, LK = { -56, 0, 0 } },
+					fx = { { "burst", color = BROTH, size = 2, at = "feet" } }, text = "BON APPÉTIT !", hitText = "PLONK !",
+				},
+				-- Y : le festin, il engloutit la marmite entière d'un trait, gonfle comme un ballon… et son ventre explose en avant sur tout le couloir
+				SUPER = {
+					label = "Festin du yokozuna !", startup = 0.45, active = 0.3, recovery = 0.7,
+					damage = 22, hitbox = box(14, 7, 7, 1), kbBase = 44, kbGrowth = 90, kbAngle = 35, selfEffect = { heal = 8 },
+					windup = { Root = { 12, 0, 0, 0, -0.3, 0.2 }, Waist = { 20, 0, 0 }, Neck = { 40, 0, 0 }, RS = { 170, 0, 10 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 170, 0, -10 }, LE = { 110, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+					strike = { Root = { 24, 0, 0, 0, -0.3, -0.6 }, Waist = { 34, 0, 0 }, Neck = { -24, 0, 0 }, RS = { -60, 0, 50 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { -60, 0, -50 }, LE = { 10, 0, 0 }, FR = WIDE_R, FL = { 0, 0, 0, -0.35, 0, -0.5 } },
+					follow = { Root = { 28, 0, 0, 0, -0.3, -0.8 }, Waist = { 36, 0, 0 }, Neck = { -26, 0, 0 }, RS = { -70, 0, 55 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { -70, 0, -55 }, LE = { 10, 0, 0 }, FR = WIDE_R, FL = { 0, 0, 0, -0.35, 0, -0.55 } },
+					hold = 0.15, shake = true, wobble = true, trail = "body", windupFx = { "super", { "symbols", symbols = { "🍲", "😋" }, count = 5, radius = 3, color = BROTH } },
+					fx = { { "ring", color = JELLY, radius = 7, at = "front" }, { "burst", color = BROTH, size = 4, at = "front" }, { "shake", amount = 0.5 } },
+					text = "SLURP… BURP !", hitText = "BEDAINE ATOMIQUE !",
+				},
+				-- →Y : marmite-catapulte, il s'assoit sur la louche, bascule… et la marmite entière part comme un boulet brûlant à travers le couloir
+				SUPER_side = {
+					label = "Marmite-catapulte !", kind = "projectile", startup = 0.4, active = 0, recovery = 0.7,
+					damage = 26, kbBase = 48, kbGrowth = 98, kbAngle = 30, burn = true,
+					projectile = { speed = 85, angle = 0, gravity = 0, lifetime = 0.9, size = 3.4, color = IRON, pierce = true,
+						visual = { shape = "cyl", size = 3, color = IRON, spin = 6, parts = { { "ball", Vector3.new(2, 0.8, 2), Vector3.new(0, 1.5, 0), BROTH }, { "ball", Vector3.new(0.7, 0.7, 0.7), Vector3.new(0.6, 1.9, 0), MEATBALL } } } },
+					windup = { Root = { 10, -30, 0, 0, -0.7, 0.3 }, Waist = { 14, -34, 0 }, Neck = { 10, 20, 0 }, RS = { 30, 0, 30 }, RE = { 120, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -30 }, LE = { 120, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+					strike = { Root = { -18, 22, 0, 0, -0.4, -0.5 }, Waist = { -20, 28, 0 }, Neck = { -6, -16, 0 }, RS = { 96, 0, -2 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 92, 0, 4 }, LE = { 0, 0, 0 }, FR = WIDE_R, FL = { 0, 0, 0, -0.35, 0, -0.5 } },
+					follow = { Root = { -20, 26, 0, 0, -0.44, -0.56 }, Waist = { -24, 32, 0 }, Neck = { -8, -18, 0 }, RS = { 100, 0, -4 }, RE = { 4, 0, 0 }, RW = { 6, 0, 0 }, LS = { 96, 0, 6 }, LE = { 0, 0, 0 }, FR = WIDE_R, FL = { 0, 0, 0, -0.35, 0, -0.52 } },
+					hideProp = "chanko", windupFx = { "super", { "symbols", symbols = { "🍲" }, count = 6, radius = 3, color = BROTH } },
+					fx = { { "burst", color = BROTH, size = 3.5, at = "hand" }, { "particles", tex = "fire", color = BROTH, dir = "front", at = "hand", time = 0.4, speed = 18, size = 0.6 }, { "shake", amount = 0.4 } },
+					text = "CATAPULTE !", hitText = "KA-BLONG !",
+				},
+				-- ↑Y : geyser de bouillon, il pose la marmite, saute dedans à pieds joints et un geyser de soupe l'emporte au plafond avec tout le couloir
+				SUPER_up = {
+					label = "Geyser de bouillon !", startup = 0.36, active = 0.3, recovery = 0.7,
+					damage = 24, hitbox = box(14, 14, 7, 6), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3, selfVelocity = Vector2.new(0, 55), burn = true,
+					windup = { Root = { 0, 0, 0, 0, 0.4, 0.1 }, Waist = { 6, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 60, 0, 60 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -60 }, LE = { 40, 0, 0 }, FR = { 0, 0, 0, 0.35, 0.4, 0 }, FL = { 0, 0, 0, -0.35, 0.4, 0 } },
+					strike = { Root = { 8, 0, 0, 0, -0.9, 0 }, Waist = { 12, 0, 0 }, Neck = { -14, 0, 0 }, RS = { 30, 0, 35 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -35 }, LE = { 100, 0, 0 }, FR = { 0, 0, 0, 0.3, 0, 0 }, FL = { 0, 0, 0, -0.3, 0, 0 } },
+					follow = { Root = { 6, 0, 0, 0, 0.5, 0 }, Waist = { 10, 0, 0 }, Neck = { 40, 0, 0 }, RS = { 186, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 186, 0, -10 }, LE = { 0, 0, 0 }, RH = { 40, 0, 20 }, RK = { -90, 0, 0 }, LH = { 40, 0, -20 }, LK = { -90, 0, 0 } },
+					hold = 0.2, shake = true, wobble = true, windupFx = { "super" },
+					fx = { { "pillar", color = BROTH, height = 22, width = 5, at = "front" }, { "rain", shape = "ball", color = MEATBALL, count = 8, radius = 6, size = 0.6 }, { "ring", color = BROTH, radius = 7, at = "feet" }, { "particles", tex = "smoke", color = Color3.fromRGB(245, 245, 245), dir = "up", at = "front", time = 0.5, speed = 18, size = 1.2, rate = 90 }, { "shake", amount = 0.7 } },
+					text = "GEYSER DE SOUPE !", hitText = "ÉBOUILLANTÉ !",
+				},
+				-- ↓Y : chanko pour tout le monde, il fracasse la marmite au sol à deux mains : une marée de bouillon brûlant inonde le couloir
+				SUPER_down = {
+					label = "Chanko pour tout le monde !", startup = 0.4, active = 0.3, recovery = 0.7,
+					damage = 22, hitbox = box(16, 5, 8, 0), kbBase = 42, kbGrowth = 88, kbAngle = 50, burn = true,
+					status = { name = "slowed", duration = 2 },
+					windup = { Root = { 6, 0, 0, 0, 0.1, 0.2 }, Waist = { 14, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 185, 0, 15 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 185, 0, -15 }, LE = { 10, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+					strike = { Root = { -20, 0, 0, 0, -0.9, -0.2 }, Waist = { -30, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 60, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -10 }, LE = { 0, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+					follow = { Root = { -22, 0, 0, 0, -0.95, -0.25 }, Waist = { -32, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 55, 0, 12 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 55, 0, -12 }, LE = { 0, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+					hold = 0.25, trail = "prop", windupFx = { "super" },
+					fx = { { "shake", amount = 0.8 }, { "puddle", color = BROTH, width = 16, time = 2 }, { "beam", color = BROTH, length = 16, width = 4, at = "feet" }, { "toss", shape = "ball", color = MEATBALL, size = 0.6, count = 8, speed = 24 }, { "burst", color = IRON, size = 3, at = "front" } },
+					text = "CHANKO POUR TOUT LE MONDE !", hitText = "NOYÉ DANS LA SOUPE !",
+				},
+			},
+			links = {
+				P_neutral = { P = "P_side", K = "K_neutral", S = "S_neutral" },
+				P_side = { P = "P_up", K = "K_side", S = "S_side" },
+				P_down = { P = "P_up", K = "K_down", S = "S_down" },
+				K_neutral = { P = "P_neutral", K = "K_side", S = "S_side" },
+				K_side = { P = "P_up", K = "K_up", S = "S_neutral" },
+				P_dash = { P = "P_side", K = "K_side", S = "S_side" },
+				K_dash = { P = "P_up", S = "S_up" },
+			},
+		},
+	},
 
 	look = {
 		body = { head = JELLY, upper = JELLY, lower = JELLY, arms = JELLY, hands = JELLY, legs = JELLY, feet = JELLY_DARK },
@@ -518,6 +1012,20 @@ local data = {
 			follow = { Root = { 8, 0, 0, 0, 0.12, 0 }, Waist = { 16, 0, 0 }, Neck = { 24, 0, 0 }, RS = { 150, 0, 75 }, RE = { 0, 0, 0 }, LS = { 150, 0, -75 }, LE = { 0, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
 			shake = true, wobble = true, windupFx = { "super" }, fx = { { "burst", color = JELLY, size = 4, at = "root" }, { "symbols", symbols = { "🍮", "🍮", "🍮" }, color = JELLY, count = 3, radius = 3, at = "above" } },
 			text = "DIVISION !", hitText = "TRIPLE BOÏNG !",
+		},
+		-- Canard géant (→Y) : il presse sa bedaine des deux bras de toutes ses forces, le canard en plastique gonfle, gonfle…
+		-- et jaillit de son ventre en canard géant qui traverse tout le couloir en faisant COIN, l'adversaire emporté dessus
+		SUPER_side = {
+			label = "Canard géant !", kind = "projectile", startup = 0.42, active = 0, recovery = 0.7,
+			damage = 25, kbBase = 48, kbGrowth = 98, kbAngle = 32,
+			projectile = { speed = 70, angle = 0, gravity = 0, lifetime = 1.0, size = 4.5, color = DUCK, pierce = true, visual = DUCK_GIANT },
+			status = { name = "laughing", duration = 2 },
+			windup = { Root = { -10, 0, 0, 0, -0.5, 0.3 }, Waist = { -16, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 60, 0, 20 }, RE = { 110, 0, 0 }, RW = { -40, 0, 0 }, LS = { 60, 0, -20 }, LE = { 110, 0, 0 }, LW = { -40, 0, 0 }, FR = WIDE_R, FL = WIDE_L },
+			strike = { Root = { 22, 0, 0, 0, -0.35, -0.5 }, Waist = { 32, 0, 0 }, Neck = { -30, 0, 0 }, RS = { 40, 0, 70 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -70 }, LE = { 10, 0, 0 }, LW = { 0, 0, 0 }, FR = WIDE_R, FL = { 0, 0, 0, -0.35, 0, -0.5 } },
+			follow = { Root = { 26, 0, 0, 0, -0.35, -0.6 }, Waist = { 36, 0, 0 }, Neck = { -34, 0, 0 }, RS = { 36, 0, 76 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 36, 0, -76 }, LE = { 10, 0, 0 }, LW = { 0, 0, 0 }, FR = WIDE_R, FL = { 0, 0, 0, -0.35, 0, -0.55 } },
+			hold = 0.15, shake = true, wobble = true, windupFx = { "super", { "symbols", symbols = { "🦆", "COIN", "🦆" }, color = DUCK, count = 6, radius = 3, at = "above" } },
+			fx = { { "burst", color = JELLY, size = 4, at = "front" }, { "ring", color = DUCK, radius = 5, at = "front" }, { "symbols", symbols = { "COIN !", "COIN !" }, color = DUCK, count = 4, radius = 4, at = "front" }, { "shake", amount = 0.5 } },
+			text = "COOOOIN !", hitText = "ÉCRASÉ PAR UN CANARD !",
 		},
 		-- Super ↑ : Shiko volcanique, jambe levée très haut puis un piétinement si fort que la gelée du sol jaillit en geyser sur tout le couloir et le fait rebondir au ciel
 		SUPER_up = {

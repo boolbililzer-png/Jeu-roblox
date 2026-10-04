@@ -22,11 +22,508 @@ local LEATHER = Color3.fromRGB(110, 70, 40)
 local WATER = Color3.fromRGB(80, 170, 240)
 local BRASS = Color3.fromRGB(215, 175, 70)
 
+local GAS = Color3.fromRGB(40, 60, 120) -- bouteille du chalumeau (arme n° 2)
+local FLAME = Color3.fromRGB(90, 170, 255)
+local EMBER = Color3.fromRGB(255, 140, 40)
+local PORCELAIN = Color3.fromRGB(240, 240, 245) -- cuvette de WC (arme n° 3)
+local SEWER = Color3.fromRGB(90, 90, 95) -- plaque d'égout du →Y
+
+-- flammèche du chalumeau
+local FLAME_SHOT = { shape = "ball", size = 1.2, color = FLAME, neon = true, spin = 10, parts = { { "ball", Vector3.new(0.6, 0.6, 0.6), Vector3.new(-0.5, 0.2, 0), EMBER } } }
+-- la cuvette qui roule / vole
+local TOILET_SHOT = { shape = "ball", size = 2.4, color = PORCELAIN, spin = 6, parts = {
+	{ "cyl", Vector3.new(0.2, 2.4, 2.4), Vector3.new(0, 0.9, 0), PORCELAIN },
+	{ "block", Vector3.new(1.8, 1.6, 0.7), Vector3.new(0, 1.2, 1.3), PORCELAIN },
+	{ "ball", Vector3.new(1.2, 0.3, 1.2), Vector3.new(0, 0.95, 0), WATER },
+} }
+-- plaque d'égout boomerang
+local MANHOLE = { shape = "ball", size = 1, color = SEWER, spin = 14, parts = {
+	{ "cyl", Vector3.new(0.4, 4.2, 4.2), Vector3.new(0, 0, 0), SEWER },
+	{ "cyl", Vector3.new(0.5, 1.2, 1.2), Vector3.new(0, 0, 0), Color3.fromRGB(60, 60, 65) },
+	{ "block", Vector3.new(3.2, 0.5, 0.3), Vector3.new(0, 0, 0), Color3.fromRGB(60, 60, 65) },
+	{ "block", Vector3.new(0.3, 0.5, 3.2), Vector3.new(0, 0, 0), Color3.fromRGB(60, 60, 65) },
+} }
 local data = {
 	id = "Ventouse",
 	name = "Madame Ventouse",
 	costume = "Ventouse",
 	style = "plumber",
+	------------------------------------------------------------------ Les 3 armes de la Caisse Bizarre (une au hasard)
+	-- n° 1 : la ventouse géante (ses coups sont ceux de moves). n° 2 : le chalumeau, rapide et court, qui brûle tout
+	-- ce qu'il touche. n° 3 : la cuvette de WC, lourde, à chasse d'eau, qui frappe fort et éjecte loin.
+	weapons = {
+		{ id = "ventouse", name = "Ventouse géante", icon = "🪠",
+			ability = { jumps = 1, text = "Un saut en l'air de plus : elle s'accroche partout" } },
+		{ id = "chalumeau", name = "Chalumeau de plombière", icon = "🔥",
+			prop = { name = "PropChalumeau", hand = "Right", pieces = {
+				{ "Bouteille", "", "cyl", Vector3.new(1.3, 0.52, 0.52), Vector3.new(0, -0.5, 0), Vector3.zero, GAS, "Metal" },
+				{ "Robinet", "", "cyl", Vector3.new(0.12, 0.42, 0.42), Vector3.new(0, 0.22, 0), Vector3.zero, BRASS, "Metal" },
+				{ "Bec", "", "cyl", Vector3.new(0.9, 0.16, 0.16), Vector3.new(0, -1.6, 0), Vector3.zero, BRASS, "Metal" },
+				{ "Flamme", "", "ball", Vector3.new(0.32, 0.9, 0.32), Vector3.new(0, -2.4, 0), Vector3.zero, FLAME, "Neon", { neon = true } },
+				{ "Etiquette", "", "block", Vector3.new(0.3, 0.5, 0.06), Vector3.new(0, -0.5, -0.27), Vector3.zero, EMBER, "SmoothPlastic" },
+			} },
+			ability = { speed = 1.15, status = { name = "burning", duration = 2 }, text = "15 % plus vite ; les spéciaux enflamment" },
+			moves = {
+				-- J : petit coup de bec du chalumeau, vif comme un fer à souder
+				P_neutral = {
+					label = "Coup de bec", startup = 0.06, active = 0.08, recovery = 0.12,
+					damage = 5, hitbox = box(4.5, 2.5, 2.8, 0.8), kbBase = 16, kbGrowth = 20, kbAngle = 25, burn = true,
+					windup = { Root = { 2, -16, 0, 0, -0.2, 0.1 }, Waist = { 2, -18, 0 }, Neck = { 0, 12, 0 }, RS = { 50, 0, 20 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -30 }, LE = { 80, 0, 0 } },
+					strike = { Root = { -8, 12, 0, 0, -0.25, -0.25 }, Waist = { -8, 14, 0 }, Neck = { 0, -8, 0 }, RS = { 94, 0, 2 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -40 }, LE = { 80, 0, 0 } },
+					follow = { Root = { -9, 14, 0, 0, -0.27, -0.28 }, Waist = { -9, 16, 0 }, Neck = { 0, -10, 0 }, RS = { 96, 0, 0 }, RE = { 4, 0, 0 }, RW = { -6, 0, 0 }, LS = { 18, 0, -42 }, LE = { 80, 0, 0 } },
+					trail = "prop", fx = { { "particles", tex = "fire", color = FLAME, dir = "front", at = "hand", time = 0.12, speed = 10, size = 0.3, rate = 50 } }, hitText = "TSSS !",
+				},
+				-- →J : une flammèche crachée à bout portant (petit projectile court qui enflamme)
+				P_side = {
+					label = "Flammèche", kind = "projectile", startup = 0.08, active = 0, recovery = 0.16,
+					damage = 6, kbBase = 18, kbGrowth = 26, kbAngle = 28, burn = true,
+					projectile = { speed = 70, angle = 0, gravity = 0, lifetime = 0.25, size = 1.1, color = FLAME, visual = FLAME_SHOT, aim = false },
+					windup = { Root = { 2, -20, 0, 0, -0.2, 0.15 }, Waist = { 2, -22, 0 }, Neck = { 0, 14, 0 }, RS = { 60, 0, 30 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -30 }, LE = { 80, 0, 0 } },
+					strike = { Root = { -8, 14, 0, 0, -0.25, -0.25 }, Waist = { -8, 16, 0 }, Neck = { 0, -8, 0 }, RS = { 92, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, -10 }, LE = { 20, 0, 0 }, LW = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					follow = { Root = { -9, 16, 0, 0, -0.27, -0.28 }, Waist = { -9, 18, 0 }, Neck = { 0, -10, 0 }, RS = { 94, 0, 2 }, RE = { 2, 0, 0 }, RW = { 0, 0, 0 }, LS = { 72, 0, -12 }, LE = { 20, 0, 0 }, LW = { -10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.32 } },
+					fx = { { "burst", color = FLAME, size = 1.2, at = "hand" } }, hitText = "FSSHH !",
+				},
+				-- ↓J : accroupie, elle soude les bottes de l'adversaire au sol d'un coup de flamme
+				P_down = {
+					label = "Soudure aux bottes", startup = 0.08, active = 0.12, recovery = 0.16,
+					damage = 5, hitbox = box(5.5, 2, 3.2, -2), kbBase = 14, kbGrowth = 16, kbAngle = 60, burn = true,
+					status = { name = "rooted", duration = 0.6 },
+					windup = { Root = { -8, 14, 0, 0, -0.7, 0.1 }, Waist = { -18, 12, 0 }, Neck = { -12, 0, 0 }, RS = { 60, 0, 30 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -30 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -14, -4, 0, 0, -0.9, -0.15 }, Waist = { -28, -6, 0 }, Neck = { -18, 0, 0 }, RS = { 60, 0, 10 }, RE = { 0, 0, 0 }, RW = { 60, 0, 0 }, LS = { 50, 0, -30 }, LE = { 50, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					follow = { Root = { -15, -8, 0, 0, -0.9, -0.18 }, Waist = { -30, -8, 0 }, Neck = { -20, 0, 0 }, RS = { 55, 0, 14 }, RE = { 0, 0, 0 }, RW = { 70, 0, 0 }, LS = { 52, 0, -32 }, LE = { 50, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.32 } },
+					trail = "prop", fx = { { "particles", tex = "spark", color = EMBER, dir = "up", at = "front", time = 0.2, speed = 12, size = 0.3, rate = 80 } }, text = "SOUDÉ !", hitText = "CHAUD LES BOTTES !",
+				},
+				-- ↑J : la flamme pointée au ciel grille le menton (anti-air)
+				P_up = {
+					label = "Flamme au menton", startup = 0.08, active = 0.12, recovery = 0.18,
+					damage = 6, hitbox = box(4, 5.5, 1.2, 3.5), kbBase = 22, kbGrowth = 30, kbAngle = 86, burn = true,
+					windup = { Root = { -4, 0, 0, 0, -0.45, 0 }, Waist = { -10, 0, 0 }, Neck = { -4, 0, 0 }, RS = { 40, 0, 20 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -20 }, LE = { 80, 0, 0 } },
+					strike = { Root = { 6, 0, 0, 0, 0.1, 0 }, Waist = { 10, 0, 0 }, Neck = { 26, 0, 0 }, RS = { 178, 0, 5 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -40 }, LE = { 60, 0, 0 }, FR = { 0, 0, 0, 0, 0.15, 0 }, FL = { 0, 0, 0, 0, 0.15, 0 } },
+					follow = { Root = { 8, 0, 0, 0, 0.14, 0 }, Waist = { 12, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 184, 0, 5 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 44, 0, -42 }, LE = { 60, 0, 0 }, FR = { 0, 0, 0, 0, 0.18, 0 }, FL = { 0, 0, 0, 0, 0.18, 0 } },
+					trail = "prop", fx = { { "particles", tex = "fire", color = FLAME, dir = "up", at = "hand", time = 0.2, speed = 14, size = 0.4, rate = 70 } }, hitText = "GRILLÉ !",
+				},
+				-- J en l'air : flambée en vol, un coup de flamme balayé sous elle
+				P_air = {
+					label = "Flambée en vol", startup = 0.08, active = 0.14, recovery = 0.14,
+					damage = 6, hitbox = box(5, 4, 1.5, -1.5), kbBase = 18, kbGrowth = 28, kbAngle = -35, burn = true,
+					windup = { Root = { 6, 0, 0 }, Waist = { 10, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 160, 0, 20 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -40 }, LE = { 50, 0, 0 }, RH = { 40, 0, 0 }, RK = { -80, 0, 0 }, LH = { 60, 0, 0 }, LK = { -90, 0, 0 } },
+					strike = { Root = { -10, 0, 0 }, Waist = { -24, 0, 0 }, Neck = { 26, 0, 0 }, RS = { 20, 0, 10 }, RE = { 0, 0, 0 }, RW = { 30, 0, 0 }, LS = { -20, 0, -45 }, LE = { 20, 0, 0 }, RH = { 15, 0, 0 }, RK = { -35, 0, 0 }, LH = { 35, 0, 0 }, LK = { -70, 0, 0 } },
+					follow = { Root = { -14, 0, 0 }, Waist = { -28, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 10, 0, 12 }, RE = { 4, 0, 0 }, RW = { 40, 0, 0 }, LS = { -28, 0, -50 }, LE = { 20, 0, 0 }, RH = { 5, 0, 0 }, RK = { -30, 0, 0 }, LH = { 30, 0, 0 }, LK = { -65, 0, 0 } },
+					trail = "prop", fx = { { "particles", tex = "fire", color = FLAME, dir = "down", at = "hand", time = 0.2, speed = 12, size = 0.4, rate = 70 } }, hitText = "FSSHH !",
+				},
+				-- dash J : passage au chalumeau, elle fonce flamme devant comme une torche
+				P_dash = {
+					label = "Passage au chalumeau", startup = 0.07, active = 0.16, recovery = 0.2,
+					damage = 7, hitbox = box(6, 3, 3.5, 0.5), kbBase = 24, kbGrowth = 42, kbAngle = 26, selfVelocity = Vector2.new(46, 0), burn = true,
+					windup = { Root = { -8, -16, 0, 0, -0.3, 0.1 }, Waist = { -6, -16, 0 }, Neck = { 0, 10, 0 }, RS = { 50, 0, 30 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -20 }, LE = { 80, 0, 0 } },
+					strike = { Root = { -18, 16, 0, 0, -0.4, -0.45 }, Waist = { -10, 16, 0 }, Neck = { 6, -14, 0 }, RS = { 94, 0, 4 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -30, 0, -40 }, LE = { 40, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.55 } },
+					follow = { Root = { -20, 18, 0, 0, -0.42, -0.55 }, Waist = { -12, 18, 0 }, Neck = { 6, -16, 0 }, RS = { 98, 0, 4 }, RE = { 0, 0, 0 }, RW = { 4, 0, 0 }, LS = { -36, 0, -44 }, LE = { 40, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.6 } },
+					trail = "prop", fx = { "dust", { "beam", color = FLAME, length = 6, width = 1, at = "hand" } }, text = "CHAUD DEVANT !", hitText = "ROUSSI !",
+				},
+				-- K : botte chauffée à blanc, elle passe sa semelle au chalumeau et l'enfonce dans le ventre
+				K_neutral = {
+					label = "Botte chauffée à blanc", startup = 0.15, active = 0.1, recovery = 0.26,
+					damage = 10, hitbox = box(5, 3, 3, 0.3), kbBase = 28, kbGrowth = 60, kbAngle = 30, burn = true,
+					windup = { Root = { 8, -10, 0, 0, -0.15, 0.2 }, Waist = { 8, -8, 0 }, Neck = { 4, 0, 0 }, RS = { 60, 0, 10 }, RE = { 100, 0, 0 }, RW = { 60, 0, 0 }, LS = { 50, 0, -40 }, LE = { 70, 0, 0 }, RH = { 100, 0, 0 }, RK = { -130, 0, 0 }, RA = { 15, 0, 0 } },
+					strike = { Root = { 18, -5, 0, 0, -0.1, -0.1 }, Waist = { 12, 0, 0 }, Neck = { -10, 0, 0 }, RS = { -20, 0, 50 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { -20, 0, -50 }, LE = { 40, 0, 0 }, RH = { 92, 0, 0 }, RK = { -2, 0, 0 }, RA = { 20, 0, 0 } },
+					follow = { Root = { 20, -3, 0, 0, -0.1, -0.12 }, Waist = { 14, 0, 0 }, Neck = { -12, 0, 0 }, RS = { -25, 0, 52 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { -25, 0, -52 }, LE = { 40, 0, 0 }, RH = { 96, 0, 0 }, RK = { 0, 0, 0 }, RA = { 20, 0, 0 } },
+					trail = "rightFoot", windupFx = { { "particles", tex = "spark", color = EMBER, dir = "all", at = "feet", time = 0.15, speed = 8, size = 0.3, rate = 60 } }, hitText = "SSSS… BOUM !",
+				},
+				-- →K : coup de bouteille de gaz, elle balance le chalumeau par la bouteille comme une massue
+				K_side = {
+					label = "Coup de bouteille", startup = 0.16, active = 0.12, recovery = 0.28,
+					damage = 11, hitbox = box(6, 3.5, 3.4, 0.6), kbBase = 30, kbGrowth = 68, kbAngle = 32, selfVelocity = Vector2.new(22, 0),
+					windup = { Root = { 4, 40, 0, 0, -0.25, 0.2 }, Waist = { 6, 44, 0 }, Neck = { 0, -30, 0 }, RS = { 100, 0, 70 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, 20 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -10, -30, 0, 0, -0.35, -0.4 }, Waist = { -12, -36, 0 }, Neck = { 0, 24, 0 }, RS = { 92, 0, -30 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -50 }, LE = { 40, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+					follow = { Root = { -12, -42, 0, 0, -0.37, -0.45 }, Waist = { -14, -48, 0 }, Neck = { 0, 32, 0 }, RS = { 94, 0, -40 }, RE = { 4, 0, 0 }, RW = { -10, 0, 0 }, LS = { 44, 0, -54 }, LE = { 40, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.48 } },
+					trail = "prop", hitText = "KLONG !",
+				},
+				-- ↓K : balayette brûlante, elle fauche les jambes en traînant la flamme au ras du sol
+				K_down = {
+					label = "Balayette brûlante", startup = 0.14, active = 0.14, recovery = 0.26,
+					damage = 10, hitbox = box(7, 2, 3.5, -1.8), kbBase = 26, kbGrowth = 54, kbAngle = 72, burn = true,
+					windup = { Root = { 10, 10, 0, 0, -0.8, 0.1 }, Waist = { 14, 14, 0 }, RS = { 60, 0, 30 }, RE = { 60, 0, 0 }, RW = { 60, 0, 0 }, LS = { 20, 0, -40 }, LE = { 80, 0, 0 }, LH = { -30, 0, 0 }, LK = { -40, 0, 0 } },
+					strike = { Root = { 14, -20, 0, 0, -0.9, -0.1 }, Waist = { 18, -26, 0 }, RS = { 50, 0, 40 }, RE = { 10, 0, 0 }, RW = { 80, 0, 0 }, LS = { 30, 0, -40 }, LE = { 80, 0, 0 }, LH = { 50, 0, -20 }, LK = { -4, 0, 0 }, LA = { 20, 0, 0 } },
+					follow = { Root = { 16, -26, 0, 0, -0.9, -0.14 }, Waist = { 20, -32, 0 }, RS = { 52, 0, 42 }, RE = { 10, 0, 0 }, RW = { 80, 0, 0 }, LS = { 34, 0, -42 }, LE = { 80, 0, 0 }, LH = { 56, 0, -24 }, LK = { 0, 0, 0 }, LA = { 24, 0, 0 } },
+					trail = "leftFoot", fx = { "dust", { "beam", color = FLAME, length = 6, width = 0.8, at = "feet" } }, hitText = "FAUCHÉ ET GRILLÉ !",
+				},
+				-- ↑K : flamme montante, genou levé, elle ouvre le robinet à fond et la flamme jaillit vers le ciel
+				K_up = {
+					label = "Flamme montante", startup = 0.14, active = 0.14, recovery = 0.28,
+					damage = 10, hitbox = box(4.5, 6, 1.5, 3.5), kbBase = 28, kbGrowth = 60, kbAngle = 88, burn = true,
+					windup = { Root = { 8, 0, 0, 0, -0.35, 0.1 }, Waist = { 12, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 30, 0, 20 }, RE = { 120, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -30 }, LE = { 110, 0, 0 }, LW = { 0, 0, 0 }, RH = { -20, 0, 0 }, RK = { -60, 0, 0 } },
+					strike = { Root = { -12, 0, 0, 0, 0.05, -0.1 }, Waist = { -16, 0, 0 }, Neck = { -24, 0, 0 }, RS = { 176, 0, 8 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, -10 }, LE = { 60, 0, 0 }, LW = { -30, 0, 0 }, RH = { 100, 0, 0 }, RK = { -120, 0, 0 } },
+					follow = { Root = { -14, 0, 0, 0, 0.08, -0.12 }, Waist = { -18, 0, 0 }, Neck = { -28, 0, 0 }, RS = { 182, 0, 10 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 154, 0, -12 }, LE = { 60, 0, 0 }, LW = { -30, 0, 0 }, RH = { 104, 0, 0 }, RK = { -124, 0, 0 } },
+					trail = "prop", fx = { { "pillar", color = FLAME, height = 7, width = 1.2, at = "front" }, { "particles", tex = "fire", color = FLAME, dir = "up", at = "hand", time = 0.3, speed = 18, size = 0.5, rate = 90 } }, text = "À FOND !", hitText = "ROUSSI !",
+				},
+				-- K en l'air : talon fumant, la botte passée à la flamme s'abat de biais
+				K_air = {
+					label = "Talon fumant", startup = 0.12, active = 0.14, recovery = 0.2,
+					damage = 10, hitbox = box(5.5, 3.5, 3, -0.5), kbBase = 26, kbGrowth = 54, kbAngle = 38, burn = true,
+					windup = { Root = { -10, -20, 0 }, Waist = { -10, -10, 0 }, Neck = { 0, 15, 0 }, RS = { 60, 0, 40 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -40 }, LE = { 80, 0, 0 }, RH = { 100, 0, 20 }, RK = { -130, 0, 0 }, LH = { 40, 0, 0 }, LK = { -100, 0, 0 } },
+					strike = { Root = { 20, -40, 0 }, Waist = { 8, -10, 0 }, Neck = { -10, 36, 0 }, RS = { 80, 0, 60 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -70 }, LE = { 30, 0, 0 }, RH = { 80, 0, 36 }, RK = { 0, 0, 0 }, RA = { 20, 0, 0 }, LH = { 20, 0, 0 }, LK = { -110, 0, 0 } },
+					follow = { Root = { 24, -44, 0 }, Waist = { 10, -10, 0 }, Neck = { -12, 40, 0 }, RS = { 84, 0, 64 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 54, 0, -74 }, LE = { 30, 0, 0 }, RH = { 84, 0, 40 }, RK = { 0, 0, 0 }, RA = { 20, 0, 0 }, LH = { 15, 0, 0 }, LK = { -105, 0, 0 } },
+					trail = "rightFoot", fx = { { "particles", tex = "smoke", color = Color3.fromRGB(80, 80, 80), dir = "all", at = "feet", time = 0.3, speed = 6, size = 0.6 } }, hitText = "SBLAF !",
+				},
+				-- dash K : glissade au gaz, elle se laisse glisser sur les genoux, flamme au ras du sol
+				K_dash = {
+					label = "Glissade au gaz", startup = 0.1, active = 0.24, recovery = 0.28,
+					damage = 10, hitbox = box(6, 3, 3, -0.8), kbBase = 28, kbGrowth = 60, kbAngle = 38, selfVelocity = Vector2.new(54, 6), burn = true,
+					windup = { Root = { -8, 0, 0, 0, -0.45, 0 }, Waist = { -10, 0, 0 }, RS = { 60, 0, 40 }, RE = { 70, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -40 }, LE = { 60, 0, 0 } },
+					strike = { Root = { 10, 0, 0, 0, -0.95, 0.1 }, Waist = { -8, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 94, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -40, 0, -50 }, LE = { 20, 0, 0 }, RH = { 10, 0, 6 }, RK = { -130, 0, 0 }, LH = { 10, 0, -6 }, LK = { -130, 0, 0 } },
+					follow = { Root = { 12, 0, 0, 0, -0.97, 0.14 }, Waist = { -10, 0, 0 }, Neck = { 8, 0, 0 }, RS = { 98, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -46, 0, -54 }, LE = { 20, 0, 0 }, RH = { 12, 0, 8 }, RK = { -132, 0, 0 }, LH = { 12, 0, -8 }, LK = { -132, 0, 0 } },
+					trail = "prop", fx = { "dust", { "particles", tex = "fire", color = FLAME, dir = "front", at = "hand", time = 0.3, speed = 14, size = 0.5, rate = 80 } }, text = "SKRRRT !", hitText = "GRILLÉ !",
+				},
+				-- L : jet de flamme, robinet ouvert à fond, un dard de feu bleu file droit sur l'adversaire
+				S_neutral = {
+					label = "Jet de flamme", kind = "projectile", startup = 0.2, active = 0, recovery = 0.42,
+					damage = 12, kbBase = 24, kbGrowth = 40, kbAngle = 30, burn = true,
+					projectile = { speed = 95, angle = 0, gravity = 0, lifetime = 0.55, size = 1.8, color = FLAME, pierce = true, visual = FLAME_SHOT },
+					windup = { Root = { 0, -14, 0, 0, -0.2, 0.15 }, Waist = { 0, -18, 0 }, Neck = { 4, 10, 0 }, RS = { 60, 0, 20 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, 0 }, LE = { 110, 0, 0 }, LW = { 0, 0, 0 } },
+					strike = { Root = { -8, 10, 0, 0, -0.28, -0.3 }, Waist = { -8, 12, 0 }, Neck = { 0, -6, 0 }, RS = { 94, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 80, 0, 10 }, LE = { 70, 0, 0 }, LW = { -40, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { -10, 12, 0, 0, -0.3, -0.34 }, Waist = { -10, 14, 0 }, Neck = { 0, -8, 0 }, RS = { 96, 0, 2 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 82, 0, 12 }, LE = { 70, 0, 0 }, LW = { -44, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+					shake = true, fx = { { "beam", color = FLAME, length = 14, width = 1.6, at = "hand" }, { "particles", tex = "fire", color = FLAME, dir = "front", at = "hand", time = 0.3, speed = 22, size = 0.6, rate = 100 } }, text = "PLEIN GAZ !", hitText = "CRAMÉ !",
+				},
+				-- →L : soudure à l'arc, elle avance en soudant tout le couloir d'un trait, trois gerbes d'étincelles
+				S_side = {
+					label = "Soudure à l'arc", startup = 0.22, active = 0.3, recovery = 0.45, hits = 3,
+					damage = 5, hitbox = box(14, 5, 7, 1), kbBase = 26, kbGrowth = 48, kbAngle = 34, selfVelocity = Vector2.new(30, 0), burn = true,
+					windup = { Root = { -4, -20, 0, 0, -0.25, 0.15 }, Waist = { -6, -24, 0 }, Neck = { -10, 14, 0 }, RS = { 60, 0, 20 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -20 }, LE = { 110, 0, 0 }, LW = { 0, 0, 0 } },
+					strike = { Root = { -14, 10, 0, 0, -0.35, -0.3 }, Waist = { -16, 12, 0 }, Neck = { -16, -6, 0 }, RS = { 90, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, 0 }, LE = { 0, 0, 0 }, LW = { -60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+					follow = { Root = { -16, -10, 0, 0, -0.37, -0.36 }, Waist = { -18, -12, 0 }, Neck = { -18, 6, 0 }, RS = { 92, 0, -10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 92, 0, -20 }, LE = { 0, 0, 0 }, LW = { -60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.48 } },
+					wobble = true, trail = "prop", fx = { { "particles", tex = "spark", color = Color3.fromRGB(255, 240, 200), dir = "all", at = "hand", time = 0.4, speed = 20, size = 0.4, rate = 150 }, { "beam", color = FLAME, length = 14, width = 1.2, at = "hand" }, { "screen", color = FLAME, alpha = 0.15 } },
+					text = "SOUDURE !", hitText = "TSSS TSSS TSSS !",
+				},
+				-- ↓L : fuite de gaz, elle ouvre la bouteille à ras du sol et allume : une flamme rase court le long du couloir
+				S_down = {
+					label = "Fuite de gaz", startup = 0.24, active = 0.22, recovery = 0.48,
+					damage = 13, hitbox = box(14, 4, 7, -0.5), kbBase = 28, kbGrowth = 52, kbAngle = 70, burn = true,
+					status = { name = "burning", duration = 2.5 },
+					windup = { Root = { -8, 10, 0, 0, -0.75, 0.1 }, Waist = { -20, 10, 0 }, Neck = { -12, 0, 0 }, RS = { 50, 0, 20 }, RE = { 90, 0, 0 }, RW = { 60, 0, 0 }, LS = { 50, 0, -20 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -12, -8, 0, 0, -0.9, -0.1 }, Waist = { -26, -8, 0 }, Neck = { -18, 0, 0 }, RS = { 60, 0, 10 }, RE = { 0, 0, 0 }, RW = { 80, 0, 0 }, LS = { 60, 0, -30 }, LE = { 20, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					follow = { Root = { 6, 0, 0, 0, -0.4, 0.2 }, Waist = { 8, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 40, 0, 40 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -40 }, LE = { 60, 0, 0 } },
+					hold = 0.1, windupFx = { { "particles", tex = "smoke", color = Color3.fromRGB(200, 200, 210), dir = "front", at = "feet", time = 0.25, speed = 10, size = 0.6 } },
+					fx = { { "beam", color = EMBER, length = 16, width = 2.5, at = "feet" }, { "particles", tex = "fire", color = EMBER, dir = "front", at = "feet", time = 0.4, speed = 24, size = 0.8, rate = 120 }, { "shake", amount = 0.3 } },
+					text = "ÇA SENT LE GAZ…", hitText = "WOUF !",
+				},
+				-- ↑L : réacteur à gaz, elle pointe le chalumeau vers le sol et décolle en diagonale sur la flamme, casquette au vent
+				S_up = {
+					label = "Réacteur à gaz", startup = 0.14, active = 0.3, recovery = 0.44,
+					damage = 13, hitbox = box(10, 11, 3, 4), kbBase = 30, kbGrowth = 46, kbAngle = 76, selfVelocity = Vector2.new(42, 82), burn = true,
+					windup = { Root = { -6, 0, 0, 0, -0.65, 0 }, Waist = { -16, 0, 0 }, Neck = { -4, 0, 0 }, RS = { -30, 0, 20 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -30 }, LE = { 80, 0, 0 } },
+					strike = { Root = { -44, 0, 0, 0, 0.3, 0 }, Waist = { -4, 0, 0 }, Neck = { 28, 0, 0 }, RS = { -50, 0, 30 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, -30 }, LE = { 20, 0, 0 }, RH = { -25, 0, 6 }, RK = { -35, 0, 0 }, RA = { -30, 0, 0 }, LH = { -35, 0, -6 }, LK = { -50, 0, 0 }, LA = { -30, 0, 0 } },
+					follow = { Root = { -48, 0, 0, 0, 0.35, 0 }, Waist = { -6, 0, 0 }, Neck = { 32, 0, 0 }, RS = { -56, 0, 34 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 156, 0, -32 }, LE = { 20, 0, 0 }, RH = { -30, 0, 8 }, RK = { -45, 0, 0 }, RA = { -30, 0, 0 }, LH = { -40, 0, -8 }, LK = { -60, 0, 0 }, LA = { -30, 0, 0 } },
+					trail = "prop", fx = { { "particles", tex = "fire", color = FLAME, dir = "down", at = "hand", time = 0.5, speed = 22, size = 0.7, rate = 110 }, { "ring", color = FLAME, radius = 4, at = "feet" }, { "burst", color = EMBER, size = 3, at = "feet" } },
+					text = "DÉCOLLAGE !", hitText = "ROUSSI !",
+				},
+				-- L en l'air : flamme plongeante, un dard de feu tiré en piqué vers l'adversaire
+				S_air = {
+					label = "Flamme plongeante", kind = "projectile", startup = 0.16, active = 0, recovery = 0.4,
+					damage = 12, kbBase = 24, kbGrowth = 44, kbAngle = -40, burn = true,
+					projectile = { speed = 90, angle = -45, gravity = 0, lifetime = 0.6, size = 1.8, color = FLAME, visual = FLAME_SHOT },
+					windup = { Root = { -6, -15, 0 }, Waist = { -8, -15, 0 }, Neck = { 0, 10, 0 }, RS = { 150, 0, 30 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -40 }, LE = { 60, 0, 0 }, RH = { 60, 0, 0 }, RK = { -100, 0, 0 }, LH = { 40, 0, 0 }, LK = { -80, 0, 0 } },
+					strike = { Root = { -10, 15, 0 }, Waist = { -14, 18, 0 }, Neck = { 20, -10, 0 }, RS = { 50, 0, 5 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -20, 0, -50 }, LE = { 30, 0, 0 }, RH = { 30, 0, 0 }, RK = { -60, 0, 0 }, LH = { 60, 0, 0 }, LK = { -90, 0, 0 } },
+					follow = { Root = { -12, 17, 0 }, Waist = { -16, 20, 0 }, Neck = { 24, -12, 0 }, RS = { 46, 0, 8 }, RE = { 4, 0, 0 }, RW = { 0, 0, 0 }, LS = { -26, 0, -52 }, LE = { 30, 0, 0 }, RH = { 26, 0, 0 }, RK = { -56, 0, 0 }, LH = { 64, 0, 0 }, LK = { -92, 0, 0 } },
+					fx = { { "beam", color = FLAME, length = 10, width = 1.2, at = "hand" }, { "burst", color = FLAME, size = 1.8, at = "hand" } }, text = "EN PIQUÉ !", hitText = "CRAMÉ !",
+				},
+				-- Y : explosion de gaz, elle ouvre la bouteille à fond, compte jusqu'à trois… et tout le couloir part en champignon
+				SUPER = {
+					label = "Explosion de gaz !", startup = 0.45, active = 0.3, recovery = 0.75,
+					damage = 24, hitbox = box(16, 8, 8, 2), kbBase = 44, kbGrowth = 92, kbAngle = 40, burn = true, invuln = 0.2,
+					status = { name = "burning", duration = 3 },
+					windup = { Root = { -6, 0, 0, 0, -0.3, 0.1 }, Waist = { -10, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 60, 0, 20 }, RE = { 110, 0, 0 }, RW = { 60, 0, 0 }, LS = { 60, 0, -20 }, LE = { 110, 0, 0 }, LW = { 0, 0, 0 } },
+					strike = { Root = { 24, 0, 0, 0, -0.5, 0.5 }, Waist = { 20, 0, 0 }, Neck = { -30, 0, 0 }, RS = { 150, 0, 70 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, -70 }, LE = { 10, 0, 0 }, FR = { 0, 0, 0, 0, 0, 0.5 }, FL = { 0, 0, 0, 0, 0, 0.5 } },
+					follow = { Root = { 30, 0, 0, 0, -0.6, 0.6 }, Waist = { 24, 0, 0 }, Neck = { -34, 0, 0 }, RS = { 160, 0, 80 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 160, 0, -80 }, LE = { 10, 0, 0 }, FR = { 0, 0, 0, 0, 0, 0.55 }, FL = { 0, 0, 0, 0, 0, 0.55 } },
+					hold = 0.2, shake = true, windupFx = { "super", { "text", text = "3… 2… 1…", color = EMBER, at = "head" }, { "particles", tex = "smoke", color = Color3.fromRGB(200, 200, 210), dir = "front", at = "hand", time = 0.4, speed = 12, size = 0.8 } },
+					fx = { { "burst", color = EMBER, size = 7, at = "front" }, { "pillar", color = FLAME, height = 20, width = 6, at = "front" }, { "ring", color = EMBER, radius = 9, at = "front" }, { "screen", color = EMBER, alpha = 0.35 }, { "particles", tex = "fire", color = EMBER, dir = "all", at = "front", time = 0.6, speed = 24, size = 1.2, rate = 150 }, { "shake", amount = 0.9 } },
+					text = "BOUM !", hitText = "CARBONISÉ !",
+				},
+				-- →Y : lance-flammes, elle bloque le robinet avec sa clé et arrose tout le couloir d'un dragon de feu qui traverse tout
+				SUPER_side = {
+					label = "Lance-flammes !", kind = "projectile", startup = 0.4, active = 0, recovery = 0.7,
+					damage = 8, kbBase = 30, kbGrowth = 50, kbAngle = 36, burn = true,
+					projectile = { speed = 70, angle = 0, gravity = 0, lifetime = 1.0, size = 3, color = FLAME, pierce = true, hits = 3, fan = { count = 3, from = -4, to = 4, gap = 0.12 },
+						visual = { shape = "ball", size = 2.8, color = EMBER, neon = true, spin = 10, parts = { { "ball", Vector3.new(1.6, 1.6, 1.6), Vector3.new(-1.2, 0.4, 0), FLAME }, { "ball", Vector3.new(1, 1, 1), Vector3.new(-2.2, -0.3, 0), FLAME } } } },
+					status = { name = "burning", duration = 3 },
+					windup = { Root = { 2, -20, 0, 0, -0.3, 0.2 }, Waist = { 2, -24, 0 }, Neck = { 4, 14, 0 }, RS = { 60, 0, 20 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, 0 }, LE = { 120, 0, 0 }, LW = { 0, 0, 0 } },
+					strike = { Root = { -10, 10, 0, 0, -0.4, -0.3 }, Waist = { -8, 12, 0 }, Neck = { 0, -6, 0 }, RS = { 94, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, 6 }, LE = { 50, 0, 0 }, LW = { -30, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+					follow = { Root = { -14, 12, 0, 0, -0.42, -0.4 }, Waist = { -10, 14, 0 }, Neck = { 0, -8, 0 }, RS = { 98, 0, 2 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 94, 0, 8 }, LE = { 50, 0, 0 }, LW = { -34, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.55 } },
+					shake = true, prop = "cle", windupFx = { "super", { "text", text = "CRIIIC", color = STEEL, at = "hand" } },
+					fx = { { "beam", color = FLAME, length = 18, width = 4, at = "hand" }, { "particles", tex = "fire", color = EMBER, dir = "front", at = "hand", time = 0.7, speed = 30, size = 1.2, rate = 160 }, { "screen", color = EMBER, alpha = 0.2 }, { "shake", amount = 0.5 } },
+					text = "DRAGON !", hitText = "RÔTI !",
+				},
+				-- ↑Y : fusée à gaz, elle se met à califourchon sur la bouteille, dévisse le robinet d'un coup de clé et décolle au plafond avec tout le couloir
+				SUPER_up = {
+					label = "Fusée à gaz !", startup = 0.4, active = 0.3, recovery = 0.75,
+					damage = 24, hitbox = box(14, 14, 7, 6), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3, selfVelocity = Vector2.new(0, 60), burn = true,
+					windup = { Root = { 6, 0, 0, 0, -0.6, 0.1 }, Waist = { 8, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 30, 0, 20 }, RE = { 110, 0, 0 }, RW = { 60, 0, 0 }, LS = { 30, 0, -20 }, LE = { 110, 0, 0 }, LW = { 0, 0, 0 } },
+					strike = { Root = { 6, 0, 0, 0, 0.5, 0 }, Waist = { 10, 0, 0 }, Neck = { 40, 0, 0 }, RS = { 40, 0, 10 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 185, 0, -10 }, LE = { 0, 0, 0 }, RH = { 60, 0, 30 }, RK = { -110, 0, 0 }, LH = { 60, 0, -30 }, LK = { -110, 0, 0 } },
+					follow = { Root = { 10, 0, 0, 0, 0.55, 0 }, Waist = { 14, 0, 0 }, Neck = { 46, 0, 0 }, RS = { 44, 0, 12 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 188, 0, -12 }, LE = { 0, 0, 0 }, RH = { 64, 0, 32 }, RK = { -112, 0, 0 }, LH = { 64, 0, -32 }, LK = { -112, 0, 0 } },
+					hold = 0.2, shake = true, prop = "cle", trail = "prop", windupFx = { "super", { "text", text = "CRIIIC", color = STEEL, at = "hand" } },
+					fx = { { "pillar", color = FLAME, height = 24, width = 4, at = "front" }, { "burst", color = EMBER, size = 5, at = "feet" }, { "ring", color = FLAME, radius = 7, at = "feet" }, { "particles", tex = "fire", color = FLAME, dir = "down", at = "feet", time = 0.6, speed = 26, size = 1, rate = 140 }, { "shake", amount = 0.7 } },
+					text = "YIIIHAA !", hitText = "AU PLAFOND, GRILLÉ !",
+				},
+				-- ↓Y : brasier au sol, elle verse tout le gaz par terre et craque une allumette avec ses dents : le couloir brûle longtemps
+				SUPER_down = {
+					label = "Brasier au sol !", startup = 0.42, active = 0.35, recovery = 0.7,
+					damage = 22, hitbox = box(16, 5, 8, 0), kbBase = 40, kbGrowth = 84, kbAngle = 65, burn = true,
+					status = { name = "burning", duration = 3 },
+					windup = { Root = { -10, 0, 0, 0, -0.7, 0.1 }, Waist = { -22, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 60, 0, 20 }, RE = { 60, 0, 0 }, RW = { 90, 0, 0 }, LS = { 30, 0, -30 }, LE = { 120, 0, 0 }, LW = { 0, 0, 0 } },
+					strike = { Root = { 4, 0, 0, 0, -0.3, 0.2 }, Waist = { 6, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 60, 0, 40 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, -10 }, LE = { 0, 0, 0 }, LW = { -30, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					follow = { Root = { 10, 0, 0, 0, -0.2, 0.4 }, Waist = { 12, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 70, 0, 50 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, -50 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, 0.3 } },
+					hold = 0.2, windupFx = { "super", { "puddle", color = Color3.fromRGB(200, 200, 210), width = 16, time = 0.6 } },
+					fx = { { "beam", color = EMBER, length = 16, width = 5, at = "feet" }, { "puddle", color = EMBER, width = 16, time = 2.5 }, { "particles", tex = "fire", color = EMBER, dir = "up", at = "front", time = 0.8, speed = 16, size = 1.2, rate = 150 }, { "screen", color = EMBER, alpha = 0.25 }, { "shake", amount = 0.6 } },
+					text = "ET ON CRAQUE L'ALLUMETTE !", hitText = "BRASIER !",
+				},
+			},
+			links = {
+				P_neutral = { P = "P_side", K = "K_neutral", S = "S_neutral" },
+				P_side = { P = "P_up", K = "K_side", S = "S_side" },
+				P_down = { P = "P_neutral", K = "K_down", S = "S_down" },
+				K_neutral = { P = "P_neutral", K = "K_side", S = "S_side" },
+				K_side = { P = "P_up", K = "K_up", S = "S_neutral" },
+				P_dash = { P = "P_side", K = "K_side", S = "S_side" },
+				K_dash = { P = "P_up", S = "S_up" },
+			},
+		},
+		{ id = "cuvette", name = "Cuvette de WC", icon = "🚽",
+			prop = { name = "PropCuvette", hand = "Right", pieces = {
+				{ "Cuvette", "", "ball", Vector3.new(1.5, 0.9, 1.6), Vector3.new(0, -1.0, 0), Vector3.zero, PORCELAIN, "SmoothPlastic" },
+				{ "Lunette", "", "cyl", Vector3.new(0.12, 1.6, 1.7), Vector3.new(0, -0.52, 0), Vector3.zero, PORCELAIN, "SmoothPlastic" },
+				{ "Eau", "", "cyl", Vector3.new(0.08, 0.9, 0.9), Vector3.new(0, -0.5, 0), Vector3.zero, WATER, "SmoothPlastic" },
+				{ "Reservoir", "", "block", Vector3.new(1.3, 1.1, 0.5), Vector3.new(0, -0.35, 0.95), Vector3.zero, PORCELAIN, "SmoothPlastic" },
+				{ "Chasse", "", "cyl", Vector3.new(0.45, 0.1, 0.1), Vector3.new(0.55, 0.3, 0.95), Vector3.zero, BRASS, "Metal" },
+				{ "Pied", "", "cyl", Vector3.new(0.6, 0.9, 1.0), Vector3.new(0, -1.7, 0), Vector3.zero, PORCELAIN, "SmoothPlastic" },
+			} },
+			ability = { damage = 1.2, text = "Dégâts +20 % : la porcelaine, c'est lourd" },
+			moves = {
+				-- J : coup de lunette lourd, à deux mains, dans le ventre
+				P_neutral = {
+					label = "Coup de lunette", startup = 0.13, active = 0.1, recovery = 0.22,
+					damage = 8, hitbox = box(5, 3.5, 2.8, 0.5), kbBase = 24, kbGrowth = 30, kbAngle = 30,
+					windup = { Root = { 4, -14, 0, 0, -0.15, 0.15 }, Waist = { 6, -18, 0 }, RS = { 60, 0, 10 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -10 }, LE = { 110, 0, 0 }, LW = { 0, 0, 0 } },
+					strike = { Root = { -10, 12, 0, 0, -0.3, -0.3 }, Waist = { -12, 16, 0 }, RS = { 96, 0, 4 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 92, 0, -6 }, LE = { 10, 0, 0 }, LW = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.35 } },
+					follow = { Root = { -12, 16, 0, 0, -0.32, -0.36 }, Waist = { -14, 20, 0 }, RS = { 100, 0, 6 }, RE = { 14, 0, 0 }, RW = { -10, 0, 0 }, LS = { 96, 0, -8 }, LE = { 14, 0, 0 }, LW = { -10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.38 } },
+					trail = "prop", hitText = "KLONG !",
+				},
+				-- →J : balayage de cuvette à l'horizontale, l'eau de la cuvette gicle au passage
+				P_side = {
+					label = "Balayage de cuvette", startup = 0.16, active = 0.12, recovery = 0.26,
+					damage = 10, hitbox = box(6, 3.5, 3.5, 0.8), kbBase = 26, kbGrowth = 42, kbAngle = 28, selfVelocity = Vector2.new(14, 0),
+					windup = { Root = { 6, 42, 0, 0, -0.2, 0.2 }, Waist = { 8, 46, 0 }, Neck = { 0, -30, 0 }, RS = { 70, 0, 60 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, 20 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -8, -30, 0, 0, -0.3, -0.35 }, Waist = { -10, -36, 0 }, Neck = { 0, 24, 0 }, RS = { 90, 0, -30 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, -60 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { -10, -40, 0, 0, -0.32, -0.4 }, Waist = { -12, -46, 0 }, Neck = { 0, 32, 0 }, RS = { 94, 0, -36 }, RE = { 10, 0, 0 }, RW = { -10, 0, 0 }, LS = { 94, 0, -66 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+					trail = "prop", fx = { { "toss", shape = "ball", color = WATER, size = 0.4, count = 3, speed = 12 } }, hitText = "BLAM !",
+				},
+				-- ↓J : elle pose la cuvette lourdement sur les orteils de l'adversaire
+				P_down = {
+					label = "Cuvette sur les orteils", startup = 0.14, active = 0.1, recovery = 0.26,
+					damage = 9, hitbox = box(5, 2.5, 2.5, -1.5), kbBase = 26, kbGrowth = 40, kbAngle = 80,
+					windup = { Root = { 6, 0, 0, 0, -0.2, 0.1 }, Waist = { -10, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 160, 0, 10 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 160, 0, -10 }, LE = { 40, 0, 0 } },
+					strike = { Root = { 18, 0, 0, 0, -0.9, -0.2 }, Waist = { 28, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 40, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -10 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					follow = { Root = { 20, 0, 0, 0, -0.95, -0.24 }, Waist = { 30, 0, 0 }, Neck = { 18, 0, 0 }, RS = { 36, 0, 12 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 36, 0, -12 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.32 } },
+					fx = { "thud", "dust" }, hitText = "AÏE LES ORTEILS !",
+				},
+				-- ↑J : elle soulève la cuvette à bout de bras, le pied de porcelaine cogne le menton
+				P_up = {
+					label = "Cuvette au menton", startup = 0.14, active = 0.12, recovery = 0.26,
+					damage = 9, hitbox = box(4.5, 5.5, 1.5, 3), kbBase = 26, kbGrowth = 45, kbAngle = 86,
+					windup = { Root = { 10, 0, 0, 0, -0.35, 0.1 }, Waist = { 14, 0, 0 }, RS = { 30, 0, 10 }, RE = { 120, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -10 }, LE = { 120, 0, 0 } },
+					strike = { Root = { -12, 0, 0, 0, 0.1, -0.1 }, Waist = { -16, 0, 0 }, Neck = { -22, 0, 0 }, RS = { 172, 0, 8 }, RE = { 6, 0, 0 }, RW = { 0, 0, 0 }, LS = { 172, 0, -8 }, LE = { 6, 0, 0 } },
+					follow = { Root = { -14, 0, 0, 0, 0.14, -0.12 }, Waist = { -18, 0, 0 }, Neck = { -26, 0, 0 }, RS = { 178, 0, 10 }, RE = { 6, 0, 0 }, RW = { -10, 0, 0 }, LS = { 178, 0, -10 }, LE = { 6, 0, 0 } },
+					trail = "prop", hitText = "KLONK !",
+				},
+				-- J en l'air : elle lâche la cuvette sous elle et retombe assise dessus
+				P_air = {
+					label = "Cuvette tombante", startup = 0.12, active = 0.14, recovery = 0.18,
+					damage = 10, hitbox = box(4.5, 4, 1, -1.8), kbBase = 24, kbGrowth = 40, kbAngle = -45,
+					windup = { Root = { 8, 0, 0 }, Waist = { 14, 0, 0 }, RS = { 185, 0, 10 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 185, 0, -10 }, LE = { 40, 0, 0 }, RH = { 40, 0, 0 }, RK = { -80, 0, 0 }, LH = { 60, 0, 0 }, LK = { -90, 0, 0 } },
+					strike = { Root = { -10, 0, 0 }, Waist = { -28, 0, 0 }, RS = { 40, 0, 5 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -5 }, LE = { 0, 0, 0 }, RH = { 90, 0, 10 }, RK = { -40, 0, 0 }, LH = { 90, 0, -10 }, LK = { -40, 0, 0 } },
+					follow = { Root = { -14, 0, 0 }, Waist = { -32, 0, 0 }, RS = { 20, 0, 5 }, RE = { 8, 0, 0 }, RW = { -20, 0, 0 }, LS = { 20, 0, -5 }, LE = { 8, 0, 0 }, RH = { 95, 0, 10 }, RK = { -36, 0, 0 }, LH = { 95, 0, -10 }, LK = { -36, 0, 0 } },
+					trail = "prop", hitText = "BLAM !",
+				},
+				-- dash J : bélier de porcelaine, la cuvette en avant comme un bouclier, rien ne l'arrête
+				P_dash = {
+					label = "Bélier de porcelaine", startup = 0.1, active = 0.2, recovery = 0.3,
+					damage = 11, hitbox = box(6, 4, 3, 0.5), kbBase = 30, kbGrowth = 55, kbAngle = 30, selfVelocity = Vector2.new(48, 0), armor = true,
+					windup = { Root = { 10, -20, 0, 0, -0.2, 0.2 }, Waist = { 12, -24, 0 }, RS = { 80, 0, 10 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 80, 0, -10 }, LE = { 100, 0, 0 } },
+					strike = { Root = { 18, 10, 0, 0, -0.3, -0.3 }, Waist = { 14, 14, 0 }, Neck = { -10, 0, 0 }, RS = { 96, 0, 4 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 92, 0, -4 }, LE = { 20, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { 20, 12, 0, 0, -0.32, -0.36 }, Waist = { 16, 16, 0 }, Neck = { -12, 0, 0 }, RS = { 100, 0, 6 }, RE = { 20, 0, 0 }, RW = { -10, 0, 0 }, LS = { 96, 0, -6 }, LE = { 20, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+					trail = "prop", fx = { "dust" }, text = "DÉGAGEZ !", hitText = "BÉLIER !",
+				},
+				-- K : chasse d'eau, elle tire la chaînette et un paquet d'eau part de la cuvette (projectile court, trempe)
+				K_neutral = {
+					label = "Chasse d'eau", kind = "projectile", startup = 0.2, active = 0, recovery = 0.32,
+					damage = 11, kbBase = 30, kbGrowth = 60, kbAngle = 30,
+					projectile = { speed = 75, angle = 6, gravity = 30, lifetime = 0.4, size = 2, color = WATER, visual = "water", aim = false },
+					status = { name = "wet", duration = 1.5 },
+					windup = { Root = { 4, -12, 0, 0, -0.2, 0.15 }, Waist = { 6, -14, 0 }, Neck = { 4, 8, 0 }, RS = { 80, 0, 10 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, -10 }, LE = { 60, 0, 0 }, LW = { 0, 0, 0 } },
+					strike = { Root = { -8, 8, 0, 0, -0.3, -0.25 }, Waist = { -10, 10, 0 }, Neck = { 0, -4, 0 }, RS = { 92, 0, 4 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -20 }, LE = { 100, 0, 0 }, LW = { -40, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.35 } },
+					follow = { Root = { -10, 10, 0, 0, -0.32, -0.3 }, Waist = { -12, 12, 0 }, Neck = { 0, -6, 0 }, RS = { 94, 0, 6 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -24 }, LE = { 100, 0, 0 }, LW = { -50, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.38 } },
+					fx = { { "particles", tex = "smoke", color = WATER, dir = "front", at = "hand", time = 0.3, speed = 16, size = 0.6, rate = 80 }, { "text", text = "FLOUUUSH", color = WATER, at = "hand" } }, hitText = "SPLASH !",
+				},
+				-- →K : coup de pied sauté, la cuvette serrée contre elle en bouclier
+				K_side = {
+					label = "Botte-bouclier", startup = 0.16, active = 0.14, recovery = 0.32,
+					damage = 13, hitbox = box(6, 3.5, 3.5, 0.5), kbBase = 34, kbGrowth = 74, kbAngle = 36, selfVelocity = Vector2.new(26, 18),
+					windup = { Root = { 6, -10, 0, 0, -0.2, 0.1 }, Waist = { 8, -8, 0 }, RS = { 60, 0, 10 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -10 }, LE = { 110, 0, 0 }, RH = { -20, 0, 10 }, RK = { -50, 0, 0 } },
+					strike = { Root = { 10, 0, 0, 0, 0.1, -0.1 }, Waist = { 12, 0, 0 }, RS = { 70, 0, 10 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, -10 }, LE = { 100, 0, 0 }, RH = { 100, 0, 10 }, RK = { -6, 0, 0 }, RA = { 10, 0, 0 }, LH = { -20, 0, 0 }, LK = { -60, 0, 0 } },
+					follow = { Root = { 12, 0, 0, 0, 0.12, -0.14 }, Waist = { 14, 0, 0 }, RS = { 74, 0, 12 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 74, 0, -12 }, LE = { 100, 0, 0 }, RH = { 108, 0, 12 }, RK = { 0, 0, 0 }, RA = { 14, 0, 0 }, LH = { -24, 0, 0 }, LK = { -64, 0, 0 } },
+					trail = "rightFoot", hitText = "VLAN !",
+				},
+				-- ↓K : assise sur la cuvette (comme aux toilettes, journal à la main), elle balaie des deux bottes
+				K_down = {
+					label = "Balayage sur le trône", startup = 0.16, active = 0.16, recovery = 0.34,
+					damage = 11, hitbox = box(7, 2.2, 3.5, -1.6), kbBase = 28, kbGrowth = 54, kbAngle = 76,
+					windup = { Root = { 6, 0, 0, 0, -0.5, 0.1 }, Waist = { 10, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 40, 0, 30 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -30 }, LE = { 90, 0, 0 }, RH = { 40, 0, 0 }, RK = { -60, 0, 0 }, LH = { 40, 0, 0 }, LK = { -60, 0, 0 } },
+					strike = { Root = { 14, 0, 0, 0, -0.75, -0.15 }, Waist = { 18, 0, 0 }, Neck = { 0, 0, 0 }, RS = { 50, 0, 40 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -40 }, LE = { 30, 0, 0 }, RH = { 90, 0, 10 }, RK = { -4, 0, 0 }, RA = { 20, 0, 0 }, LH = { 90, 0, -10 }, LK = { -4, 0, 0 }, LA = { 20, 0, 0 } },
+					follow = { Root = { 16, 0, 0, 0, -0.78, -0.18 }, Waist = { 20, 0, 0 }, Neck = { 0, 0, 0 }, RS = { 54, 0, 44 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 54, 0, -44 }, LE = { 30, 0, 0 }, RH = { 96, 0, 12 }, RK = { 0, 0, 0 }, RA = { 24, 0, 0 }, LH = { 96, 0, -12 }, LK = { 0, 0, 0 }, LA = { 24, 0, 0 } },
+					trail = "bothFeet", fx = { "dust", { "symbols", symbols = { "📰" }, color = PORCELAIN, count = 1, radius = 1.5, at = "head" } }, hitText = "FAUCHÉ !",
+				},
+				-- ↑K : elle balance la cuvette en l'air et la suit d'un coup de botte monté
+				K_up = {
+					label = "Cuvette envoyée", startup = 0.18, active = 0.14, recovery = 0.34,
+					damage = 12, hitbox = box(5, 6, 1.5, 3.5), kbBase = 32, kbGrowth = 70, kbAngle = 88,
+					windup = { Root = { 10, 0, 0, 0, -0.3, 0.1 }, Waist = { 14, 0, 0 }, RS = { 60, 0, 10 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -10 }, LE = { 110, 0, 0 }, RH = { -20, 0, 0 }, RK = { -60, 0, 0 } },
+					strike = { Root = { -16, 0, 0, 0, 0.05, -0.1 }, Waist = { -20, 0, 0 }, Neck = { -22, 0, 0 }, RS = { 170, 0, 10 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 170, 0, -10 }, LE = { 10, 0, 0 }, RH = { 140, 0, 0 }, RK = { -6, 0, 0 }, RA = { 20, 0, 0 } },
+					follow = { Root = { -18, 0, 0, 0, 0.08, -0.12 }, Waist = { -22, 0, 0 }, Neck = { -26, 0, 0 }, RS = { 176, 0, 12 }, RE = { 10, 0, 0 }, RW = { -10, 0, 0 }, LS = { 176, 0, -12 }, LE = { 10, 0, 0 }, RH = { 148, 0, 0 }, RK = { 0, 0, 0 }, RA = { 24, 0, 0 } },
+					trail = "rightFoot", fx = { { "toss", shape = "ball", color = WATER, size = 0.5, count = 4, speed = 14 } }, hitText = "ET HOP !",
+				},
+				-- K en l'air : assise sur la cuvette en plein vol, elle tombe d'un bloc, le trône en premier
+				K_air = {
+					label = "Trône tombant", startup = 0.16, active = 0.16, recovery = 0.28,
+					damage = 12, hitbox = box(5.5, 4, 1.5, -1.5), kbBase = 30, kbGrowth = 70, kbAngle = -40,
+					windup = { Root = { -8, 0, 0 }, Waist = { -14, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 160, 0, 30 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 160, 0, -30 }, LE = { 20, 0, 0 }, RH = { 60, 0, 10 }, RK = { -90, 0, 0 }, LH = { 60, 0, -10 }, LK = { -90, 0, 0 } },
+					strike = { Root = { 14, 0, 0 }, Waist = { 18, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 60, 0, 60 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -60 }, LE = { 60, 0, 0 }, RH = { 100, 0, 25 }, RK = { -110, 0, 0 }, LH = { 100, 0, -25 }, LK = { -110, 0, 0 } },
+					follow = { Root = { 16, 0, 0 }, Waist = { 20, 0, 0 }, Neck = { 8, 0, 0 }, RS = { 64, 0, 64 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 64, 0, -64 }, LE = { 60, 0, 0 }, RH = { 104, 0, 28 }, RK = { -112, 0, 0 }, LH = { 104, 0, -28 }, LK = { -112, 0, 0 } },
+					trail = "prop", fx = { { "symbols", symbols = { "🚽", "💧" }, color = WATER, count = 2, radius = 2, at = "feet" } }, text = "OCCUPÉ !", hitText = "ÉCRASÉ SOUS LE TRÔNE !",
+				},
+				-- dash K : luge de porcelaine, assise sur la cuvette, elle glisse sur le sol mouillé bottes devant
+				K_dash = {
+					label = "Luge de porcelaine", startup = 0.12, active = 0.3, recovery = 0.34,
+					damage = 13, hitbox = box(6, 4, 3, -0.5), kbBase = 32, kbGrowth = 68, kbAngle = 40, selfVelocity = Vector2.new(52, 14), armor = true,
+					windup = { Root = { -8, 0, 0, 0, -0.4, 0 }, Waist = { -10, 0, 0 }, RS = { 60, 0, 30 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -30 }, LE = { 60, 0, 0 } },
+					strike = { Root = { 14, 0, 0, 0, -0.75, 0.1 }, Waist = { 16, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 40, 0, 60 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -60 }, LE = { 60, 0, 0 }, RH = { 95, 0, 15 }, RK = { -20, 0, 0 }, RA = { 10, 0, 0 }, LH = { 95, 0, -15 }, LK = { -20, 0, 0 }, LA = { 10, 0, 0 } },
+					follow = { Root = { 16, 0, 0, 0, -0.78, 0.14 }, Waist = { 18, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 44, 0, 64 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 44, 0, -64 }, LE = { 60, 0, 0 }, RH = { 100, 0, 15 }, RK = { -16, 0, 0 }, RA = { 14, 0, 0 }, LH = { 100, 0, -15 }, LK = { -16, 0, 0 }, LA = { 14, 0, 0 } },
+					trail = "body", fx = { { "puddle", color = WATER, width = 8 }, "dust" }, text = "YAHOU !", hitText = "ÉCRASÉ !",
+				},
+				-- L : grande chasse, elle tire la chaînette à fond : un torrent d'eau part de la cuvette droit sur l'adversaire
+				S_neutral = {
+					label = "Grande chasse", kind = "projectile", startup = 0.22, active = 0, recovery = 0.45,
+					damage = 13, kbBase = 28, kbGrowth = 50, kbAngle = 35,
+					projectile = { speed = 80, angle = 0, gravity = 0, lifetime = 0.6, size = 2.6, color = WATER, visual = "water" },
+					status = { name = "wet", duration = 2.5 },
+					windup = { Root = { 4, -14, 0, 0, -0.2, 0.15 }, Waist = { 6, -16, 0 }, Neck = { 4, 8, 0 }, RS = { 80, 0, 10 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 170, 0, -10 }, LE = { 40, 0, 0 }, LW = { 0, 0, 0 } },
+					strike = { Root = { -10, 10, 0, 0, -0.32, -0.3 }, Waist = { -12, 12, 0 }, Neck = { 0, -6, 0 }, RS = { 94, 0, 4 }, RE = { 6, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -20 }, LE = { 110, 0, 0 }, LW = { -50, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { -12, 12, 0, 0, -0.34, -0.36 }, Waist = { -14, 14, 0 }, Neck = { 0, -8, 0 }, RS = { 96, 0, 6 }, RE = { 6, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -24 }, LE = { 110, 0, 0 }, LW = { -60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+					shake = true, fx = { { "beam", color = WATER, length = 14, width = 2.5, at = "hand" }, { "particles", tex = "smoke", color = WATER, dir = "front", at = "hand", time = 0.35, speed = 20, size = 0.8, rate = 100 }, { "text", text = "FLOUUUUSH", color = WATER, at = "hand" } },
+					text = "GRANDE CHASSE !", hitText = "RINCÉ !",
+				},
+				-- →L : siphon aspirant, elle pointe la cuvette devant elle et tire la chasse à l'envers : tout le couloir est aspiré vers la cuvette… puis recraché
+				S_side = {
+					label = "Siphon aspirant", kind = "absorb", startup = 0.24, active = 0.3, recovery = 0.5,
+					damage = 14, hitbox = box(14, 6, 7, 1), kbBase = 30, kbGrowth = 54, kbAngle = 30, pull = true,
+					absorb = { radius = 8, offset = 5 },
+					windup = { Root = { 6, -20, 0, 0, -0.25, 0.2 }, Waist = { 8, -24, 0 }, Neck = { 4, 14, 0 }, RS = { 60, 0, 20 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -20 }, LE = { 110, 0, 0 } },
+					strike = { Root = { -12, 10, 0, 0, -0.4, -0.3 }, Waist = { -16, 12, 0 }, Neck = { -4, -6, 0 }, RS = { 96, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 92, 0, 0 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+					follow = { Root = { 10, 0, 0, 0, -0.3, 0.3 }, Waist = { 12, 0, 0 }, Neck = { 8, 0, 0 }, RS = { 80, 0, 10 }, RE = { 50, 0, 0 }, RW = { 0, 0, 0 }, LS = { 80, 0, -10 }, LE = { 50, 0, 0 } },
+					hold = 0.2, shake = true, trail = "prop", fx = { { "particles", tex = "smoke", color = WATER, dir = "front", at = "front", time = 0.5, speed = 14, size = 0.8, rate = 100 }, { "beam", color = WATER, length = 14, width = 3, at = "hand" }, { "ring", color = WATER, radius = 6, at = "front" } },
+					text = "SCHLOOORP !", hitText = "ASPIRÉ… RECRACHÉ !",
+				},
+				-- ↓L : elle pose la cuvette au sol et la pousse du pied : elle roule sur tout le couloir en débordant
+				S_down = {
+					label = "Cuvette roulante", kind = "projectile", startup = 0.22, active = 0, recovery = 0.5,
+					damage = 13, kbBase = 30, kbGrowth = 56, kbAngle = 40,
+					projectile = { speed = 55, angle = 0, gravity = 0, lifetime = 0.9, size = 2.6, color = PORCELAIN, pierce = true, from = "feet", aim = false, visual = TOILET_SHOT },
+					status = { name = "wet", duration = 2 },
+					windup = { Root = { 12, 0, 0, 0, -0.9, 0.1 }, Waist = { 20, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 60, 0, 20 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -20 }, LE = { 30, 0, 0 } },
+					strike = { Root = { 6, 0, 0, 0, -0.35, -0.1 }, Waist = { 8, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 30, 0, 40 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -50 }, LE = { 40, 0, 0 }, RH = { 80, 0, 0 }, RK = { -6, 0, 0 }, RA = { 10, 0, 0 } },
+					follow = { Root = { 8, 0, 0, 0, -0.35, -0.12 }, Waist = { 10, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 28, 0, 42 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 54, 0, -52 }, LE = { 40, 0, 0 }, RH = { 86, 0, 0 }, RK = { 0, 0, 0 }, RA = { 14, 0, 0 } },
+					hideProp = "cuvette", trail = "rightFoot", fx = { "dust", { "toss", shape = "ball", color = WATER, size = 0.5, count = 4, speed = 14 } }, text = "ROULE !", hitText = "ÉCRABOUILLÉ !",
+				},
+				-- ↑L : jet de chasse, elle s'assoit sur la cuvette, tire la chaînette et la colonne d'eau la propulse en diagonale, trône compris
+				S_up = {
+					label = "Jet de chasse", startup = 0.15, active = 0.3, recovery = 0.45,
+					damage = 13, hitbox = box(10, 11, 3, 4), kbBase = 32, kbGrowth = 48, kbAngle = 78, selfVelocity = Vector2.new(42, 82),
+					status = { name = "wet", duration = 2 },
+					windup = { Root = { 6, 0, 0, 0, -0.75, 0 }, Waist = { 10, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 60, 0, 20 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, -10 }, LE = { 60, 0, 0 }, LW = { 0, 0, 0 } },
+					strike = { Root = { -40, 0, 0, 0, 0.3, 0 }, Waist = { -2, 0, 0 }, Neck = { 28, 0, 0 }, RS = { 60, 0, 30 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -30 }, LE = { 110, 0, 0 }, LW = { -40, 0, 0 }, RH = { 80, 0, 20 }, RK = { -100, 0, 0 }, LH = { 80, 0, -20 }, LK = { -100, 0, 0 } },
+					follow = { Root = { -44, 0, 0, 0, 0.35, 0 }, Waist = { -4, 0, 0 }, Neck = { 32, 0, 0 }, RS = { 64, 0, 32 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 36, 0, -32 }, LE = { 110, 0, 0 }, LW = { -44, 0, 0 }, RH = { 84, 0, 22 }, RK = { -104, 0, 0 }, LH = { 84, 0, -22 }, LK = { -104, 0, 0 } },
+					trail = "prop", fx = { { "pillar", color = WATER, height = 8, width = 2.5, at = "root", time = 0.4 }, { "particles", tex = "smoke", color = WATER, dir = "down", at = "feet", time = 0.5, speed = 20, size = 0.8, rate = 100 }, { "ring", color = WATER, radius = 5, at = "feet" } },
+					text = "FLOUUUSH !", hitText = "RINCÉ !",
+				},
+				-- L en l'air : chasse plongeante, cuvette retournée au-dessus de l'adversaire, toute l'eau lui tombe dessus
+				S_air = {
+					label = "Chasse plongeante", kind = "projectile", startup = 0.16, active = 0, recovery = 0.42,
+					damage = 13, kbBase = 26, kbGrowth = 48, kbAngle = -50,
+					projectile = { speed = 75, angle = -55, gravity = 20, lifetime = 0.6, size = 2.4, color = WATER, visual = "water" },
+					status = { name = "wet", duration = 2 },
+					windup = { Root = { 8, 0, 0 }, Waist = { 12, 0, 0 }, Neck = { 8, 0, 0 }, RS = { 185, 0, 10 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 180, 0, 10 }, LE = { 20, 0, 0 }, RH = { 50, 0, 0 }, RK = { -90, 0, 0 }, LH = { 40, 0, 0 }, LK = { -80, 0, 0 } },
+					strike = { Root = { -14, 0, 0 }, Waist = { -26, 0, 0 }, Neck = { 26, 0, 0 }, RS = { 40, 0, 10 }, RE = { 0, 0, 0 }, RW = { 90, 0, 0 }, LS = { 40, 0, 10 }, LE = { 0, 0, 0 }, LW = { 90, 0, 0 }, RH = { 20, 0, 0 }, RK = { -50, 0, 0 }, LH = { 50, 0, 0 }, LK = { -85, 0, 0 } },
+					follow = { Root = { -16, 0, 0 }, Waist = { -30, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 34, 0, 12 }, RE = { 4, 0, 0 }, RW = { 100, 0, 0 }, LS = { 34, 0, 12 }, LE = { 4, 0, 0 }, LW = { 100, 0, 0 }, RH = { 16, 0, 0 }, RK = { -46, 0, 0 }, LH = { 54, 0, 0 }, LK = { -88, 0, 0 } },
+					trail = "prop", fx = { { "burst", color = WATER, size = 2.5, at = "hand" }, { "rain", shape = "ball", color = WATER, count = 8, radius = 3, size = 0.4 } }, text = "PLOUF !", hitText = "TREMPÉ !",
+				},
+				-- Y : tout aux égouts, elle lève la cuvette au-dessus de sa tête et la claque au sol : la chasse géante aspire tout le couloir et l'envoie dans les tuyaux
+				SUPER = {
+					label = "Tout aux égouts !", startup = 0.45, active = 0.3, recovery = 0.8,
+					damage = 24, hitbox = box(14, 7, 7, 1), kbBase = 46, kbGrowth = 94, kbAngle = 36,
+					status = { name = "wet", duration = 3 },
+					windup = { Root = { 10, 0, 0, 0, 0.1, 0.2 }, Waist = { 16, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 190, 0, 5 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 185, 0, -5 }, LE = { 30, 0, 0 }, FR = { 0, 0, 0, 0, 0.2, 0 }, FL = { 0, 0, 0, 0, 0.2, 0 } },
+					strike = { Root = { -18, 0, 0, 0, -0.9, -0.3 }, Waist = { -32, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 40, 0, 5 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -5 }, LE = { 0, 0, 0 } },
+					follow = { Root = { -20, 0, 0, 0, -0.95, -0.34 }, Waist = { -34, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 30, 0, 5 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -5 }, LE = { 0, 0, 0 } },
+					hold = 0.3, shake = true, trail = "prop", windupFx = { "super", { "symbols", symbols = { "🚽", "🌀" }, count = 5, radius = 3, color = WATER } },
+					fx = { { "burst", color = PORCELAIN, size = 5, at = "front" }, { "ring", color = WATER, radius = 9, at = "front" }, { "beam", color = WATER, length = 16, width = 4, at = "feet" }, { "particles", tex = "smoke", color = WATER, dir = "front", at = "front", time = 0.6, speed = 22, size = 1.2, rate = 150 }, { "text", text = "FLOUUUUUUSH", color = WATER, at = "front" }, { "shake", amount = 0.8 } },
+					text = "TOUT AUX ÉGOUTS !", hitText = "DANS LES TUYAUX !",
+				},
+				-- →Y : cuvette-boulet, elle fait tournoyer la cuvette par la chaînette comme un marteau et la lâche : un boulet de porcelaine traverse le couloir
+				SUPER_side = {
+					label = "Cuvette-boulet !", kind = "projectile", startup = 0.42, active = 0, recovery = 0.7,
+					damage = 26, kbBase = 48, kbGrowth = 100, kbAngle = 30,
+					projectile = { speed = 85, angle = 0, gravity = 0, lifetime = 0.9, size = 3.6, color = PORCELAIN, pierce = true, visual = TOILET_SHOT },
+					status = { name = "wet", duration = 2 },
+					windup = { Root = { 0, -50, 0, 0, -0.4, 0.2 }, Waist = { -4, -46, 0 }, Neck = { 0, 34, 0 }, RS = { 60, 0, 88 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, 20 }, LE = { 80, 0, 0 } },
+					strike = { Root = { -14, 30, 0, 0, -0.4, -0.5 }, Waist = { -16, 34, 0 }, Neck = { 0, -24, 0 }, RS = { 94, 0, -6 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -50 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.55 } },
+					follow = { Root = { -16, 34, 0, 0, -0.42, -0.56 }, Waist = { -18, 38, 0 }, Neck = { 0, -28, 0 }, RS = { 98, 0, -8 }, RE = { 4, 0, 0 }, RW = { 6, 0, 0 }, LS = { 26, 0, -54 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.58 } },
+					spin = { axis = "y", degrees = 720 }, hideProp = "cuvette", windupFx = { "super", { "symbols", symbols = { "🚽" }, count = 6, radius = 3, color = PORCELAIN } },
+					fx = { { "burst", color = PORCELAIN, size = 4, at = "hand" }, { "ring", color = WATER, radius = 5, at = "front" }, { "shake", amount = 0.5 } },
+					text = "BOULET DE PORCELAINE !", hitText = "KA-BLONG !",
+				},
+				-- ↑Y : geyser de chasse, elle colle la cuvette au sol, s'assoit dessus et tire la chaînette : une colonne d'eau arrache le couloir vers le plafond
+				SUPER_up = {
+					label = "Geyser de chasse !", startup = 0.4, active = 0.3, recovery = 0.8,
+					damage = 24, hitbox = box(14, 14, 7, 6), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3, selfVelocity = Vector2.new(0, 58),
+					status = { name = "wet", duration = 3 },
+					windup = { Root = { 8, 0, 0, 0, -0.7, 0.1 }, Waist = { 12, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 60, 0, 20 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 160, 0, -10 }, LE = { 50, 0, 0 }, LW = { 0, 0, 0 } },
+					strike = { Root = { 6, 0, 0, 0, 0.5, 0 }, Waist = { 12, 0, 0 }, Neck = { 40, 0, 0 }, RS = { 60, 0, 40 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -30 }, LE = { 110, 0, 0 }, LW = { -50, 0, 0 }, RH = { 90, 0, 25 }, RK = { -110, 0, 0 }, LH = { 90, 0, -25 }, LK = { -110, 0, 0 } },
+					follow = { Root = { 10, 0, 0, 0, 0.55, 0 }, Waist = { 16, 0, 0 }, Neck = { 46, 0, 0 }, RS = { 64, 0, 44 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 26, 0, -32 }, LE = { 110, 0, 0 }, LW = { -54, 0, 0 }, RH = { 94, 0, 28 }, RK = { -112, 0, 0 }, LH = { 94, 0, -28 }, LK = { -112, 0, 0 } },
+					hold = 0.2, shake = true, trail = "prop", windupFx = { "super" },
+					fx = { { "pillar", color = WATER, height = 24, width = 5, at = "front" }, { "burst", color = WATER, size = 5, at = "feet" }, { "rain", shape = "ball", color = WATER, count = 16, radius = 8, size = 0.5 }, { "ring", color = WATER, radius = 7, at = "feet" }, { "screen", color = WATER, alpha = 0.25 }, { "shake", amount = 0.7 } },
+					text = "GEYSER DE CHASSE !", hitText = "AU PLAFOND, TREMPÉ !",
+				},
+				-- ↓Y : raz-de-marée de WC, elle renverse la cuvette au sol et tire la chaînette : une vague déferle au ras du sol sur tout le couloir, tout le monde glisse
+				SUPER_down = {
+					label = "Raz-de-marée de WC !", startup = 0.4, active = 0.35, recovery = 0.75,
+					damage = 22, hitbox = box(16, 5, 8, 0), kbBase = 42, kbGrowth = 86, kbAngle = 55,
+					status = { name = "slippery", duration = 3 },
+					windup = { Root = { 8, 0, 0, 0, -0.5, 0.2 }, Waist = { 14, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 170, 0, 20 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, -10 }, LE = { 60, 0, 0 }, LW = { 0, 0, 0 } },
+					strike = { Root = { -18, 0, 0, 0, -0.9, -0.2 }, Waist = { -30, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 50, 0, 10 }, RE = { 0, 0, 0 }, RW = { 60, 0, 0 }, LS = { 40, 0, -20 }, LE = { 100, 0, 0 }, LW = { -50, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { -20, 0, 0, 0, -0.95, -0.24 }, Waist = { -32, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 46, 0, 12 }, RE = { 0, 0, 0 }, RW = { 70, 0, 0 }, LS = { 36, 0, -22 }, LE = { 100, 0, 0 }, LW = { -56, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+					hold = 0.25, trail = "prop", windupFx = { "super" },
+					fx = { { "shake", amount = 0.8 }, { "puddle", color = WATER, width = 16, time = 2.5 }, { "beam", color = WATER, length = 16, width = 5, at = "feet" }, { "toss", shape = "ball", color = WATER, size = 0.7, count = 10, speed = 24 }, { "burst", color = PORCELAIN, size = 3, at = "front" }, { "text", text = "FLOUUUUSH", color = WATER, at = "front" } },
+					text = "RAZ-DE-MARÉE !", hitText = "EMPORTÉ PAR LA CHASSE !",
+				},
+			},
+			links = {
+				P_neutral = { P = "P_side", K = "K_neutral", S = "S_neutral" },
+				P_side = { P = "P_up", K = "K_side", S = "S_side" },
+				P_down = { P = "P_up", K = "K_down", S = "S_down" },
+				K_neutral = { P = "P_neutral", K = "K_side", S = "S_side" },
+				K_side = { P = "P_up", K = "K_up", S = "S_neutral" },
+				P_dash = { P = "P_side", K = "K_side", S = "S_side" },
+				K_dash = { P = "P_up", S = "S_up" },
+			},
+		},
+	},
 
 	look = {
 		body = { head = SKIN, upper = SHIRT, lower = DENIM, arms = SHIRT, forearms = SKIN, hands = GLOVE, legs = DENIM, feet = BOOT },
@@ -518,6 +1015,21 @@ local data = {
 			fx = { { "pillar", color = WATER, height = 16, width = 3, at = "front" }, { "pillar", color = WATER, height = 12, width = 2, at = "root" },
 				{ "rain", shape = "ball", color = WATER, count = 16, radius = 14, size = 0.6 }, { "screen", color = WATER, alpha = 0.3 }, { "shake", amount = 0.7 } },
 			text = "RUPTURE DE CANALISATION !", hitText = "GEYSER !",
+		},
+		-- Plaque d'égout boomerang (→Y) : elle soulève une plaque d'égout à mains nues (HNNG), pivote comme une lanceuse de disque
+		-- et l'envoie à plat : la plaque fauche tout le couloir en tournoyant, puis revient se planter dans sa main
+		SUPER_side = {
+			label = "Plaque d'égout boomerang !", kind = "projectile", startup = 0.42, active = 0, recovery = 0.7,
+			damage = 25, kbBase = 46, kbGrowth = 96, kbAngle = 34,
+			projectile = { speed = 85, angle = 0, gravity = 0, lifetime = 0.9, size = 3.6, color = SEWER, returns = true, pierce = true, visual = MANHOLE },
+			status = { name = "stunned", duration = 1.5 },
+			windup = { Root = { 10, -60, 0, 0, -0.7, 0.2 }, Waist = { 14, -50, 0 }, Neck = { -10, 40, 0 }, RS = { 40, 0, 60 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -20 }, LE = { 20, 0, 0 }, LW = { 0, 0, 0 } },
+			strike = { Root = { -14, 40, 0, 0, -0.4, -0.5 }, Waist = { -16, 44, 0 }, Neck = { 0, -30, 0 }, RS = { 92, 0, 40 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -50 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.55 } },
+			follow = { Root = { -16, 50, 0, 0, -0.42, -0.56 }, Waist = { -18, 54, 0 }, Neck = { 0, -36, 0 }, RS = { 90, 0, 60 }, RE = { 4, 0, 0 }, RW = { 10, 0, 0 }, LS = { 16, 0, -54 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.58 } },
+			spin = { axis = "y", degrees = 360 }, hideProp = "ventouse", trail = "rightHand",
+			windupFx = { "super", { "text", text = "HNNNG…", color = SEWER, at = "head" }, { "particles", tex = "smoke", color = SEWER, dir = "up", at = "feet", time = 0.3, speed = 6, size = 0.8 } },
+			fx = { { "burst", color = SEWER, size = 3.5, at = "hand" }, { "ring", color = WATER, radius = 5, at = "front" }, { "shake", amount = 0.5 } },
+			text = "PLAQUE D'ÉGOUT !", hitText = "DÉCAPITÉ… PRESQUE !",
 		},
 		-- Super ↑ : elle plaque la ventouse géante au sol devant elle, s'arc-boute de tout son poids… et la décolle d'un coup : le POP
 		-- monstrueux arrache le carrelage de tout le couloir, l'adversaire part au plafond avec les tuyaux, elle avec, cramponnée au manche
