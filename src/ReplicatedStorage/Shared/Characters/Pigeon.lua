@@ -40,12 +40,494 @@ local function pigeonPieces(prefix, y)
 	}
 end
 
+local SILK = Color3.fromRGB(150, 110, 190) -- ombrelle de cour (arme n° 3)
+
+-- Sceptre lancé (arme n° 2) : une tige dorée, son pommeau et le pigeon perché au bout, qui tournoie
+local SCEPTRE_VISUAL = { shape = "ball", size = 0.5, color = GOLD, material = "Metal", spin = 10, parts = {
+	{ "block", Vector3.new(0.2, 2.8, 0.2), Vector3.zero, GOLD },
+	{ "ball", Vector3.new(0.5, 0.5, 0.5), Vector3.new(0, 1.5, 0), GOLD },
+	{ "ball", Vector3.new(0.7, 0.55, 0.9), Vector3.new(0, -1.6, 0), FEATHER },
+	{ "ball", Vector3.new(0.4, 0.4, 0.4), Vector3.new(0, -1.3, -0.4), NECK },
+} }
+-- Ombrelle lancée (arme n° 3) : fermée, pointe en avant, comme une fléchette de soie
+local OMBRELLE_VISUAL = { shape = "ball", size = 0.4, color = SILK, spin = 6, parts = {
+	{ "block", Vector3.new(0.14, 2.6, 0.14), Vector3.zero, BRONZE },
+	{ "ball", Vector3.new(0.5, 1.6, 0.5), Vector3.new(0, -0.6, 0), SILK },
+	{ "ball", Vector3.new(0.6, 0.3, 0.6), Vector3.new(0, 0.2, 0), WHITE },
+	{ "ball", Vector3.new(0.22, 0.22, 0.22), Vector3.new(0, -1.5, 0), GOLD },
+} }
+
 local data = {
 	id = "Pigeon",
 	name = "Le Roi Pigeon",
 	costume = "Pigeon",
 	style = "pigeon",
 	flying = true, -- sait voler : un saut en l\'air de plus, plané, et un ↑L très puissant
+	------------------------------------------------------------------ Les 3 armes de la Caisse Bizarre (une au hasard)
+	-- n° 1 : la baguette de pain (ses coups sont ceux de moves). n° 2 : le sceptre à perchoir, lourd et lent, qui encaisse pendant les
+	-- spéciaux et éjecte loin. n° 3 : l'ombrelle de cour, rapide et courte, escrime précieuse et envols à la Poppins.
+	weapons = {
+		{ id = "baguette", name = "Baguette de pain", icon = "🥖",
+			ability = { jumps = 1, text = "Un saut de plus : la nuée le porte" } },
+		{ id = "sceptre", name = "Sceptre à perchoir", icon = "👑",
+			prop = { name = "PropSceptre", hand = "Right", pieces = {
+				{ "Tige", "", "cyl", Vector3.new(2.6, 0.18, 0.18), Vector3.new(0, -1.0, 0), Vector3.zero, GOLD, "Metal", { axis = "y", reflect = 0.2 } },
+				{ "Pommeau", "", "ball", Vector3.new(0.5, 0.5, 0.5), Vector3.new(0, 0.35, 0), Vector3.zero, GOLD, "Metal" },
+				{ "Perchoir", "", "block", Vector3.new(1.2, 0.12, 0.12), Vector3.new(0, -2.4, 0), Vector3.zero, BRONZE, "Metal" },
+				{ "PercheCorps", "", "ball", Vector3.new(0.7, 0.55, 0.9), Vector3.new(0, -2.75, 0), Vector3.zero, FEATHER, "Fabric" },
+				{ "PercheTete", "", "ball", Vector3.new(0.4, 0.4, 0.4), Vector3.new(0, -3.1, -0.35), Vector3.zero, NECK, "SmoothPlastic" },
+				{ "PercheBec", "", "block", Vector3.new(0.1, 0.1, 0.22), Vector3.new(0, -3.05, -0.6), Vector3.zero, BEAK, "SmoothPlastic" },
+			} },
+			ability = { knockback = 1.25, armor = true, text = "Éjecte 25 % plus loin ; les L encaissent, un roi ne bronche pas" },
+			moves = {
+				-- J : coup de sceptre sur le crâne, comme pour adouber un chevalier… en plus fort
+				P_neutral = {
+					label = "Adoubement", startup = 0.12, active = 0.1, recovery = 0.22,
+					damage = 8, hitbox = box(5, 3.5, 3, 0.6), kbBase = 24, kbGrowth = 32, kbAngle = 30,
+					windup = { Root = { 4, -12, 0, 0, -0.15, 0.1 }, Waist = { 6, -14, 0 }, Neck = { -8, 8, 0 }, RS = { 170, 0, 20 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -40 }, LE = { 95, 0, 0 }, LW = { 0, 0, -30 } },
+					strike = { Root = { -8, 12, 0, 0, -0.28, -0.25 }, Waist = { -12, 14, 0 }, Neck = { 12, -6, 0 }, RS = { 85, 0, 0 }, RE = { 0, 0, 0 }, RW = { 20, 0, 0 }, LS = { 40, 0, -55 }, LE = { 95, 0, 0 }, LW = { 0, 0, -30 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					follow = { Root = { -10, 14, 0, 0, -0.3, -0.28 }, Waist = { -14, 16, 0 }, Neck = { 14, -8, 0 }, RS = { 76, 0, 2 }, RE = { 4, 0, 0 }, RW = { 30, 0, 0 }, LS = { 42, 0, -56 }, LE = { 95, 0, 0 }, LW = { 0, 0, -30 }, FL = { 0, 0, 0, 0, 0, -0.32 } },
+					trail = "prop", hitText = "ADOUBÉ !",
+				},
+				-- →J : estoc royal : il tend le sceptre à bout de bras, le pigeon perché pique en même temps
+				P_side = {
+					label = "Estoc du perchoir", startup = 0.14, active = 0.12, recovery = 0.26,
+					damage = 9, hitbox = box(6.5, 3, 3.8, 0.8), kbBase = 26, kbGrowth = 40, kbAngle = 28, selfVelocity = Vector2.new(12, 0),
+					windup = { Root = { 4, -30, 0, 0, -0.2, 0.15 }, Waist = { 4, -34, 0 }, Neck = { -6, 22, 0 }, RS = { 40, 0, 30 }, RE = { 120, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -40 }, LE = { 95, 0, 0 }, LW = { 0, 0, -30 } },
+					strike = { Root = { -10, 26, 0, 0, -0.3, -0.35 }, Waist = { -12, 30, 0 }, Neck = { 6, -14, 0 }, RS = { 98, 0, -4 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -30, 0, -40 }, LE = { 60, 0, 0 }, LW = { 0, 0, -30 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+					follow = { Root = { -12, 30, 0, 0, -0.32, -0.4 }, Waist = { -14, 34, 0 }, Neck = { 8, -16, 0 }, RS = { 102, 0, -6 }, RE = { 4, 0, 0 }, RW = { -8, 0, 0 }, LS = { -32, 0, -42 }, LE = { 60, 0, 0 }, LW = { 0, 0, -30 }, FL = { 0, 0, 0, 0, 0, -0.48 } },
+					trail = "prop", fx = { { "symbols", symbols = { "🐦" }, count = 1, radius = 1.5, at = "hand" } }, hitText = "PIC ROYAL !",
+				},
+				-- ↓J : il abat le sceptre sur les orteils de l'adversaire, l'air pincé
+				P_down = {
+					label = "Sceptre aux orteils", startup = 0.12, active = 0.1, recovery = 0.24,
+					damage = 8, hitbox = box(5.5, 2.2, 3.2, -1.4), kbBase = 24, kbGrowth = 34, kbAngle = 70,
+					windup = { Root = { 6, 0, 0, 0, -0.3, 0.1 }, Waist = { 10, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 150, 0, 15 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -40 }, LE = { 95, 0, 0 }, LW = { 0, 0, -30 } },
+					strike = { Root = { -12, 0, 0, 0, -0.55, -0.2 }, Waist = { -22, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 44, 0, 5 }, RE = { 0, 0, 0 }, RW = { 10, 0, 0 }, LS = { 40, 0, -55 }, LE = { 95, 0, 0 }, LW = { 0, 0, -30 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					follow = { Root = { -14, 0, 0, 0, -0.58, -0.24 }, Waist = { -24, 0, 0 }, Neck = { 18, 0, 0 }, RS = { 36, 0, 6 }, RE = { 0, 0, 0 }, RW = { 16, 0, 0 }, LS = { 42, 0, -56 }, LE = { 95, 0, 0 }, LW = { 0, 0, -30 }, FL = { 0, 0, 0, 0, 0, -0.32 } },
+					trail = "prop", fx = { "dust" }, hitText = "ORTEILS !",
+				},
+				-- ↑J : lever de sceptre : d'un geste de couronnement, il le remonte sous le menton
+				P_up = {
+					label = "Lever de sceptre", startup = 0.12, active = 0.1, recovery = 0.24,
+					damage = 8, hitbox = box(4, 5.5, 1.5, 3), kbBase = 26, kbGrowth = 42, kbAngle = 86,
+					windup = { Root = { 4, 0, 0, 0, -0.3, 0.1 }, Waist = { 8, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 20, 0, 20 }, RE = { 50, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -40 }, LE = { 95, 0, 0 }, LW = { 0, 0, -30 } },
+					strike = { Root = { -4, 0, 0, 0, -0.05, -0.1 }, Waist = { -8, 0, 0 }, Neck = { -22, 0, 0 }, RS = { 170, 0, 12 }, RE = { 0, 0, 0 }, RW = { -30, 0, 0 }, LS = { 40, 0, -55 }, LE = { 95, 0, 0 }, LW = { 0, 0, -30 } },
+					follow = { Root = { -6, 0, 0, 0, -0.02, -0.12 }, Waist = { -10, 0, 0 }, Neck = { -26, 0, 0 }, RS = { 180, 0, 14 }, RE = { 0, 0, 0 }, RW = { -40, 0, 0 }, LS = { 42, 0, -56 }, LE = { 95, 0, 0 }, LW = { 0, 0, -30 } },
+					trail = "prop", fx = { { "symbols", symbols = { "👑" }, color = GOLD, count = 2, radius = 1.5, at = "above" } }, hitText = "COURONNÉ !",
+				},
+				-- J en l'air : le sceptre pendule sous lui, le pigeon perché bat des ailes pour l'aider
+				P_air = {
+					label = "Sceptre pendulaire", startup = 0.12, active = 0.12, recovery = 0.2,
+					damage = 9, hitbox = box(5, 4.5, 1.5, -1.8), kbBase = 24, kbGrowth = 38, kbAngle = -40,
+					windup = { Root = { 8, 0, 0 }, Waist = { 12, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 180, 0, 15 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -50 }, LE = { 80, 0, 0 }, LW = { 0, 0, -30 }, RH = { 40, 0, 0 }, RK = { -80, 0, 0 }, LH = { 50, 0, 0 }, LK = { -90, 0, 0 } },
+					strike = { Root = { -14, 0, 0 }, Waist = { -26, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 30, 0, 5 }, RE = { 0, 0, 0 }, RW = { 10, 0, 0 }, LS = { 80, 0, -70 }, LE = { 20, 0, 0 }, LW = { 0, 0, -30 }, RH = { 10, 0, 0 }, RK = { -30, 0, 0 }, LH = { 30, 0, 0 }, LK = { -60, 0, 0 } },
+					follow = { Root = { -18, 0, 0 }, Waist = { -30, 0, 0 }, Neck = { 24, 0, 0 }, RS = { 14, 0, 6 }, RE = { 4, 0, 0 }, RW = { 20, 0, 0 }, LS = { 84, 0, -74 }, LE = { 20, 0, 0 }, LW = { 0, 0, -30 }, RH = { 4, 0, 0 }, RK = { -26, 0, 0 }, LH = { 26, 0, 0 }, LK = { -56, 0, 0 } },
+					trail = "prop", hitText = "KLONG !",
+				},
+				-- dash J : charge du héraut : il court sceptre en avant comme une lance de tournoi, cape au vent
+				P_dash = {
+					label = "Charge du héraut", startup = 0.12, active = 0.14, recovery = 0.26,
+					damage = 9, hitbox = box(6.5, 3.5, 3.8, 0.5), kbBase = 26, kbGrowth = 40, kbAngle = 32, selfVelocity = Vector2.new(30, 0),
+					windup = { Root = { 6, -16, 0, 0, -0.2, 0.2 }, Waist = { 8, -20, 0 }, Neck = { -6, 10, 0 }, RS = { 50, 0, 30 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -40 }, LE = { 60, 0, 0 }, LW = { 0, 0, -30 } },
+					strike = { Root = { -14, 14, 0, 0, -0.3, -0.4 }, Waist = { -18, 18, 0 }, Neck = { 4, -8, 0 }, RS = { 100, 0, 4 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -30, 0, -50 }, LE = { 40, 0, 0 }, LW = { 0, 0, -30 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+					follow = { Root = { -16, 16, 0, 0, -0.32, -0.44 }, Waist = { -20, 20, 0 }, Neck = { 6, -10, 0 }, RS = { 104, 0, 6 }, RE = { 4, 0, 0 }, RW = { -8, 0, 0 }, LS = { -32, 0, -52 }, LE = { 40, 0, 0 }, LW = { 0, 0, -30 }, FL = { 0, 0, 0, 0, 0, -0.48 } },
+					trail = "prop", fx = { "dust" }, hitText = "TOURNOI !",
+				},
+				-- K : coup de soulier à boucle dans le tibia, sceptre levé bien haut pour l'équilibre
+				K_neutral = {
+					label = "Soulier à boucle", startup = 0.2, active = 0.1, recovery = 0.32,
+					damage = 11, hitbox = box(5, 3.5, 3, 0.2), kbBase = 30, kbGrowth = 62, kbAngle = 32,
+					windup = { Root = { 4, -10, 0, 0, -0.15, 0.1 }, Waist = { 8, -8, 0 }, Neck = { 10, 0, 0 }, RS = { 170, 0, 30 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -40 }, LE = { 95, 0, 0 }, LW = { 0, 0, -30 }, RH = { -30, 0, 0 }, RK = { -50, 0, 0 } },
+					strike = { Root = { 8, 0, 0, 0, -0.1, 0 }, Waist = { 10, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 176, 0, 36 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -55 }, LE = { 95, 0, 0 }, LW = { 0, 0, -30 }, RH = { 92, 0, 0 }, RK = { -4, 0, 0 }, RA = { 10, 0, 0 } },
+					follow = { Root = { 10, 0, 0, 0, -0.1, 0.04 }, Waist = { 12, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 180, 0, 40 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 42, 0, -56 }, LE = { 95, 0, 0 }, LW = { 0, 0, -30 }, RH = { 100, 0, 0 }, RK = { 0, 0, 0 }, RA = { 14, 0, 0 } },
+					trail = "rightFoot", hitText = "BOUCLÉ !",
+				},
+				-- →K : pirouette de cour : coup de pied tournant, le sceptre tendu balaie en même temps
+				K_side = {
+					label = "Pirouette de cour", startup = 0.18, active = 0.14, recovery = 0.34,
+					damage = 12, hitbox = box(6.5, 3.5, 3.5, 0.6), kbBase = 32, kbGrowth = 72, kbAngle = 36, selfVelocity = Vector2.new(18, 0),
+					windup = { Root = { 4, 30, 0, 0, -0.2, 0.1 }, Waist = { 6, 36, 0 }, Neck = { 0, -16, 0 }, RS = { 100, 0, 70 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -40 }, LE = { 95, 0, 0 }, LW = { 0, 0, -30 }, RH = { -20, 0, 10 }, RK = { -50, 0, 0 } },
+					strike = { Root = { 8, -40, 0, 0, -0.1, -0.1 }, Waist = { 8, -46, 0 }, Neck = { 0, 12, 0 }, RS = { 90, 0, 85 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -50 }, LE = { 40, 0, 0 }, LW = { 0, 0, -30 }, RH = { 100, 0, 20 }, RK = { -6, 0, 0 }, RA = { 10, 0, 0 } },
+					follow = { Root = { 10, -50, 0, 0, -0.1, -0.14 }, Waist = { 10, -56, 0 }, Neck = { 0, 16, 0 }, RS = { 92, 0, 88 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 54, 0, -54 }, LE = { 40, 0, 0 }, LW = { 0, 0, -30 }, RH = { 108, 0, 24 }, RK = { 0, 0, 0 }, RA = { 14, 0, 0 } },
+					spin = { axis = "y", degrees = 360 }, trail = "prop", hitText = "PIROUETTE !",
+				},
+				-- ↓K : révérence fauchante : il plonge dans une grande révérence et sa jambe arrière fauche les chevilles
+				K_down = {
+					label = "Révérence fauchante", startup = 0.16, active = 0.14, recovery = 0.32,
+					damage = 9, hitbox = box(7, 2, 3.5, -1.6), kbBase = 28, kbGrowth = 52, kbAngle = 76,
+					windup = { Root = { 6, 10, 0, 0, -0.3, 0.1 }, Waist = { 10, 12, 0 }, Neck = { -8, 0, 0 }, RS = { 60, 0, 40 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -40 }, LE = { 95, 0, 0 }, LW = { 0, 0, -30 }, LH = { -30, 0, 0 }, LK = { -40, 0, 0 } },
+					strike = { Root = { -18, -18, 0, 0, -0.65, -0.1 }, Waist = { -30, -22, 0 }, Neck = { -10, 0, 0 }, RS = { 40, 0, 60 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { -30, 0, -40 }, LE = { 60, 0, 0 }, LW = { 0, 0, -30 }, LH = { 50, 0, -20 }, LK = { -4, 0, 0 }, LA = { 20, 0, 0 } },
+					follow = { Root = { -20, -24, 0, 0, -0.68, -0.14 }, Waist = { -32, -28, 0 }, Neck = { -12, 0, 0 }, RS = { 42, 0, 62 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { -32, 0, -42 }, LE = { 60, 0, 0 }, LW = { 0, 0, -30 }, LH = { 56, 0, -24 }, LK = { 0, 0, 0 }, LA = { 24, 0, 0 } },
+					trail = "leftFoot", fx = { "dust" }, hitText = "RÉVÉRENCE !",
+				},
+				-- ↑K : soulier au ciel : coup de pied monté, pointe du pied tendue, sceptre brandi comme un étendard
+				K_up = {
+					label = "Soulier au ciel", startup = 0.18, active = 0.12, recovery = 0.34,
+					damage = 11, hitbox = box(4.5, 6, 1.5, 3.5), kbBase = 30, kbGrowth = 66, kbAngle = 88,
+					windup = { Root = { 6, 0, 0, 0, -0.25, 0.1 }, Waist = { 10, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 80, 0, 30 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -40 }, LE = { 95, 0, 0 }, LW = { 0, 0, -30 }, RH = { -20, 0, 0 }, RK = { -60, 0, 0 } },
+					strike = { Root = { -12, 0, 0, 0, 0.02, -0.1 }, Waist = { -16, 0, 0 }, Neck = { -22, 0, 0 }, RS = { 178, 0, 16 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -55 }, LE = { 95, 0, 0 }, LW = { 0, 0, -30 }, RH = { 138, 0, 0 }, RK = { -6, 0, 0 }, RA = { -30, 0, 0 } },
+					follow = { Root = { -14, 0, 0, 0, 0.05, -0.12 }, Waist = { -18, 0, 0 }, Neck = { -26, 0, 0 }, RS = { 182, 0, 18 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 42, 0, -56 }, LE = { 95, 0, 0 }, LW = { 0, 0, -30 }, RH = { 146, 0, 0 }, RK = { 0, 0, 0 }, RA = { -30, 0, 0 } },
+					trail = "rightFoot", fx = { { "burst", color = GOLD, size = 2, at = "above" } }, hitText = "AU CIEL !",
+				},
+				-- K en l'air : serres impériales : il pédale pointes tendues, le sceptre serré contre le jabot (2 touches)
+				K_air = {
+					label = "Serres impériales", startup = 0.14, active = 0.2, recovery = 0.22,
+					damage = 10, hits = 2, hitbox = box(5, 4, 2.5, -0.5), kbBase = 22, kbGrowth = 46, kbAngle = 40,
+					windup = { Root = { -8, 0, 0 }, Waist = { -6, 0, 0 }, Neck = { 8, 0, 0 }, RS = { 60, 0, 10 }, RE = { 120, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -50 }, LE = { 80, 0, 0 }, LW = { 0, 0, -30 }, RH = { 60, 0, 0 }, RK = { -100, 0, 0 }, LH = { -20, 0, 0 }, LK = { -40, 0, 0 } },
+					strike = { Root = { -4, 0, 0 }, Waist = { 6, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 64, 0, 12 }, RE = { 120, 0, 0 }, RW = { 0, 0, 0 }, LS = { 64, 0, -54 }, LE = { 80, 0, 0 }, LW = { 0, 0, -30 }, RH = { 90, 0, 0 }, RK = { -6, 0, 0 }, RA = { -30, 0, 0 }, LH = { 70, 0, 0 }, LK = { -110, 0, 0 } },
+					follow = { Root = { -2, 0, 0 }, Waist = { 8, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 66, 0, 14 }, RE = { 120, 0, 0 }, RW = { 0, 0, 0 }, LS = { 66, 0, -56 }, LE = { 80, 0, 0 }, LW = { 0, 0, -30 }, RH = { 20, 0, 0 }, RK = { -60, 0, 0 }, LH = { 95, 0, 0 }, LK = { -4, 0, 0 }, LA = { -30, 0, 0 } },
+					trail = "rightFoot", hitText = "TAC TAC !",
+				},
+				-- dash K : glissade sur la traîne de sa cape, souliers devant, sceptre levé comme une bannière
+				K_dash = {
+					label = "Glissade sur la traîne", startup = 0.12, active = 0.26, recovery = 0.32,
+					damage = 11, hitbox = box(6, 3, 3, -0.8), kbBase = 30, kbGrowth = 66, kbAngle = 38, selfVelocity = Vector2.new(52, 10),
+					windup = { Root = { -8, 0, 0, 0, -0.4, 0 }, Waist = { -10, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 170, 0, 20 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -40 }, LE = { 60, 0, 0 }, LW = { 0, 0, -30 } },
+					strike = { Root = { 22, 0, 0, 0, -0.7, 0.2 }, Waist = { 12, 0, 0 }, Neck = { 18, 0, 0 }, RS = { 176, 0, 24 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, -40 }, LE = { 30, 0, 0 }, LW = { 0, 0, -30 }, RH = { 85, 0, 0 }, RK = { 0, 0, 0 }, RA = { 10, 0, 0 }, LH = { 80, 0, 0 }, LK = { -10, 0, 0 } },
+					follow = { Root = { 26, 0, 0, 0, -0.72, 0.24 }, Waist = { 14, 0, 0 }, Neck = { 22, 0, 0 }, RS = { 178, 0, 26 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 75, 0, -45 }, LE = { 30, 0, 0 }, LW = { 0, 0, -30 }, RH = { 90, 0, 0 }, RK = { 0, 0, 0 }, RA = { 14, 0, 0 }, LH = { 85, 0, 0 }, LK = { -10, 0, 0 } },
+					trail = "rightFoot", fx = { "dust" }, hitText = "SKRRRT !",
+				},
+				-- L : décret royal : il frappe le sol du sceptre, « SILENCE ! », l'onde du décret traverse le couloir et fige tout le monde
+				S_neutral = {
+					label = "Décret royal", startup = 0.26, active = 0.16, recovery = 0.55,
+					damage = 15, hitbox = box(14, 6, 7, 1), kbBase = 30, kbGrowth = 55, kbAngle = 38,
+					status = { name = "statue", duration = 1 },
+					windup = { Root = { 2, 0, 0, 0, -0.2, 0.1 }, Waist = { 6, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 160, 0, 20 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -40 }, LE = { 95, 0, 0 }, LW = { 0, 0, -30 } },
+					strike = { Root = { -6, 0, 0, 0, -0.35, -0.15 }, Waist = { -10, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 40, 0, 10 }, RE = { 0, 0, 0 }, RW = { 10, 0, 0 }, LS = { 120, 0, -30 }, LE = { 20, 0, 0 }, LW = { 0, 0, -30 }, FR = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { -8, 0, 0, 0, -0.37, -0.18 }, Waist = { -12, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 36, 0, 12 }, RE = { 0, 0, 0 }, RW = { 16, 0, 0 }, LS = { 126, 0, -34 }, LE = { 20, 0, 0 }, LW = { 0, 0, -30 }, FR = { 0, 0, 0, 0, 0, -0.42 } },
+					hold = 0.12, shake = true, windupFx = { { "text", text = "SILENCE !", color = GOLD, at = "head" } },
+					fx = { { "ring", color = MARBLE, radius = 6, at = "feet" }, { "beam", color = MARBLE, length = 14, width = 3, at = "feet" }, { "symbols", symbols = { "👑", "📜" }, color = GOLD, count = 4, radius = 3, at = "front" }, { "shake", amount = 0.3 } },
+					text = "DÉCRET ROYAL !", hitText = "FIGÉ PAR LA LOI !",
+				},
+				-- →L : lancer de sceptre : il le jette en tournoyant, le pigeon perché pique l'adversaire au passage, puis le sceptre revient
+				S_side = {
+					label = "Sceptre tournoyant", kind = "projectile", startup = 0.24, active = 0, recovery = 0.5,
+					damage = 16, kbBase = 32, kbGrowth = 62, kbAngle = 34,
+					projectile = { speed = 68, angle = 0, gravity = 0, lifetime = 0.9, size = 2.2, color = GOLD, visual = SCEPTRE_VISUAL, returns = true },
+					windup = { Root = { 2, 30, 0, 0, -0.25, 0.1 }, Waist = { -4, 35, 0 }, Neck = { -6, -25, 0 }, RS = { 85, 0, -50 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -40 }, LE = { 95, 0, 0 }, LW = { 0, 0, -30 } },
+					strike = { Root = { -8, -15, 0, 0, -0.3, -0.25 }, Waist = { -12, -25, 0 }, Neck = { 6, 10, 0 }, RS = { 92, 0, 40 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -55 }, LE = { 95, 0, 0 }, LW = { 0, 0, -30 }, FL = { 0, 0, 0, 0, 0, -0.35 } },
+					follow = { Root = { -10, -18, 0, 0, -0.3, -0.28 }, Waist = { -14, -28, 0 }, Neck = { 8, 12, 0 }, RS = { 88, 0, 55 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 42, 0, -56 }, LE = { 95, 0, 0 }, LW = { 0, 0, -30 }, FL = { 0, 0, 0, 0, 0, -0.38 } },
+					hideProp = "sceptre", fx = { { "symbols", symbols = { "👑", "🐦" }, color = GOLD, count = 3, radius = 2, at = "hand" } }, text = "ALLER-RETOUR !", hitText = "PIC ET KLONG !",
+				},
+				-- ↓L : le sacre : il lève le sceptre à deux mains au-dessus de sa perruque et l'abat au sol : le dallage se fend sur tout le couloir
+				S_down = {
+					label = "Le Sacre", startup = 0.28, active = 0.16, recovery = 0.6,
+					damage = 15, hitbox = box(14, 5, 7, 0.5), kbBase = 32, kbGrowth = 60, kbAngle = 50,
+					status = { name = "slowed", duration = 1.5 },
+					windup = { Root = { 6, 0, 0, 0, -0.15, 0.1 }, Waist = { 10, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 185, 0, 10 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 185, 0, -10 }, LE = { 20, 0, 0 } },
+					strike = { Root = { -18, 0, 0, 0, -0.7, -0.3 }, Waist = { -30, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 50, 0, 10 }, RE = { 0, 0, 0 }, RW = { 10, 0, 0 }, LS = { 50, 0, -10 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { -20, 0, 0, 0, -0.72, -0.34 }, Waist = { -32, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 44, 0, 12 }, RE = { 0, 0, 0 }, RW = { 20, 0, 0 }, LS = { 44, 0, -12 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+					hold = 0.12, shake = true, trail = "prop", windupFx = { { "symbols", symbols = { "👑" }, color = GOLD, count = 3, radius = 2, at = "above" } },
+					fx = { { "beam", color = MARBLE, length = 14, width = 2.5, at = "feet" }, { "toss", shape = "flat", color = MARBLE, count = 6, size = 0.7, speed = 22 }, { "shake", amount = 0.4 } },
+					text = "LE SACRE !", hitText = "CRAAAC !",
+				},
+				-- ↑L : envol du perchoir : le pigeon perché bat des ailes comme un forcené et soulève le roi par son sceptre, en diagonale, cape au vent
+				S_up = {
+					label = "Envol du perchoir", startup = 0.14, active = 0.3, recovery = 0.45,
+					damage = 14, hitbox = box(10, 11, 3, 4), kbBase = 32, kbGrowth = 50, kbAngle = 78, selfVelocity = Vector2.new(42, 80),
+					windup = { Root = { 2, 0, 0, 0, -0.5, 0.1 }, Waist = { -10, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 40, 0, 10 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -10 }, LE = { 90, 0, 0 }, LW = { 0, 0, -30 } },
+					strike = { Root = { -40, 0, 0, 0, 0.3, 0 }, Waist = { -4, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 184, 0, 4 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -40, 0, -30 }, LE = { 30, 0, 0 }, LW = { 0, 0, -30 }, RH = { -20, 0, 6 }, RK = { -40, 0, 0 }, RA = { -35, 0, 0 }, LH = { -30, 0, -6 }, LK = { -55, 0, 0 }, LA = { -35, 0, 0 } },
+					follow = { Root = { -44, 0, 0, 0, 0.35, 0 }, Waist = { -6, 0, 0 }, Neck = { 34, 0, 0 }, RS = { 188, 0, 6 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -46, 0, -32 }, LE = { 30, 0, 0 }, LW = { 0, 0, -30 }, RH = { -26, 0, 8 }, RK = { -48, 0, 0 }, RA = { -35, 0, 0 }, LH = { -36, 0, -8 }, LK = { -62, 0, 0 }, LA = { -35, 0, 0 } },
+					trail = "prop", fx = { { "burst", color = FEATHER, size = 3, at = "hand" }, { "symbols", symbols = { "🐦", "👑" }, count = 5, radius = 3, at = "above" }, { "particles", tex = "smoke", color = FEATHER, dir = "down", at = "feet", time = 0.4, speed = 12, rate = 80 } },
+					text = "PLUS HAUT, MANANT !", hitText = "EMPORTÉ PAR LE PERCHOIR !",
+				},
+				-- L en l'air : sceptre-marteau : il le fait passer au-dessus de la perruque et l'abat sous lui de tout son poids royal
+				S_air = {
+					label = "Sceptre-marteau", startup = 0.18, active = 0.16, recovery = 0.45,
+					damage = 14, hitbox = box(6, 5, 2, -1.5), kbBase = 30, kbGrowth = 60, kbAngle = -60,
+					windup = { Root = { 10, 0, 0 }, Waist = { 14, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 186, 0, 10 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 186, 0, -10 }, LE = { 30, 0, 0 }, RH = { 50, 0, 0 }, RK = { -90, 0, 0 }, LH = { 50, 0, 0 }, LK = { -90, 0, 0 } },
+					strike = { Root = { -16, 0, 0 }, Waist = { -30, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 30, 0, 5 }, RE = { 0, 0, 0 }, RW = { 20, 0, 0 }, LS = { 30, 0, -5 }, LE = { 0, 0, 0 }, RH = { 20, 0, 0 }, RK = { -40, 0, 0 }, LH = { 30, 0, 0 }, LK = { -60, 0, 0 } },
+					follow = { Root = { -20, 0, 0 }, Waist = { -34, 0, 0 }, Neck = { 24, 0, 0 }, RS = { 20, 0, 6 }, RE = { 4, 0, 0 }, RW = { 30, 0, 0 }, LS = { 20, 0, -6 }, LE = { 4, 0, 0 }, RH = { 16, 0, 0 }, RK = { -36, 0, 0 }, LH = { 26, 0, 0 }, LK = { -56, 0, 0 } },
+					trail = "prop", fx = { { "burst", color = GOLD, size = 2.5, at = "hand" } }, text = "MARTEAU !", hitText = "KLONG ROYAL !",
+				},
+				-- Y : le couronnement : il plante le sceptre, une couronne géante tombe du ciel et sacre tout l'écran… en statues de cour
+				SUPER = {
+					label = "Le Couronnement !", startup = 0.4, active = 0.3, recovery = 0.75,
+					damage = 24, hitbox = box(30, 8, 0, 2), kbBase = 42, kbGrowth = 90, kbAngle = 45,
+					status = { name = "statue", duration = 1.5 },
+					windup = { Root = { 2, 0, 0, 0, -0.3, 0.1 }, Waist = { 6, 0, 0 }, Neck = { -16, 0, 0 }, RS = { 60, 0, 40 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -40 }, LE = { 90, 0, 0 } },
+					strike = { Root = { -6, 0, 0, 0, -0.2, 0 }, Waist = { -4, 0, 0 }, Neck = { 24, 0, 0 }, RS = { 60, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 170, 0, -40 }, LE = { 0, 0, 0 }, LW = { 0, 0, -30 }, FR = { 0, 0, 0, 0, 0, -0.3 } },
+					follow = { Root = { -8, 0, 0, 0, -0.2, 0 }, Waist = { -6, 0, 0 }, Neck = { 28, 0, 0 }, RS = { 56, 0, 12 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 176, 0, -44 }, LE = { 0, 0, 0 }, LW = { 0, 0, -30 }, FR = { 0, 0, 0, 0, 0, -0.3 } },
+					hold = 0.25, shake = true, windupFx = { "super", { "text", text = "QUE L'ON ME COURONNE !", color = GOLD, at = "head" } },
+					fx = { { "screen", color = GOLD, alpha = 0.25 }, { "ring", color = GOLD, radius = 14, at = "root" }, { "burst", color = GOLD, size = 5, at = "above" }, { "symbols", symbols = { "👑", "✨", "🐦" }, color = GOLD, count = 12, radius = 7 }, { "shake", amount = 0.5 } },
+					text = "LE COURONNEMENT !", hitText = "SACRÉ !",
+				},
+				-- →Y : sceptre-javelot : il prend son élan comme un lanceur olympique à perruque et le sceptre traverse tout le couloir en flèche
+				SUPER_side = {
+					label = "Sceptre-javelot !", kind = "projectile", startup = 0.42, active = 0, recovery = 0.7,
+					damage = 26, kbBase = 50, kbGrowth = 100, kbAngle = 30,
+					projectile = { speed = 95, angle = 0, gravity = 0, lifetime = 0.9, size = 3.5, color = GOLD, visual = SCEPTRE_VISUAL, pierce = true },
+					status = { name = "statue", duration = 1 },
+					windup = { Root = { 2, -36, 0, 0, -0.3, 0.3 }, Waist = { 4, -40, 0 }, Neck = { 0, 24, 0 }, RS = { 176, 0, 30 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, -20 }, LE = { 20, 0, 0 }, LW = { 0, 0, -30 } },
+					strike = { Root = { -16, 26, 0, 0, -0.34, -0.5 }, Waist = { -18, 30, 0 }, Neck = { -6, -18, 0 }, RS = { 94, 0, -6 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -40, 0, -40 }, LE = { 40, 0, 0 }, LW = { 0, 0, -30 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+					follow = { Root = { -18, 30, 0, 0, -0.36, -0.55 }, Waist = { -22, 34, 0 }, Neck = { -8, -20, 0 }, RS = { 98, 0, -8 }, RE = { 4, 0, 0 }, RW = { 6, 0, 0 }, LS = { -44, 0, -44 }, LE = { 40, 0, 0 }, LW = { 0, 0, -30 }, FL = { 0, 0, 0, 0, 0, -0.52 } },
+					hideProp = "sceptre", windupFx = { "super", { "symbols", symbols = { "👑" }, count = 6, radius = 3, color = GOLD } },
+					fx = { { "burst", color = GOLD, size = 3.5, at = "hand" }, { "beam", color = GOLD, length = 16, width = 2, at = "hand" }, { "shake", amount = 0.4 } },
+					text = "JAVELOT !", hitText = "EMBROCHÉ !",
+				},
+				-- ↑Y : trône ascensionnel : la nuée apporte son trône, il s'y assoit sceptre levé et le trône décolle, emportant tout au plafond
+				SUPER_up = {
+					label = "Trône ascensionnel !", startup = 0.38, active = 0.3, recovery = 0.7,
+					damage = 24, hitbox = box(16, 12, 8, 5), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3, selfVelocity = Vector2.new(0, 52),
+					windup = { Root = { 2, 0, 0, 0, -0.5, 0 }, Waist = { 4, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 60, 0, 20 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -20 }, LE = { 90, 0, 0 }, LW = { 0, 0, -30 } },
+					strike = { Root = { 6, 0, 0, 0, 0.5, 0 }, Waist = { 10, 0, 0 }, Neck = { 40, 0, 0 }, RS = { 186, 0, 6 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, -40 }, LE = { 70, 0, 0 }, LW = { 0, 0, -30 }, RH = { 90, 0, 10 }, RK = { -90, 0, 0 }, LH = { 90, 0, -10 }, LK = { -90, 0, 0 } },
+					follow = { Root = { 8, 0, 0, 0, 0.55, 0 }, Waist = { 12, 0, 0 }, Neck = { 44, 0, 0 }, RS = { 188, 0, 8 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 74, 0, -44 }, LE = { 70, 0, 0 }, LW = { 0, 0, -30 }, RH = { 92, 0, 12 }, RK = { -92, 0, 0 }, LH = { 92, 0, -12 }, LK = { -92, 0, 0 } },
+					hold = 0.2, trail = "prop", windupFx = { "super", { "symbols", symbols = { "🐦", "🪑" }, count = 6, radius = 3, at = "above" } },
+					fx = { { "pillar", color = GOLD, height = 22, width = 3, at = "front" }, { "swarm", shape = "ball", color = FEATHER, count = 12, distance = 14, size = 0.9, time = 0.6, height = 6, spreadY = 6 }, { "burst", color = GOLD, size = 4, at = "above" }, { "shake", amount = 0.4 } },
+					text = "TRÔNE ASCENSIONNEL !", hitText = "ÉLEVÉ AU RANG DE PROJECTILE !",
+				},
+				-- ↓Y : édit de marbre : il tape trois coups de sceptre au sol, comme au théâtre, et tout le couloir se change en marbre
+				SUPER_down = {
+					label = "Édit de marbre !", startup = 0.38, active = 0.35, recovery = 0.7,
+					damage = 22, hitbox = box(16, 4, 8, -0.5), kbBase = 40, kbGrowth = 85, kbAngle = 60,
+					status = { name = "statue", duration = 2 },
+					windup = { Root = { 2, 0, 0, 0, -0.25, 0.1 }, Waist = { 6, 0, 0 }, Neck = { -12, 0, 0 }, RS = { 150, 0, 15 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -40 }, LE = { 95, 0, 0 }, LW = { 0, 0, -30 } },
+					strike = { Root = { -10, 0, 0, 0, -0.5, -0.2 }, Waist = { -16, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 40, 0, 10 }, RE = { 0, 0, 0 }, RW = { 10, 0, 0 }, LS = { 40, 0, -55 }, LE = { 95, 0, 0 }, LW = { 0, 0, -30 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { -6, 0, 0, 0, -0.4, -0.16 }, Waist = { -10, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 70, 0, 10 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 42, 0, -56 }, LE = { 95, 0, 0 }, LW = { 0, 0, -30 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+					hold = 0.15, shake = true, wobble = true, trail = "prop", windupFx = { "super", { "text", text = "TOC, TOC, TOC.", color = MARBLE, at = "head" } },
+					fx = { { "beam", color = MARBLE, length = 16, width = 3, at = "feet" }, { "screen", color = MARBLE, alpha = 0.25 }, { "symbols", symbols = { "🗿", "👑" }, color = MARBLE, count = 8, radius = 5, at = "front" }, { "shake", amount = 0.5 } },
+					text = "ÉDIT DE MARBRE !", hitText = "MARBRÉ !",
+				},
+			},
+			links = {
+				P_neutral = { P = "P_side", K = "K_neutral", S = "S_neutral" },
+				P_side = { P = "P_up", K = "K_side", S = "S_side" },
+				P_down = { P = "P_up", K = "K_down", S = "S_down" },
+				K_neutral = { P = "P_neutral", K = "K_side", S = "S_down" },
+				K_side = { P = "P_up", K = "K_up", S = "S_neutral" },
+				P_dash = { P = "P_side", K = "K_side", S = "S_side" },
+				K_dash = { P = "P_up", S = "S_up" },
+			},
+		},
+		{ id = "ombrelle", name = "Ombrelle de cour", icon = "🌂",
+			prop = { name = "PropOmbrelle", hand = "Right", pieces = {
+				{ "Manche", "", "cyl", Vector3.new(2.2, 0.12, 0.12), Vector3.new(0, -0.8, 0), Vector3.zero, BRONZE, "Metal", { axis = "y" } },
+				{ "Poignee", "", "ball", Vector3.new(0.32, 0.32, 0.32), Vector3.new(0, 0.35, 0), Vector3.zero, BRONZE, "Wood" },
+				{ "Dentelle", "", "cyl", Vector3.new(0.12, 0.55, 0.55), Vector3.new(0, -1.85, 0), Vector3.zero, WHITE, "Fabric", { axis = "y" } },
+				{ "Toile", "", "ball", Vector3.new(0.5, 1.5, 0.5), Vector3.new(0, -2.55, 0), Vector3.zero, SILK, "Fabric" },
+				{ "Pointe", "", "ball", Vector3.new(0.22, 0.22, 0.22), Vector3.new(0, -3.35, 0), Vector3.zero, GOLD, "Metal" },
+			} },
+			ability = { speed = 1.15, text = "Trotte 15 % plus vite : la cour n'attend pas" },
+			moves = {
+				-- J : piqûre d'ombrelle, un petit estoc sec de la pointe, menton levé
+				P_neutral = {
+					label = "Piqûre d'ombrelle", startup = 0.06, active = 0.07, recovery = 0.12,
+					damage = 5, hitbox = box(4.5, 2.8, 2.8, 0.8), kbBase = 18, kbGrowth = 22, kbAngle = 25,
+					windup = { Root = { 2, -16, 0, 0, -0.15, 0.1 }, Waist = { 4, -20, 0 }, Neck = { -8, 12, 0 }, RS = { 50, 0, 20 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -40 }, LE = { 95, 0, 0 }, LW = { 0, 0, -30 } },
+					strike = { Root = { -6, 14, 0, 0, -0.22, -0.2 }, Waist = { -8, 18, 0 }, Neck = { 6, -8, 0 }, RS = { 96, 0, -4 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -40 }, LE = { 95, 0, 0 }, LW = { 0, 0, -30 } },
+					follow = { Root = { -7, 16, 0, 0, -0.24, -0.22 }, Waist = { -9, 20, 0 }, Neck = { 8, -10, 0 }, RS = { 94, 0, -6 }, RE = { 6, 0, 0 }, RW = { -8, 0, 0 }, LS = { 32, 0, -42 }, LE = { 95, 0, 0 }, LW = { 0, 0, -30 } },
+					trail = "prop", hitText = "TIC !",
+				},
+				-- →J : botte secrète : petite fente avant, la pointe dans les côtes, petit doigt en l'air
+				P_side = {
+					label = "Botte secrète", startup = 0.08, active = 0.08, recovery = 0.16,
+					damage = 6, hitbox = box(6, 2.8, 3.5, 0.8), kbBase = 20, kbGrowth = 28, kbAngle = 24, selfVelocity = Vector2.new(16, 0),
+					windup = { Root = { 2, -28, 0, 0, -0.2, 0.15 }, Waist = { 2, -30, 0 }, Neck = { -6, 20, 0 }, RS = { 40, 0, 20 }, RE = { 120, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -60 }, LE = { 90, 0, 0 }, LW = { 0, 0, -30 } },
+					strike = { Root = { -10, 24, 0, 0, -0.35, -0.4 }, Waist = { -10, 28, 0 }, Neck = { 4, -14, 0 }, RS = { 98, 0, -6 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -30, 0, -60 }, LE = { 30, 0, 0 }, LW = { 0, 0, -30 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+					follow = { Root = { -12, 28, 0, 0, -0.37, -0.45 }, Waist = { -12, 32, 0 }, Neck = { 6, -16, 0 }, RS = { 102, 0, -8 }, RE = { 4, 0, 0 }, RW = { -8, 0, 0 }, LS = { -32, 0, -62 }, LE = { 30, 0, 0 }, LW = { 0, 0, -30 }, FL = { 0, 0, 0, 0, 0, -0.52 } },
+					trail = "prop", hitText = "TOUCHÉ !",
+				},
+				-- ↓J : pointe aux orteils : il pique le pied adverse comme on vérifie un rôti
+				P_down = {
+					label = "Pointe aux orteils", startup = 0.08, active = 0.08, recovery = 0.16,
+					damage = 5, hitbox = box(5.5, 2, 3.2, -1.4), kbBase = 20, kbGrowth = 26, kbAngle = 70,
+					windup = { Root = { 4, 0, 0, 0, -0.25, 0.1 }, Waist = { 8, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 70, 0, 15 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -40 }, LE = { 95, 0, 0 }, LW = { 0, 0, -30 } },
+					strike = { Root = { -10, 0, 0, 0, -0.5, -0.2 }, Waist = { -18, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 50, 0, 5 }, RE = { 0, 0, 0 }, RW = { 20, 0, 0 }, LS = { 30, 0, -40 }, LE = { 95, 0, 0 }, LW = { 0, 0, -30 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					follow = { Root = { -12, 0, 0, 0, -0.52, -0.24 }, Waist = { -20, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 44, 0, 6 }, RE = { 0, 0, 0 }, RW = { 26, 0, 0 }, LS = { 32, 0, -42 }, LE = { 95, 0, 0 }, LW = { 0, 0, -30 }, FL = { 0, 0, 0, 0, 0, -0.32 } },
+					trail = "prop", hitText = "PIC !",
+				},
+				-- ↑J : il ouvre l'ombrelle d'un coup sec sous le menton de l'adversaire : POF
+				P_up = {
+					label = "Ombrelle au menton", startup = 0.09, active = 0.1, recovery = 0.18,
+					damage = 6, hitbox = box(4.5, 5, 1.5, 3), kbBase = 24, kbGrowth = 38, kbAngle = 85,
+					windup = { Root = { 2, 0, 0, 0, -0.2, 0.1 }, Waist = { 6, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 30, 0, 20 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -40 }, LE = { 95, 0, 0 }, LW = { 0, 0, -30 } },
+					strike = { Root = { -4, 0, 0, 0, -0.05, -0.1 }, Waist = { -8, 0, 0 }, Neck = { -22, 0, 0 }, RS = { 168, 0, 10 }, RE = { 0, 0, 0 }, RW = { -30, 0, 0 }, LS = { 30, 0, -40 }, LE = { 95, 0, 0 }, LW = { 0, 0, -30 } },
+					follow = { Root = { -6, 0, 0, 0, -0.02, -0.12 }, Waist = { -10, 0, 0 }, Neck = { -26, 0, 0 }, RS = { 176, 0, 12 }, RE = { 0, 0, 0 }, RW = { -40, 0, 0 }, LS = { 32, 0, -42 }, LE = { 95, 0, 0 }, LW = { 0, 0, -30 } },
+					trail = "prop", fx = { { "burst", color = SILK, size = 2, at = "hand" } }, hitText = "POF !",
+				},
+				-- J en l'air : pique en vol : suspendu comme à un parachute, il pique la pointe vers le bas
+				P_air = {
+					label = "Pique en vol", startup = 0.08, active = 0.1, recovery = 0.14,
+					damage = 6, hitbox = box(4.5, 4, 1.5, -1.6), kbBase = 18, kbGrowth = 32, kbAngle = -35,
+					windup = { Root = { 6, 0, 0 }, Waist = { 8, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 170, 0, 15 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -50 }, LE = { 80, 0, 0 }, LW = { 0, 0, -30 }, RH = { 30, 0, 0 }, RK = { -70, 0, 0 }, LH = { 40, 0, 0 }, LK = { -80, 0, 0 } },
+					strike = { Root = { -10, 0, 0 }, Waist = { -20, 0, 0 }, Neck = { 18, 0, 0 }, RS = { 20, 0, 5 }, RE = { 0, 0, 0 }, RW = { 10, 0, 0 }, LS = { 80, 0, -70 }, LE = { 20, 0, 0 }, LW = { 0, 0, -30 }, RH = { 10, 0, 0 }, RK = { -30, 0, 0 }, LH = { 30, 0, 0 }, LK = { -60, 0, 0 } },
+					follow = { Root = { -12, 0, 0 }, Waist = { -24, 0, 0 }, Neck = { 22, 0, 0 }, RS = { 10, 0, 6 }, RE = { 4, 0, 0 }, RW = { 20, 0, 0 }, LS = { 84, 0, -74 }, LE = { 20, 0, 0 }, LW = { 0, 0, -30 }, RH = { 4, 0, 0 }, RK = { -26, 0, 0 }, LH = { 26, 0, 0 }, LK = { -56, 0, 0 } },
+					trail = "prop", hitText = "PIC !",
+				},
+				-- dash J : fente de cour : grande fente d'escrimeur, pointe devant, la perruque glisse un peu
+				P_dash = {
+					label = "Fente de cour", startup = 0.08, active = 0.12, recovery = 0.22,
+					damage = 7, hitbox = box(6.5, 3, 3.8, 0.6), kbBase = 22, kbGrowth = 34, kbAngle = 28, selfVelocity = Vector2.new(34, 0),
+					windup = { Root = { 2, -20, 0, 0, -0.2, 0.2 }, Waist = { 4, -24, 0 }, Neck = { -6, 14, 0 }, RS = { 40, 0, 20 }, RE = { 120, 0, 0 }, RW = { 0, 0, 0 }, LS = { 100, 0, -40 }, LE = { 60, 0, 0 }, LW = { 0, 0, -30 } },
+					strike = { Root = { -14, 18, 0, 0, -0.45, -0.5 }, Waist = { -14, 22, 0 }, Neck = { 6, -10, 0 }, RS = { 100, 0, -4 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -40, 0, -70 }, LE = { 20, 0, 0 }, LW = { 0, 0, -30 }, FL = { 0, 0, 0, 0, 0, -0.6 } },
+					follow = { Root = { -16, 20, 0, 0, -0.47, -0.55 }, Waist = { -16, 24, 0 }, Neck = { 8, -12, 0 }, RS = { 104, 0, -6 }, RE = { 4, 0, 0 }, RW = { -8, 0, 0 }, LS = { -42, 0, -72 }, LE = { 20, 0, 0 }, LW = { 0, 0, -30 }, FL = { 0, 0, 0, 0, 0, -0.62 } },
+					trail = "prop", fx = { "dust" }, hitText = "EN GARDE !",
+				},
+				-- K : petit coup de soulier sec dans le tibia, l'ombrelle sous le bras comme un officier
+				K_neutral = {
+					label = "Petit soulier sec", startup = 0.14, active = 0.1, recovery = 0.24,
+					damage = 9, hitbox = box(4.5, 3, 2.8, -0.4), kbBase = 26, kbGrowth = 52, kbAngle = 30,
+					windup = { Root = { 2, -10, 0, 0, -0.12, 0.1 }, Waist = { 6, -8, 0 }, Neck = { 12, 0, 0 }, RS = { -20, 0, 20 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -40 }, LE = { 95, 0, 0 }, LW = { 0, 0, -30 }, RH = { -30, 0, 0 }, RK = { -50, 0, 0 } },
+					strike = { Root = { 6, 0, 0, 0, -0.08, 0 }, Waist = { 8, 0, 0 }, Neck = { 16, 0, 0 }, RS = { -24, 0, 24 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -55 }, LE = { 95, 0, 0 }, LW = { 0, 0, -30 }, RH = { 88, 0, 0 }, RK = { -4, 0, 0 }, RA = { -30, 0, 0 } },
+					follow = { Root = { 8, 0, 0, 0, -0.08, 0.04 }, Waist = { 10, 0, 0 }, Neck = { 18, 0, 0 }, RS = { -26, 0, 26 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 42, 0, -56 }, LE = { 95, 0, 0 }, LW = { 0, 0, -30 }, RH = { 96, 0, 0 }, RK = { 0, 0, 0 }, RA = { -30, 0, 0 } },
+					trail = "rightFoot", hitText = "TOC !",
+				},
+				-- →K : chassé de cour : petit pas chassé et coup de pied latéral, l'ombrelle tendue en contrepoids
+				K_side = {
+					label = "Chassé de cour", startup = 0.15, active = 0.12, recovery = 0.28,
+					damage = 10, hitbox = box(6, 3.5, 3.5, 0.4), kbBase = 28, kbGrowth = 60, kbAngle = 34, selfVelocity = Vector2.new(22, 0),
+					windup = { Root = { 2, 24, 0, 0, -0.2, 0.1 }, Waist = { 4, 30, 0 }, Neck = { 0, -16, 0 }, RS = { 90, 0, 80 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -40 }, LE = { 95, 0, 0 }, LW = { 0, 0, -30 }, RH = { -20, 0, 10 }, RK = { -50, 0, 0 } },
+					strike = { Root = { 6, -30, 0, 0, -0.1, -0.1 }, Waist = { 8, -36, 0 }, Neck = { 0, 12, 0 }, RS = { 90, 0, 90 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -60 }, LE = { 40, 0, 0 }, LW = { 0, 0, -30 }, RH = { 96, 0, 20 }, RK = { -6, 0, 0 }, RA = { -30, 0, 0 } },
+					follow = { Root = { 8, -36, 0, 0, -0.1, -0.14 }, Waist = { 10, -42, 0 }, Neck = { 0, 16, 0 }, RS = { 92, 0, 92 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 54, 0, -64 }, LE = { 40, 0, 0 }, LW = { 0, 0, -30 }, RH = { 104, 0, 24 }, RK = { 0, 0, 0 }, RA = { -30, 0, 0 } },
+					trail = "rightFoot", hitText = "CHASSÉ !",
+				},
+				-- ↓K : croche-ombrelle : accroupi, il crochète la cheville avec la poignée recourbée et tire
+				K_down = {
+					label = "Croche-ombrelle", startup = 0.12, active = 0.12, recovery = 0.26,
+					damage = 8, hitbox = box(6.5, 2, 3.5, -1.6), kbBase = 26, kbGrowth = 48, kbAngle = 76,
+					windup = { Root = { 4, 10, 0, 0, -0.55, 0.1 }, Waist = { 8, 12, 0 }, Neck = { -6, 0, 0 }, RS = { 70, 0, 20 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -40 }, LE = { 95, 0, 0 }, LW = { 0, 0, -30 } },
+					strike = { Root = { -10, -14, 0, 0, -0.75, -0.15 }, Waist = { -18, -18, 0 }, Neck = { 10, 0, 0 }, RS = { 40, 0, 10 }, RE = { 10, 0, 0 }, RW = { 40, 0, 0 }, LS = { 30, 0, -40 }, LE = { 95, 0, 0 }, LW = { 0, 0, -30 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					follow = { Root = { -6, -20, 0, 0, -0.7, 0.05 }, Waist = { -12, -24, 0 }, Neck = { 12, 0, 0 }, RS = { 20, 0, 12 }, RE = { 60, 0, 0 }, RW = { 40, 0, 0 }, LS = { 32, 0, -42 }, LE = { 95, 0, 0 }, LW = { 0, 0, -30 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					trail = "prop", fx = { "dust" }, hitText = "CROCHETÉ !",
+				},
+				-- ↑K : talon levé : coup de pied monté pointe tendue, l'ombrelle ouverte au-dessus de la perruque pour l'équilibre
+				K_up = {
+					label = "Talon de cour", startup = 0.15, active = 0.12, recovery = 0.28,
+					damage = 10, hitbox = box(4.5, 6, 1.5, 3.5), kbBase = 28, kbGrowth = 60, kbAngle = 88,
+					windup = { Root = { 4, 0, 0, 0, -0.2, 0.1 }, Waist = { 8, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 150, 0, 20 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -40 }, LE = { 95, 0, 0 }, LW = { 0, 0, -30 }, RH = { -20, 0, 0 }, RK = { -60, 0, 0 } },
+					strike = { Root = { -12, 0, 0, 0, 0.02, -0.1 }, Waist = { -16, 0, 0 }, Neck = { -22, 0, 0 }, RS = { 184, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -55 }, LE = { 95, 0, 0 }, LW = { 0, 0, -30 }, RH = { 136, 0, 0 }, RK = { -6, 0, 0 }, RA = { -30, 0, 0 } },
+					follow = { Root = { -14, 0, 0, 0, 0.05, -0.12 }, Waist = { -18, 0, 0 }, Neck = { -26, 0, 0 }, RS = { 186, 0, 12 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 42, 0, -56 }, LE = { 95, 0, 0 }, LW = { 0, 0, -30 }, RH = { 144, 0, 0 }, RK = { 0, 0, 0 }, RA = { -30, 0, 0 } },
+					trail = "rightFoot", hitText = "TALON !",
+				},
+				-- K en l'air : pédalage précieux, pointes tendues, l'ombrelle ouverte au-dessus de lui comme un parachute (2 touches)
+				K_air = {
+					label = "Pédalage précieux", startup = 0.12, active = 0.2, recovery = 0.2,
+					damage = 9, hits = 2, hitbox = box(5, 4, 2.5, -0.5), kbBase = 20, kbGrowth = 42, kbAngle = 40,
+					windup = { Root = { -8, 0, 0 }, Waist = { -6, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 184, 0, 6 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -50 }, LE = { 80, 0, 0 }, LW = { 0, 0, -30 }, RH = { 60, 0, 0 }, RK = { -100, 0, 0 }, LH = { -20, 0, 0 }, LK = { -40, 0, 0 } },
+					strike = { Root = { -4, 0, 0 }, Waist = { 6, 0, 0 }, Neck = { 8, 0, 0 }, RS = { 186, 0, 8 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 64, 0, -54 }, LE = { 80, 0, 0 }, LW = { 0, 0, -30 }, RH = { 90, 0, 0 }, RK = { -6, 0, 0 }, RA = { -30, 0, 0 }, LH = { 70, 0, 0 }, LK = { -110, 0, 0 } },
+					follow = { Root = { -2, 0, 0 }, Waist = { 8, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 188, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 66, 0, -56 }, LE = { 80, 0, 0 }, LW = { 0, 0, -30 }, RH = { 20, 0, 0 }, RK = { -60, 0, 0 }, LH = { 95, 0, 0 }, LK = { -4, 0, 0 }, LA = { -30, 0, 0 } },
+					trail = "rightFoot", hitText = "TIC TAC !",
+				},
+				-- dash K : glissade sous l'ombrelle : il se laisse glisser sur les souliers, ombrelle ouverte devant comme un bouclier
+				K_dash = {
+					label = "Glissade sous l'ombrelle", startup = 0.1, active = 0.24, recovery = 0.28,
+					damage = 10, hitbox = box(6, 3, 3, -0.8), kbBase = 28, kbGrowth = 58, kbAngle = 38, selfVelocity = Vector2.new(56, 10),
+					windup = { Root = { -8, 0, 0, 0, -0.35, 0 }, Waist = { -10, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 60, 0, 20 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -40 }, LE = { 60, 0, 0 }, LW = { 0, 0, -30 } },
+					strike = { Root = { 18, 0, 0, 0, -0.65, 0.2 }, Waist = { 10, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 100, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, -40 }, LE = { 30, 0, 0 }, LW = { 0, 0, -30 }, RH = { 85, 0, 0 }, RK = { 0, 0, 0 }, RA = { -30, 0, 0 }, LH = { 80, 0, 0 }, LK = { -10, 0, 0 } },
+					follow = { Root = { 22, 0, 0, 0, -0.68, 0.24 }, Waist = { 12, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 104, 0, 2 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 75, 0, -45 }, LE = { 30, 0, 0 }, LW = { 0, 0, -30 }, RH = { 90, 0, 0 }, RK = { 0, 0, 0 }, RA = { -30, 0, 0 }, LH = { 85, 0, 0 }, LK = { -10, 0, 0 } },
+					trail = "prop", fx = { "dust" }, hitText = "SKRRRT !",
+				},
+				-- L : moulinet d'ombrelle : il la fait tourner devant lui à toute vitesse, trois piqûres de pointe en rafale (3 touches)
+				S_neutral = {
+					label = "Moulinet d'ombrelle", startup = 0.2, active = 0.3, recovery = 0.42,
+					damage = 13, hits = 3, hitbox = box(8, 5, 4, 1), kbBase = 26, kbGrowth = 48, kbAngle = 36,
+					windup = { Root = { 2, -24, 0, 0, -0.2, 0.15 }, Waist = { 4, -28, 0 }, Neck = { -6, 18, 0 }, RS = { 60, 0, 30 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -40 }, LE = { 95, 0, 0 }, LW = { 0, 0, -30 } },
+					strike = { Root = { -8, 20, 0, 0, -0.3, -0.3 }, Waist = { -10, 24, 0 }, Neck = { 4, -12, 0 }, RS = { 96, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 90 }, LS = { -30, 0, -50 }, LE = { 40, 0, 0 }, LW = { 0, 0, -30 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { -10, 24, 0, 0, -0.32, -0.34 }, Waist = { -12, 28, 0 }, Neck = { 6, -14, 0 }, RS = { 98, 0, 2 }, RE = { 0, 0, 0 }, RW = { 0, 0, 180 }, LS = { -32, 0, -52 }, LE = { 40, 0, 0 }, LW = { 0, 0, -30 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+					wobble = true, trail = "prop", fx = { { "ring", color = SILK, radius = 4, at = "front" }, { "symbols", symbols = { "🌂", "✨" }, color = SILK, count = 4, radius = 2.5, at = "front" } },
+					text = "MOULINET !", hitText = "TIC TIC TIC !",
+				},
+				-- →L : tir d'ombrelle : il la lance fermée comme une fléchette de soie, pointe en avant, droit sur l'adversaire
+				S_side = {
+					label = "Fléchette de soie", kind = "projectile", startup = 0.22, active = 0, recovery = 0.45,
+					damage = 14, kbBase = 30, kbGrowth = 56, kbAngle = 30,
+					projectile = { speed = 95, angle = 0, gravity = 0, lifetime = 0.6, size = 1.8, color = SILK, visual = OMBRELLE_VISUAL },
+					windup = { Root = { 2, -34, 0, 0, -0.25, 0.25 }, Waist = { 4, -38, 0 }, Neck = { -6, 24, 0 }, RS = { 150, 0, 30 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, -20 }, LE = { 20, 0, 0 }, LW = { 0, 0, -30 } },
+					strike = { Root = { -12, 24, 0, 0, -0.32, -0.42 }, Waist = { -14, 28, 0 }, Neck = { 4, -16, 0 }, RS = { 96, 0, -4 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -40, 0, -40 }, LE = { 40, 0, 0 }, LW = { 0, 0, -30 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+					follow = { Root = { -14, 28, 0, 0, -0.34, -0.46 }, Waist = { -16, 32, 0 }, Neck = { 6, -18, 0 }, RS = { 100, 0, -6 }, RE = { 4, 0, 0 }, RW = { 6, 0, 0 }, LS = { -44, 0, -44 }, LE = { 40, 0, 0 }, LW = { 0, 0, -30 }, FL = { 0, 0, 0, 0, 0, -0.48 } },
+					hideProp = "ombrelle", fx = { { "beam", color = SILK, length = 10, width = 1.2, at = "hand" } }, text = "FLÉCHETTE !", hitText = "PIQUÉ !",
+				},
+				-- ↓L : bourrasque de cour : il ouvre l'ombrelle au ras du sol et la referme d'un coup : le courant d'air balaie le couloir et aveugle de poussière
+				S_down = {
+					label = "Bourrasque de cour", startup = 0.22, active = 0.18, recovery = 0.48,
+					damage = 13, hitbox = box(14, 5, 7, 0.8), kbBase = 28, kbGrowth = 50, kbAngle = 42,
+					status = { name = "blinded", duration = 1.5 },
+					windup = { Root = { 2, 0, 0, 0, -0.5, 0.1 }, Waist = { 4, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 40, 0, 40 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -40 }, LE = { 60, 0, 0 }, LW = { 0, 0, -30 } },
+					strike = { Root = { -10, 0, 0, 0, -0.7, -0.2 }, Waist = { -18, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 60, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, 0 }, LE = { 0, 0, 0 }, LW = { 0, 0, -30 }, FR = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { -12, 0, 0, 0, -0.72, -0.24 }, Waist = { -20, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 56, 0, 2 }, RE = { 0, 0, 0 }, RW = { 10, 0, 0 }, LS = { 56, 0, -2 }, LE = { 0, 0, 0 }, LW = { 0, 0, -30 }, FR = { 0, 0, 0, 0, 0, -0.42 } },
+					hold = 0.1, fx = { { "beam", color = WHITE, length = 14, width = 3, at = "feet" }, { "particles", tex = "smoke", color = CRUMB, dir = "front", at = "feet", time = 0.4, speed = 18, rate = 90 }, { "symbols", symbols = { "💨" }, color = WHITE, count = 4, radius = 3, at = "front" } },
+					text = "BOURRASQUE !", hitText = "DÉCOIFFÉ !",
+				},
+				-- ↑L : envol à la Poppins : il ouvre l'ombrelle, un coup de vent la gonfle et l'emporte en diagonale, souliers joints, l'air pincé
+				S_up = {
+					label = "Envol à la Poppins", startup = 0.14, active = 0.3, recovery = 0.42,
+					damage = 14, hitbox = box(10, 11, 3, 4), kbBase = 32, kbGrowth = 50, kbAngle = 80, selfVelocity = Vector2.new(42, 80),
+					windup = { Root = { 2, 0, 0, 0, -0.5, 0.1 }, Waist = { -8, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 60, 0, 20 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -40 }, LE = { 95, 0, 0 }, LW = { 0, 0, -30 } },
+					strike = { Root = { -36, 0, 0, 0, 0.3, 0 }, Waist = { -2, 0, 0 }, Neck = { 28, 0, 0 }, RS = { 186, 0, 2 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -20, 0, -20 }, LE = { 20, 0, 0 }, LW = { 0, 0, -30 }, RH = { -14, 0, 3 }, RK = { -20, 0, 0 }, RA = { -35, 0, 0 }, LH = { -14, 0, -3 }, LK = { -20, 0, 0 }, LA = { -35, 0, 0 } },
+					follow = { Root = { -40, 0, 0, 0, 0.35, 0 }, Waist = { -4, 0, 0 }, Neck = { 32, 0, 0 }, RS = { 190, 0, 4 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -24, 0, -22 }, LE = { 20, 0, 0 }, LW = { 0, 0, -30 }, RH = { -18, 0, 4 }, RK = { -24, 0, 0 }, RA = { -35, 0, 0 }, LH = { -18, 0, -4 }, LK = { -24, 0, 0 }, LA = { -35, 0, 0 } },
+					trail = "prop", fx = { { "burst", color = SILK, size = 3, at = "above" }, { "symbols", symbols = { "🌂", "💨" }, color = WHITE, count = 5, radius = 3, at = "above" }, { "particles", tex = "smoke", color = WHITE, dir = "down", at = "feet", time = 0.4, speed = 12, rate = 80 } },
+					text = "SUPERCALI… ENFIN BREF !", hitText = "EMPORTÉ PAR LE VENT !",
+				},
+				-- L en l'air : parachute piquant : ombrelle fermée pointée vers le bas, il se laisse tomber dessus comme une fléchette
+				S_air = {
+					label = "Parachute piquant", startup = 0.16, active = 0.2, recovery = 0.42,
+					damage = 14, hitbox = box(6, 5, 2, -1.5), kbBase = 30, kbGrowth = 58, kbAngle = -62, selfVelocity = Vector2.new(10, -40),
+					windup = { Root = { 8, 0, 0 }, Waist = { 10, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 186, 0, 6 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -50 }, LE = { 80, 0, 0 }, LW = { 0, 0, -30 }, RH = { 40, 0, 0 }, RK = { -80, 0, 0 }, LH = { 40, 0, 0 }, LK = { -80, 0, 0 } },
+					strike = { Root = { -16, 0, 0 }, Waist = { -26, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 16, 0, 4 }, RE = { 0, 0, 0 }, RW = { 20, 0, 0 }, LS = { 90, 0, -80 }, LE = { 10, 0, 0 }, LW = { 0, 0, -30 }, RH = { 10, 0, 3 }, RK = { -20, 0, 0 }, RA = { -35, 0, 0 }, LH = { 10, 0, -3 }, LK = { -20, 0, 0 }, LA = { -35, 0, 0 } },
+					follow = { Root = { -20, 0, 0 }, Waist = { -30, 0, 0 }, Neck = { 24, 0, 0 }, RS = { 10, 0, 6 }, RE = { 4, 0, 0 }, RW = { 30, 0, 0 }, LS = { 94, 0, -84 }, LE = { 10, 0, 0 }, LW = { 0, 0, -30 }, RH = { 6, 0, 4 }, RK = { -16, 0, 0 }, RA = { -35, 0, 0 }, LH = { 6, 0, -4 }, LK = { -16, 0, 0 }, LA = { -35, 0, 0 } },
+					trail = "prop", fx = { { "burst", color = SILK, size = 2.5, at = "hand" }, { "symbols", symbols = { "🌂" }, color = SILK, count = 2, radius = 2 } }, text = "EN PIQUÉ !", hitText = "CLOUÉ !",
+				},
+				-- Y : la grande bourrasque : il ouvre et referme l'ombrelle dix fois de suite comme un forcené, l'ouragan balaie tout l'écran
+				SUPER = {
+					label = "La Grande Bourrasque !", startup = 0.38, active = 0.3, recovery = 0.7,
+					damage = 24, hitbox = box(30, 8, 0, 2), kbBase = 42, kbGrowth = 90, kbAngle = 45,
+					status = { name = "blinded", duration = 2 },
+					windup = { Root = { 2, 0, 0, 0, -0.3, 0.1 }, Waist = { 4, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 60, 0, 30 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -30 }, LE = { 110, 0, 0 }, LW = { 0, 0, -30 } },
+					strike = { Root = { -6, 0, 0, 0, -0.2, 0 }, Waist = { -6, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 100, 0, 60 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 100, 0, -60 }, LE = { 0, 0, 0 }, LW = { 0, 0, -30 }, FR = { 0, 0, 0, 0, 0, 0.3 } },
+					follow = { Root = { -8, 0, 0, 0, -0.2, 0 }, Waist = { -8, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 60, 0, 10 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -10 }, LE = { 60, 0, 0 }, LW = { 0, 0, -30 }, FR = { 0, 0, 0, 0, 0, 0.3 } },
+					hold = 0.2, shake = true, wobble = true, trail = "prop", windupFx = { "super", { "text", text = "POF POF POF POF !", color = SILK, at = "head" } },
+					fx = { { "screen", color = WHITE, alpha = 0.2 }, { "ring", color = WHITE, radius = 14, at = "root" }, { "particles", tex = "smoke", color = WHITE, dir = "all", at = "root", time = 0.6, speed = 20, rate = 120 }, { "symbols", symbols = { "💨", "🌂", "🐦" }, color = WHITE, count = 12, radius = 7 }, { "shake", amount = 0.5 } },
+					text = "LA GRANDE BOURRASQUE !", hitText = "SOUFFLÉ !",
+				},
+				-- →Y : ombrelle-fusée : il ouvre l'ombrelle à l'envers, les pigeons s'y installent et rament : elle file comme une fusée à travers le couloir
+				SUPER_side = {
+					label = "Ombrelle-fusée !", kind = "projectile", startup = 0.42, active = 0, recovery = 0.7,
+					damage = 25, kbBase = 48, kbGrowth = 98, kbAngle = 30,
+					projectile = { speed = 100, angle = 0, gravity = 0, lifetime = 0.9, size = 3.2, color = SILK, visual = OMBRELLE_VISUAL, pierce = true },
+					status = { name = "blinded", duration = 1.5 },
+					windup = { Root = { 2, -30, 0, 0, -0.3, 0.3 }, Waist = { 4, -34, 0 }, Neck = { -4, 22, 0 }, RS = { 60, 0, 30 }, RE = { 120, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -30 }, LE = { 120, 0, 0 } },
+					strike = { Root = { -16, 24, 0, 0, -0.34, -0.5 }, Waist = { -18, 28, 0 }, Neck = { -6, -16, 0 }, RS = { 96, 0, -4 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 92, 0, 4 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+					follow = { Root = { -18, 28, 0, 0, -0.36, -0.55 }, Waist = { -22, 32, 0 }, Neck = { -8, -18, 0 }, RS = { 100, 0, -6 }, RE = { 4, 0, 0 }, RW = { 6, 0, 0 }, LS = { 96, 0, 6 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.52 } },
+					hideProp = "ombrelle", windupFx = { "super", { "symbols", symbols = { "🐦", "🌂" }, count = 6, radius = 3, color = SILK } },
+					fx = { { "burst", color = SILK, size = 4, at = "hand" }, { "swarm", shape = "ball", color = FEATHER, count = 6, distance = 24, size = 0.8, time = 0.5, height = 1.5, spreadY = 2 }, { "shake", amount = 0.4 } },
+					text = "OMBRELLE-FUSÉE !", hitText = "TRANSPERCÉ !",
+				},
+				-- ↑Y : le grand envol : ombrelle ouverte, tous ses pigeons s'y agrippent et la tirent vers le ciel avec tout le couloir dedans
+				SUPER_up = {
+					label = "Le Grand Envol !", startup = 0.36, active = 0.3, recovery = 0.7,
+					damage = 24, hitbox = box(16, 12, 8, 5), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3, selfVelocity = Vector2.new(0, 55),
+					windup = { Root = { 2, 0, 0, 0, -0.6, 0 }, Waist = { -10, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 60, 0, 20 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -40 }, LE = { 95, 0, 0 }, LW = { 0, 0, -30 } },
+					strike = { Root = { 4, 0, 0, 0, 0.5, 0 }, Waist = { 8, 0, 0 }, Neck = { 46, 0, 0 }, RS = { 188, 0, 4 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -20, 0, -30 }, LE = { 20, 0, 0 }, LW = { 0, 0, -30 }, RH = { -10, 0, 4 }, RK = { -20, 0, 0 }, RA = { -35, 0, 0 }, LH = { -10, 0, -4 }, LK = { -20, 0, 0 }, LA = { -35, 0, 0 } },
+					follow = { Root = { 6, 0, 0, 0, 0.55, 0 }, Waist = { 10, 0, 0 }, Neck = { 50, 0, 0 }, RS = { 190, 0, 6 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { -24, 0, -32 }, LE = { 20, 0, 0 }, LW = { 0, 0, -30 }, RH = { -14, 0, 6 }, RK = { -24, 0, 0 }, RA = { -35, 0, 0 }, LH = { -14, 0, -6 }, LK = { -24, 0, 0 }, LA = { -35, 0, 0 } },
+					hold = 0.2, trail = "prop", windupFx = { "super", { "text", text = "FUUUIIIT ! À MOI !", color = WHITE, at = "head" } },
+					fx = { { "pillar", color = SILK, height = 22, width = 3, at = "front" }, { "swarm", shape = "ball", color = FEATHER, count = 14, distance = 14, size = 0.9, time = 0.6, height = 8, spreadY = 6 }, { "symbols", symbols = { "🌂", "🐦", "💨" }, color = WHITE, count = 10, radius = 6, at = "above" }, { "shake", amount = 0.4 } },
+					text = "LE GRAND ENVOL !", hitText = "ENVOLÉ AVEC LA COUR !",
+				},
+				-- ↓Y : flaque de cour : il plante l'ombrelle, un nuage d'orage se forme dessous et l'averse royale inonde tout le couloir
+				SUPER_down = {
+					label = "Averse royale !", startup = 0.38, active = 0.35, recovery = 0.7,
+					damage = 22, hitbox = box(16, 4, 8, -0.5), kbBase = 40, kbGrowth = 85, kbAngle = 60,
+					status = { name = "wet", duration = 2.5 },
+					windup = { Root = { 2, 0, 0, 0, -0.25, 0.1 }, Waist = { 6, 0, 0 }, Neck = { -14, 0, 0 }, RS = { 186, 0, 6 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -40 }, LE = { 95, 0, 0 }, LW = { 0, 0, -30 } },
+					strike = { Root = { -10, 0, 0, 0, -0.5, -0.2 }, Waist = { -16, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 40, 0, 10 }, RE = { 0, 0, 0 }, RW = { 10, 0, 0 }, LS = { 40, 0, -55 }, LE = { 95, 0, 0 }, LW = { 0, 0, -30 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { -8, 0, 0, 0, -0.45, -0.16 }, Waist = { -12, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 44, 0, 12 }, RE = { 0, 0, 0 }, RW = { 16, 0, 0 }, LS = { 42, 0, -56 }, LE = { 95, 0, 0 }, LW = { 0, 0, -30 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+					hold = 0.2, shake = true, windupFx = { "super", { "symbols", symbols = { "🌧️" }, count = 4, radius = 3, at = "above" } },
+					fx = { { "rain", shape = "ball", color = Color3.fromRGB(120, 180, 240), count = 16, radius = 10, size = 0.5 }, { "puddle", color = Color3.fromRGB(120, 180, 240), width = 16 }, { "beam", color = Color3.fromRGB(120, 180, 240), length = 16, width = 3, at = "feet" }, { "screen", color = Color3.fromRGB(120, 180, 240), alpha = 0.2 }, { "shake", amount = 0.4 } },
+					text = "AVERSE ROYALE !", hitText = "TREMPÉ COMME UN MANANT !",
+				},
+			},
+			links = {
+				P_neutral = { P = "P_side", K = "K_neutral", S = "S_neutral" },
+				P_side = { P = "P_up", K = "K_side", S = "S_side" },
+				P_down = { P = "P_up", K = "K_down", S = "S_down" },
+				K_neutral = { P = "P_neutral", K = "K_side", S = "S_side" },
+				K_side = { P = "P_up", K = "K_up", S = "S_neutral" },
+				P_dash = { P = "P_side", K = "K_side", S = "S_side" },
+				K_dash = { P = "P_up", S = "S_up" },
+			},
+		},
+	},
 
 	look = {
 		body = { head = SKIN, upper = VELVET, lower = VELVET_DARK, arms = VELVET, hands = WHITE, legs = WHITE,
@@ -542,6 +1024,19 @@ local data = {
 			windupFx = { "super", { "symbols", symbols = { "🐦", "🕊️" }, count = 6, radius = 4, at = "above" } }, trail = "body",
 			fx = { { "pillar", color = FEATHER, height = 18, width = 7, at = "root" }, { "swarm", shape = "ball", color = FEATHER, count = 14, distance = 16, size = 0.9, time = 0.8, height = 6, spreadY = 8 }, { "particles", tex = "smoke", color = FEATHER, dir = "all", at = "root", time = 0.6, speed = 14, rate = 110 }, { "shake", amount = 0.5 } },
 			text = "TORNADE ROUCOULANTE !", hitText = "ROUCOULÉ AU CIEL !",
+		},
+		-- Carrosse royal (→Y) : il siffle, la nuée entière s'attelle à un carrosse imaginaire et il traverse tout le couloir assis dedans,
+		-- rênes en main, menton levé, renversant tout ce qui ne s'est pas incliné à son passage
+		SUPER_side = {
+			label = "Carrosse royal !", startup = 0.4, active = 0.3, recovery = 0.7,
+			damage = 25, hitbox = box(16, 6, 8, 1), kbBase = 46, kbGrowth = 94, kbAngle = 34, selfVelocity = Vector2.new(62, 0), invuln = 0.2,
+			status = { name = "blinded", duration = 1.5 },
+			windup = { Root = { 2, 0, 0, 0, -0.2, 0.1 }, Waist = { 6, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 30, 0, 20 }, RE = { 50, 0, 0 }, LS = { 110, 0, 15 }, LE = { 130, 0, 0 } },
+			strike = { Root = { -6, 0, 0, 0, -0.55, -0.3 }, Waist = { -4, 0, 0 }, Neck = { 18, 0, 0 }, RS = { 70, 0, 10 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, -10 }, LE = { 60, 0, 0 }, LW = { 0, 0, -30 }, FL = { 0, 0, 0, 0, 0, -0.4 }, FR = { 0, 0, 0, 0, 0, -0.4 } },
+			follow = { Root = { -8, 0, 0, 0, -0.58, -0.34 }, Waist = { -6, 0, 0 }, Neck = { 22, 0, 0 }, RS = { 74, 0, 12 }, RE = { 62, 0, 0 }, RW = { 0, 0, 0 }, LS = { 74, 0, -12 }, LE = { 62, 0, 0 }, LW = { 0, 0, -30 }, FL = { 0, 0, 0, 0, 0, -0.42 }, FR = { 0, 0, 0, 0, 0, -0.42 } },
+			hold = 0.1, trail = "body", windupFx = { "super", { "text", text = "FUUUIIIT ! MON CARROSSE !", color = WHITE, at = "head" } },
+			fx = { { "swarm", shape = "ball", color = FEATHER, count = 10, distance = 24, size = 0.9, time = 0.5, height = 2, spreadY = 3 }, { "beam", color = GOLD, length = 16, width = 3, at = "front" }, { "particles", tex = "smoke", color = FEATHER, dir = "front", at = "root", time = 0.4, speed = 14, rate = 90 }, { "symbols", symbols = { "🐦", "👑" }, count = 6, radius = 4, at = "above" }, { "shake", amount = 0.4 } },
+			text = "CARROSSE ROYAL !", hitText = "ÉCRASÉ PAR LE CORTÈGE !",
 		},
 		-- La Statue (↓Y) : il cadre l'arène entre ses mains, puis fige tout le monde d'un coup de baguette ; les pigeons se posent sur les statues
 		SUPER_down = {

@@ -37,12 +37,487 @@ local function catVisual(color)
 	}
 end
 
+local STEEL = Color3.fromRGB(200, 200, 210) -- aiguilles géantes, semelle du fer (armes n° 2 et 3)
+local FER = Color3.fromRGB(90, 95, 110) -- fer à repasser : poignée et cordon
+local FER_BLEU = Color3.fromRGB(120, 180, 230) -- fer à repasser : corps
+local STEAM = Color3.fromRGB(235, 240, 245) -- vapeur
+
 local data = {
 	id = "Mamie",
 	name = "Mamie Tricot",
 	costume = "Mamie",
 	style = "granny",
 	flying = true, -- sait voler : un saut en l\'air de plus, plané, et un ↑L très puissant
+	------------------------------------------------------------------ Les 3 armes de la Caisse Bizarre (une au hasard)
+	-- n° 1 : le sac à main et la canne (ses coups sont ceux de moves). n° 2 : les aiguilles à tricoter géantes, jeu de
+	-- piqueuse à longue portée et pelote-boomerang. n° 3 : le fer à repasser à vapeur, lourd et lent, qui aplatit et
+	-- éjecte loin dans un nuage de vapeur.
+	weapons = {
+		{ id = "sac_a_main", name = "Sac à main & canne", icon = "👜",
+			ability = { superCooldown = 0.7, text = "Les chats rechargent ses Supers 30 % plus vite" } },
+		{ id = "aiguilles_geantes", name = "Aiguilles à tricoter géantes", icon = "🪡",
+			prop = { name = "PropAiguillesGeantes", hand = "Right", pieces = {
+				{ "AiguilleA", "", "cyl", Vector3.new(4.4, 0.14, 0.14), Vector3.new(0.14, -2.1, 0), Vector3.new(0, 0, 6), STEEL, "Metal" },
+				{ "AiguilleB", "", "cyl", Vector3.new(4.4, 0.14, 0.14), Vector3.new(-0.14, -2.1, 0), Vector3.new(0, 0, -6), STEEL, "Metal" },
+				{ "BoutonA", "", "ball", Vector3.new(0.36, 0.36, 0.36), Vector3.new(0.4, 0.05, 0), Vector3.zero, WOOL, "SmoothPlastic" },
+				{ "BoutonB", "", "ball", Vector3.new(0.36, 0.36, 0.36), Vector3.new(-0.4, 0.05, 0), Vector3.zero, WOOL2, "SmoothPlastic" },
+				{ "Tricot", "", "block", Vector3.new(0.9, 0.55, 0.12), Vector3.new(0, -0.7, 0.12), Vector3.zero, WOOL, "Fabric" },
+			} },
+			ability = { reach = 1.25, text = "Portée +25 % : elle pique de loin" },
+			moves = {
+				-- J : petit estoc des deux aiguilles, bras tendu, lunettes sur le nez
+				P_neutral = {
+					label = "Pic-pic", startup = 0.07, active = 0.08, recovery = 0.14,
+					damage = 6, hitbox = box(6.5, 2.4, 3.8, 0.6), kbBase = 18, kbGrowth = 24, kbAngle = 18,
+					windup = { Root = { -6, -16, 0, 0, -0.2, 0.15 }, Waist = { -14, -20, 0 }, Neck = { 14, 16, 0 }, RS = { 50, 0, 20 }, RE = { 95, 0, 0 }, RW = { 0, 0, 0 }, LS = { 25, 0, -15 }, LE = { 45, 0, 0 } },
+					strike = { Root = { -12, 14, 0, 0, -0.28, -0.35 }, Waist = { -18, 20, 0 }, Neck = { 18, -14, 0 }, RS = { 94, 0, -4 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -8, 0, -22 }, LE = { 35, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.35 } },
+					follow = { Root = { -12, 18, 0, 0, -0.28, -0.38 }, Waist = { -18, 24, 0 }, Neck = { 18, -18, 0 }, RS = { 96, 0, -8 }, RE = { 0, 0, 0 }, RW = { -6, 0, 0 }, LS = { -12, 0, -24 }, LE = { 35, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.38 } },
+					trail = "prop", hitText = "PIC !",
+				},
+				-- →J : grande fente d'escrimeuse, les deux aiguilles en pointe, pantoufle qui glisse
+				P_side = {
+					label = "Fente de couturière", startup = 0.1, active = 0.1, recovery = 0.22,
+					damage = 8, hitbox = box(8, 2.6, 4.5, 0.6), kbBase = 24, kbGrowth = 40, kbAngle = 16, selfVelocity = Vector2.new(24, 0),
+					windup = { Root = { -4, -30, 0, 0, -0.2, 0.3 }, Waist = { -10, -32, 0 }, Neck = { 12, 28, 0 }, RS = { 30, 0, 30 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -20 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -16, 20, 0, 0, -0.45, -0.7 }, Waist = { -20, 26, 0 }, Neck = { 22, -20, 0 }, RS = { 96, 0, -8 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -40, 0, -20 }, LE = { 20, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.8 } },
+					follow = { Root = { -18, 24, 0, 0, -0.48, -0.75 }, Waist = { -22, 30, 0 }, Neck = { 24, -24, 0 }, RS = { 100, 0, -12 }, RE = { 0, 0, 0 }, RW = { -8, 0, 0 }, LS = { -45, 0, -22 }, LE = { 20, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.85 } },
+					trail = "prop", fx = { { "particles", tex = "smoke", color = Color3.fromRGB(220, 210, 190), dir = "front", at = "feet", time = 0.2, speed = 6 } }, text = "TOUCHÉE !", hitText = "PIQUÉ !",
+				},
+				-- ↓J : accroupie, elle plante les aiguilles dans le sol et les relève sous les pieds
+				P_down = {
+					label = "Épingles aux orteils", startup = 0.09, active = 0.1, recovery = 0.2,
+					damage = 6, hitbox = box(7, 2, 4, -2), kbBase = 24, kbGrowth = 26, kbAngle = 76,
+					windup = { Root = { -10, 10, 0, 0, -0.7, 0.1 }, Waist = { -26, 10, 0 }, Neck = { 22, -8, 0 }, RS = { 120, 0, 10 }, RE = { 80, 0, 0 }, RW = { 20, 0, 0 }, LS = { 30, 0, -25 }, LE = { 50, 0, 0 } },
+					strike = { Root = { -16, 0, 0, 0, -0.85, -0.2 }, Waist = { -32, 0, 0 }, Neck = { 28, 0, 0 }, RS = { 30, 0, 10 }, RE = { 0, 0, 0 }, RW = { -30, 0, 0 }, LS = { 35, 0, -30 }, LE = { 50, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					follow = { Root = { -14, 0, 0, 0, -0.8, -0.24 }, Waist = { -30, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 55, 0, 10 }, RE = { 0, 0, 0 }, RW = { -50, 0, 0 }, LS = { 35, 0, -30 }, LE = { 50, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					trail = "prop", fx = { { "symbols", symbols = { "📌" }, count = 3, radius = 2, at = "front", color = WOOL } }, hitText = "AÏE LES PIEDS !",
+				},
+				-- ↑J : les aiguilles pointées au ciel, elle se dresse sur la pointe des chaussons (anti-air)
+				P_up = {
+					label = "Aiguilles au ciel", startup = 0.09, active = 0.12, recovery = 0.2,
+					damage = 7, hitbox = box(4.5, 6.5, 1.5, 3.5), kbBase = 26, kbGrowth = 36, kbAngle = 88,
+					windup = { Root = { -8, 0, 0, 0, -0.4, 0 }, Waist = { -22, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 20, 0, 20 }, RE = { 120, 0, 0 }, RW = { 0, 0, 0 }, LS = { 25, 0, -15 }, LE = { 45, 0, 0 } },
+					strike = { Root = { 4, 0, 0, 0, 0.15, 0 }, Waist = { 8, 0, 0 }, Neck = { 34, 0, 0 }, RS = { 182, 0, 6 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 15, 0, -22 }, LE = { 40, 0, 0 }, FR = { 0, 0, 0, 0, 0.2, 0 }, FL = { 0, 0, 0, 0, 0.2, 0 } },
+					follow = { Root = { 6, 0, 0, 0, 0.18, 0 }, Waist = { 10, 0, 0 }, Neck = { 38, 0, 0 }, RS = { 186, 0, 10 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 15, 0, -24 }, LE = { 40, 0, 0 }, FR = { 0, 0, 0, 0, 0.22, 0 }, FL = { 0, 0, 0, 0, 0.22, 0 } },
+					trail = "prop", hitText = "EMBROCHÉ !",
+				},
+				-- J en l'air : elle pique sous elle, aiguilles vers le bas, jambes repliées comme sur un tabouret
+				P_air = {
+					label = "Pique en chute", startup = 0.08, active = 0.14, recovery = 0.18,
+					damage = 7, hitbox = box(4.5, 5, 1.2, -2), kbBase = 20, kbGrowth = 36, kbAngle = -45,
+					windup = { Root = { 8, 0, 0 }, Waist = { 10, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 175, 0, 10 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -40 }, LE = { 60, 0, 0 }, RH = { 70, 0, 0 }, RK = { -110, 0, 0 }, LH = { 70, 0, 0 }, LK = { -110, 0, 0 } },
+					strike = { Root = { -20, 0, 0 }, Waist = { -26, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 20, 0, 6 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -20, 0, -45 }, LE = { 30, 0, 0 }, RH = { 20, 0, 0 }, RK = { -60, 0, 0 }, LH = { 30, 0, 0 }, LK = { -80, 0, 0 } },
+					follow = { Root = { -24, 0, 0 }, Waist = { -30, 0, 0 }, Neck = { 32, 0, 0 }, RS = { 10, 0, 6 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { -25, 0, -48 }, LE = { 30, 0, 0 }, RH = { 15, 0, 0 }, RK = { -55, 0, 0 }, LH = { 25, 0, 0 }, LK = { -75, 0, 0 } },
+					trail = "prop", hitText = "PIC PIC !",
+				},
+				-- dash J : elle trottine aiguilles en avant comme une lance de joute, tremblotante
+				P_dash = {
+					label = "Joute au tricot", startup = 0.08, active = 0.18, recovery = 0.26,
+					damage = 8, hitbox = box(7.5, 3, 4.2, 0.4), kbBase = 28, kbGrowth = 50, kbAngle = 24, selfVelocity = Vector2.new(44, 0),
+					windup = { Root = { -8, -14, 0, 0, -0.25, 0.15 }, Waist = { -18, -14, 0 }, Neck = { 22, 12, 0 }, RS = { 50, 0, 20 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -15 }, LE = { 40, 0, 0 } },
+					strike = { Root = { -22, 8, 0, 0, -0.32, -0.3 }, Waist = { -22, 10, 0 }, Neck = { 32, -6, 0 }, RS = { 98, 0, -6 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -20 }, LE = { 20, 0, 0 } },
+					follow = { Root = { -24, 10, 0, 0, -0.34, -0.34 }, Waist = { -24, 12, 0 }, Neck = { 34, -8, 0 }, RS = { 100, 0, -10 }, RE = { 0, 0, 0 }, RW = { -8, 0, 0 }, LS = { 55, 0, -20 }, LE = { 20, 0, 0 } },
+					wobble = true, trail = "prop", fx = { { "particles", tex = "smoke", color = Color3.fromRGB(220, 210, 190), dir = "up", at = "feet", time = 0.3, speed = 5 } }, text = "EN GARDE !", hitText = "TRANSPERCÉ !",
+				},
+				-- K : coup de genou dans le ventre, aiguilles croisées devant elle pour se protéger
+				K_neutral = {
+					label = "Genou de mamie", startup = 0.16, active = 0.1, recovery = 0.28,
+					damage = 10, hitbox = box(4.5, 3.5, 2.5, 0), kbBase = 28, kbGrowth = 64, kbAngle = 40,
+					windup = { Root = { -8, 0, 0, 0, -0.2, 0.1 }, Waist = { -18, 0, 0 }, Neck = { 18, 0, 0 }, RS = { 40, 0, 50 }, RE = { 90, 0, 0 }, RW = { 0, 0, 40 }, LS = { 40, 0, -50 }, LE = { 90, 0, 0 }, RH = { -20, 0, 0 }, RK = { -50, 0, 0 } },
+					strike = { Root = { -6, 0, 0, 0, -0.15, -0.2 }, Waist = { -12, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 50, 0, 50 }, RE = { 90, 0, 0 }, RW = { 0, 0, 40 }, LS = { 50, 0, -50 }, LE = { 90, 0, 0 }, RH = { 100, 0, 0 }, RK = { -110, 0, 0 } },
+					follow = { Root = { -6, 0, 0, 0, -0.15, -0.22 }, Waist = { -12, 0, 0 }, Neck = { 22, 0, 0 }, RS = { 52, 0, 52 }, RE = { 90, 0, 0 }, RW = { 0, 0, 40 }, LS = { 52, 0, -52 }, LE = { 90, 0, 0 }, RH = { 106, 0, 0 }, RK = { -114, 0, 0 } },
+					trail = "rightLeg", hitText = "OUMPF !",
+				},
+				-- →K : coup de pantoufle tendu, les aiguilles levées derrière la tête comme une ballerine
+				K_side = {
+					label = "Pantoufle de ballerine", startup = 0.18, active = 0.12, recovery = 0.3,
+					damage = 12, hitbox = box(5.5, 2.8, 3.2, -0.3), kbBase = 32, kbGrowth = 72, kbAngle = 30, selfVelocity = Vector2.new(18, 0),
+					windup = { Root = { 6, -10, 0, 0, -0.15, 0.2 }, Waist = { -6, -8, 0 }, Neck = { 8, 6, 0 }, RS = { 170, 0, 30 }, RE = { 50, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -30 }, LE = { 40, 0, 0 }, RH = { 60, 0, 0 }, RK = { -110, 0, 0 }, RA = { -10, 0, 0 } },
+					strike = { Root = { 14, 0, 0, 0, -0.1, -0.2 }, Waist = { 4, 0, 0 }, Neck = { -4, 0, 0 }, RS = { 180, 0, 40 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -45 }, LE = { 30, 0, 0 }, RH = { 80, 0, 0 }, RK = { -4, 0, 0 }, RA = { 20, 0, 0 } },
+					follow = { Root = { 16, 0, 0, 0, -0.1, -0.25 }, Waist = { 6, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 184, 0, 44 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 18, 0, -48 }, LE = { 30, 0, 0 }, RH = { 84, 0, 0 }, RK = { 0, 0, 0 }, RA = { 25, 0, 0 } },
+					trail = "rightFoot", hitText = "FLAP !",
+				},
+				-- ↓K : balayette au ras du sol, elle s'appuie sur les aiguilles plantées comme sur une canne
+				K_down = {
+					label = "Balayette tricotée", startup = 0.16, active = 0.14, recovery = 0.3,
+					damage = 10, hitbox = box(7, 2, 3.5, -1.8), kbBase = 28, kbGrowth = 52, kbAngle = 74,
+					windup = { Root = { -10, 20, 0, 0, -0.7, 0.1 }, Waist = { -26, 18, 0 }, Neck = { 22, -14, 0 }, RS = { 60, 0, 20 }, RE = { 60, 0, 0 }, RW = { -20, 0, 0 }, LS = { 20, 0, -30 }, LE = { 60, 0, 0 }, LH = { -30, 0, 0 }, LK = { -40, 0, 0 } },
+					strike = { Root = { -14, -20, 0, 0, -0.85, -0.1 }, Waist = { -30, -24, 0 }, Neck = { 24, 16, 0 }, RS = { 50, 0, 25 }, RE = { 40, 0, 0 }, RW = { -30, 0, 0 }, LS = { 30, 0, -40 }, LE = { 60, 0, 0 }, LH = { 50, 0, -20 }, LK = { -4, 0, 0 }, LA = { 20, 0, 0 } },
+					follow = { Root = { -14, -28, 0, 0, -0.85, -0.14 }, Waist = { -30, -30, 0 }, Neck = { 24, 20, 0 }, RS = { 52, 0, 27 }, RE = { 40, 0, 0 }, RW = { -30, 0, 0 }, LS = { 34, 0, -42 }, LE = { 60, 0, 0 }, LH = { 56, 0, -24 }, LK = { 0, 0, 0 }, LA = { 24, 0, 0 } },
+					trail = "leftFoot", fx = { "dust" }, hitText = "FAUCHÉ !",
+				},
+				-- ↑K : elle plante les aiguilles au sol et s'en sert de barre fixe pour un coup de pied monté
+				K_up = {
+					label = "Barre fixe", startup = 0.18, active = 0.14, recovery = 0.32,
+					damage = 11, hitbox = box(4.5, 6, 1.5, 3.5), kbBase = 30, kbGrowth = 66, kbAngle = 88,
+					windup = { Root = { -10, 0, 0, 0, -0.5, 0.1 }, Waist = { -26, 0, 0 }, Neck = { 24, 0, 0 }, RS = { 70, 0, 10 }, RE = { 20, 0, 0 }, RW = { -40, 0, 0 }, LS = { 30, 0, -25 }, LE = { 50, 0, 0 }, RH = { -20, 0, 0 }, RK = { -60, 0, 0 } },
+					strike = { Root = { -20, 0, 0, 0, -0.3, -0.1 }, Waist = { -28, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 80, 0, 10 }, RE = { 10, 0, 0 }, RW = { -50, 0, 0 }, LS = { 20, 0, -40 }, LE = { 40, 0, 0 }, RH = { 140, 0, 0 }, RK = { -6, 0, 0 }, RA = { 20, 0, 0 } },
+					follow = { Root = { -22, 0, 0, 0, -0.3, -0.12 }, Waist = { -30, 0, 0 }, Neck = { 32, 0, 0 }, RS = { 82, 0, 12 }, RE = { 10, 0, 0 }, RW = { -52, 0, 0 }, LS = { 22, 0, -42 }, LE = { 40, 0, 0 }, RH = { 148, 0, 0 }, RK = { 0, 0, 0 }, RA = { 24, 0, 0 } },
+					trail = "rightFoot", text = "HOP LÀ !", hitText = "AU PLAFOND !",
+				},
+				-- K en l'air : double coup de chaussons en ciseaux, aiguilles tenues contre la poitrine
+				K_air = {
+					label = "Ciseaux de chaussons", startup = 0.12, active = 0.18, recovery = 0.22,
+					damage = 10, hits = 2, hitbox = box(5, 4, 2.5, -0.5), kbBase = 22, kbGrowth = 46, kbAngle = 40,
+					windup = { Root = { -8, 0, 0 }, Waist = { -10, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 40, 0, 20 }, RE = { 120, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -20 }, LE = { 120, 0, 0 }, RH = { 60, 0, 0 }, RK = { -100, 0, 0 }, LH = { -20, 0, 0 }, LK = { -40, 0, 0 } },
+					strike = { Root = { -4, 0, 0 }, Waist = { 4, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 44, 0, 22 }, RE = { 120, 0, 0 }, RW = { 0, 0, 0 }, LS = { 44, 0, -22 }, LE = { 120, 0, 0 }, RH = { 90, 0, 0 }, RK = { -6, 0, 0 }, RA = { 10, 0, 0 }, LH = { 70, 0, 0 }, LK = { -110, 0, 0 } },
+					follow = { Root = { -2, 0, 0 }, Waist = { 6, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 46, 0, 24 }, RE = { 120, 0, 0 }, RW = { 0, 0, 0 }, LS = { 46, 0, -24 }, LE = { 120, 0, 0 }, RH = { 20, 0, 0 }, RK = { -60, 0, 0 }, LH = { 95, 0, 0 }, LK = { -4, 0, 0 }, LA = { 10, 0, 0 } },
+					trail = "bothFeet", hitText = "FLAP FLAP !",
+				},
+				-- dash K : glissade sur une pelote qui roule, aiguilles tendues devant comme une proue
+				K_dash = {
+					label = "Glissade sur pelote", startup = 0.1, active = 0.26, recovery = 0.3,
+					damage = 11, hitbox = box(7, 3, 3.8, -0.6), kbBase = 30, kbGrowth = 64, kbAngle = 38, selfVelocity = Vector2.new(54, 10),
+					windup = { Root = { -8, 0, 0, 0, -0.4, 0 }, Waist = { -16, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 60, 0, 30 }, RE = { 70, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -30 }, LE = { 50, 0, 0 } },
+					strike = { Root = { 16, 0, 0, 0, -0.6, 0.2 }, Waist = { 6, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 100, 0, -4 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, -40 }, LE = { 30, 0, 0 }, RH = { 85, 0, 0 }, RK = { 0, 0, 0 }, RA = { 10, 0, 0 }, LH = { 80, 0, 0 }, LK = { -10, 0, 0 } },
+					follow = { Root = { 20, 0, 0, 0, -0.62, 0.24 }, Waist = { 8, 0, 0 }, Neck = { 18, 0, 0 }, RS = { 102, 0, -8 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 75, 0, -45 }, LE = { 30, 0, 0 }, RH = { 90, 0, 0 }, RK = { 0, 0, 0 }, RA = { 14, 0, 0 }, LH = { 85, 0, 0 }, LK = { -10, 0, 0 } },
+					trail = "prop", fx = { { "toss", shape = "ball", color = WOOL2, size = 1, count = 1, speed = 12 }, "dust" }, hitText = "ROULÉ-PIQUÉ !",
+				},
+				-- L : pelote-boomerang : elle lance la pelote au bout du fil, elle fonce sur l'adversaire, l'entortille et revient
+				S_neutral = {
+					label = "Pelote-boomerang", kind = "projectile", startup = 0.2, active = 0, recovery = 0.42,
+					damage = 13, kbBase = 24, kbGrowth = 42, kbAngle = 30, status = { name = "rooted", duration = 1 },
+					projectile = { speed = 68, angle = 0, gravity = 0, lifetime = 0.9, size = 2, returns = true, color = WOOL,
+						visual = { shape = "ball", size = 1.6, color = WOOL, spin = 12, material = "Fabric", parts = {
+							{ "cyl", Vector3.new(0.12, 1.65, 1.65), Vector3.new(0, 0, 0), Color3.fromRGB(210, 90, 140), "Fabric" },
+						} } },
+					windup = { Root = { -6, -26, 0, 0, -0.22, 0.2 }, Waist = { -12, -30, 0 }, Neck = { 14, 24, 0 }, RS = { 150, 0, 20 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -20 }, LE = { 50, 0, 0 } },
+					strike = { Root = { -12, 18, 0, 0, -0.3, -0.35 }, Waist = { -16, 24, 0 }, Neck = { 20, -16, 0 }, RS = { 96, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -25 }, LE = { 45, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.35 } },
+					follow = { Root = { -12, 22, 0, 0, -0.3, -0.4 }, Waist = { -16, 28, 0 }, Neck = { 22, -20, 0 }, RS = { 90, 0, -6 }, RE = { 10, 0, 0 }, RW = { -10, 0, 0 }, LS = { 18, 0, -27 }, LE = { 45, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.38 } },
+					fx = { { "beam", color = WOOL, length = 12, width = 0.6, at = "hand" } }, text = "ET ÇA REVIENT !", hitText = "EMBOBINÉ !",
+				},
+				-- →L : rang de mailles : trois estocs rapides d'une seule glissade, qui cousent tout le couloir
+				S_side = {
+					label = "Rang de mailles", startup = 0.2, active = 0.3, recovery = 0.45,
+					damage = 5, hits = 3, hitbox = box(14, 4, 7, 0.6), kbBase = 26, kbGrowth = 46, kbAngle = 22, selfVelocity = Vector2.new(30, 0),
+					windup = { Root = { -6, -30, 0, 0, -0.25, 0.3 }, Waist = { -14, -34, 0 }, Neck = { 16, 28, 0 }, RS = { 30, 0, 30 }, RE = { 120, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -20 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -16, 22, 0, 0, -0.4, -0.5 }, Waist = { -20, 28, 0 }, Neck = { 22, -20, 0 }, RS = { 98, 0, -6 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -30, 0, -25 }, LE = { 20, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.6 } },
+					follow = { Root = { -16, 26, 0, 0, -0.42, -0.55 }, Waist = { -20, 32, 0 }, Neck = { 24, -24, 0 }, RS = { 102, 0, -12 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { -35, 0, -28 }, LE = { 20, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.65 } },
+					shake = true, trail = "prop", fx = { { "beam", color = STEEL, length = 14, width = 1, at = "hand" }, { "symbols", symbols = { "✂️", "🧵" }, count = 3, radius = 2.5, at = "front", color = WOOL } },
+					text = "UNE MAILLE À L'ENDROIT…", hitText = "COUSU !",
+				},
+				-- ↓L : fil tendu : elle tend le fil au ras du sol d'un bord à l'autre du couloir, tout le monde se prend les pieds dedans
+				S_down = {
+					label = "Fil tendu", startup = 0.22, active = 0.2, recovery = 0.48,
+					damage = 12, hitbox = box(14, 3, 7, -1.5), kbBase = 24, kbGrowth = 40, kbAngle = 80, status = { name = "rooted", duration = 1.4 },
+					windup = { Root = { -10, 0, 0, 0, -0.6, 0.1 }, Waist = { -28, 0, 0 }, Neck = { 26, 0, 0 }, RS = { 60, 0, 40 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -40 }, LE = { 90, 0, 0 }, LW = { 0, 0, 0 } },
+					strike = { Root = { -16, 0, 0, 0, -0.9, -0.2 }, Waist = { -34, 0, 0 }, Neck = { 32, 0, 0 }, RS = { 40, 0, 80 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -80 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					follow = { Root = { -16, 0, 0, 0, -0.9, -0.24 }, Waist = { -34, 0, 0 }, Neck = { 34, 0, 0 }, RS = { 36, 0, 86 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 36, 0, -86 }, LE = { 0, 0, 0 }, LW = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.32 } },
+					hold = 0.1, trail = "bothHands", fx = { { "beam", color = Color3.fromRGB(210, 90, 140), length = 14, width = 0.5, at = "feet" }, { "ring", color = WOOL, radius = 5, at = "feet" } },
+					text = "ATTENTION AU FIL !", hitText = "LES PIEDS DANS LE FIL !",
+				},
+				-- ↑L : aiguilles-hélice : elle fait tourner les deux aiguilles au-dessus du chignon comme un rotor et décolle en diagonale
+				S_up = {
+					label = "Aiguilles-hélice", startup = 0.12, active = 0.32, recovery = 0.42,
+					damage = 14, hitbox = box(10, 11, 3, 4), kbBase = 34, kbGrowth = 56, kbAngle = 74, selfVelocity = Vector2.new(42, 82),
+					windup = { Root = { -8, 0, 0, 0, -0.65, 0.1 }, Waist = { -26, 0, 0 }, Neck = { 26, 0, 0 }, RS = { 60, 0, 20 }, RE = { 120, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -20 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -42, 0, 0, 0, 0.4, -0.2 }, Waist = { -6, 0, 0 }, Neck = { 34, 0, 0 }, RS = { 182, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 120, 0, -60 }, LE = { 30, 0, 0 }, RH = { -25, 0, 6 }, RK = { -30, 0, 0 }, LH = { -15, 0, -6 }, LK = { -45, 0, 0 } },
+					follow = { Root = { -46, 0, 0, 0, 0.45, -0.25 }, Waist = { -8, 0, 0 }, Neck = { 36, 0, 0 }, RS = { 186, 0, 14 }, RE = { 0, 0, 0 }, RW = { -8, 0, 0 }, LS = { 125, 0, -65 }, LE = { 30, 0, 0 }, RH = { -30, 0, 8 }, RK = { -35, 0, 0 }, LH = { -20, 0, -8 }, LK = { -50, 0, 0 } },
+					spin = { axis = "y", degrees = 720 }, trail = "prop", fx = { { "ring", color = STEEL, radius = 5, at = "above" }, { "burst", color = WOOL, size = 3, at = "feet" }, { "particles", tex = "smoke", color = SHAWL, dir = "down", at = "feet", time = 0.4, speed = 12 } },
+					text = "VROUM VROUM !", hitText = "HACHÉ MENU !",
+				},
+				-- L en l'air : pluie d'épingles : elle secoue sa boîte à couture au-dessus de l'adversaire
+				S_air = {
+					label = "Pluie d'épingles", kind = "projectile", startup = 0.15, active = 0, recovery = 0.4,
+					damage = 5, kbBase = 22, kbGrowth = 42, kbAngle = -45,
+					projectile = { speed = 60, angle = -70, gravity = 40, lifetime = 0.7, size = 1.1, color = STEEL, rain = { count = 5, spread = 6 },
+						visual = { shape = "block", size = 0.7, color = STEEL, spin = 10, parts = { { "ball", Vector3.new(0.3, 0.3, 0.3), Vector3.new(0, 0.4, 0), WOOL } } } },
+					windup = { Root = { 10, 0, 0 }, Waist = { 14, 0, 0 }, Neck = { 0, 0, 0 }, RS = { 170, 0, 20 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 170, 0, -20 }, LE = { 60, 0, 0 }, RH = { 40, 0, 0 }, RK = { -80, 0, 0 }, LH = { 50, 0, 0 }, LK = { -90, 0, 0 } },
+					strike = { Root = { -14, 0, 0 }, Waist = { -28, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 30, 0, 10 }, RE = { 0, 0, 0 }, RW = { -40, 0, 0 }, LS = { 30, 0, -10 }, LE = { 0, 0, 0 }, LW = { -40, 0, 0 }, RH = { 20, 0, 0 }, RK = { -40, 0, 0 }, LH = { 30, 0, 0 }, LK = { -60, 0, 0 } },
+					follow = { Root = { -18, 0, 0 }, Waist = { -32, 0, 0 }, Neck = { 34, 0, 0 }, RS = { 24, 0, 12 }, RE = { 4, 0, 0 }, RW = { -50, 0, 0 }, LS = { 24, 0, -12 }, LE = { 4, 0, 0 }, LW = { -50, 0, 0 }, RH = { 16, 0, 0 }, RK = { -36, 0, 0 }, LH = { 26, 0, 0 }, LK = { -56, 0, 0 } },
+					shake = true, fx = { { "burst", color = STEEL, size = 2, at = "feet" } }, text = "OUPS, MA BOÎTE !", hitText = "PIQUÉ DE PARTOUT !",
+				},
+				-- Y : le pull en une seconde : elle tricote à la vitesse de la lumière un pull géant qui engloutit tout le couloir
+				SUPER = {
+					label = "Pull en une seconde !", startup = 0.4, active = 0.3, recovery = 0.7,
+					damage = 22, hitbox = box(16, 7, 8, 1.5), kbBase = 40, kbGrowth = 86, kbAngle = 40, status = { name = "rooted", duration = 2 },
+					windup = { Root = { -8, 0, 0, 0, -0.3, 0.1 }, Waist = { -20, 0, 0 }, Neck = { 28, 0, 0 }, RS = { 50, 0, -15 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, 15 }, LE = { 110, 0, 0 }, LW = { 0, 0, 0 } },
+					strike = { Root = { -16, 0, 0, 0, -0.35, -0.4 }, Waist = { -22, 0, 0 }, Neck = { 24, 0, 0 }, RS = { 96, 0, 50 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 96, 0, -50 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { -18, 0, 0, 0, -0.38, -0.45 }, Waist = { -24, 0, 0 }, Neck = { 26, 0, 0 }, RS = { 100, 0, 60 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 100, 0, -60 }, LE = { 0, 0, 0 }, LW = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+					hold = 0.2, shake = true, trail = "bothHands", windupFx = { "super", { "particles", tex = "spark", color = WOOL, dir = "all", at = "hand", time = 0.4, speed = 8 }, { "symbols", symbols = { "🧶", "🧶", "🧥" }, count = 5, radius = 3, color = WOOL } },
+					fx = { { "burst", color = Color3.fromRGB(200, 30, 40), size = 5, at = "front" }, { "beam", color = Color3.fromRGB(200, 30, 40), length = 16, width = 6, at = "feet" }, { "shake", amount = 0.4 } },
+					text = "UNE SECONDE, MON PETIT !", hitText = "EMMAILLOTÉ !",
+				},
+				-- →Y : point de croix géant : les deux aiguilles partent comme des javelots croisés, traversent tout le monde et reviennent dans sa main
+				SUPER_side = {
+					label = "Point de croix géant !", kind = "projectile", startup = 0.4, active = 0, recovery = 0.7,
+					damage = 26, kbBase = 48, kbGrowth = 96, kbAngle = 28,
+					projectile = { speed = 92, angle = 0, gravity = 0, lifetime = 1.0, size = 3, pierce = true, returns = true, color = STEEL,
+						visual = { shape = "block", size = 1, color = STEEL, spin = 16, parts = {
+							{ "block", Vector3.new(5, 0.16, 0.16), Vector3.new(0, 0, 0), STEEL, "Metal" },
+							{ "block", Vector3.new(0.16, 5, 0.16), Vector3.new(0, 0, 0), STEEL, "Metal" },
+							{ "ball", Vector3.new(0.5, 0.5, 0.5), Vector3.new(0, 2.5, 0), WOOL },
+							{ "ball", Vector3.new(0.5, 0.5, 0.5), Vector3.new(2.5, 0, 0), WOOL2 },
+						} } },
+					hideProp = "aiguillesgeantes",
+					windup = { Root = { -8, -34, 0, 0, -0.3, 0.3 }, Waist = { -16, -38, 0 }, Neck = { 18, 30, 0 }, RS = { 160, 0, 30 }, RE = { 80, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -25 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -18, 24, 0, 0, -0.35, -0.5 }, Waist = { -22, 30, 0 }, Neck = { 24, -20, 0 }, RS = { 98, 0, -4 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -30, 0, -30 }, LE = { 30, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+					follow = { Root = { -20, 28, 0, 0, -0.38, -0.55 }, Waist = { -24, 34, 0 }, Neck = { 26, -24, 0 }, RS = { 102, 0, -8 }, RE = { 4, 0, 0 }, RW = { 6, 0, 0 }, LS = { -35, 0, -32 }, LE = { 30, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.52 } },
+					windupFx = { "super", { "symbols", symbols = { "✚", "🪡" }, count = 4, radius = 2.5, color = WOOL } }, fx = { { "burst", color = STEEL, size = 3.5, at = "hand" }, { "beam", color = STEEL, length = 10, width = 1.2, at = "hand" }, { "shake", amount = 0.35 } },
+					text = "POINT DE CROIX !", hitText = "TRANSPERCÉ DEUX FOIS !",
+				},
+				-- ↑Y : tornade de laine : elle tourne si vite que la laine s'enroule en tornade autour d'elle et emporte tout le monde au plafond
+				SUPER_up = {
+					label = "Tornade de laine !", startup = 0.35, active = 0.35, recovery = 0.7,
+					damage = 24, hitbox = box(16, 13, 8, 5), kbBase = 46, kbGrowth = 94, kbAngle = 86, invuln = 0.3, selfVelocity = Vector2.new(0, 56),
+					windup = { Root = { -10, 0, 0, 0, -0.9, 0 }, Waist = { -30, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 40, 0, 40 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -40 }, LE = { 110, 0, 0 } },
+					strike = { Root = { 6, 0, 0, 0, 0.5, 0 }, Waist = { 14, 0, 0 }, Neck = { 46, 0, 0 }, RS = { 186, 0, 20 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 100, 0, -90 }, LE = { 0, 0, 0 }, RH = { 40, 0, 10 }, RK = { -90, 0, 0 }, LH = { 20, 0, -15 }, LK = { -60, 0, 0 } },
+					follow = { Root = { 10, 0, 0, 0, 0.55, 0 }, Waist = { 20, 0, 0 }, Neck = { 50, 0, 0 }, RS = { 188, 0, 24 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 104, 0, -94 }, LE = { 0, 0, 0 }, RH = { 60, 0, 20 }, RK = { -110, 0, 0 }, LH = { 10, 0, -25 }, LK = { -40, 0, 0 } },
+					hold = 0.2, spin = { axis = "y", degrees = 1080 }, trail = "prop",
+					windupFx = { "super", { "symbols", symbols = { "🧶", "🌪️" }, count = 5, radius = 3, color = WOOL2 } }, fx = { { "pillar", color = WOOL, height = 22, width = 4, at = "front" }, { "swarm", shape = "ball", color = WOOL2, count = 8, distance = 10 }, { "ring", color = WOOL, radius = 6, at = "feet" }, { "shake", amount = 0.4 } },
+					text = "TORNADE DE LAINE !", hitText = "ENROULÉ AU PLAFOND !",
+				},
+				-- ↓Y : le grand reprisage : elle pique le sol à toute vitesse et un tapis de mailles se tend sur tout le couloir, tout le monde s'y englue
+				SUPER_down = {
+					label = "Le grand reprisage !", startup = 0.4, active = 0.35, recovery = 0.7,
+					damage = 22, hitbox = box(16, 5, 8, -0.5), kbBase = 42, kbGrowth = 88, kbAngle = 60, status = { name = "slowed", duration = 2.5 },
+					windup = { Root = { -12, 0, 0, 0, -0.7, 0.1 }, Waist = { -30, 0, 0 }, Neck = { 28, 0, 0 }, RS = { 140, 0, 20 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -25 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -18, 10, 0, 0, -1.0, -0.3 }, Waist = { -34, 10, 0 }, Neck = { 30, -6, 0 }, RS = { 40, 0, 10 }, RE = { 0, 0, 0 }, RW = { -40, 0, 0 }, LS = { 40, 0, -30 }, LE = { 50, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { -18, -10, 0, 0, -1.0, -0.34 }, Waist = { -34, -10, 0 }, Neck = { 30, 6, 0 }, RS = { 36, 0, 40 }, RE = { 0, 0, 0 }, RW = { -40, 0, 0 }, LS = { 40, 0, -30 }, LE = { 50, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+					hold = 0.15, wobble = true, trail = "prop", windupFx = { "super", { "symbols", symbols = { "🧵", "🧶" }, count = 5, radius = 3, color = WOOL } },
+					fx = { { "beam", color = WOOL, length = 16, width = 4, at = "feet" }, { "puddle", color = WOOL, width = 12 }, { "toss", shape = "ball", color = WOOL2, size = 0.8, count = 6, speed = 20 }, { "shake", amount = 0.4 } },
+					text = "ON REPRISE TOUT ÇA !", hitText = "ENGLUÉ DANS LES MAILLES !",
+				},
+			},
+			links = {
+				P_neutral = { P = "P_side", K = "K_neutral", S = "S_side" },
+				P_side = { P = "P_up", K = "K_side", S = "S_neutral" },
+				P_down = { P = "P_up", K = "K_down", S = "S_down" },
+				K_neutral = { P = "P_neutral", K = "K_side", S = "S_neutral" },
+				K_side = { P = "P_up", K = "K_up", S = "S_side" },
+				P_dash = { P = "P_side", K = "K_side", S = "S_side" },
+				K_dash = { P = "P_up", S = "S_up" },
+			},
+		},
+		{ id = "fer_a_repasser", name = "Fer à repasser à vapeur", icon = "♨️",
+			prop = { name = "PropFer", hand = "Right", pieces = {
+				{ "Poignee", "", "block", Vector3.new(0.3, 0.9, 0.3), Vector3.new(0, -0.45, 0), Vector3.zero, FER, "SmoothPlastic" },
+				{ "Corps", "", "block", Vector3.new(1.2, 0.7, 2.0), Vector3.new(0, -1.25, -0.2), Vector3.zero, FER_BLEU, "SmoothPlastic" },
+				{ "Semelle", "", "wedge", Vector3.new(1.3, 0.25, 2.3), Vector3.new(0, -1.72, -0.25), Vector3.new(0, 180, 0), STEEL, "Metal", { reflect = 0.3 } },
+				{ "Cadran", "", "ball", Vector3.new(0.35, 0.35, 0.2), Vector3.new(0, -0.95, -0.95), Vector3.zero, SLIPPER, "SmoothPlastic" },
+				{ "Cordon", "", "cyl", Vector3.new(1.6, 0.08, 0.08), Vector3.new(0, -1.1, 1.3), Vector3.new(35, 0, 0), FER, "SmoothPlastic" },
+			} },
+			ability = { knockback = 1.2, status = { name = "slowed", duration = 1.5 }, text = "Éjecte 20 % plus loin ; les L repassent à plat (ralentis)" },
+			moves = {
+				-- J : coup de fer à plat sur la figure, lent mais bien appuyé, comme sur un col de chemise
+				P_neutral = {
+					label = "Coup de fer", startup = 0.12, active = 0.1, recovery = 0.24,
+					damage = 8, hitbox = box(4.5, 3.5, 2.8, 0.6), kbBase = 24, kbGrowth = 30, kbAngle = 30,
+					windup = { Root = { -6, -18, 0, 0, -0.2, 0.15 }, Waist = { -14, -24, 0 }, Neck = { 14, 18, 0 }, RS = { 60, 0, 40 }, RE = { 100, 0, 0 }, RW = { -60, 0, 0 }, LS = { 25, 0, -15 }, LE = { 45, 0, 0 } },
+					strike = { Root = { -12, 16, 0, 0, -0.3, -0.3 }, Waist = { -18, 22, 0 }, Neck = { 18, -14, 0 }, RS = { 96, 0, 0 }, RE = { 6, 0, 0 }, RW = { -85, 0, 0 }, LS = { 10, 0, -22 }, LE = { 40, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.35 } },
+					follow = { Root = { -14, 20, 0, 0, -0.32, -0.36 }, Waist = { -20, 26, 0 }, Neck = { 20, -18, 0 }, RS = { 100, 0, -4 }, RE = { 10, 0, 0 }, RW = { -90, 0, 0 }, LS = { 8, 0, -24 }, LE = { 40, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.38 } },
+					trail = "prop", fx = { { "particles", tex = "smoke", color = STEAM, dir = "front", at = "hand", time = 0.2, speed = 6 } }, hitText = "PSSCHH !",
+				},
+				-- →J : repassage en avant : elle pousse le fer à plat devant elle comme sur une planche, en avançant d'un pas
+				P_side = {
+					label = "Repassage en avant", startup = 0.14, active = 0.14, recovery = 0.26,
+					damage = 10, hitbox = box(6.5, 3, 3.5, 0.2), kbBase = 26, kbGrowth = 44, kbAngle = 24, selfVelocity = Vector2.new(16, 0),
+					windup = { Root = { -10, -10, 0, 0, -0.3, 0.15 }, Waist = { -24, -12, 0 }, Neck = { 22, 10, 0 }, RS = { 40, 0, 10 }, RE = { 90, 0, 0 }, RW = { -70, 0, 0 }, LS = { 30, 0, -20 }, LE = { 50, 0, 0 } },
+					strike = { Root = { -18, 10, 0, 0, -0.45, -0.4 }, Waist = { -32, 12, 0 }, Neck = { 30, -8, 0 }, RS = { 70, 0, 0 }, RE = { 0, 0, 0 }, RW = { -90, 0, 0 }, LS = { -10, 0, -25 }, LE = { 30, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+					follow = { Root = { -20, 12, 0, 0, -0.48, -0.5 }, Waist = { -34, 14, 0 }, Neck = { 32, -10, 0 }, RS = { 80, 0, -4 }, RE = { 0, 0, 0 }, RW = { -90, 0, 0 }, LS = { -15, 0, -28 }, LE = { 30, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.55 } },
+					trail = "prop", fx = { { "particles", tex = "smoke", color = STEAM, dir = "front", at = "hand", time = 0.25, speed = 8 } }, text = "BIEN À PLAT !", hitText = "REPASSÉ !",
+				},
+				-- ↓J : accroupie, elle pose le fer brûlant sur les orteils de l'adversaire et appuie
+				P_down = {
+					label = "Fer sur les orteils", startup = 0.14, active = 0.12, recovery = 0.26,
+					damage = 9, hitbox = box(5, 2.5, 2.5, -1.6), kbBase = 26, kbGrowth = 40, kbAngle = 80,
+					windup = { Root = { -8, 0, 0, 0, -0.3, 0.1 }, Waist = { -20, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 150, 0, 10 }, RE = { 40, 0, 0 }, RW = { -40, 0, 0 }, LS = { 30, 0, -25 }, LE = { 50, 0, 0 } },
+					strike = { Root = { -16, 0, 0, 0, -0.9, -0.2 }, Waist = { -32, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 40, 0, 10 }, RE = { 0, 0, 0 }, RW = { -70, 0, 0 }, LS = { 40, 0, -30 }, LE = { 50, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					follow = { Root = { -16, 0, 0, 0, -0.92, -0.24 }, Waist = { -32, 0, 0 }, Neck = { 32, 0, 0 }, RS = { 36, 0, 12 }, RE = { 0, 0, 0 }, RW = { -72, 0, 0 }, LS = { 40, 0, -32 }, LE = { 50, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.32 } },
+					hold = 0.08, fx = { "thud", { "particles", tex = "smoke", color = STEAM, dir = "up", at = "hand", time = 0.3, speed = 6 } }, hitText = "ÇA SENT LE ROUSSI !",
+				},
+				-- ↑J : elle soulève le fer à deux mains, semelle vers le ciel, sous le menton
+				P_up = {
+					label = "Semelle au menton", startup = 0.14, active = 0.12, recovery = 0.26,
+					damage = 9, hitbox = box(4.5, 5.5, 1.5, 3), kbBase = 26, kbGrowth = 46, kbAngle = 86,
+					windup = { Root = { -8, 0, 0, 0, -0.4, 0.1 }, Waist = { -22, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 30, 0, 10 }, RE = { 120, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -10 }, LE = { 120, 0, 0 }, LW = { 0, 0, 0 } },
+					strike = { Root = { 2, 0, 0, 0, 0.1, -0.1 }, Waist = { 6, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 176, 0, 8 }, RE = { 6, 0, 0 }, RW = { 0, 0, 0 }, LS = { 176, 0, -8 }, LE = { 6, 0, 0 }, LW = { 0, 0, 0 } },
+					follow = { Root = { 4, 0, 0, 0, 0.14, -0.12 }, Waist = { 8, 0, 0 }, Neck = { 34, 0, 0 }, RS = { 182, 0, 10 }, RE = { 6, 0, 0 }, RW = { -10, 0, 0 }, LS = { 182, 0, -10 }, LE = { 6, 0, 0 }, LW = { 0, 0, 0 } },
+					trail = "prop", hitText = "KLONK !",
+				},
+				-- J en l'air : fer plongeant : elle laisse tomber le fer sous elle, les chats en parachute
+				P_air = {
+					label = "Fer plongeant", startup = 0.12, active = 0.14, recovery = 0.2,
+					damage = 10, hitbox = box(4.5, 4, 1, -1.8), kbBase = 24, kbGrowth = 42, kbAngle = -50,
+					windup = { Root = { 8, 0, 0 }, Waist = { 12, 0, 0 }, Neck = { 0, 0, 0 }, RS = { 185, 0, 10 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, -40 }, LE = { 40, 0, 0 }, RH = { 40, 0, 0 }, RK = { -80, 0, 0 }, LH = { 60, 0, 0 }, LK = { -90, 0, 0 } },
+					strike = { Root = { -12, 0, 0 }, Waist = { -28, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 30, 0, 5 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 140, 0, -60 }, LE = { 30, 0, 0 }, RH = { 15, 0, 0 }, RK = { -35, 0, 0 }, LH = { 35, 0, 0 }, LK = { -70, 0, 0 } },
+					follow = { Root = { -16, 0, 0 }, Waist = { -32, 0, 0 }, Neck = { 32, 0, 0 }, RS = { 14, 0, 5 }, RE = { 8, 0, 0 }, RW = { -20, 0, 0 }, LS = { 144, 0, -64 }, LE = { 30, 0, 0 }, RH = { 5, 0, 0 }, RK = { -30, 0, 0 }, LH = { 30, 0, 0 }, LK = { -65, 0, 0 } },
+					trail = "prop", fx = { { "symbols", symbols = { "🐈", "🪂" }, count = 2, radius = 1.5, at = "above", color = MINOU } }, hitText = "BLAM !",
+				},
+				-- dash J : pli du pantalon : elle fonce fer en avant, semelle fumante, pour marquer un pli bien net
+				P_dash = {
+					label = "Pli du pantalon", startup = 0.1, active = 0.2, recovery = 0.3,
+					damage = 11, hitbox = box(6, 4, 3, 0.4), kbBase = 30, kbGrowth = 56, kbAngle = 28, selfVelocity = Vector2.new(46, 0), armor = true,
+					windup = { Root = { -10, -16, 0, 0, -0.25, 0.2 }, Waist = { -22, -18, 0 }, Neck = { 22, 14, 0 }, RS = { 60, 0, 20 }, RE = { 100, 0, 0 }, RW = { -60, 0, 0 }, LS = { 40, 0, -20 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -22, 8, 0, 0, -0.32, -0.3 }, Waist = { -24, 10, 0 }, Neck = { 32, -6, 0 }, RS = { 94, 0, 0 }, RE = { 10, 0, 0 }, RW = { -90, 0, 0 }, LS = { 50, 0, -20 }, LE = { 20, 0, 0 } },
+					follow = { Root = { -24, 10, 0, 0, -0.34, -0.34 }, Waist = { -26, 12, 0 }, Neck = { 34, -8, 0 }, RS = { 98, 0, -4 }, RE = { 10, 0, 0 }, RW = { -90, 0, 0 }, LS = { 55, 0, -20 }, LE = { 20, 0, 0 } },
+					trail = "prop", fx = { { "particles", tex = "smoke", color = STEAM, dir = "front", at = "hand", time = 0.4, speed = 10 }, "dust" }, text = "UN PLI BIEN NET !", hitText = "PLIÉ !",
+				},
+				-- K : coup de pied dans le fer posé par terre, qui glisse sur sa semelle vers l'adversaire
+				K_neutral = {
+					label = "Fer glissé", startup = 0.2, active = 0.18, recovery = 0.34,
+					damage = 12, hitbox = box(8, 3, 4.5, -1), kbBase = 32, kbGrowth = 70, kbAngle = 30,
+					windup = { Root = { -8, -10, 0, 0, -0.2, 0.1 }, Waist = { -18, -8, 0 }, Neck = { 18, 6, 0 }, RS = { 40, 0, 30 }, RE = { 60, 0, 0 }, RW = { -30, 0, 0 }, LS = { 50, 0, -40 }, LE = { 55, 0, 0 }, RH = { -30, 0, 0 }, RK = { -60, 0, 0 } },
+					strike = { Root = { 2, 0, 0, 0, -0.12, 0.05 }, Waist = { -6, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 60, 0, 55 }, RE = { 30, 0, 0 }, RW = { -30, 0, 0 }, LS = { 70, 0, -55 }, LE = { 30, 0, 0 }, RH = { 92, 0, 0 }, RK = { -4, 0, 0 }, RA = { 10, 0, 0 } },
+					follow = { Root = { 4, 0, 0, 0, -0.12, 0.1 }, Waist = { -4, 0, 0 }, Neck = { 22, 0, 0 }, RS = { 64, 0, 60 }, RE = { 25, 0, 0 }, RW = { -30, 0, 0 }, LS = { 74, 0, -60 }, LE = { 25, 0, 0 }, RH = { 100, 0, 0 }, RK = { 0, 0, 0 }, RA = { 15, 0, 0 } },
+					trail = "rightFoot", fx = { { "particles", tex = "smoke", color = STEAM, dir = "front", at = "feet", time = 0.3, speed = 12 }, "dust" }, hitText = "SKRIIII !",
+				},
+				-- →K : coup de pantoufle sauté, le fer serré contre elle en bouclier
+				K_side = {
+					label = "Pantoufle blindée", startup = 0.18, active = 0.14, recovery = 0.32,
+					damage = 13, hitbox = box(6, 3.5, 3.5, 0.3), kbBase = 34, kbGrowth = 74, kbAngle = 34, selfVelocity = Vector2.new(24, 16),
+					windup = { Root = { -6, -10, 0, 0, -0.2, 0.1 }, Waist = { -14, -8, 0 }, Neck = { 14, 0, 0 }, RS = { 60, 0, 10 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -10 }, LE = { 110, 0, 0 }, RH = { -20, 0, 10 }, RK = { -50, 0, 0 } },
+					strike = { Root = { 8, 0, 0, 0, 0.1, -0.1 }, Waist = { 6, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 70, 0, 10 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, -10 }, LE = { 100, 0, 0 }, RH = { 100, 0, 10 }, RK = { -6, 0, 0 }, RA = { 10, 0, 0 }, LH = { -20, 0, 0 }, LK = { -60, 0, 0 } },
+					follow = { Root = { 10, 0, 0, 0, 0.12, -0.14 }, Waist = { 8, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 74, 0, 12 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 74, 0, -12 }, LE = { 100, 0, 0 }, RH = { 108, 0, 12 }, RK = { 0, 0, 0 }, RA = { 14, 0, 0 }, LH = { -24, 0, 0 }, LK = { -64, 0, 0 } },
+					trail = "rightFoot", hitText = "VLAN !",
+				},
+				-- ↓K : elle s'assoit sur le fer encore chaud (« ouille ! ») et balaie des deux chaussons
+				K_down = {
+					label = "Assise sur le fer", startup = 0.16, active = 0.16, recovery = 0.34,
+					damage = 10, hitbox = box(7, 2.2, 3.5, -1.6), kbBase = 28, kbGrowth = 52, kbAngle = 76,
+					windup = { Root = { -6, 0, 0, 0, -0.5, 0.1 }, Waist = { -16, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 40, 0, 30 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -30 }, LE = { 60, 0, 0 }, RH = { 40, 0, 0 }, RK = { -60, 0, 0 }, LH = { 40, 0, 0 }, LK = { -60, 0, 0 } },
+					strike = { Root = { 14, 0, 0, 0, -0.75, -0.15 }, Waist = { 10, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 50, 0, 40 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -40 }, LE = { 30, 0, 0 }, RH = { 90, 0, 10 }, RK = { -4, 0, 0 }, RA = { 20, 0, 0 }, LH = { 90, 0, -10 }, LK = { -4, 0, 0 }, LA = { 20, 0, 0 } },
+					follow = { Root = { 16, 0, 0, 0, -0.78, -0.18 }, Waist = { 12, 0, 0 }, Neck = { 34, 0, 0 }, RS = { 54, 0, 44 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 54, 0, -44 }, LE = { 30, 0, 0 }, RH = { 96, 0, 12 }, RK = { 0, 0, 0 }, RA = { 24, 0, 0 }, LH = { 96, 0, -12 }, LK = { 0, 0, 0 }, LA = { 24, 0, 0 } },
+					trail = "bothFeet", fx = { "dust", { "text", text = "OUILLE !", color = SLIPPER, at = "head" } }, hitText = "FAUCHÉ !",
+				},
+				-- ↑K : elle balance le fer en l'air comme un haltère et le suit d'un coup de chausson monté
+				K_up = {
+					label = "Haltère de mamie", startup = 0.18, active = 0.14, recovery = 0.34,
+					damage = 12, hitbox = box(5, 6, 1.5, 3.5), kbBase = 32, kbGrowth = 68, kbAngle = 88,
+					windup = { Root = { -10, 0, 0, 0, -0.35, 0.1 }, Waist = { -24, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 60, 0, 10 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -20 }, LE = { 60, 0, 0 }, RH = { -20, 0, 0 }, RK = { -60, 0, 0 } },
+					strike = { Root = { -14, 0, 0, 0, 0.05, -0.1 }, Waist = { -18, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 170, 0, 10 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -40 }, LE = { 40, 0, 0 }, RH = { 140, 0, 0 }, RK = { -6, 0, 0 }, RA = { 20, 0, 0 } },
+					follow = { Root = { -16, 0, 0, 0, 0.08, -0.12 }, Waist = { -20, 0, 0 }, Neck = { 34, 0, 0 }, RS = { 176, 0, 12 }, RE = { 10, 0, 0 }, RW = { -10, 0, 0 }, LS = { 22, 0, -42 }, LE = { 40, 0, 0 }, RH = { 148, 0, 0 }, RK = { 0, 0, 0 }, RA = { 24, 0, 0 } },
+					trail = "rightFoot", text = "ET UN, ET DEUX !", hitText = "ET HOP !",
+				},
+				-- K en l'air : coup de la pointe du chausson, le fer calé sous le bras comme un pain
+				K_air = {
+					label = "Chausson sous le fer", startup = 0.12, active = 0.14, recovery = 0.22,
+					damage = 11, hitbox = box(5.5, 3.5, 3, -0.5), kbBase = 26, kbGrowth = 52, kbAngle = 40,
+					windup = { Root = { -8, 0, 0 }, Waist = { -12, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 20, 0, 20 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 120, 0, -30 }, LE = { 40, 0, 0 }, RH = { -20, 0, 0 }, RK = { -40, 0, 0 }, LH = { 50, 0, 0 }, LK = { -90, 0, 0 } },
+					strike = { Root = { 8, 0, 0 }, Waist = { 4, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 20, 0, 20 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 130, 0, -40 }, LE = { 30, 0, 0 }, RH = { 95, 0, 0 }, RK = { -4, 0, 0 }, RA = { 20, 0, 0 }, LH = { 10, 0, 0 }, LK = { -60, 0, 0 } },
+					follow = { Root = { 10, 0, 0 }, Waist = { 6, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 20, 0, 20 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 134, 0, -44 }, LE = { 30, 0, 0 }, RH = { 100, 0, 0 }, RK = { 0, 0, 0 }, RA = { 24, 0, 0 }, LH = { 6, 0, 0 }, LK = { -56, 0, 0 } },
+					trail = "rightFoot", hitText = "TOC !",
+				},
+				-- dash K : elle surfe sur le fer à plat, chaussons sur la poignée, dans une traînée de vapeur
+				K_dash = {
+					label = "Surf sur le fer", startup = 0.12, active = 0.3, recovery = 0.34,
+					damage = 13, hitbox = box(6, 4, 3, -0.5), kbBase = 32, kbGrowth = 68, kbAngle = 40, selfVelocity = Vector2.new(50, 14), armor = true,
+					windup = { Root = { -8, 0, 0, 0, -0.4, 0 }, Waist = { -18, 0, 0 }, Neck = { 18, 0, 0 }, RS = { 60, 0, 30 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -30 }, LE = { 60, 0, 0 } },
+					strike = { Root = { 10, 20, 0, 0, 0.3, 0.1 }, Waist = { 4, 10, 0 }, Neck = { 16, -10, 0 }, RS = { 100, 0, 70 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 100, 0, -70 }, LE = { 10, 0, 0 }, RH = { 30, 0, 25 }, RK = { -40, 0, 0 }, LH = { 30, 0, -25 }, LK = { -40, 0, 0 } },
+					follow = { Root = { 14, 24, 0, 0, 0.32, 0.14 }, Waist = { 6, 12, 0 }, Neck = { 18, -12, 0 }, RS = { 104, 0, 74 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 104, 0, -74 }, LE = { 10, 0, 0 }, RH = { 34, 0, 28 }, RK = { -44, 0, 0 }, LH = { 34, 0, -28 }, LK = { -44, 0, 0 } },
+					trail = "body", fx = { { "particles", tex = "smoke", color = STEAM, dir = "front", at = "feet", time = 0.5, speed = 14 }, "dust" }, text = "COWABUNGA !", hitText = "SURFÉ !",
+				},
+				-- L : jet de vapeur : elle appuie sur le bouton et le fer crache un nuage brûlant sur tout le couloir
+				S_neutral = {
+					label = "Jet de vapeur", startup = 0.24, active = 0.3, recovery = 0.5,
+					damage = 14, hitbox = box(14, 5, 7, 1), kbBase = 30, kbGrowth = 52, kbAngle = 30, status = { name = "wet", duration = 2 },
+					windup = { Root = { -8, -16, 0, 0, -0.25, 0.15 }, Waist = { -18, -20, 0 }, Neck = { 20, 14, 0 }, RS = { 60, 0, 10 }, RE = { 100, 0, 0 }, RW = { -40, 0, 0 }, LS = { 50, 0, -10 }, LE = { 110, 0, 0 } },
+					strike = { Root = { -14, 14, 0, 0, -0.32, -0.3 }, Waist = { -20, 18, 0 }, Neck = { 22, -10, 0 }, RS = { 94, 0, 4 }, RE = { 10, 0, 0 }, RW = { -90, 0, 0 }, LS = { 80, 0, -8 }, LE = { 20, 0, 0 }, LW = { 30, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { -16, 16, 0, 0, -0.34, -0.34 }, Waist = { -22, 20, 0 }, Neck = { 24, -12, 0 }, RS = { 98, 0, 6 }, RE = { 10, 0, 0 }, RW = { -92, 0, 0 }, LS = { 84, 0, -10 }, LE = { 20, 0, 0 }, LW = { 30, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+					hold = 0.15, shake = true, fx = { { "beam", color = STEAM, length = 14, width = 3, at = "hand" }, { "particles", tex = "smoke", color = STEAM, dir = "front", at = "hand", time = 0.45, speed = 22, size = 1.2, rate = 90 } },
+					text = "PSSSCHHHH !", hitText = "ÉBOUILLANTÉ !",
+				},
+				-- →L : fer lancé : elle balance le fer au bout du cordon comme un fléau, il file droit sur l'adversaire
+				S_side = {
+					label = "Fer au bout du cordon", kind = "projectile", startup = 0.26, active = 0, recovery = 0.55,
+					damage = 17, kbBase = 36, kbGrowth = 66, kbAngle = 32,
+					projectile = { speed = 72, angle = 0, gravity = 0, lifetime = 0.75, size = 2.4, color = FER_BLEU, spin = 10,
+						visual = { shape = "block", size = 1.6, color = FER_BLEU, spin = 10, parts = {
+							{ "wedge", Vector3.new(1.3, 0.3, 2.3), Vector3.new(0, -0.45, 0), STEEL, "Metal" },
+							{ "block", Vector3.new(0.3, 0.8, 0.3), Vector3.new(0, 0.7, 0), FER, "SmoothPlastic" },
+						} } },
+					hideProp = "fer",
+					windup = { Root = { -8, -34, 0, 0, -0.25, 0.3 }, Waist = { -18, -38, 0 }, Neck = { 20, 26, 0 }, RS = { 160, 0, 40 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -25 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -16, 22, 0, 0, -0.36, -0.45 }, Waist = { -22, 28, 0 }, Neck = { 24, -16, 0 }, RS = { 94, 0, 4 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -25 }, LE = { 45, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+					follow = { Root = { -18, 26, 0, 0, -0.38, -0.5 }, Waist = { -24, 32, 0 }, Neck = { 26, -18, 0 }, RS = { 98, 0, 6 }, RE = { 4, 0, 0 }, RW = { 6, 0, 0 }, LS = { 18, 0, -27 }, LE = { 45, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.52 } },
+					fx = { { "burst", color = STEAM, size = 2.5, at = "hand" }, { "beam", color = FER, length = 8, width = 0.4, at = "hand" } }, text = "ATTRAPE ÇA !", hitText = "FER DANS LE NEZ !",
+				},
+				-- ↓L : repassage à plat : elle écrase le fer au sol, l'onde de chaleur aplatit tout le couloir
+				S_down = {
+					label = "Repassage à plat", startup = 0.26, active = 0.2, recovery = 0.55,
+					damage = 15, hitbox = box(14, 5, 7, 0.5), kbBase = 32, kbGrowth = 56, kbAngle = 50, status = { name = "stunned", duration = 1 },
+					windup = { Root = { -6, 0, 0, 0, -0.25, 0.1 }, Waist = { -16, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 175, 0, 10 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 175, 0, -10 }, LE = { 30, 0, 0 }, LW = { 0, 0, 0 } },
+					strike = { Root = { -16, 0, 0, 0, -0.95, -0.2 }, Waist = { -34, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 40, 0, 10 }, RE = { 0, 0, 0 }, RW = { -60, 0, 0 }, LS = { 40, 0, -10 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					follow = { Root = { -16, 0, 0, 0, -0.98, -0.24 }, Waist = { -36, 0, 0 }, Neck = { 32, 0, 0 }, RS = { 36, 0, 12 }, RE = { 0, 0, 0 }, RW = { -64, 0, 0 }, LS = { 36, 0, -12 }, LE = { 0, 0, 0 }, LW = { -10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.32 } },
+					hold = 0.1, fx = { "thud", { "ring", color = STEAM, radius = 7, at = "feet" }, { "beam", color = STEAM, length = 14, width = 3, at = "feet" }, { "particles", tex = "smoke", color = STEAM, dir = "all", at = "feet", time = 0.4, speed = 10 }, { "shake", amount = 0.35 } },
+					text = "ET ON APLATIT !", hitText = "APLATI !",
+				},
+				-- ↑L : vapeur-fusée : elle retourne le fer sous ses chaussons, la vapeur la propulse en diagonale, chats en bandoulière
+				S_up = {
+					label = "Vapeur-fusée", startup = 0.14, active = 0.3, recovery = 0.42,
+					damage = 15, hitbox = box(10, 11, 3, 4), kbBase = 34, kbGrowth = 56, kbAngle = 72, selfVelocity = Vector2.new(42, 84),
+					windup = { Root = { -8, 0, 0, 0, -0.8, 0.1 }, Waist = { -26, 0, 0 }, Neck = { 26, 0, 0 }, RS = { 20, 0, 20 }, RE = { 120, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -20 }, LE = { 110, 0, 0 }, RH = { 40, 0, 0 }, RK = { -60, 0, 0 } },
+					strike = { Root = { -40, 0, 0, 0, 0.4, -0.2 }, Waist = { -6, 0, 0 }, Neck = { 32, 0, 0 }, RS = { -40, 0, 40 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 160, 0, -30 }, LE = { 10, 0, 0 }, RH = { -25, 0, 5 }, RK = { -30, 0, 0 }, LH = { -15, 0, -5 }, LK = { -50, 0, 0 } },
+					follow = { Root = { -44, 0, 0, 0, 0.45, -0.25 }, Waist = { -8, 0, 0 }, Neck = { 34, 0, 0 }, RS = { -46, 0, 46 }, RE = { 10, 0, 0 }, RW = { -8, 0, 0 }, LS = { 166, 0, -34 }, LE = { 10, 0, 0 }, RH = { -30, 0, 6 }, RK = { -35, 0, 0 }, LH = { -20, 0, -6 }, LK = { -55, 0, 0 } },
+					shake = true, trail = "body", fx = { { "pillar", color = STEAM, height = 12, width = 2.5, at = "feet" }, { "burst", color = STEAM, size = 3, at = "feet" }, { "particles", tex = "smoke", color = STEAM, dir = "down", at = "feet", time = 0.5, speed = 18, size = 1, rate = 90 } },
+					text = "VAPEUR À FOND !", hitText = "PSSCHOU !",
+				},
+				-- L en l'air : chute en fer : elle tombe assise sur le fer comme sur une luge, semelle la première
+				S_air = {
+					label = "Luge de fer", startup = 0.15, active = 0.35, recovery = 0.42,
+					damage = 15, hitbox = box(6, 5, 2, -1.5), kbBase = 28, kbGrowth = 58, kbAngle = -40, selfVelocity = Vector2.new(22, -75), armor = true,
+					windup = { Root = { 14, 0, 0 }, Waist = { 8, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 160, 0, 20 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 160, 0, -20 }, LE = { 30, 0, 0 }, RH = { 60, 0, 0 }, RK = { -90, 0, 0 }, LH = { 60, 0, 0 }, LK = { -90, 0, 0 } },
+					strike = { Root = { -10, 0, 0 }, Waist = { -12, 0, 0 }, Neck = { 24, 0, 0 }, RS = { 40, 0, 20 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -20 }, LE = { 100, 0, 0 }, RH = { 90, 0, 15 }, RK = { -90, 0, 0 }, LH = { 90, 0, -15 }, LK = { -90, 0, 0 } },
+					follow = { Root = { -14, 0, 0 }, Waist = { -14, 0, 0 }, Neck = { 28, 0, 0 }, RS = { 44, 0, 22 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 44, 0, -22 }, LE = { 100, 0, 0 }, RH = { 94, 0, 16 }, RK = { -94, 0, 0 }, LH = { 94, 0, -16 }, LK = { -94, 0, 0 } },
+					trail = "body", fx = { "thud", { "particles", tex = "smoke", color = STEAM, dir = "up", at = "feet", time = 0.3, speed = 8 } }, text = "YOUHOU !", hitText = "LUGÉ !",
+				},
+				-- Y : la planche à repasser : une planche géante se déplie sur tout le couloir et elle repasse tout le monde dessus d'un seul geste
+				SUPER = {
+					label = "Planche à repasser !", startup = 0.4, active = 0.3, recovery = 0.7,
+					damage = 26, hitbox = box(16, 6, 8, 1), kbBase = 48, kbGrowth = 98, kbAngle = 34, armor = true,
+					windup = { Root = { -8, 0, 0, 0, -0.5, 0.15 }, Waist = { -24, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 170, 0, 20 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -30 }, LE = { 80, 0, 0 } },
+					strike = { Root = { -18, 10, 0, 0, -0.5, -0.5 }, Waist = { -30, 12, 0 }, Neck = { 28, -8, 0 }, RS = { 80, 0, 0 }, RE = { 0, 0, 0 }, RW = { -90, 0, 0 }, LS = { 70, 0, -30 }, LE = { 20, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+					follow = { Root = { -20, 14, 0, 0, -0.55, -0.6 }, Waist = { -34, 16, 0 }, Neck = { 30, -10, 0 }, RS = { 90, 0, -6 }, RE = { 0, 0, 0 }, RW = { -90, 0, 0 }, LS = { 65, 0, -32 }, LE = { 20, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.6 } },
+					hold = 0.2, shake = true, trail = "prop", windupFx = { "super", { "symbols", symbols = { "👕", "👖", "♨️" }, count = 5, radius = 3, color = STEAM } },
+					fx = { { "beam", color = WHITE, length = 18, width = 5, at = "feet" }, { "particles", tex = "smoke", color = STEAM, dir = "front", at = "hand", time = 0.6, speed = 20, size = 1.4, rate = 100 }, { "burst", color = STEAM, size = 4, at = "front" }, { "shake", amount = 0.5 } },
+					text = "ON REPASSE TOUT ÇA !", hitText = "REPASSÉ À PLAT !",
+				},
+				-- →Y : fer-locomotive : elle pose le fer sur un rail de vapeur et le chevauche à toute allure à travers le couloir (elle encaisse)
+				SUPER_side = {
+					label = "Fer-locomotive !", startup = 0.4, active = 0.45, recovery = 0.7,
+					damage = 26, hitbox = box(8, 5, 3, 0), kbBase = 50, kbGrowth = 100, kbAngle = 36, selfVelocity = Vector2.new(60, 8), armor = true,
+					windup = { Root = { -8, 0, 0, 0, -0.5, 0 }, Waist = { -20, 0, 0 }, Neck = { 22, 0, 0 }, RS = { 60, 0, 30 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -30 }, LE = { 60, 0, 0 }, RH = { 30, 0, 0 }, RK = { -60, 0, 0 } },
+					strike = { Root = { 8, 0, 0, 0, 0.4, 0.1 }, Waist = { 0, 0, 0 }, Neck = { 24, 0, 0 }, RS = { 60, 0, 10 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, -60 }, LE = { 20, 0, 0 }, RH = { 80, 0, 20 }, RK = { -90, 0, 0 }, LH = { 80, 0, -20 }, LK = { -90, 0, 0 } },
+					follow = { Root = { 10, 0, 0, 0, 0.42, 0.14 }, Waist = { 2, 0, 0 }, Neck = { 26, 0, 0 }, RS = { 62, 0, 12 }, RE = { 90, 0, 0 }, RW = { -10, 0, 0 }, LS = { 160, 0, -70 }, LE = { 20, 0, 0 }, RH = { 84, 0, 24 }, RK = { -94, 0, 0 }, LH = { 84, 0, -24 }, LK = { -94, 0, 0 } },
+					wobble = true, trail = "body", windupFx = { "super", { "symbols", symbols = { "🚂", "♨️" }, count = 4, radius = 3, color = STEAM } },
+					fx = { { "particles", tex = "smoke", color = STEAM, dir = "up", at = "head", time = 0.6, speed = 12, size = 1.2, rate = 80 }, { "beam", color = STEEL, length = 16, width = 1.5, at = "feet" }, { "shake", amount = 0.4 }, "dust" },
+					text = "TCHOU TCHOU !", hitText = "LAMINÉ !",
+				},
+				-- ↑Y : geyser de vapeur : elle bloque le bouton, le fer gronde, et un geyser de vapeur la catapulte au plafond avec tout le monde
+				SUPER_up = {
+					label = "Geyser de vapeur !", startup = 0.35, active = 0.3, recovery = 0.7,
+					damage = 24, hitbox = box(16, 12, 8, 5), kbBase = 46, kbGrowth = 96, kbAngle = 86, invuln = 0.3, selfVelocity = Vector2.new(0, 58),
+					windup = { Root = { -12, 0, 0, 0, -0.95, 0 }, Waist = { -32, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 40, 0, -20 }, RE = { 110, 0, 0 }, RW = { -40, 0, 0 }, LS = { 40, 0, 20 }, LE = { 110, 0, 0 } },
+					strike = { Root = { 6, 0, 0, 0, 0.5, 0 }, Waist = { 16, 0, 0 }, Neck = { 48, 0, 0 }, RS = { 186, 0, 6 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 186, 0, -6 }, LE = { 0, 0, 0 }, RH = { 40, 0, 10 }, RK = { -90, 0, 0 }, LH = { 20, 0, -15 }, LK = { -60, 0, 0 } },
+					follow = { Root = { 10, 0, 0, 0, 0.55, 0 }, Waist = { 22, 0, 0 }, Neck = { 54, 0, 0 }, RS = { 188, 0, 10 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 188, 0, -10 }, LE = { 0, 0, 0 }, RH = { 60, 0, 20 }, RK = { -110, 0, 0 }, LH = { 10, 0, -25 }, LK = { -40, 0, 0 } },
+					hold = 0.2, shake = true, spin = { axis = "y", degrees = 360 },
+					windupFx = { "super", { "particles", tex = "smoke", color = STEAM, dir = "all", at = "hand", time = 0.3, speed = 6 } }, fx = { { "pillar", color = STEAM, height = 24, width = 3.5, at = "front" }, { "beam", color = STEAM, length = 16, width = 5, at = "feet" }, { "burst", color = WHITE, size = 4, at = "above" }, { "ring", color = STEAM, radius = 6, at = "feet" }, "thud" },
+					text = "GEYSER !", hitText = "AU PLAFOND, ÉBOUILLANTÉ !",
+				},
+				-- ↓Y : pressing total : elle saute à pieds joints sur le fer, qui écrase le sol et repasse tout le couloir dans un nuage brûlant
+				SUPER_down = {
+					label = "Pressing total !", startup = 0.4, active = 0.3, recovery = 0.75,
+					damage = 24, hitbox = box(16, 5, 8, 0), kbBase = 46, kbGrowth = 94, kbAngle = 62, armor = true, status = { name = "slowed", duration = 2.5 },
+					windup = { Root = { -10, 0, 0, 0, 0.3, 0 }, Waist = { -20, 0, 0 }, Neck = { 0, 0, 0 }, RS = { 160, 0, 20 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 160, 0, -20 }, LE = { 30, 0, 0 }, RH = { 60, 0, 0 }, RK = { -90, 0, 0 }, LH = { 60, 0, 0 }, LK = { -90, 0, 0 } },
+					strike = { Root = { -16, 0, 0, 0, -0.95, -0.2 }, Waist = { -34, 0, 0 }, Neck = { 28, 0, 0 }, RS = { 30, 0, 50 }, RE = { 0, 0, 0 }, RW = { -60, 0, 0 }, LS = { 30, 0, -50 }, LE = { 0, 0, 0 }, FR = { 0, 0, 0, 0, 0, 0.2 }, FL = { 0, 0, 0, 0, 0, -0.2 } },
+					follow = { Root = { -18, 0, 0, 0, -1.0, -0.24 }, Waist = { -36, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 26, 0, 54 }, RE = { 0, 0, 0 }, RW = { -64, 0, 0 }, LS = { 26, 0, -54 }, LE = { 0, 0, 0 }, FR = { 0, 0, 0, 0, 0, 0.22 }, FL = { 0, 0, 0, 0, 0, -0.22 } },
+					hold = 0.2, windupFx = { "super", { "symbols", symbols = { "♨️", "🧺" }, count = 4, radius = 3, color = STEAM } },
+					fx = { "thud", { "ring", color = STEAM, radius = 8, at = "feet" }, { "beam", color = STEAM, length = 16, width = 4, at = "feet" }, { "particles", tex = "smoke", color = STEAM, dir = "all", at = "feet", time = 0.6, speed = 16, size = 1.4, rate = 100 }, { "shake", amount = 0.6 } },
+					text = "PRESSING TOTAL !", hitText = "LAMINÉ ET PLIÉ !",
+				},
+			},
+			links = {
+				P_neutral = { P = "P_side", K = "K_neutral", S = "S_neutral" },
+				P_side = { P = "P_up", K = "K_side", S = "S_side" },
+				P_down = { P = "P_up", K = "K_down", S = "S_down" },
+				K_neutral = { K = "K_side", P = "P_neutral", S = "S_down" },
+				K_side = { P = "P_up", K = "K_up", S = "S_side" },
+				P_dash = { P = "P_side", K = "K_side", S = "S_side" },
+				K_dash = { P = "P_up", S = "S_up" },
+			},
+		},
+	},
+
 
 	-- Costume : chignon blanc, lunettes triple foyer, châle violet, robe bleue, chaussons, et ses deux chats
 	-- (Minou le roux sur l'épaule droite, Pompon le gris sur la gauche)
@@ -549,6 +1024,19 @@ local data = {
 			follow = { Root = { -10, 12, 0, 0, -0.25, -0.22 }, Waist = { -14, 14, 0 }, Neck = { 18, -10, 0 }, RS = { 100, 0, -8 }, RE = { 0, 0, 0 }, LS = { 30, 0, -22 }, LE = { 40, 0, 0 } },
 			hold = 0.2, windupFx = { { "screen", color = MINOU, alpha = 0.25 }, { "symbols", symbols = { "🐈", "🐾" }, count = 6, radius = 3, color = MINOU } },
 			fx = { { "shake", amount = 0.4 } }, text = "MES CHÉRIS, À L'ATTAQUE !", hitText = "MIAAAOU !",
+		},
+		-- Toupie du dimanche (→Y) : sac dans une main, canne dans l'autre, elle tourne sur elle-même comme une toupie en
+		-- trottinant à travers tout le couloir, chats accrochés aux épaules, et balaie tout sur son passage (elle encaisse)
+		SUPER_side = {
+			label = "Toupie du dimanche !", startup = 0.4, active = 0.45, recovery = 0.7,
+			damage = 25, hitbox = box(8, 5, 3, 0.5), kbBase = 48, kbGrowth = 98, kbAngle = 36, selfVelocity = Vector2.new(58, 6), armor = true,
+			windup = { Root = { -8, 40, 0, 0, -0.3, 0.1 }, Waist = { -18, 45, 0 }, Neck = { 24, -30, 0 }, RS = { 60, 0, 70 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -70 }, LE = { 20, 0, 0 }, LW = { 0, 0, 0 } },
+			strike = { Root = { -14, -30, 0, 0, -0.25, -0.2 }, Waist = { -20, -35, 0 }, Neck = { 28, 25, 0 }, RS = { 90, 0, 85 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, -85 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+			follow = { Root = { -14, -50, 0, 0, -0.25, -0.25 }, Waist = { -20, -50, 0 }, Neck = { 28, 35, 0 }, RS = { 92, 0, 88 }, RE = { 0, 0, 0 }, RW = { -8, 0, 0 }, LS = { 92, 0, -88 }, LE = { 0, 0, 0 }, LW = { 8, 0, 0 }, FR = { 0, 0, 0, 0, 0, -0.3 } },
+			spin = { axis = "y", degrees = 1080 }, wobble = true, trail = "bothHands",
+			windupFx = { "super", { "symbols", symbols = { "🐈", "🐈‍⬛", "💫" }, count = 4, radius = 2.5, color = MINOU } },
+			fx = { { "ring", color = SHAWL, radius = 6, at = "feet" }, { "particles", tex = "smoke", color = Color3.fromRGB(220, 210, 190), dir = "all", at = "feet", time = 0.5, speed = 10 }, { "shake", amount = 0.4 } },
+			text = "ET QUE ÇA TOURNE !", hitText = "TOUPIÉ !",
 		},
 		-- Pelote-fusée (↑Y) : elle roule une pelote géante entre ses mains et la jette au plafond : le fil se déroule sur tout le
 		-- couloir et entortille tout le monde en vrille vers le ciel, aiguilles levées

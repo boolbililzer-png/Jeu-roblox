@@ -25,11 +25,496 @@ local VIOLET = Color3.fromRGB(180, 60, 255)
 local CHIPS = Color3.fromRGB(255, 205, 40)
 local BSOD = Color3.fromRGB(20, 80, 220)
 
+local ORANGE = Color3.fromRGB(255, 140, 30) -- pistolet optique (arme n° 3)
+local GRIS = Color3.fromRGB(200, 200, 210) -- canon du pistolet, câbles
 local data = {
 	id = "Jordan",
 	name = "Jordan « RageQuit »",
 	costume = "Jordan",
 	style = "gamer",
+	------------------------------------------------------------------ Les 3 armes de la Caisse Bizarre (une au hasard)
+	-- n° 1 : la manette filaire (ses coups sont ceux de moves). n° 2 : la tour de PC gaming, lourde et lente, qui éjecte loin.
+	-- n° 3 : le pistolet optique, jeu de tirs à distance, rapide et précis.
+	weapons = {
+		{ id = "manette", name = "Manette filaire", icon = "🎮",
+			ability = { speed = 1.15, text = "Rushdown : court 15 % plus vite" } },
+		{ id = "tour", name = "Tour de PC gaming", icon = "🖥️",
+			prop = { name = "PropTour", hand = "Right", pieces = {
+				{ "Boitier", "", "block", Vector3.new(1.1, 2.2, 1.0), Vector3.new(0, -1.3, 0), Vector3.zero, NOIR, "SmoothPlastic" },
+				{ "Vitre", "", "block", Vector3.new(0.06, 1.8, 0.8), Vector3.new(0.57, -1.3, 0), Vector3.zero, BLEU, "Neon", { neon = true, transparency = 0.3 } },
+				{ "Ventilo", "", "cyl", Vector3.new(0.3, 0.7, 0.7), Vector3.new(0, -1.6, -0.5), Vector3.zero, VIOLET, "Neon", { axis = "z", neon = true, light = { VIOLET, 8, 1.5 } } },
+				{ "Bouton", "", "ball", Vector3.new(0.2, 0.2, 0.2), Vector3.new(0, -0.35, -0.52), Vector3.zero, VERT, "Neon", { neon = true } },
+				{ "Cables", "", "cyl", Vector3.new(0.1, 1.2, 0.1), Vector3.new(0, -2.5, 0.4), Vector3.new(30, 0, 0), GRIS, "SmoothPlastic", { axis = "y" } },
+			} },
+			ability = { knockback = 1.3, text = "Lourde comme un PC fixe : éjecte 30 % plus loin" },
+			moves = {
+				-- J : il pousse le boîtier à deux mains dans le ventre, comme pour poser un carton trop lourd
+				P_neutral = {
+					label = "Coup de boîtier", startup = 0.12, active = 0.1, recovery = 0.22,
+					damage = 8, hitbox = box(4.5, 3.5, 2.8, 0.5), kbBase = 26, kbGrowth = 32, kbAngle = 28,
+					windup = { Root = { 4, -14, 0, 0, -0.2, 0.15 }, Waist = { 4, -18, 0 }, Neck = { -6, 0, 0 }, RS = { 60, 0, 10 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -10 }, LE = { 110, 0, 0 } },
+					strike = { Root = { -10, 12, 0, 0, -0.3, -0.3 }, Waist = { -12, 18, 0 }, Neck = { -10, 0, 0 }, RS = { 96, 0, 4 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 92, 0, -6 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.35 } },
+					follow = { Root = { -12, 16, 0, 0, -0.32, -0.36 }, Waist = { -14, 22, 0 }, Neck = { -12, 0, 0 }, RS = { 100, 0, 6 }, RE = { 14, 0, 0 }, RW = { -10, 0, 0 }, LS = { 96, 0, -8 }, LE = { 14, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.38 } },
+					trail = "prop", hitText = "BOUM !",
+				},
+				-- →J : balayage horizontal de la tour, il pivote sur ses baskets, tout le buste suit
+				P_side = {
+					label = "Balayage de tour", startup = 0.16, active = 0.12, recovery = 0.26,
+					damage = 10, hitbox = box(6, 3.5, 3.5, 0.8), kbBase = 28, kbGrowth = 44, kbAngle = 26, selfVelocity = Vector2.new(14, 0),
+					windup = { Root = { 6, 40, 0, 0, -0.25, 0.2 }, Waist = { 8, 46, 0 }, Neck = { 0, -20, 0 }, RS = { 70, 0, 60 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, 20 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -8, -30, 0, 0, -0.32, -0.35 }, Waist = { -10, -36, 0 }, Neck = { 0, 20, 0 }, RS = { 90, 0, -30 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, -60 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { -10, -40, 0, 0, -0.34, -0.4 }, Waist = { -12, -46, 0 }, Neck = { 0, 26, 0 }, RS = { 94, 0, -36 }, RE = { 10, 0, 0 }, RW = { -10, 0, 0 }, LS = { 94, 0, -66 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+					trail = "prop", hitText = "BLAM !",
+				},
+				-- ↓J : il lâche la tour par terre, sur les orteils de l'adversaire, avec le bruit d'un disque dur qui meurt
+				P_down = {
+					label = "Tour sur les orteils", startup = 0.14, active = 0.1, recovery = 0.26,
+					damage = 9, hitbox = box(5, 2.5, 2.5, -1.5), kbBase = 26, kbGrowth = 42, kbAngle = 80,
+					windup = { Root = { 6, 0, 0, 0, -0.2, 0.1 }, Waist = { -10, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 160, 0, 10 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 160, 0, -10 }, LE = { 40, 0, 0 } },
+					strike = { Root = { 18, 0, 0, 0, -0.9, -0.2 }, Waist = { 28, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 40, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -10 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					follow = { Root = { 20, 0, 0, 0, -0.95, -0.24 }, Waist = { 30, 0, 0 }, Neck = { 18, 0, 0 }, RS = { 36, 0, 12 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 36, 0, -12 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.32 } },
+					fx = { "thud", "dust", { "text", text = "CLIC CLIC CLIC", color = BLANC, at = "feet" } }, hitText = "MES ORTEILS !",
+				},
+				-- ↑J : il soulève la tour à bout de bras comme un haltère, le dessus cogne le menton
+				P_up = {
+					label = "Tour au menton", startup = 0.14, active = 0.12, recovery = 0.26,
+					damage = 9, hitbox = box(4.5, 5.5, 1.5, 3), kbBase = 26, kbGrowth = 46, kbAngle = 86,
+					windup = { Root = { 10, 0, 0, 0, -0.35, 0.1 }, Waist = { 14, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 30, 0, 10 }, RE = { 120, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -10 }, LE = { 120, 0, 0 } },
+					strike = { Root = { -12, 0, 0, 0, 0.1, -0.1 }, Waist = { -16, 0, 0 }, Neck = { -22, 0, 0 }, RS = { 172, 0, 8 }, RE = { 6, 0, 0 }, RW = { 0, 0, 0 }, LS = { 172, 0, -8 }, LE = { 6, 0, 0 } },
+					follow = { Root = { -14, 0, 0, 0, 0.14, -0.12 }, Waist = { -18, 0, 0 }, Neck = { -26, 0, 0 }, RS = { 178, 0, 10 }, RE = { 6, 0, 0 }, RW = { -10, 0, 0 }, LS = { 178, 0, -10 }, LE = { 6, 0, 0 } },
+					trail = "prop", hitText = "KLONK !",
+				},
+				-- J en l'air : il laisse tomber la tour sous lui et se rattrape dessus à califourchon
+				P_air = {
+					label = "Tour tombante", startup = 0.12, active = 0.14, recovery = 0.18,
+					damage = 10, hitbox = box(4.5, 4, 1, -1.8), kbBase = 24, kbGrowth = 42, kbAngle = -45,
+					windup = { Root = { 8, 0, 0 }, Waist = { 14, 0, 0 }, RS = { 180, 0, 12 }, RE = { 50, 0, 0 }, RW = { 0, 0, 0 }, LS = { 180, 0, -12 }, LE = { 50, 0, 0 }, RH = { 40, 0, 0 }, RK = { -80, 0, 0 }, LH = { 50, 0, 0 }, LK = { -90, 0, 0 } },
+					strike = { Root = { -14, 0, 0 }, Waist = { -26, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 30, 0, 10 }, RE = { 0, 0, 0 }, RW = { -20, 0, 0 }, LS = { 30, 0, -10 }, LE = { 0, 0, 0 }, RH = { 60, 0, 20 }, RK = { -40, 0, 0 }, LH = { 60, 0, -20 }, LK = { -40, 0, 0 } },
+					follow = { Root = { -18, 0, 0 }, Waist = { -30, 0, 0 }, Neck = { 24, 0, 0 }, RS = { 24, 0, 12 }, RE = { 4, 0, 0 }, RW = { -30, 0, 0 }, LS = { 24, 0, -12 }, LE = { 4, 0, 0 }, RH = { 64, 0, 22 }, RK = { -44, 0, 0 }, LH = { 64, 0, -22 }, LK = { -44, 0, 0 } },
+					trail = "prop", hitText = "BLAM !",
+				},
+				-- dash J : bélier : la tour devant lui comme un bouclier, il fonce épaule en avant
+				P_dash = {
+					label = "Bélier de tour", startup = 0.1, active = 0.18, recovery = 0.3,
+					damage = 10, hitbox = box(5, 4, 3, 0.5), kbBase = 30, kbGrowth = 48, kbAngle = 24, selfVelocity = Vector2.new(42, 0),
+					windup = { Root = { 10, 10, 0, 0, -0.25, 0.1 }, Waist = { 12, 12, 0 }, Neck = { 0, -10, 0 }, RS = { 70, 0, 10 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, -10 }, LE = { 90, 0, 0 } },
+					strike = { Root = { 18, 6, 0, 0, -0.35, -0.4 }, Waist = { 20, 8, 0 }, Neck = { -12, -6, 0 }, RS = { 92, 0, 4 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 92, 0, -4 }, LE = { 20, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+					follow = { Root = { 20, 6, 0, 0, -0.36, -0.44 }, Waist = { 22, 8, 0 }, Neck = { -14, -6, 0 }, RS = { 94, 0, 6 }, RE = { 18, 0, 0 }, RW = { 0, 0, 0 }, LS = { 94, 0, -6 }, LE = { 18, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.48 } },
+					trail = "prop", fx = { "dust" }, hitText = "BÉLIER !",
+				},
+				-- K : il cale la tour contre sa hanche et envoie un gros coup de genou par-dessus
+				K_neutral = {
+					label = "Genou par-dessus la tour", startup = 0.16, active = 0.12, recovery = 0.3,
+					damage = 11, hitbox = box(4.5, 3.5, 2.5, 0.8), kbBase = 30, kbGrowth = 62, kbAngle = 40,
+					windup = { Root = { 6, -10, 0, 0, -0.2, 0.1 }, Waist = { 6, -12, 0 }, Neck = { -6, 0, 0 }, RS = { 40, 0, 20 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -20 }, LE = { 100, 0, 0 }, RH = { -20, 0, 0 }, RK = { -40, 0, 0 } },
+					strike = { Root = { -8, 6, 0, 0, -0.3, -0.25 }, Waist = { -10, 8, 0 }, Neck = { -10, 0, 0 }, RS = { 60, 0, 30 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -30 }, LE = { 90, 0, 0 }, RH = { 110, 0, 0 }, RK = { -110, 0, 0 } },
+					follow = { Root = { -10, 8, 0, 0, -0.32, -0.28 }, Waist = { -12, 10, 0 }, Neck = { -12, 0, 0 }, RS = { 62, 0, 32 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 62, 0, -32 }, LE = { 90, 0, 0 }, RH = { 116, 0, 0 }, RK = { -112, 0, 0 } },
+					trail = "rightLeg", hitText = "GENOU !",
+				},
+				-- →K : coup de pied retourné, la tour tenue à bout de bras sert de contrepoids
+				K_side = {
+					label = "Retourné lesté", startup = 0.18, active = 0.12, recovery = 0.34,
+					damage = 13, hitbox = box(6, 3.5, 3.5, 0.5), kbBase = 34, kbGrowth = 74, kbAngle = 34, selfVelocity = Vector2.new(18, 0),
+					windup = { Root = { 6, 30, 0, 0, -0.2, 0.1 }, Waist = { 8, 40, 0 }, Neck = { 0, -20, 0 }, RS = { 120, 0, 60 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -40 }, LE = { 70, 0, 0 }, RH = { -20, 0, 10 }, RK = { -50, 0, 0 } },
+					strike = { Root = { 10, -40, 0, 0, -0.1, -0.1 }, Waist = { 10, -50, 0 }, Neck = { 0, 20, 0 }, RS = { 80, 0, 80 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -50 }, LE = { 40, 0, 0 }, RH = { 100, 0, 20 }, RK = { -6, 0, 0 }, RA = { 10, 0, 0 } },
+					follow = { Root = { 12, -50, 0, 0, -0.1, -0.14 }, Waist = { 12, -60, 0 }, Neck = { 0, 24, 0 }, RS = { 84, 0, 84 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 64, 0, -54 }, LE = { 40, 0, 0 }, RH = { 108, 0, 24 }, RK = { 0, 0, 0 }, RA = { 14, 0, 0 } },
+					spin = { axis = "y", degrees = 360 }, trail = "rightFoot", hitText = "VLAN !",
+				},
+				-- ↓K : la tour posée au sol, il s'appuie dessus d'une main et balaie les chevilles
+				K_down = {
+					label = "Balayette appuyée", startup = 0.14, active = 0.14, recovery = 0.3,
+					damage = 9, hitbox = box(7, 2, 3.5, -1.6), kbBase = 28, kbGrowth = 52, kbAngle = 75,
+					windup = { Root = { 12, 10, 0, 0, -0.85, 0.1 }, Waist = { 16, 14, 0 }, Neck = { 6, 0, 0 }, RS = { 60, 0, 30 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -40 }, LE = { 80, 0, 0 }, LH = { -30, 0, 0 }, LK = { -40, 0, 0 } },
+					strike = { Root = { 16, -20, 0, 0, -0.95, -0.1 }, Waist = { 20, -26, 0 }, Neck = { 6, 0, 0 }, RS = { 50, 0, 40 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -40 }, LE = { 80, 0, 0 }, LH = { 50, 0, -20 }, LK = { -4, 0, 0 }, LA = { 20, 0, 0 } },
+					follow = { Root = { 18, -26, 0, 0, -0.95, -0.14 }, Waist = { 22, -32, 0 }, Neck = { 6, 0, 0 }, RS = { 52, 0, 42 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 34, 0, -42 }, LE = { 80, 0, 0 }, LH = { 56, 0, -24 }, LK = { 0, 0, 0 }, LA = { 24, 0, 0 } },
+					trail = "leftFoot", fx = { "dust" }, hitText = "FAUCHÉ !",
+				},
+				-- ↑K : coup de pied monté, la tour levée au-dessus de la tête comme un trophée
+				K_up = {
+					label = "Pied monté trophée", startup = 0.16, active = 0.12, recovery = 0.32,
+					damage = 11, hitbox = box(4.5, 6, 1.5, 3.5), kbBase = 30, kbGrowth = 66, kbAngle = 88,
+					windup = { Root = { 10, 0, 0, 0, -0.25, 0.1 }, Waist = { 14, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 100, 0, 20 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 100, 0, -20 }, LE = { 60, 0, 0 }, RH = { -20, 0, 0 }, RK = { -60, 0, 0 } },
+					strike = { Root = { -16, 0, 0, 0, 0.05, -0.1 }, Waist = { -20, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 176, 0, 12 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 176, 0, -12 }, LE = { 10, 0, 0 }, RH = { 140, 0, 0 }, RK = { -6, 0, 0 }, RA = { 20, 0, 0 } },
+					follow = { Root = { -18, 0, 0, 0, 0.08, -0.12 }, Waist = { -22, 0, 0 }, Neck = { -24, 0, 0 }, RS = { 180, 0, 14 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 180, 0, -14 }, LE = { 10, 0, 0 }, RH = { 148, 0, 0 }, RK = { 0, 0, 0 }, RA = { 24, 0, 0 } },
+					trail = "rightFoot", hitText = "KLANG !",
+				},
+				-- K en l'air : double coup de pied en pédalant, la tour serrée contre le ventre
+				K_air = {
+					label = "Pédalage lesté", startup = 0.12, active = 0.2, recovery = 0.22,
+					damage = 10, hits = 2, hitbox = box(5, 4, 2.5, -0.5), kbBase = 22, kbGrowth = 48, kbAngle = 40,
+					windup = { Root = { -10, 0, 0 }, Waist = { -8, 0, 0 }, RS = { 50, 0, 10 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -10 }, LE = { 110, 0, 0 }, RH = { 60, 0, 0 }, RK = { -100, 0, 0 }, LH = { -20, 0, 0 }, LK = { -40, 0, 0 } },
+					strike = { Root = { -6, 0, 0 }, Waist = { 6, 0, 0 }, RS = { 54, 0, 12 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 54, 0, -12 }, LE = { 110, 0, 0 }, RH = { 90, 0, 0 }, RK = { -6, 0, 0 }, RA = { 10, 0, 0 }, LH = { 70, 0, 0 }, LK = { -110, 0, 0 } },
+					follow = { Root = { -4, 0, 0 }, Waist = { 8, 0, 0 }, RS = { 56, 0, 14 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 56, 0, -14 }, LE = { 110, 0, 0 }, RH = { 20, 0, 0 }, RK = { -60, 0, 0 }, LH = { 95, 0, 0 }, LK = { -4, 0, 0 }, LA = { 10, 0, 0 } },
+					trail = "bothFeet", hitText = "TAC TAC !",
+				},
+				-- dash K : il se couche sur la tour et glisse dessus comme sur une luge, pieds devant
+				K_dash = {
+					label = "Luge de tour", startup = 0.1, active = 0.26, recovery = 0.32,
+					damage = 12, hitbox = box(6, 3, 3, -0.8), kbBase = 32, kbGrowth = 68, kbAngle = 36, selfVelocity = Vector2.new(55, 10),
+					windup = { Root = { -8, 0, 0, 0, -0.4, 0 }, Waist = { -10, 0, 0 }, RS = { 60, 0, 40 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -40 } },
+					strike = { Root = { 20, 0, 0, 0, -0.7, 0.2 }, Waist = { 10, 0, 0 }, RS = { -30, 0, 50 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, -40 }, LE = { 30, 0, 0 }, RH = { 85, 0, 0 }, RK = { 0, 0, 0 }, RA = { 10, 0, 0 }, LH = { 80, 0, 0 }, LK = { -10, 0, 0 } },
+					follow = { Root = { 24, 0, 0, 0, -0.72, 0.24 }, Waist = { 12, 0, 0 }, RS = { -36, 0, 55 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 75, 0, -45 }, LE = { 30, 0, 0 }, RH = { 90, 0, 0 }, RK = { 0, 0, 0 }, RA = { 14, 0, 0 }, LH = { 85, 0, 0 }, LK = { -10, 0, 0 } },
+					trail = "bothFeet", fx = { "dust", { "particles", tex = "spark", color = VIOLET, dir = "up", at = "feet", time = 0.3, speed = 10, size = 0.4, rate = 50 } }, hitText = "SKRRRT !",
+				},
+				-- L : surchauffe : la tour vire au rouge, les ventilos hurlent et un souffle brûlant balaie tout le couloir
+				S_neutral = {
+					label = "Surchauffe", startup = 0.24, active = 0.22, recovery = 0.5, hits = 2,
+					damage = 7, hitbox = box(14, 5, 7, 1), kbBase = 26, kbGrowth = 48, kbAngle = 30,
+					status = { name = "burning", duration = 2 },
+					windup = { Root = { 6, 0, 0, 0, -0.3, 0.2 }, Waist = { 8, 0, 0 }, Neck = { -12, 0, 0 }, RS = { 50, 0, 10 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -10 }, LE = { 110, 0, 0 } },
+					strike = { Root = { -12, 0, 0, 0, -0.35, -0.3 }, Waist = { -14, 0, 0 }, Neck = { -16, 0, 0 }, RS = { 92, 0, 6 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 92, 0, -6 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { -14, 0, 0, 0, -0.36, -0.34 }, Waist = { -16, 0, 0 }, Neck = { -18, 0, 0 }, RS = { 94, 0, 8 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 94, 0, -8 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+					shake = true, windupFx = { { "particles", tex = "smoke", color = ROUGE, dir = "up", at = "hand", time = 0.25, speed = 6, size = 0.5, rate = 40 } },
+					fx = { { "beam", color = ROUGE, length = 14, width = 4, at = "hand" }, { "particles", tex = "fire", color = ORANGE, dir = "front", at = "hand", time = 0.4, speed = 24, size = 0.8, rate = 90 }, { "text", text = "95 °C", color = ROUGE, at = "above" } },
+					text = "ÇA CHAUFFE !", hitText = "GRILLÉ !",
+				},
+				-- →L : il balance la tour entière à deux mains : elle traverse le couloir en vrille, câbles au vent
+				S_side = {
+					label = "Lancer de tour", kind = "projectile", startup = 0.26, active = 0, recovery = 0.55,
+					damage = 16, kbBase = 34, kbGrowth = 66, kbAngle = 32,
+					projectile = { speed = 70, angle = 0, gravity = 0, lifetime = 0.7, size = 2.4, color = NOIR,
+						visual = { shape = "block", size = 2, color = NOIR, spin = 8, parts = { { "block", Vector3.new(0.1, 1.6, 0.8), Vector3.new(1.05, 0, 0), BLEU }, { "cyl", Vector3.new(0.3, 0.7, 0.7), Vector3.new(0, -0.3, -1.0), VIOLET } } } },
+					windup = { Root = { 8, -34, 0, 0, -0.3, 0.3 }, Waist = { 10, -38, 0 }, Neck = { 4, 22, 0 }, RS = { 150, 0, 30 }, RE = { 50, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, -30 }, LE = { 50, 0, 0 } },
+					strike = { Root = { -16, 22, 0, 0, -0.36, -0.5 }, Waist = { -18, 26, 0 }, Neck = { -6, -14, 0 }, RS = { 94, 0, 4 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 94, 0, -4 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+					follow = { Root = { -18, 26, 0, 0, -0.38, -0.55 }, Waist = { -20, 30, 0 }, Neck = { -8, -16, 0 }, RS = { 98, 0, 6 }, RE = { 4, 0, 0 }, RW = { 10, 0, 0 }, LS = { 98, 0, -6 }, LE = { 4, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.52 } },
+					hideProp = "tour", fx = { { "burst", color = BLEU, size = 2.5, at = "hand" }, { "shake", amount = 0.2 } }, text = "TIENS, PRENDS ÇA !", hitText = "KRRRASH !",
+				},
+				-- ↓L : il abat la tour sur le sol comme une masse : l'onde de choc file au ras du sol sur tout le couloir
+				S_down = {
+					label = "Masse de tour", startup = 0.24, active = 0.18, recovery = 0.55,
+					damage = 14, hitbox = box(14, 4, 7, -0.5), kbBase = 30, kbGrowth = 58, kbAngle = 62,
+					status = { name = "stunned", duration = 1 },
+					windup = { Root = { -10, 0, 0, 0, -0.2, 0.1 }, Waist = { -24, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 190, 0, 10 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 190, 0, -10 }, LE = { 30, 0, 0 } },
+					strike = { Root = { 22, 0, 0, 0, -0.9, -0.3 }, Waist = { 32, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 40, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -10 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { 24, 0, 0, 0, -0.95, -0.34 }, Waist = { 34, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 34, 0, 12 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 34, 0, -12 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+					hold = 0.12, trail = "prop", fx = { "thud", { "ring", color = BLEU, radius = 8, at = "feet" }, { "beam", color = VIOLET, length = 14, width = 3, at = "feet" }, { "shake", amount = 0.5 } },
+					text = "BOUM !", hitText = "ÉCRASÉ !",
+				},
+				-- ↑L : les ventilos tournent à fond : la tour serrée contre lui fait réacteur et il décolle en diagonale
+				S_up = {
+					label = "Décollage ventilos", startup = 0.14, active = 0.3, recovery = 0.42,
+					damage = 13, hitbox = box(10, 11, 3, 4), kbBase = 32, kbGrowth = 54, kbAngle = 74, selfVelocity = Vector2.new(42, 82),
+					windup = { Root = { 6, 0, 0, 0, -0.8, 0.1 }, Waist = { -10, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 40, 0, 10 }, RE = { 120, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -10 }, LE = { 120, 0, 0 } },
+					strike = { Root = { -40, 0, 0, 0, 0.4, -0.2 }, Waist = { -6, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 60, 0, 6 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -6 }, LE = { 110, 0, 0 }, RH = { -25, 0, 5 }, RK = { -30, 0, 0 }, LH = { -15, 0, -5 }, LK = { -50, 0, 0 } },
+					follow = { Root = { -44, 0, 0, 0, 0.45, -0.25 }, Waist = { -8, 0, 0 }, Neck = { 32, 0, 0 }, RS = { 64, 0, 8 }, RE = { 112, 0, 0 }, RW = { 0, 0, 0 }, LS = { 64, 0, -8 }, LE = { 112, 0, 0 }, RH = { -30, 0, 6 }, RK = { -35, 0, 0 }, LH = { -20, 0, -6 }, LK = { -55, 0, 0 } },
+					shake = true, trail = "body", fx = { { "particles", tex = "smoke", color = VIOLET, dir = "down", at = "feet", time = 0.5, speed = 18, size = 0.7, rate = 90 }, { "ring", color = VIOLET, radius = 5, at = "feet" } },
+					text = "VROOOM !", hitText = "ASPIRÉ !",
+				},
+				-- L en l'air : il brandit la tour au-dessus de lui et la plante vers le bas : pilon sur tout ce qui est dessous
+				S_air = {
+					label = "Pilon de tour", startup = 0.16, active = 0.3, recovery = 0.45,
+					damage = 14, hitbox = box(8, 6, 1, -2), kbBase = 28, kbGrowth = 60, kbAngle = -60, selfVelocity = Vector2.new(6, -80),
+					windup = { Root = { -8, 0, 0 }, Waist = { -10, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 180, 0, 14 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 180, 0, -14 }, LE = { 30, 0, 0 }, RH = { 80, 0, 0 }, RK = { -110, 0, 0 }, LH = { 80, 0, 0 }, LK = { -110, 0, 0 } },
+					strike = { Root = { -30, 0, 0 }, Waist = { -30, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 20, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -10 }, LE = { 0, 0, 0 }, RH = { -10, 0, 6 }, RK = { -10, 0, 0 }, RA = { -20, 0, 0 }, LH = { -10, 0, -6 }, LK = { -10, 0, 0 }, LA = { -20, 0, 0 } },
+					follow = { Root = { -34, 0, 0 }, Waist = { -32, 0, 0 }, Neck = { -22, 0, 0 }, RS = { 22, 0, 12 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 22, 0, -12 }, LE = { 0, 0, 0 }, RH = { -12, 0, 6 }, RK = { -14, 0, 0 }, RA = { -20, 0, 0 }, LH = { -12, 0, -6 }, LK = { -14, 0, 0 }, LA = { -20, 0, 0 } },
+					trail = "prop", fx = { { "burst", color = BLEU, size = 3, at = "feet" }, { "shake", amount = 0.4 } }, text = "PILON !", hitText = "PLANTÉ !",
+				},
+				-- Y : mise à jour forcée : il pose la tour, appuie sur le bouton et une barre de progression bleue géante traverse le couloir à 1 %… tout le monde attend
+				SUPER = {
+					label = "Mise à jour forcée !", startup = 0.4, active = 0.25, recovery = 0.7,
+					damage = 24, hitbox = box(16, 8, 8, 2), kbBase = 40, kbGrowth = 80, kbAngle = 35,
+					status = { name = "waiting", duration = 3 },
+					windup = { Root = { 10, 0, 0, 0, -0.6, 0.1 }, Waist = { 20, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 60, 0, 20 }, RE = { 80, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -20 }, LE = { 80, 0, 0 } },
+					strike = { Root = { -8, 0, 0, 0, -0.3, -0.2 }, Waist = { -10, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 90, 0, 0 }, RE = { 10, 0, 0 }, RW = { -30, 0, 0 }, LS = { 30, 0, -30 }, LE = { 110, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					follow = { Root = { -6, 0, 0, 0, -0.25, -0.1 }, Waist = { -6, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 40, 0, 30 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -30 }, LE = { 100, 0, 0 } },
+					hold = 0.4, windupFx = { "super", { "text", text = "NE PAS ÉTEINDRE", color = BSOD, at = "above" } },
+					fx = { { "beam", color = BSOD, length = 18, width = 5, at = "feet" }, { "screen", color = BSOD, alpha = 0.3 }, { "text", text = "MISE À JOUR 1 %…", color = BLANC, at = "above" }, { "symbols", symbols = { "⏳", "1 %", "2 %" }, count = 6, radius = 5, color = BLANC } },
+					text = "ATTENDEZ…", hitText = "PATIENTEZ !",
+				},
+				-- →Y : tour-bélier : il serre la tour contre lui, baisse la tête et fonce à travers tout le couloir comme un chariot de supermarché fou
+				SUPER_side = {
+					label = "Tour-bélier !", startup = 0.35, active = 0.32, recovery = 0.7,
+					damage = 26, hitbox = box(16, 6, 8, 0.8), kbBase = 48, kbGrowth = 100, kbAngle = 30, selfVelocity = Vector2.new(72, 0), armor = true,
+					windup = { Root = { 10, 0, 0, 0, -0.3, 0.3 }, Waist = { 16, 0, 0 }, Neck = { -16, 0, 0 }, RS = { 60, 0, 10 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -10 }, LE = { 110, 0, 0 } },
+					strike = { Root = { 26, 0, 0, 0, -0.4, -0.5 }, Waist = { 26, 0, 0 }, Neck = { -24, 0, 0 }, RS = { 94, 0, 4 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 94, 0, -4 }, LE = { 30, 0, 0 }, RH = { 60, 0, 0 }, RK = { -40, 0, 0 } },
+					follow = { Root = { 28, 0, 0, 0, -0.42, -0.55 }, Waist = { 28, 0, 0 }, Neck = { -26, 0, 0 }, RS = { 96, 0, 6 }, RE = { 28, 0, 0 }, RW = { 0, 0, 0 }, LS = { 96, 0, -6 }, LE = { 28, 0, 0 }, LH = { 60, 0, 0 }, LK = { -40, 0, 0 } },
+					shake = true, trail = "prop", windupFx = { "super", { "symbols", symbols = { "💢", "🖥️" }, count = 5, radius = 3, color = ROUGE } },
+					fx = { "dust", { "beam", color = VIOLET, length = 16, width = 4, at = "root" }, { "burst", color = BLEU, size = 4, at = "front" }, { "shake", amount = 0.5 } },
+					text = "DÉGAGEZ !", hitText = "ENCASTRÉ !",
+				},
+				-- ↑Y : overclock : il pousse tous les curseurs à fond, la tour explose sous ses pieds et le propulse au plafond dans une gerbe de LED
+				SUPER_up = {
+					label = "Overclock !", startup = 0.38, active = 0.3, recovery = 0.7,
+					damage = 24, hitbox = box(16, 12, 8, 5), kbBase = 46, kbGrowth = 96, kbAngle = 86, invuln = 0.3, selfVelocity = Vector2.new(0, 55),
+					windup = { Root = { 10, 0, 0, 0, -0.9, 0.1 }, Waist = { 20, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 40, 0, 20 }, RE = { 110, 0, 0 }, RW = { -30, 0, 0 }, LS = { 40, 0, -20 }, LE = { 110, 0, 0 }, LW = { -30, 0, 0 } },
+					strike = { Root = { 4, 0, 0, 0, 0.5, 0 }, Waist = { 14, 0, 0 }, Neck = { 46, 0, 0 }, RS = { 184, 0, 20 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 184, 0, -20 }, LE = { 0, 0, 0 }, RH = { 40, 0, 10 }, RK = { -90, 0, 0 }, LH = { 20, 0, -15 }, LK = { -60, 0, 0 } },
+					follow = { Root = { 8, 0, 0, 0, 0.55, 0 }, Waist = { 20, 0, 0 }, Neck = { 52, 0, 0 }, RS = { 188, 0, 24 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 188, 0, -24 }, LE = { 0, 0, 0 }, RH = { 60, 0, 20 }, RK = { -110, 0, 0 }, LH = { 10, 0, -25 }, LK = { -40, 0, 0 } },
+					hold = 0.2, shake = true, spin = { axis = "y", degrees = 360 }, hideProp = "tour",
+					windupFx = { "super", { "text", text = "5,8 GHz", color = VERT, at = "above" } },
+					fx = { { "pillar", color = VIOLET, height = 22, width = 3, at = "front" }, { "burst", color = ROUGE, size = 5, at = "feet" }, { "toss", shape = "block", color = NOIR, size = 0.6, count = 8, speed = 26 }, { "particles", tex = "fire", color = ORANGE, dir = "all", at = "feet", time = 0.5, speed = 16, size = 0.7, rate = 90 }, { "shake", amount = 0.6 } },
+					text = "OVERCLOCK !", hitText = "KABOUM !",
+				},
+				-- ↓Y : court-circuit : il arrache l'alim et plante les deux fils dans le sol : les éclairs courent des deux côtés sur toute la plateforme
+				SUPER_down = {
+					label = "Court-circuit !", startup = 0.4, active = 0.2, recovery = 0.7,
+					damage = 22, hitbox = box(34, 6, 0, 1), kbBase = 36, kbGrowth = 64, kbAngle = 60,
+					status = { name = "stunned", duration = 2 },
+					windup = { Root = { 0, 0, 0, 0, -0.3, 0 }, Waist = { -6, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 150, 0, 40 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, -40 }, LE = { 20, 0, 0 } },
+					strike = { Root = { 22, 0, 0, 0, -0.95, -0.2 }, Waist = { 30, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 30, 0, 30 }, RE = { 0, 0, 0 }, RW = { -30, 0, 0 }, LS = { 30, 0, -30 }, LE = { 0, 0, 0 }, LW = { -30, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					follow = { Root = { 24, 0, 0, 0, -1.0, -0.24 }, Waist = { 32, 0, 0 }, Neck = { 8, 0, 0 }, RS = { 26, 0, 32 }, RE = { 0, 0, 0 }, RW = { -40, 0, 0 }, LS = { 26, 0, -32 }, LE = { 0, 0, 0 }, LW = { -40, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.32 } },
+					hold = 0.3, shake = true, windupFx = { "super", { "particles", tex = "spark", color = BLEU, dir = "all", at = "hand", time = 0.3, speed = 10, size = 0.4, rate = 60 } },
+					fx = { { "beam", color = BLEU, length = 34, width = 2.5, at = "feet" }, { "ring", color = VERT, radius = 10, at = "feet" }, { "ring", color = BLEU, radius = 17, at = "feet" }, { "particles", tex = "spark", color = BLEU, dir = "all", at = "feet", time = 0.5, speed = 24, size = 0.6, rate = 120 }, { "shake", amount = 0.5 } },
+					text = "BZZZZT !", hitText = "ÉLECTROCUTÉ !",
+				},
+			},
+			links = {
+				P_neutral = { P = "P_side", K = "K_neutral", S = "S_down" },
+				P_side = { P = "P_up", K = "K_side", S = "S_side" },
+				P_down = { P = "P_up", K = "K_down", S = "S_down" },
+				K_neutral = { P = "P_neutral", K = "K_side", S = "S_neutral" },
+				P_dash = { P = "P_side", K = "K_side", S = "S_side" },
+				K_dash = { P = "P_up", S = "S_up" },
+			},
+		},
+		{ id = "zapper", name = "Pistolet optique", icon = "🔫",
+			prop = { name = "PropZapper", hand = "Right", pieces = {
+				{ "Crosse", "", "block", Vector3.new(0.3, 0.7, 0.4), Vector3.new(0, -0.35, 0.1), Vector3.new(-15, 0, 0), ORANGE, "SmoothPlastic" },
+				{ "Canon", "", "cyl", Vector3.new(0.26, 0.26, 1.3), Vector3.new(0, -0.1, -0.7), Vector3.zero, GRIS, "SmoothPlastic", { axis = "z" } },
+				{ "Viseur", "", "block", Vector3.new(0.1, 0.18, 0.5), Vector3.new(0, 0.1, -0.6), Vector3.zero, NOIR, "SmoothPlastic" },
+				{ "Bout", "", "ball", Vector3.new(0.3, 0.3, 0.3), Vector3.new(0, -0.1, -1.4), Vector3.zero, VERT, "Neon", { neon = true, light = { VERT, 6, 1 } } },
+			} },
+			ability = { reach = 1.2, text = "Visée longue : portée de tous les coups +20 %" },
+			moves = {
+				-- J : coup de crosse sec sur le nez, le pistolet retourné dans la main
+				P_neutral = {
+					label = "Coup de crosse", startup = 0.07, active = 0.08, recovery = 0.14,
+					damage = 5, hitbox = box(4, 3, 2.6, 0.8), kbBase = 18, kbGrowth = 22, kbAngle = 25,
+					windup = { Root = { 2, -12, 0, 0, -0.15, 0.1 }, Waist = { 2, -16, 0 }, Neck = { -6, 10, 0 }, RS = { 50, 0, 20 }, RE = { 120, 0, 0 }, RW = { 60, 0, 0 }, LS = { 30, 0, -20 }, LE = { 90, 0, 0 } },
+					strike = { Root = { -6, 10, 0, 0, -0.22, -0.25 }, Waist = { -8, 14, 0 }, Neck = { -8, -8, 0 }, RS = { 92, 0, 0 }, RE = { 10, 0, 0 }, RW = { 90, 0, 0 }, LS = { 20, 0, -30 }, LE = { 90, 0, 0 } },
+					follow = { Root = { -8, 14, 0, 0, -0.24, -0.3 }, Waist = { -10, 18, 0 }, Neck = { -10, -10, 0 }, RS = { 88, 0, 6 }, RE = { 16, 0, 0 }, RW = { 80, 0, 0 }, LS = { 16, 0, -32 }, LE = { 90, 0, 0 } },
+					trail = "prop", hitText = "TOC !",
+				},
+				-- →J : tir laser, bras tendu, un œil fermé : un petit trait orange file droit devant
+				P_side = {
+					label = "Tir laser", kind = "projectile", startup = 0.09, active = 0, recovery = 0.2,
+					damage = 6, kbBase = 20, kbGrowth = 32, kbAngle = 25,
+					projectile = { speed = 95, angle = 0, gravity = 0, lifetime = 0.32, size = 1, color = ORANGE, aim = false,
+						visual = { shape = "ball", size = 0.8, color = ORANGE, neon = true } },
+					windup = { Root = { 0, -20, 0, 0, -0.15, 0.1 }, Waist = { 0, -24, 0 }, Neck = { 0, 16, -8 }, RS = { 70, 0, 10 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -20 }, LE = { 90, 0, 0 } },
+					strike = { Root = { -4, 18, 0, 0, -0.2, -0.2 }, Waist = { -4, 22, 0 }, Neck = { -4, -14, -8 }, RS = { 94, 0, -4 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -30 }, LE = { 90, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					follow = { Root = { -2, 18, 0, 0, -0.18, -0.15 }, Waist = { -2, 22, 0 }, Neck = { -4, -14, -8 }, RS = { 102, 0, -4 }, RE = { 10, 0, 0 }, RW = { 20, 0, 0 }, LS = { 20, 0, -30 }, LE = { 90, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					fx = { { "burst", color = ORANGE, size = 1, at = "hand" } }, text = "PIOU !", hitText = "TOUCHÉ !",
+				},
+				-- ↓J : accroupi, il tire au ras du sol dans les tibias
+				P_down = {
+					label = "Tir dans les tibias", kind = "projectile", startup = 0.1, active = 0, recovery = 0.22,
+					damage = 6, kbBase = 20, kbGrowth = 30, kbAngle = 70,
+					projectile = { speed = 90, angle = 0, gravity = 0, lifetime = 0.3, size = 1, color = ORANGE, aim = false, from = "feet",
+						visual = { shape = "ball", size = 0.8, color = ORANGE, neon = true } },
+					windup = { Root = { 10, -14, 0, 0, -0.85, 0.1 }, Waist = { 16, -16, 0 }, Neck = { 6, 10, 0 }, RS = { 50, 0, 20 }, RE = { 80, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -30 }, LE = { 90, 0, 0 }, LH = { -40, 0, 0 }, LK = { -40, 0, 0 } },
+					strike = { Root = { 14, 10, 0, 0, -0.95, -0.15 }, Waist = { 22, 12, 0 }, Neck = { 4, -8, 0 }, RS = { 70, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -30 }, LE = { 90, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					follow = { Root = { 14, 10, 0, 0, -0.95, -0.15 }, Waist = { 22, 12, 0 }, Neck = { 4, -8, 0 }, RS = { 76, 0, 0 }, RE = { 6, 0, 0 }, RW = { 20, 0, 0 }, LS = { 30, 0, -30 }, LE = { 90, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					fx = { { "burst", color = ORANGE, size = 0.8, at = "hand" } }, text = "PIOU !", hitText = "AÏE LE TIBIA !",
+				},
+				-- ↑J : tir en cloche vers le ciel, le pistolet tenu à deux mains comme un sniper
+				P_up = {
+					label = "Tir en cloche", kind = "projectile", startup = 0.1, active = 0, recovery = 0.22,
+					damage = 7, kbBase = 22, kbGrowth = 36, kbAngle = 85,
+					projectile = { speed = 80, angle = 70, gravity = 0, lifetime = 0.35, size = 1, color = ORANGE, aim = false,
+						visual = { shape = "ball", size = 0.8, color = ORANGE, neon = true } },
+					windup = { Root = { 6, 0, 0, 0, -0.25, 0.1 }, Waist = { 8, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 60, 0, 10 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -10 }, LE = { 100, 0, 0 } },
+					strike = { Root = { -12, 0, 0, 0, 0.05, -0.1 }, Waist = { -16, 0, 0 }, Neck = { -30, 0, 0 }, RS = { 160, 0, 6 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, -6 }, LE = { 20, 0, 0 } },
+					follow = { Root = { -14, 0, 0, 0, 0.08, -0.12 }, Waist = { -18, 0, 0 }, Neck = { -34, 0, 0 }, RS = { 166, 0, 8 }, RE = { 6, 0, 0 }, RW = { 10, 0, 0 }, LS = { 154, 0, -8 }, LE = { 20, 0, 0 } },
+					fx = { { "burst", color = ORANGE, size = 1, at = "hand" } }, text = "PIOU !", hitText = "EN L'AIR !",
+				},
+				-- J en l'air : tir plongeant, pistolet pointé en bas entre ses pieds
+				P_air = {
+					label = "Tir plongeant", kind = "projectile", startup = 0.1, active = 0, recovery = 0.2,
+					damage = 7, kbBase = 20, kbGrowth = 36, kbAngle = -40,
+					projectile = { speed = 90, angle = -55, gravity = 0, lifetime = 0.35, size = 1, color = ORANGE, aim = false,
+						visual = { shape = "ball", size = 0.8, color = ORANGE, neon = true } },
+					windup = { Root = { 6, 0, 0 }, Waist = { 10, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 120, 0, 10 }, RE = { 70, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -30 }, LE = { 80, 0, 0 }, RH = { 40, 0, 0 }, RK = { -80, 0, 0 }, LH = { 50, 0, 0 }, LK = { -90, 0, 0 } },
+					strike = { Root = { 14, 0, 0 }, Waist = { 22, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 20, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -40 }, LE = { 60, 0, 0 }, RH = { 30, 0, 10 }, RK = { -60, 0, 0 }, LH = { 30, 0, -10 }, LK = { -60, 0, 0 } },
+					follow = { Root = { 16, 0, 0 }, Waist = { 24, 0, 0 }, Neck = { 32, 0, 0 }, RS = { 26, 0, 10 }, RE = { 6, 0, 0 }, RW = { 20, 0, 0 }, LS = { 30, 0, -40 }, LE = { 60, 0, 0 }, RH = { 28, 0, 10 }, RK = { -56, 0, 0 }, LH = { 28, 0, -10 }, LK = { -56, 0, 0 } },
+					fx = { { "burst", color = ORANGE, size = 1, at = "hand" } }, text = "PIOU !", hitText = "DANS LE MILLE !",
+				},
+				-- dash J : il tire deux fois en courant, bras tendu, l'autre bras en balancier
+				P_dash = {
+					label = "Double tir en courant", kind = "projectile", startup = 0.08, active = 0, recovery = 0.22,
+					damage = 5, kbBase = 20, kbGrowth = 32, kbAngle = 28, selfVelocity = Vector2.new(30, 0),
+					projectile = { speed = 95, angle = 0, gravity = 0, lifetime = 0.32, size = 1, color = ORANGE, aim = false, fan = { count = 2, from = -4, to = 6 },
+						visual = { shape = "ball", size = 0.8, color = ORANGE, neon = true } },
+					windup = { Root = { 8, -16, 0, 0, -0.15, 0.15 }, Waist = { 8, -20, 0 }, Neck = { 0, 12, 0 }, RS = { 60, 0, 10 }, RE = { 70, 0, 0 }, RW = { 0, 0, 0 }, LS = { -30, 0, -20 }, LE = { 60, 0, 0 } },
+					strike = { Root = { 10, 14, 0, 0, -0.2, -0.3 }, Waist = { 10, 18, 0 }, Neck = { -6, -10, 0 }, RS = { 96, 0, -2 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -40, 0, -25 }, LE = { 70, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { 10, 14, 0, 0, -0.2, -0.32 }, Waist = { 10, 18, 0 }, Neck = { -6, -10, 0 }, RS = { 100, 0, -2 }, RE = { 8, 0, 0 }, RW = { 16, 0, 0 }, LS = { -40, 0, -25 }, LE = { 70, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+					fx = { { "burst", color = ORANGE, size = 1, at = "hand" } }, text = "PIOU PIOU !", hitText = "TOUCHÉ !",
+				},
+				-- K : coup de pied du cow-boy, le pistolet brandi en l'air comme pour un duel
+				K_neutral = {
+					label = "Coup de pied de duel", startup = 0.15, active = 0.1, recovery = 0.28,
+					damage = 10, hitbox = box(5, 3.5, 3, 0.3), kbBase = 28, kbGrowth = 58, kbAngle = 35,
+					windup = { Root = { 4, -10, 0, 0, -0.2, 0.1 }, Waist = { 4, -10, 0 }, Neck = { 0, 10, 0 }, RS = { 150, 0, 30 }, RE = { 70, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -30 }, LE = { 80, 0, 0 }, RH = { -30, 0, 0 }, RK = { -50, 0, 0 } },
+					strike = { Root = { 8, 0, 0, 0, -0.1, 0.05 }, Waist = { 10, 0, 0 }, Neck = { 0, 0, 0 }, RS = { 170, 0, 30 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -40 }, LE = { 60, 0, 0 }, RH = { 95, 0, 0 }, RK = { -4, 0, 0 }, RA = { 10, 0, 0 } },
+					follow = { Root = { 12, 0, 0, 0, -0.1, 0.1 }, Waist = { 14, 0, 0 }, Neck = { 0, 0, 0 }, RS = { 174, 0, 32 }, RE = { 58, 0, 0 }, RW = { 0, 0, 0 }, LS = { 54, 0, -44 }, LE = { 56, 0, 0 }, RH = { 104, 0, 0 }, RK = { 0, 0, 0 }, RA = { 15, 0, 0 } },
+					trail = "rightFoot", hitText = "YEEHAW !",
+				},
+				-- →K : coup de pied sauté en avant, il tire un coup au ciel pour fêter ça
+				K_side = {
+					label = "Pied sauté pistolero", startup = 0.16, active = 0.14, recovery = 0.3,
+					damage = 12, hitbox = box(6, 3.5, 3.5, 0.5), kbBase = 32, kbGrowth = 66, kbAngle = 36, selfVelocity = Vector2.new(26, 16),
+					windup = { Root = { 6, 20, 0, 0, -0.3, 0.1 }, Waist = { 8, 26, 0 }, Neck = { 0, -14, 0 }, RS = { 120, 0, 40 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -40 }, LE = { 80, 0, 0 }, RH = { -20, 0, 0 }, RK = { -60, 0, 0 } },
+					strike = { Root = { -6, -10, 0, 0, 0.2, -0.2 }, Waist = { -8, -14, 0 }, Neck = { 0, 10, 0 }, RS = { 176, 0, 24 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -50 }, LE = { 60, 0, 0 }, RH = { 100, 0, 10 }, RK = { -6, 0, 0 }, RA = { 10, 0, 0 }, LH = { -20, 0, -5 }, LK = { -70, 0, 0 } },
+					follow = { Root = { -8, -14, 0, 0, 0.22, -0.24 }, Waist = { -10, -18, 0 }, Neck = { 0, 12, 0 }, RS = { 180, 0, 26 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 34, 0, -54 }, LE = { 60, 0, 0 }, RH = { 106, 0, 12 }, RK = { 0, 0, 0 }, RA = { 14, 0, 0 }, LH = { -24, 0, -5 }, LK = { -74, 0, 0 } },
+					trail = "rightFoot", fx = { { "burst", color = ORANGE, size = 1, at = "hand" } }, hitText = "BANG !",
+				},
+				-- ↓K : balayette basse, le pistolet braqué entre ses genoux
+				K_down = {
+					label = "Balayette braquée", startup = 0.14, active = 0.14, recovery = 0.3,
+					damage = 9, hitbox = box(7, 2, 3.5, -1.6), kbBase = 26, kbGrowth = 50, kbAngle = 74,
+					windup = { Root = { 10, 10, 0, 0, -0.85, 0.1 }, Waist = { 14, 14, 0 }, Neck = { 6, 0, 0 }, RS = { 60, 0, 10 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -40 }, LE = { 80, 0, 0 }, LH = { -30, 0, 0 }, LK = { -40, 0, 0 } },
+					strike = { Root = { 14, -20, 0, 0, -0.95, -0.1 }, Waist = { 18, -26, 0 }, Neck = { 6, 0, 0 }, RS = { 60, 0, 0 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -40 }, LE = { 80, 0, 0 }, LH = { 50, 0, -20 }, LK = { -4, 0, 0 }, LA = { 20, 0, 0 } },
+					follow = { Root = { 16, -26, 0, 0, -0.95, -0.14 }, Waist = { 20, -32, 0 }, Neck = { 6, 0, 0 }, RS = { 62, 0, 0 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 34, 0, -42 }, LE = { 80, 0, 0 }, LH = { 56, 0, -24 }, LK = { 0, 0, 0 }, LA = { 24, 0, 0 } },
+					trail = "leftFoot", fx = { "dust" }, hitText = "FAUCHÉ !",
+				},
+				-- ↑K : coup de pied monté, il tire en même temps au-dessus de sa tête, par réflexe
+				K_up = {
+					label = "Pied monté réflexe", startup = 0.16, active = 0.12, recovery = 0.32,
+					damage = 11, hitbox = box(4.5, 6, 1.5, 3.5), kbBase = 30, kbGrowth = 64, kbAngle = 88,
+					windup = { Root = { 10, 0, 0, 0, -0.25, 0.1 }, Waist = { 14, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 80, 0, 30 }, RE = { 80, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -40 }, LE = { 60, 0, 0 }, RH = { -20, 0, 0 }, RK = { -60, 0, 0 } },
+					strike = { Root = { -16, 0, 0, 0, 0.05, -0.1 }, Waist = { -20, 0, 0 }, Neck = { -24, 0, 0 }, RS = { 176, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -50 }, LE = { 30, 0, 0 }, RH = { 140, 0, 0 }, RK = { -6, 0, 0 }, RA = { 20, 0, 0 } },
+					follow = { Root = { -18, 0, 0, 0, 0.08, -0.12 }, Waist = { -22, 0, 0 }, Neck = { -28, 0, 0 }, RS = { 180, 0, 12 }, RE = { 0, 0, 0 }, RW = { 10, 0, 0 }, LS = { 34, 0, -52 }, LE = { 30, 0, 0 }, RH = { 148, 0, 0 }, RK = { 0, 0, 0 }, RA = { 24, 0, 0 } },
+					trail = "rightFoot", fx = { { "burst", color = ORANGE, size = 1.2, at = "above" } }, hitText = "BANG-KLANG !",
+				},
+				-- K en l'air : coup de pied en ciseaux, pistolet braqué sur la cible pendant tout le saut
+				K_air = {
+					label = "Ciseaux braqués", startup = 0.12, active = 0.18, recovery = 0.2,
+					damage = 10, hits = 2, hitbox = box(5, 4, 2.5, -0.5), kbBase = 22, kbGrowth = 46, kbAngle = 40,
+					windup = { Root = { -8, 0, 0 }, Waist = { -6, 0, 0 }, Neck = { 0, 0, 0 }, RS = { 92, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -40 }, LE = { 80, 0, 0 }, RH = { 60, 0, 0 }, RK = { -100, 0, 0 }, LH = { -20, 0, 0 }, LK = { -40, 0, 0 } },
+					strike = { Root = { -4, 0, 0 }, Waist = { 6, 0, 0 }, Neck = { 0, 0, 0 }, RS = { 94, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 44, 0, -44 }, LE = { 80, 0, 0 }, RH = { 90, 0, 0 }, RK = { -6, 0, 0 }, RA = { 10, 0, 0 }, LH = { -30, 0, 0 }, LK = { -30, 0, 0 } },
+					follow = { Root = { -2, 0, 0 }, Waist = { 8, 0, 0 }, Neck = { 0, 0, 0 }, RS = { 96, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 46, 0, -46 }, LE = { 80, 0, 0 }, RH = { -30, 0, 0 }, RK = { -30, 0, 0 }, LH = { 95, 0, 0 }, LK = { -4, 0, 0 }, LA = { 10, 0, 0 } },
+					trail = "bothFeet", hitText = "TCHAC TCHAC !",
+				},
+				-- dash K : roulade de tireur : il roule en avant et ressort pistolet braqué, pied en avant
+				K_dash = {
+					label = "Roulade de tireur", startup = 0.1, active = 0.22, recovery = 0.3,
+					damage = 11, hitbox = box(6, 3, 3, -0.5), kbBase = 30, kbGrowth = 62, kbAngle = 38, selfVelocity = Vector2.new(50, 8),
+					windup = { Root = { 20, 0, 0, 0, -0.6, 0 }, Waist = { 30, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 120, 0, 20 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 120, 0, -20 }, LE = { 60, 0, 0 } },
+					strike = { Root = { 10, 0, 0, 0, -0.7, 0.1 }, Waist = { 10, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 94, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -50 }, LE = { 60, 0, 0 }, RH = { 85, 0, 0 }, RK = { 0, 0, 0 }, RA = { 10, 0, 0 }, LH = { 60, 0, 0 }, LK = { -90, 0, 0 } },
+					follow = { Root = { 12, 0, 0, 0, -0.72, 0.14 }, Waist = { 12, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 96, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 44, 0, -54 }, LE = { 60, 0, 0 }, RH = { 90, 0, 0 }, RK = { 0, 0, 0 }, RA = { 14, 0, 0 }, LH = { 64, 0, 0 }, LK = { -94, 0, 0 } },
+					spin = { axis = "x", degrees = 360 }, trail = "rightFoot", fx = { "dust" }, hitText = "ROULÉ-BOULÉ !",
+				},
+				-- L : rafale optique : trois traits orange en éventail qui foncent tous sur l'adversaire
+				S_neutral = {
+					label = "Rafale optique", kind = "projectile", startup = 0.22, active = 0, recovery = 0.45,
+					damage = 6, kbBase = 24, kbGrowth = 40, kbAngle = 30,
+					projectile = { speed = 100, angle = 0, gravity = 0, lifetime = 0.6, size = 1.2, color = ORANGE, fan = { count = 3, from = -8, to = 8 },
+						visual = { shape = "ball", size = 1, color = ORANGE, neon = true } },
+					windup = { Root = { 2, -24, 0, 0, -0.2, 0.15 }, Waist = { 2, -28, 0 }, Neck = { 0, 18, -8 }, RS = { 70, 0, 10 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, -10 }, LE = { 70, 0, 0 } },
+					strike = { Root = { -8, 20, 0, 0, -0.28, -0.3 }, Waist = { -10, 24, 0 }, Neck = { -4, -14, -8 }, RS = { 94, 0, -4 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, 0 }, LE = { 30, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { -8, 20, 0, 0, -0.28, -0.3 }, Waist = { -10, 24, 0 }, Neck = { -4, -14, -8 }, RS = { 104, 0, -4 }, RE = { 10, 0, 0 }, RW = { 24, 0, 0 }, LS = { 90, 0, 0 }, LE = { 30, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+					shake = true, fx = { { "burst", color = ORANGE, size = 1.6, at = "hand" } }, text = "PIOU PIOU PIOU !", hitText = "TRIPLÉ !",
+				},
+				-- →L : tir chargé : il retient son souffle, le bout vire au vert et un gros rayon part percer tout le couloir
+				S_side = {
+					label = "Tir chargé", kind = "projectile", startup = 0.3, active = 0, recovery = 0.5,
+					damage = 15, kbBase = 32, kbGrowth = 62, kbAngle = 32,
+					projectile = { speed = 115, angle = 0, gravity = 0, lifetime = 0.6, size = 2, color = VERT, pierce = true,
+						visual = { shape = "cyl", size = 1.8, color = VERT, neon = true } },
+					windup = { Root = { 4, -26, 0, 0, -0.25, 0.2 }, Waist = { 4, -30, 0 }, Neck = { 0, 20, -10 }, RS = { 92, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, -10 }, LE = { 80, 0, 0 }, LW = { 0, 0, 0 } },
+					strike = { Root = { -10, 22, 0, 0, -0.3, -0.35 }, Waist = { -12, 26, 0 }, Neck = { -4, -16, -10 }, RS = { 94, 0, -4 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 92, 0, 0 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+					follow = { Root = { -4, 22, 0, 0, -0.26, -0.2 }, Waist = { -6, 26, 0 }, Neck = { -4, -16, -10 }, RS = { 108, 0, -4 }, RE = { 10, 0, 0 }, RW = { 30, 0, 0 }, LS = { 100, 0, 0 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+					shake = true, windupFx = { { "particles", tex = "spark", color = VERT, dir = "all", at = "hand", time = 0.3, speed = 4, size = 0.3, rate = 60 } },
+					fx = { { "beam", color = VERT, length = 16, width = 2, at = "hand" }, { "burst", color = VERT, size = 2.5, at = "hand" }, { "shake", amount = 0.3 } },
+					text = "CHARGÉ… PIOUUU !", hitText = "PERCÉ !",
+				},
+				-- ↓L : tir à ricochet : accroupi, il tire dans le sol et le laser rebondit en zigzag jusqu'à l'adversaire
+				S_down = {
+					label = "Ricochet au sol", kind = "projectile", startup = 0.22, active = 0, recovery = 0.48,
+					damage = 13, kbBase = 28, kbGrowth = 52, kbAngle = 60,
+					projectile = { speed = 85, angle = -25, gravity = 70, lifetime = 0.8, size = 1.4, color = ORANGE, bounce = 3,
+						visual = { shape = "ball", size = 1.2, color = ORANGE, neon = true } },
+					windup = { Root = { 12, -10, 0, 0, -0.8, 0.1 }, Waist = { 18, -12, 0 }, Neck = { 10, 8, 0 }, RS = { 40, 0, 20 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -30 }, LE = { 90, 0, 0 }, LH = { -40, 0, 0 }, LK = { -40, 0, 0 } },
+					strike = { Root = { 16, 8, 0, 0, -0.9, -0.15 }, Waist = { 24, 10, 0 }, Neck = { 14, -6, 0 }, RS = { 50, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -30 }, LE = { 90, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					follow = { Root = { 16, 8, 0, 0, -0.9, -0.15 }, Waist = { 24, 10, 0 }, Neck = { 14, -6, 0 }, RS = { 58, 0, 0 }, RE = { 8, 0, 0 }, RW = { 20, 0, 0 }, LS = { 40, 0, -30 }, LE = { 90, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					fx = { { "burst", color = ORANGE, size = 1.5, at = "feet" }, { "ring", color = ORANGE, radius = 3, at = "front" } }, text = "RICOCHET !", hitText = "PING PANG !",
+				},
+				-- ↑L : tir de recul : il tire dans le sol à deux mains si fort que le recul le propulse en diagonale, pied en avant
+				S_up = {
+					label = "Recul propulseur", startup = 0.14, active = 0.3, recovery = 0.42,
+					damage = 13, hitbox = box(10, 11, 3, 4), kbBase = 30, kbGrowth = 52, kbAngle = 72, selfVelocity = Vector2.new(42, 82),
+					windup = { Root = { 10, 0, 0, 0, -0.8, 0.1 }, Waist = { 16, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 30, 0, 10 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -10 }, LE = { 10, 0, 0 } },
+					strike = { Root = { -42, 0, 0, 0, 0.4, -0.2 }, Waist = { -6, 0, 0 }, Neck = { 30, 0, 0 }, RS = { -30, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -30, 0, -10 }, LE = { 0, 0, 0 }, RH = { 60, 0, 5 }, RK = { -10, 0, 0 }, LH = { -30, 0, -5 }, LK = { -60, 0, 0 } },
+					follow = { Root = { -46, 0, 0, 0, 0.45, -0.25 }, Waist = { -8, 0, 0 }, Neck = { 32, 0, 0 }, RS = { -36, 0, 12 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -36, 0, -12 }, LE = { 0, 0, 0 }, RH = { 66, 0, 6 }, RK = { -10, 0, 0 }, LH = { -34, 0, -6 }, LK = { -64, 0, 0 } },
+					shake = true, trail = "rightFoot", fx = { { "burst", color = ORANGE, size = 3, at = "feet" }, { "particles", tex = "spark", color = ORANGE, dir = "down", at = "feet", time = 0.4, speed = 16, size = 0.5, rate = 80 }, { "ring", color = ORANGE, radius = 4, at = "feet" } },
+					text = "BANG… WOUSH !", hitText = "RECUL !",
+				},
+				-- L en l'air : pluie de lasers : tête en bas, il arrose tout ce qu'il y a dessous
+				S_air = {
+					label = "Pluie de lasers", kind = "projectile", startup = 0.15, active = 0, recovery = 0.4,
+					damage = 6, kbBase = 24, kbGrowth = 44, kbAngle = -40,
+					projectile = { speed = 80, angle = -70, gravity = 0, lifetime = 0.6, size = 1, color = ORANGE, rain = { count = 4, spread = 6 },
+						visual = { shape = "ball", size = 0.9, color = ORANGE, neon = true } },
+					windup = { Root = { 10, 0, 0 }, Waist = { 14, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 140, 0, 20 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -40 }, LE = { 80, 0, 0 }, RH = { 40, 0, 0 }, RK = { -80, 0, 0 }, LH = { 50, 0, 0 }, LK = { -90, 0, 0 } },
+					strike = { Root = { 30, 0, 0 }, Waist = { 30, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 10, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -50 }, LE = { 60, 0, 0 }, RH = { -20, 0, 10 }, RK = { -30, 0, 0 }, LH = { -20, 0, -10 }, LK = { -30, 0, 0 } },
+					follow = { Root = { 34, 0, 0 }, Waist = { 32, 0, 0 }, Neck = { 32, 0, 0 }, RS = { 14, 0, 12 }, RE = { 4, 0, 0 }, RW = { 10, 0, 0 }, LS = { 64, 0, -54 }, LE = { 60, 0, 0 }, RH = { -24, 0, 10 }, RK = { -34, 0, 0 }, LH = { -24, 0, -10 }, LK = { -34, 0, 0 } },
+					fx = { { "burst", color = ORANGE, size = 2, at = "hand" } }, text = "ARROSAGE !", hitText = "CRIBLÉ !",
+				},
+				-- Y : headshot : il souffle sur le canon, ajuste la visée une seconde entière… et un seul énorme rayon part se loger pile entre les deux yeux
+				SUPER = {
+					label = "Headshot !", kind = "projectile", startup = 0.45, active = 0, recovery = 0.7,
+					damage = 26, kbBase = 48, kbGrowth = 100, kbAngle = 28,
+					projectile = { speed = 130, angle = 0, gravity = 0, lifetime = 0.6, size = 2.8, color = ROUGE, pierce = true, homing = 0.6,
+						visual = { shape = "ball", size = 2.4, color = ROUGE, neon = true, spin = 12, text = "🎯" } },
+					status = { name = "stunned", duration = 1.5 },
+					windup = { Root = { 4, -30, 0, 0, -0.3, 0.2 }, Waist = { 4, -34, 0 }, Neck = { -4, 22, -14 }, RS = { 92, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 80, 0, 0 }, LE = { 10, 0, 0 }, LW = { 0, 0, 0 } },
+					strike = { Root = { -12, 24, 0, 0, -0.34, -0.45 }, Waist = { -14, 28, 0 }, Neck = { -8, -18, -14 }, RS = { 94, 0, -4 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 92, 0, 0 }, LE = { 4, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+					follow = { Root = { 0, 24, 0, 0, -0.26, -0.1 }, Waist = { -2, 28, 0 }, Neck = { -8, -18, -14 }, RS = { 118, 0, -4 }, RE = { 14, 0, 0 }, RW = { 40, 0, 0 }, LS = { 104, 0, 0 }, LE = { 4, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+					shake = true, windupFx = { "super", { "text", text = "🎯 …", color = ROUGE, at = "above" }, { "particles", tex = "spark", color = ROUGE, dir = "all", at = "hand", time = 0.4, speed = 3, size = 0.3, rate = 60 } },
+					fx = { { "beam", color = ROUGE, length = 18, width = 3, at = "hand" }, { "burst", color = ROUGE, size = 4, at = "hand" }, { "shake", amount = 0.5 } },
+					text = "HEADSHOT !", hitText = "ONE SHOT !",
+				},
+				-- →Y : balle qui rebondit : il tire en diagonale sur le décor et le laser ricoche dans tous les sens à travers le couloir, puis revient dans le canon
+				SUPER_side = {
+					label = "Laser-flipper !", kind = "projectile", startup = 0.4, active = 0, recovery = 0.7,
+					damage = 24, kbBase = 44, kbGrowth = 92, kbAngle = 40,
+					projectile = { speed = 95, angle = 20, gravity = 60, lifetime = 1.2, size = 2.6, color = VERT, bounce = 5, returns = true, pierce = true,
+						visual = { shape = "ball", size = 2.2, color = VERT, neon = true, spin = 14 } },
+					status = { name = "inverted", duration = 2 },
+					windup = { Root = { 6, -36, 0, 0, -0.3, 0.3 }, Waist = { 8, -40, 0 }, Neck = { -10, 24, 0 }, RS = { 130, 0, 20 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -20 }, LE = { 80, 0, 0 } },
+					strike = { Root = { -14, 26, 0, 0, -0.34, -0.5 }, Waist = { -16, 30, 0 }, Neck = { -16, -18, 0 }, RS = { 120, 0, -6 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -40 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+					follow = { Root = { -16, 30, 0, 0, -0.36, -0.55 }, Waist = { -18, 34, 0 }, Neck = { -18, -20, 0 }, RS = { 126, 0, -8 }, RE = { 6, 0, 0 }, RW = { 20, 0, 0 }, LS = { 46, 0, -44 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.52 } },
+					windupFx = { "super", { "symbols", symbols = { "🔫", "💥" }, count = 6, radius = 3, color = VERT } },
+					fx = { { "burst", color = VERT, size = 3.5, at = "hand" }, { "ring", color = VERT, radius = 5, at = "front" }, { "symbols", symbols = { "TILT", "BONUS" }, count = 4, radius = 4, color = ORANGE }, { "shake", amount = 0.3 } },
+					text = "FLIPPER !", hitText = "TILT !",
+				},
+				-- ↑Y : feu d'artifice optique : il tire vers le ciel en tournant sur lui-même, une gerbe de lasers retombe sur tout le couloir et le soulève
+				SUPER_up = {
+					label = "Feu d'artifice optique !", startup = 0.38, active = 0.3, recovery = 0.7,
+					damage = 24, hitbox = box(16, 12, 8, 5), kbBase = 46, kbGrowth = 96, kbAngle = 86, invuln = 0.3, selfVelocity = Vector2.new(0, 55),
+					windup = { Root = { -8, 0, 0, 0, -0.9, 0 }, Waist = { -28, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 40, 0, 20 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -20 }, LE = { 110, 0, 0 } },
+					strike = { Root = { 6, 0, 0, 0, 0.5, 0 }, Waist = { 18, 0, 0 }, Neck = { 50, 0, 0 }, RS = { 186, 0, 6 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, -60 }, LE = { 10, 0, 0 }, RH = { 40, 0, 10 }, RK = { -90, 0, 0 }, LH = { 20, 0, -15 }, LK = { -60, 0, 0 } },
+					follow = { Root = { 10, 0, 0, 0, 0.55, 0 }, Waist = { 24, 0, 0 }, Neck = { 56, 0, 0 }, RS = { 188, 0, 10 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 156, 0, -66 }, LE = { 10, 0, 0 }, RH = { 60, 0, 20 }, RK = { -110, 0, 0 }, LH = { 10, 0, -25 }, LK = { -40, 0, 0 } },
+					hold = 0.2, shake = true, spin = { axis = "y", degrees = 720 },
+					windupFx = { "super", { "symbols", symbols = { "🎆", "🎇" }, count = 5, radius = 3, color = ORANGE } },
+					fx = { { "pillar", color = ORANGE, height = 24, width = 3, at = "front" }, { "rain", shape = "ball", color = VERT, count = 12, radius = 7, size = 0.6 }, { "burst", color = ROUGE, size = 4, at = "above" }, { "ring", color = ORANGE, radius = 6, at = "feet" }, { "shake", amount = 0.4 } },
+					text = "FEU D'ARTIFICE !", hitText = "PIOU-BOUM !",
+				},
+				-- ↓Y : tapis de lasers : il se couche sur le dos et tire en rafale vers le ciel, une pluie de traits retombe pile sur l'adversaire
+				SUPER_down = {
+					label = "Tapis de lasers !", kind = "projectile", startup = 0.4, active = 0, recovery = 0.7,
+					damage = 4, kbBase = 22, kbGrowth = 36, kbAngle = 50,
+					projectile = { speed = 70, gravity = 40, lifetime = 1.2, size = 1.2, color = ORANGE, rain = { count = 8, spread = 6, ahead = 9, height = 22 },
+						visual = { shape = "ball", size = 1, color = ORANGE, neon = true } },
+					status = { name = "slowed", duration = 2.5 },
+					windup = { Root = { -20, 0, 0, 0, -0.9, 0.2 }, Waist = { -20, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 120, 0, 20 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -30 }, LE = { 90, 0, 0 } },
+					strike = { Root = { -70, 0, 0, 0, -1.4, 0 }, Waist = { 0, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 170, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 170, 0, 0 }, LE = { 0, 0, 0 }, RH = { 20, 0, 5 }, RK = { -20, 0, 0 }, LH = { 20, 0, -5 }, LK = { -20, 0, 0 } },
+					follow = { Root = { -72, 0, 0, 0, -1.4, 0 }, Waist = { 0, 0, 0 }, Neck = { 22, 0, 0 }, RS = { 176, 0, 4 }, RE = { 6, 0, 0 }, RW = { 20, 0, 0 }, LS = { 176, 0, -4 }, LE = { 6, 0, 0 }, RH = { 24, 0, 5 }, RK = { -24, 0, 0 }, LH = { 24, 0, -5 }, LK = { -24, 0, 0 } },
+					hold = 0.3, shake = true, windupFx = { "super" },
+					fx = { { "burst", color = ORANGE, size = 3, at = "hand" }, { "particles", tex = "spark", color = ORANGE, dir = "up", at = "hand", time = 0.5, speed = 30, size = 0.5, rate = 120 }, { "shake", amount = 0.3 } },
+					text = "COUVERTURE !", hitText = "CRIBLÉ !",
+				},
+			},
+			links = {
+				P_neutral = { P = "P_side", K = "K_neutral", S = "S_neutral" },
+				P_side = { P = "P_side", K = "K_side", S = "S_side" },
+				P_down = { P = "P_up", K = "K_down", S = "S_down" },
+				K_neutral = { P = "P_side", K = "K_side", S = "S_side" },
+				K_side = { P = "P_up", K = "K_up", S = "S_neutral" },
+				P_dash = { P = "P_side", S = "S_side" },
+				K_dash = { P = "P_up", S = "S_up" },
+			},
+		},
+	},
 
 	look = {
 		body = {
@@ -559,6 +1044,20 @@ local data = {
 			hold = 0.3, prop = "clavier", hideProp = "manette", windupFx = { "super" },
 			fx = { { "burst", color = BLEU, size = 4, at = "front" }, { "toss", shape = "block", color = BLANC, size = 0.5, count = 10, speed = 28 }, { "shake", amount = 0.5 } },
 			text = "RAGE QUIT !", hitText = "TAC-TAC-TAC !",
+		},
+		-- Hadoken de rage (→Y) : quart de cercle avant à deux mains sur la manette, il hurle et une boule de rage rouge
+		-- grosse comme lui part de ses paumes et traverse tout le couloir en grésillant
+		SUPER_side = {
+			label = "Hadoken de rage !", kind = "projectile", startup = 0.4, active = 0, recovery = 0.7,
+			damage = 26, kbBase = 48, kbGrowth = 98, kbAngle = 32,
+			projectile = { speed = 88, angle = 0, gravity = 0, lifetime = 0.9, size = 3.4, color = ROUGE, pierce = true,
+				visual = { shape = "ball", size = 3.2, color = ROUGE, neon = true, spin = 10, text = "💢" } },
+			windup = { Root = { 10, -40, 0, 0, -0.45, 0.3 }, Waist = { 12, -44, 0 }, Neck = { 6, 24, 0 }, RS = { 20, 0, 20 }, RE = { 120, 0, 0 }, RW = { 40, 0, 0 }, LS = { 20, 0, -20 }, LE = { 120, 0, 0 }, LW = { 40, 0, 0 } },
+			strike = { Root = { -16, 20, 0, 0, -0.4, -0.55 }, Waist = { -18, 24, 0 }, Neck = { -8, -14, 0 }, RS = { 94, 0, 8 }, RE = { 0, 0, 0 }, RW = { -40, 0, 0 }, LS = { 94, 0, -8 }, LE = { 0, 0, 0 }, LW = { -40, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.55 } },
+			follow = { Root = { -18, 24, 0, 0, -0.42, -0.6 }, Waist = { -20, 28, 0 }, Neck = { -10, -16, 0 }, RS = { 98, 0, 10 }, RE = { 4, 0, 0 }, RW = { -50, 0, 0 }, LS = { 98, 0, -10 }, LE = { 4, 0, 0 }, LW = { -50, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.58 } },
+			shake = true, windupFx = { "super", { "text", text = "↓ ↘ → + P", color = VERT, at = "above" }, { "particles", tex = "fire", color = ROUGE, dir = "all", at = "hand", time = 0.35, speed = 6, size = 0.6, rate = 60 } },
+			fx = { { "burst", color = ROUGE, size = 4, at = "front" }, { "beam", color = ROUGE, length = 14, width = 3, at = "hand" }, { "shake", amount = 0.4 } },
+			text = "HADOKEEEN !", hitText = "K.O. !",
 		},
 		-- Chaise en orbite (Y↑) : il empoigne sa chaise gaming à deux mains et la balance de toutes ses forces : elle fonce droit
 		-- sur l'adversaire et l'emporte en orbite… et il reste planté à la regarder s'éloigner

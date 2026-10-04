@@ -22,11 +22,499 @@ local ROPE = Color3.fromRGB(235, 225, 200)
 local BANANA = Color3.fromRGB(250, 225, 80)
 local WIND = Color3.fromRGB(220, 230, 240)
 
+local CUIR = Color3.fromRGB(120, 80, 50) -- coins de la valise (arme n° 2)
+local SKY = Color3.fromRGB(150, 200, 255) -- ballon bleu (arme n° 3)
+
 local data = {
 	id = "Marcel",
 	name = "Marcel le Mime",
 	costume = "Marcel",
 	style = "mime",
+
+	------------------------------------------------------------------ Les 3 armes de la Caisse Bizarre (une au hasard)
+	-- n° 1 : la canne invisible (ses coups sont ceux de moves). n° 2 : la valise invisible, lourde et lente, qui éjecte loin
+	-- et encaisse pendant les spéciaux. n° 3 : le bouquet de ballons, jeu de projectiles flottants et de Supers vite rechargés.
+	weapons = {
+		{ id = "canne", name = "Canne invisible", icon = "🤍",
+			ability = { jumps = 1, text = "Un saut de plus : il monte un escalier invisible" } },
+		{ id = "valise", name = "Valise invisible", icon = "🧳",
+			prop = { name = "PropValise", hand = "Right", pieces = {
+				{ "Poignee", "", "cyl", Vector3.new(0.7, 0.14, 0.14), Vector3.new(0, -0.1, 0), Vector3.zero, CUIR, "Leather", { axis = "x" } },
+				{ "Coffre", "", "block", Vector3.new(2.4, 1.7, 0.8), Vector3.new(0, -1.25, 0), Vector3.zero, GHOST, "Glass", { transparency = 0.72 } },
+				{ "CoinG", "", "block", Vector3.new(0.32, 0.32, 0.86), Vector3.new(-1.05, -2.0, 0), Vector3.zero, CUIR, "Leather" },
+				{ "CoinD", "", "block", Vector3.new(0.32, 0.32, 0.86), Vector3.new(1.05, -2.0, 0), Vector3.zero, CUIR, "Leather" },
+				{ "Etiquette", "", "block", Vector3.new(0.55, 0.32, 0.05), Vector3.new(0.6, -0.95, -0.42), Vector3.new(0, 0, 15), RED, "SmoothPlastic" },
+			} },
+			ability = { knockback = 1.3, armor = true, text = "Pleine de rien et pourtant lourde : éjecte 30 % plus loin, les L encaissent" },
+			moves = {
+				-- J : il balance la valise devant lui d'un coup de reins, comme un bagagiste pressé
+				P_neutral = {
+					label = "Coup de valise", startup = 0.11, active = 0.1, recovery = 0.2,
+					damage = 7, hitbox = box(5, 3.5, 2.8, 0.6), kbBase = 24, kbGrowth = 36, kbAngle = 30,
+					windup = { Root = { 4, -18, 0, 0, -0.12, 0.15 }, Waist = { 6, -22, 0 }, Neck = { 0, 14, 0 }, RS = { 20, 0, 24 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -30 }, LE = { 80, 0, 0 } },
+					strike = { Root = { -8, 16, 0, 0, -0.26, -0.3 }, Waist = { -10, 22, 0 }, Neck = { -4, -10, 0 }, RS = { 92, 0, 4 }, RE = { 10, 0, 0 }, RW = { -30, 0, 0 }, LS = { 10, 0, -30 }, LE = { 90, 0, 0 } },
+					follow = { Root = { -10, 20, 0, 0, -0.28, -0.34 }, Waist = { -12, 26, 0 }, Neck = { -4, -12, 0 }, RS = { 96, 0, 2 }, RE = { 14, 0, 0 }, RW = { -40, 0, 0 }, LS = { 8, 0, -30 }, LE = { 92, 0, 0 } },
+					trail = "prop", text = "…", hitText = "( BADABOUM )",
+				},
+				-- →J : grand balancé latéral de la valise à bout de bras, la hanche part en premier
+				P_side = {
+					label = "Valise balancée", startup = 0.12, active = 0.1, recovery = 0.22,
+					damage = 8, hitbox = box(6, 3, 3.5, 0.8), kbBase = 26, kbGrowth = 46, kbAngle = 25, selfVelocity = Vector2.new(18, 0),
+					windup = { Root = { 2, -40, 0, 0, -0.15, 0.2 }, Waist = { 4, -36, 0 }, Neck = { 0, 28, 0 }, RS = { 40, 0, 70 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -20 }, LE = { 90, 0, 0 } },
+					strike = { Root = { -6, 24, 0, 0, -0.3, -0.35 }, Waist = { -8, 30, 0 }, Neck = { 0, -18, 0 }, RS = { 90, 0, -10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -40 }, LE = { 70, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { -8, 34, 0, 0, -0.32, -0.4 }, Waist = { -10, 40, 0 }, Neck = { 0, -24, 0 }, RS = { 84, 0, -30 }, RE = { 6, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -40 }, LE = { 70, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+					trail = "prop", hitText = "( VLAN )",
+				},
+				-- ↓J : il pose la valise… pile sur les orteils d'en face, puis s'excuse d'un geste
+				P_down = {
+					label = "Valise posée", startup = 0.1, active = 0.1, recovery = 0.2,
+					damage = 7, hitbox = box(4.5, 2, 2.4, -1.8), kbBase = 24, kbGrowth = 32, kbAngle = 72,
+					windup = { Root = { 6, 0, 0, 0, -0.3, 0.1 }, Waist = { 10, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 60, 0, 16 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -30 }, LE = { 60, 0, 0 } },
+					strike = { Root = { 14, 0, 0, 0, -0.75, -0.15 }, Waist = { 26, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 40, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -30 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					follow = { Root = { 10, 0, 0, 0, -0.6, -0.1 }, Waist = { 18, 0, 0 }, Neck = { 4, 0, 10 }, RS = { 30, 0, 20 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, -40 }, LE = { 110, 0, 0 }, LW = { 0, 0, 40 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					fx = { "dust" }, text = "( OUPS )", hitText = "( AÏE LES ORTEILS )",
+				},
+				-- ↑J : il hisse la valise au-dessus du béret comme un porteur de gare, bras tendus
+				P_up = {
+					label = "Valise au plafond", startup = 0.12, active = 0.12, recovery = 0.22,
+					damage = 8, hitbox = box(4.5, 5, 1.2, 3.6), kbBase = 28, kbGrowth = 42, kbAngle = 86,
+					windup = { Root = { 8, 0, 0, 0, -0.4, 0.1 }, Waist = { 12, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 30, 0, 20 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -20 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -6, 0, 0, 0, 0.15, -0.05 }, Waist = { -8, 0, 0 }, Neck = { 28, 0, 0 }, RS = { 180, 0, 8 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 176, 0, -8 }, LE = { 0, 0, 0 }, FR = { 0, 0, 0, 0, 0.15, 0 }, FL = { 0, 0, 0, 0, 0.15, 0 } },
+					follow = { Root = { -8, 0, 0, 0, 0.18, -0.06 }, Waist = { -10, 0, 0 }, Neck = { 32, 0, 0 }, RS = { 184, 0, 10 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 180, 0, -10 }, LE = { 0, 0, 0 }, FR = { 0, 0, 0, 0, 0.18, 0 }, FL = { 0, 0, 0, 0, 0.18, 0 } },
+					trail = "prop", fx = { { "ring", color = GHOST, radius = 3, at = "above" } }, hitText = "( TOC )",
+				},
+				-- J en l'air : il abat la valise sous lui, genoux remontés, comme on jette un bagage dans la soute
+				P_air = {
+					label = "Valise plongeante", startup = 0.1, active = 0.12, recovery = 0.18,
+					damage = 8, hitbox = box(4.5, 4, 2, -1), kbBase = 24, kbGrowth = 40, kbAngle = -35,
+					windup = { Root = { 10, 0, 0 }, Waist = { 14, 0, 0 }, Neck = { 8, 0, 0 }, RS = { 180, 0, 10 }, RE = { 50, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -40 }, LE = { 40, 0, 0 }, RH = { 50, 0, 0 }, RK = { -90, 0, 0 }, LH = { 60, 0, 0 }, LK = { -100, 0, 0 } },
+					strike = { Root = { -14, 0, 0 }, Waist = { -30, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 40, 0, 4 }, RE = { 0, 0, 0 }, RW = { -20, 0, 0 }, LS = { -20, 0, -45 }, LE = { 20, 0, 0 }, RH = { 20, 0, 0 }, RK = { -40, 0, 0 }, LH = { 30, 0, 0 }, LK = { -60, 0, 0 } },
+					follow = { Root = { -18, 0, 0 }, Waist = { -34, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 20, 0, 6 }, RE = { 6, 0, 0 }, RW = { -30, 0, 0 }, LS = { -28, 0, -50 }, LE = { 20, 0, 0 }, RH = { 10, 0, 0 }, RK = { -30, 0, 0 }, LH = { 24, 0, 0 }, LK = { -55, 0, 0 } },
+					trail = "prop", hitText = "( BLAM )",
+				},
+				-- dash J : bagagiste en retard, il fonce la valise devant lui comme un bélier
+				P_dash = {
+					label = "Bagagiste en retard", startup = 0.1, active = 0.16, recovery = 0.26,
+					damage = 9, hitbox = box(5, 4, 3, 0.5), kbBase = 30, kbGrowth = 55, kbAngle = 28, selfVelocity = Vector2.new(42, 0),
+					windup = { Root = { -6, 0, 0, 0, -0.2, 0.1 }, Waist = { -6, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 50, 0, 10 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -10 }, LE = { 90, 0, 0 } },
+					strike = { Root = { -16, 0, 0, 0, -0.3, -0.3 }, Waist = { -10, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 94, 0, 6 }, RE = { 0, 0, 0 }, RW = { -20, 0, 0 }, LS = { 94, 0, -6 }, LE = { 0, 0, 0 }, LW = { -20, 0, 0 } },
+					follow = { Root = { -18, 0, 0, 0, -0.32, -0.34 }, Waist = { -12, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 96, 0, 8 }, RE = { 0, 0, 0 }, RW = { -24, 0, 0 }, LS = { 96, 0, -8 }, LE = { 0, 0, 0 }, LW = { -24, 0, 0 } },
+					trail = "prop", fx = { "dust", { "symbols", symbols = { "( VITE )" }, count = 1, radius = 1.5, color = WHITE } }, hitText = "( BOUM )",
+				},
+				-- K : il prend la valise à deux mains derrière lui et l'abat de tout son poids, le béret s'envole presque
+				K_neutral = {
+					label = "Valise à deux mains", startup = 0.22, active = 0.12, recovery = 0.36,
+					damage = 13, hitbox = box(5.5, 4, 3, 0.8), kbBase = 34, kbGrowth = 86, kbAngle = 35,
+					windup = { Root = { 14, 0, 0, 0, 0.0, 0.25 }, Waist = { 18, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 190, 0, 8 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 186, 0, 2 }, LE = { 30, 0, 0 }, FR = { 0, 0, 0, 0, 0.15, 0 }, FL = { 0, 0, 0, 0, 0.15, 0 } },
+					strike = { Root = { -16, 0, 0, 0, -0.5, -0.35 }, Waist = { -28, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 70, 0, -4 }, RE = { 0, 0, 0 }, RW = { -40, 0, 0 }, LS = { 70, 0, 10 }, LE = { 10, 0, 0 } },
+					follow = { Root = { -20, 0, 0, 0, -0.56, -0.4 }, Waist = { -32, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 50, 0, -4 }, RE = { 0, 0, 0 }, RW = { -55, 0, 0 }, LS = { 50, 0, 10 }, LE = { 10, 0, 0 } },
+					trail = "prop", fx = { { "ring", color = GHOST, radius = 3.5, at = "front" }, { "shake", amount = 0.25 } }, text = "…!", hitText = "( SBAM )",
+				},
+				-- →K : tourniquet de bagages, un tour complet sur lui-même la valise à l'horizontale
+				K_side = {
+					label = "Tourniquet de bagages", startup = 0.22, active = 0.16, recovery = 0.36,
+					damage = 14, hitbox = box(6.5, 3.5, 3.5, 0.8), kbBase = 36, kbGrowth = 90, kbAngle = 30, selfVelocity = Vector2.new(20, 0),
+					windup = { Root = { 0, -50, 0, 0, -0.2, 0.1 }, Waist = { 0, -30, 0 }, Neck = { 0, 30, 0 }, RS = { 60, 0, 60 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -40 }, LE = { 50, 0, 0 } },
+					strike = { Root = { -4, 0, 0, 0, -0.22, -0.1 }, Waist = { -4, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 90, 0, 14 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, -85 }, LE = { 0, 0, 0 } },
+					follow = { Root = { -4, 0, 0, 0, -0.22, -0.1 }, Waist = { -4, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 92, 0, 12 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, -85 }, LE = { 0, 0, 0 } },
+					spin = { axis = "y", degrees = 360 }, trail = "prop", hitText = "( VLAM )",
+				},
+				-- ↓K : il écrase la valise au sol et l'onde de choc fauche les chevilles
+				K_down = {
+					label = "Valise écrasée", startup = 0.2, active = 0.12, recovery = 0.36,
+					damage = 12, hitbox = box(7, 2.5, 3.5, -1.5), kbBase = 32, kbGrowth = 72, kbAngle = 76,
+					windup = { Root = { 8, 0, 0, 0, 0.05, 0.1 }, Waist = { 10, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 186, 0, 14 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 186, 0, -14 }, LE = { 30, 0, 0 } },
+					strike = { Root = { 12, 0, 0, 0, -0.9, -0.2 }, Waist = { 24, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 50, 0, 10 }, RE = { 0, 0, 0 }, RW = { -20, 0, 0 }, LS = { 50, 0, -10 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					follow = { Root = { 14, 0, 0, 0, -0.95, -0.24 }, Waist = { 26, 0, 0 }, Neck = { 8, 0, 0 }, RS = { 44, 0, 12 }, RE = { 0, 0, 0 }, RW = { -30, 0, 0 }, LS = { 44, 0, -12 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.32 } },
+					trail = "prop", fx = { { "ring", color = GHOST, radius = 5, at = "feet" }, { "shake", amount = 0.35 }, "dust" }, hitText = "( BROUM )",
+				},
+				-- ↑K : uppercut de valise, il la remonte du sol jusqu'au ciel en se cambrant
+				K_up = {
+					label = "Valise soulevée", startup = 0.22, active = 0.12, recovery = 0.34,
+					damage = 13, hitbox = box(4.5, 6, 1.5, 3.5), kbBase = 34, kbGrowth = 82, kbAngle = 88,
+					windup = { Root = { 12, 0, 0, 0, -0.55, 0.15 }, Waist = { 20, 0, 0 }, Neck = { -14, 0, 0 }, RS = { -20, 0, 20 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -30 }, LE = { 80, 0, 0 } },
+					strike = { Root = { -14, 0, 0, 0, 0.1, -0.1 }, Waist = { -18, 0, 0 }, Neck = { 28, 0, 0 }, RS = { 176, 0, 6 }, RE = { 10, 0, 0 }, RW = { -30, 0, 0 }, LS = { 20, 0, -40 }, LE = { 60, 0, 0 }, FR = { 0, 0, 0, 0, 0.12, 0 }, FL = { 0, 0, 0, 0, 0.12, 0 } },
+					follow = { Root = { -16, 0, 0, 0, 0.12, -0.12 }, Waist = { -20, 0, 0 }, Neck = { 32, 0, 0 }, RS = { 182, 0, 8 }, RE = { 10, 0, 0 }, RW = { -40, 0, 0 }, LS = { 16, 0, -42 }, LE = { 60, 0, 0 }, FR = { 0, 0, 0, 0, 0.14, 0 }, FL = { 0, 0, 0, 0, 0.14, 0 } },
+					trail = "prop", fx = { { "burst", color = GHOST, size = 2.5, at = "above" } }, hitText = "( HOP LÀ )",
+				},
+				-- K en l'air : assis sur la valise comme sur une luge, il la lâche sous lui
+				K_air = {
+					label = "Assis sur la valise", startup = 0.16, active = 0.14, recovery = 0.26,
+					damage = 12, hitbox = box(5, 4, 1.5, -1.5), kbBase = 30, kbGrowth = 72, kbAngle = -45,
+					windup = { Root = { -6, 0, 0 }, Waist = { -8, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 60, 0, 30 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -30 }, LE = { 90, 0, 0 }, RH = { 90, 0, 0 }, RK = { -100, 0, 0 }, LH = { 90, 0, 0 }, LK = { -100, 0, 0 } },
+					strike = { Root = { 8, 0, 0 }, Waist = { 10, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 20, 0, 20 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -20 }, LE = { 10, 0, 0 }, RH = { 95, 0, 10 }, RK = { -10, 0, 0 }, RA = { 10, 0, 0 }, LH = { 95, 0, -10 }, LK = { -10, 0, 0 }, LA = { 10, 0, 0 } },
+					follow = { Root = { 10, 0, 0 }, Waist = { 12, 0, 0 }, Neck = { -24, 0, 0 }, RS = { 10, 0, 24 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 10, 0, -24 }, LE = { 10, 0, 0 }, RH = { 100, 0, 12 }, RK = { -12, 0, 0 }, RA = { 10, 0, 0 }, LH = { 100, 0, -12 }, LK = { -12, 0, 0 }, LA = { 10, 0, 0 } },
+					trail = "prop", hitText = "( POUM )",
+				},
+				-- dash K : il glisse sur la valise à roulettes, pieds devant, et renverse tout
+				K_dash = {
+					label = "Valise à roulettes", startup = 0.12, active = 0.26, recovery = 0.34,
+					damage = 12, hitbox = box(6, 3, 3, -0.8), kbBase = 32, kbGrowth = 70, kbAngle = 38, selfVelocity = Vector2.new(55, 10),
+					windup = { Root = { -8, 0, 0, 0, -0.4, 0 }, Waist = { -10, 0, 0 }, RS = { 40, 0, 20 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -20 }, LE = { 60, 0, 0 } },
+					strike = { Root = { 22, 0, 0, 0, -0.7, 0.2 }, Waist = { 10, 0, 0 }, Neck = { 6, 0, 0 }, RS = { -20, 0, 20 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -40 }, LE = { 30, 0, 0 }, RH = { 85, 0, 0 }, RK = { 0, 0, 0 }, RA = { 10, 0, 0 }, LH = { 80, 0, 0 }, LK = { -10, 0, 0 } },
+					follow = { Root = { 26, 0, 0, 0, -0.72, 0.24 }, Waist = { 12, 0, 0 }, Neck = { 8, 0, 0 }, RS = { -26, 0, 24 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 66, 0, -44 }, LE = { 30, 0, 0 }, RH = { 90, 0, 0 }, RK = { 0, 0, 0 }, RA = { 14, 0, 0 }, LH = { 85, 0, 0 }, LK = { -10, 0, 0 } },
+					trail = "prop", fx = { "dust", { "symbols", symbols = { "( RRRR )" }, count = 2, radius = 2, color = WHITE } }, hitText = "( SKRRRT )",
+				},
+				-- L : la valise s'ouvre d'un coup et tout ce qu'elle ne contient pas gicle en ressort sur tout le couloir
+				S_neutral = {
+					label = "Valise à ressort", startup = 0.24, active = 0.2, recovery = 0.5,
+					damage = 14, hitbox = box(14, 6, 7, 1), kbBase = 34, kbGrowth = 60, kbAngle = 30,
+					windup = { Root = { 6, 0, 0, 0, -0.25, 0.2 }, Waist = { 10, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 60, 0, 10 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -10 }, LE = { 100, 0, 0 }, LW = { 60, 0, 0 } },
+					strike = { Root = { -12, 0, 0, 0, -0.35, -0.4 }, Waist = { -14, 0, 0 }, Neck = { -16, 0, 0 }, RS = { 96, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, -30 }, LE = { 20, 0, 0 }, LW = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+					follow = { Root = { -14, 0, 0, 0, -0.38, -0.45 }, Waist = { -16, 0, 0 }, Neck = { -18, 0, 0 }, RS = { 98, 0, 12 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 156, 0, -34 }, LE = { 20, 0, 0 }, LW = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.55 } },
+					hold = 0.1, shake = true, trail = "prop",
+					fx = { { "burst", color = GHOST, size = 3.5, at = "hand" }, { "toss", shape = "flat", color = WHITE, size = 0.8, count = 6, speed = 26 }, { "beam", color = GHOST, length = 14, width = 2.5, at = "hand" } },
+					text = "( CLAC )", hitText = "( SURPRISE )",
+				},
+				-- →L : le convoyeur à bagages, il pousse la valise sur un tapis roulant d'aéroport qui traverse tout le couloir
+				S_side = {
+					label = "Convoyeur à bagages", startup = 0.22, active = 0.3, recovery = 0.5,
+					damage = 15, hitbox = box(14, 6, 7, 0.5), kbBase = 36, kbGrowth = 64, kbAngle = 32, selfVelocity = Vector2.new(46, 0),
+					windup = { Root = { 6, 0, 0, 0, -0.3, 0.2 }, Waist = { 10, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 40, 0, 10 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -10 }, LE = { 110, 0, 0 }, LW = { 0, 0, 0 } },
+					strike = { Root = { -22, 0, 0, 0, -0.45, -0.5 }, Waist = { -12, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 90, 0, 8 }, RE = { 0, 0, 0 }, RW = { -30, 0, 0 }, LS = { 90, 0, -8 }, LE = { 0, 0, 0 }, LW = { -30, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.6 } },
+					follow = { Root = { -24, 0, 0, 0, -0.48, -0.55 }, Waist = { -14, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 92, 0, 8 }, RE = { 0, 0, 0 }, RW = { -34, 0, 0 }, LS = { 92, 0, -8 }, LE = { 0, 0, 0 }, LW = { -34, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.65 } },
+					wobble = true, trail = "prop", fx = { { "beam", color = GHOST, length = 16, width = 3, at = "feet" }, "dust", { "symbols", symbols = { "▶", "▶" }, count = 3, radius = 2, color = WHITE } },
+					text = "( BIIIP )", hitText = "( EMBARQUÉ )",
+				},
+				-- ↓L : valise trop lourde : il tire dessus, n'y arrive pas, et la laisse retomber si fort que le sol se fend
+				S_down = {
+					label = "Valise trop lourde", startup = 0.26, active = 0.16, recovery = 0.5,
+					damage = 14, hitbox = box(14, 6, 7, 0.5), kbBase = 34, kbGrowth = 60, kbAngle = 80,
+					windup = { Root = { 16, 0, 0, 0, -0.5, 0.3 }, Waist = { -10, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 40, 0, 10 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -10 }, LE = { 20, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					strike = { Root = { 10, 0, 0, 0, -0.9, -0.2 }, Waist = { 26, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 50, 0, 10 }, RE = { 0, 0, 0 }, RW = { -20, 0, 0 }, LS = { 50, 0, -10 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { 12, 0, 0, 0, -0.92, -0.24 }, Waist = { 28, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 44, 0, 14 }, RE = { 0, 0, 0 }, RW = { -30, 0, 0 }, LS = { 44, 0, -14 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+					shake = true, hold = 0.1, trail = "prop",
+					fx = { { "ring", color = GHOST, radius = 7, at = "feet" }, { "pillar", color = GHOST, height = 3, width = 8, at = "front", time = 0.5 }, { "shake", amount = 0.6 }, "dust" },
+					text = "( HAN… )", hitText = "( CRAAAC )",
+				},
+				-- ↑L : il monte sur la valise comme sur un tapis roulant d'aéroport qui s'emballe et file en diagonale vers le ciel
+				S_up = {
+					label = "Tapis roulant d'aéroport", startup = 0.15, active = 0.3, recovery = 0.4,
+					damage = 14, hitbox = box(10, 11, 3, 4), kbBase = 32, kbGrowth = 55, kbAngle = 72, selfVelocity = Vector2.new(42, 80),
+					windup = { Root = { 6, 0, 0, 0, -0.7, 0.1 }, Waist = { -10, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 30, 0, 10 }, RE = { 80, 0, 0 }, RW = { 0, 0, 0 }, LS = { -20, 0, -20 }, LE = { 40, 0, 0 } },
+					strike = { Root = { -38, 0, 0, 0, 0.3, 0 }, Waist = { -8, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 10, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, -30 }, LE = { 10, 0, 0 }, RH = { 10, 0, 6 }, RK = { -10, 0, 0 }, RA = { -20, 0, 0 }, LH = { 6, 0, -6 }, LK = { -10, 0, 0 }, LA = { -20, 0, 0 } },
+					follow = { Root = { -42, 0, 0, 0, 0.35, 0 }, Waist = { -10, 0, 0 }, Neck = { 32, 0, 0 }, RS = { 8, 0, 12 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 156, 0, -34 }, LE = { 10, 0, 0 }, RH = { 12, 0, 8 }, RK = { -14, 0, 0 }, RA = { -20, 0, 0 }, LH = { 4, 0, -8 }, LK = { -12, 0, 0 }, LA = { -20, 0, 0 } },
+					trail = "prop", fx = { { "ring", color = WIND, radius = 4, at = "feet" }, { "beam", color = GHOST, length = 12, width = 2, at = "feet" }, { "symbols", symbols = { "✈", "( DING )" }, count = 3, radius = 2, color = WHITE } },
+					text = "( EMBARQUEMENT )", hitText = "( DÉCOLLÉ )",
+				},
+				-- L en l'air : il lâche la valise, qui tombe du ciel pile sur la tête de l'adversaire
+				S_air = {
+					label = "Valise lâchée", kind = "projectile", startup = 0.18, active = 0, recovery = 0.42,
+					damage = 14, kbBase = 28, kbGrowth = 58, kbAngle = -60,
+					projectile = { speed = 60, gravity = 60, lifetime = 0.9, size = 3, color = GHOST, rain = { count = 1, spread = 0.5, ahead = 7, height = 18 },
+						visual = { shape = "block", size = 2.4, color = GHOST, transparency = 0.7, spin = 4,
+							parts = { { "block", Vector3.new(0.3, 0.3, 0.9), Vector3.new(-1.1, -1.0, 0), CUIR }, { "block", Vector3.new(0.3, 0.3, 0.9), Vector3.new(1.1, -1.0, 0), CUIR } } } },
+					windup = { Root = { -6, 0, 0 }, Waist = { -8, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 176, 0, 14 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -40 }, LE = { 60, 0, 0 }, RH = { 40, 0, 0 }, RK = { -60, 0, 0 }, LH = { 20, 0, 0 }, LK = { -50, 0, 0 } },
+					strike = { Root = { 4, 0, 0 }, Waist = { 4, 0, 0 }, Neck = { -16, 0, 0 }, RS = { 150, 0, 40 }, RE = { 10, 0, 0 }, RW = { 60, 0, 0 }, LS = { 60, 0, -30 }, LE = { 110, 0, 0 }, LW = { 0, 0, 40 }, RH = { 30, 0, 0 }, RK = { -50, 0, 0 }, LH = { 20, 0, 0 }, LK = { -50, 0, 0 } },
+					follow = { Root = { 4, 0, 0 }, Waist = { 4, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 140, 0, 44 }, RE = { 10, 0, 0 }, RW = { 70, 0, 0 }, LS = { 70, 0, -30 }, LE = { 110, 0, 0 }, LW = { 0, 0, 50 }, RH = { 30, 0, 0 }, RK = { -50, 0, 0 }, LH = { 20, 0, 0 }, LK = { -50, 0, 0 } },
+					hideProp = "valise", fx = { { "symbols", symbols = { "🧳", "▼" }, count = 2, radius = 2, at = "above", color = WHITE } }, text = "( OUPS )", hitText = "( PLONK )",
+				},
+				-- Y : excédent de bagages, il ouvre la valise en grand, y fourre tout le couloir et la referme à coups de fesses
+				SUPER = {
+					label = "Excédent de bagages !", startup = 0.4, active = 0.24, recovery = 0.7,
+					damage = 24, hitbox = box(14, 6, 7, 1), kbBase = 48, kbGrowth = 98, kbAngle = 32,
+					status = { name = "rooted", duration = 1 },
+					windup = { Root = { 10, 0, 0, 0, -0.5, 0.2 }, Waist = { 16, 0, 0 }, Neck = { -12, 0, 0 }, RS = { 70, 0, 30 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, -30 }, LE = { 90, 0, 0 }, LW = { 60, 0, 0 } },
+					strike = { Root = { -20, 0, 0, 0, -0.5, -0.5 }, Waist = { -20, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 96, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 96, 0, -10 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.6 } },
+					follow = { Root = { 20, 180, 0, 0, -0.9, -0.2 }, Waist = { -10, 0, 0 }, Neck = { 24, 0, 0 }, RS = { 60, 0, 60 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -60 }, LE = { 20, 0, 0 } },
+					hold = 0.2, shake = true, windupFx = { "super", { "text", text = "[ 23 KG MAX ]", color = WHITE, at = "above" } },
+					fx = { { "burst", color = GHOST, size = 4, at = "front" }, { "ring", color = GHOST, radius = 6, at = "front" }, { "symbols", symbols = { "🧳", "( CLAC )" }, count = 5, radius = 3, color = WHITE }, { "shake", amount = 0.4 } },
+					text = "( ÇA RENTRE )", hitText = "( EMBALLÉ, PESÉ )",
+				},
+				-- →Y : le carrousel, il lance la valise à plat ; elle fait le tour du tapis à bagages… et revient dans sa main
+				SUPER_side = {
+					label = "Le Carrousel !", kind = "projectile", startup = 0.38, active = 0, recovery = 0.65,
+					damage = 24, kbBase = 46, kbGrowth = 94, kbAngle = 30,
+					projectile = { speed = 85, angle = 0, gravity = 0, lifetime = 0.9, size = 3.2, color = GHOST, returns = true, pierce = true,
+						visual = { shape = "block", size = 2.8, color = GHOST, transparency = 0.7, spin = 10,
+							parts = { { "block", Vector3.new(0.3, 0.3, 1.0), Vector3.new(-1.3, -1.2, 0), CUIR }, { "block", Vector3.new(0.3, 0.3, 1.0), Vector3.new(1.3, -1.2, 0), CUIR }, { "block", Vector3.new(0.6, 0.35, 0.06), Vector3.new(0.6, 0, -1.45), RED } } } },
+					windup = { Root = { 6, -40, 0, 0, -0.3, 0.3 }, Waist = { 10, -40, 0 }, Neck = { 6, 28, 0 }, RS = { 60, 0, 80 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -20 }, LE = { 70, 0, 0 } },
+					strike = { Root = { -14, 26, 0, 0, -0.34, -0.5 }, Waist = { -16, 30, 0 }, Neck = { -4, -18, 0 }, RS = { 92, 0, -10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -40 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+					follow = { Root = { -16, 30, 0, 0, -0.36, -0.55 }, Waist = { -20, 34, 0 }, Neck = { -6, -20, 0 }, RS = { 96, 0, -14 }, RE = { 4, 0, 0 }, RW = { 6, 0, 0 }, LS = { 36, 0, -44 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.52 } },
+					hideProp = "valise", windupFx = { "super", { "symbols", symbols = { "🧳", "↻" }, count = 5, radius = 3, color = WHITE } },
+					fx = { { "burst", color = GHOST, size = 3, at = "hand" }, { "ring", color = GHOST, radius = 4, at = "front" }, { "shake", amount = 0.3 } },
+					text = "( TAPIS 4 )", hitText = "( FAUCHÉ )",
+				},
+				-- ↑Y : le tapis volant de bagages, debout sur la valise, il décolle à la verticale et tout le couloir monte avec lui
+				SUPER_up = {
+					label = "Tapis volant de bagages !", startup = 0.35, active = 0.3, recovery = 0.7,
+					damage = 24, hitbox = box(14, 8, 7, 2), kbBase = 46, kbGrowth = 95, kbAngle = 88, invuln = 0.3, selfVelocity = Vector2.new(0, 60),
+					windup = { Root = { 0, 0, 0, 0, -0.85, 0 }, Waist = { -20, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 40, 0, 10 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -10 }, LE = { 60, 0, 0 } },
+					strike = { Root = { 6, 0, 0, 0, 0.45, 0 }, Waist = { 4, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 20, 0, 60 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -60 }, LE = { 0, 0, 0 }, RH = { 10, 0, 10 }, RK = { -20, 0, 0 }, LH = { 10, 0, -10 }, LK = { -20, 0, 0 } },
+					follow = { Root = { 8, 0, 0, 0, 0.5, 0 }, Waist = { 6, 0, 0 }, Neck = { 34, 0, 0 }, RS = { 24, 0, 64 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 24, 0, -64 }, LE = { 0, 0, 0 }, RH = { 12, 0, 12 }, RK = { -24, 0, 0 }, LH = { 12, 0, -12 }, LK = { -24, 0, 0 } },
+					hold = 0.2, trail = "prop", windupFx = { "super", { "text", text = "[ PORTE 12 ]", color = WHITE, at = "above" } },
+					fx = { { "pillar", color = GHOST, height = 24, width = 6, at = "front" }, { "ring", color = WIND, radius = 7, at = "feet" }, { "symbols", symbols = { "▲", "🧳" }, count = 5, radius = 3, color = WHITE } },
+					text = "…", hitText = "[ DERNIER APPEL ]",
+				},
+				-- ↓Y : la douane, il pose la valise, enfile des gants invisibles et fouille tout le couloir sans ménagement
+				SUPER_down = {
+					label = "La Douane !", startup = 0.35, active = 0.8, recovery = 0.6,
+					damage = 6, hits = 4, hitbox = box(14, 6, 7, 0.5), kbBase = 16, kbGrowth = 22, kbAngle = 70,
+					status = { name = "slowed", duration = 2 },
+					windup = { Root = { 4, 0, 0, 0, -0.2, 0.1 }, Waist = { 6, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 60, 0, 20 }, RE = { 110, 0, 0 }, RW = { 60, 0, 0 }, LS = { 60, 0, -20 }, LE = { 110, 0, 0 }, LW = { 60, 0, 0 } },
+					strike = { Root = { -10, 10, 0, 0, -0.5, -0.3 }, Waist = { -14, 12, 0 }, Neck = { -10, 0, 0 }, RS = { 90, 0, 0 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, -20 }, LE = { 60, 0, 0 }, LW = { 0, 0, 0 } },
+					follow = { Root = { -10, -10, 0, 0, -0.5, -0.3 }, Waist = { -14, -12, 0 }, Neck = { -10, 0, 0 }, RS = { 70, 0, 20 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, 0 }, LE = { 20, 0, 0 }, LW = { 0, 0, 0 } },
+					wobble = true, windupFx = { "super", { "text", text = "[ RIEN À DÉCLARER ? ]", color = WHITE, at = "above" } },
+					fx = { { "ring", color = GHOST, radius = 6, at = "front" }, { "symbols", symbols = { "🧤", "( TOC )", "?" }, count = 8, radius = 4, at = "front", color = WHITE }, { "toss", shape = "flat", color = WHITE, size = 0.6, count = 5, speed = 16 } },
+					text = "( FOUILLE )", hitText = "( CONFISQUÉ )",
+				},
+			},
+			links = {
+				P_neutral = { P = "P_side", K = "K_neutral", S = "S_neutral" },
+				P_side = { P = "P_up", K = "K_side", S = "S_side" },
+				P_down = { P = "P_neutral", K = "K_down", S = "S_down" },
+				K_neutral = { P = "P_up", K = "K_up", S = "S_neutral" },
+				P_dash = { P = "P_side", K = "K_side", S = "S_side" },
+				K_dash = { P = "P_up", S = "S_up" },
+			},
+		},
+		{ id = "ballons", name = "Bouquet de ballons", icon = "🎈",
+			prop = { name = "PropBallons", hand = "Right", pieces = {
+				{ "Ficelles", "", "cyl", Vector3.new(0.06, 2.2, 0.06), Vector3.new(0, -1.1, 0), Vector3.zero, WHITE, "SmoothPlastic", { transparency = 0.5 } },
+				{ "Noeud", "", "ball", Vector3.new(0.26, 0.26, 0.26), Vector3.new(0, -2.05, 0), Vector3.zero, WHITE, "SmoothPlastic" },
+				{ "BallonRose", "", "ball", Vector3.new(1.3, 1.6, 1.3), Vector3.new(0, -2.9, 0), Vector3.zero, PINK, "Glass", { transparency = 0.55 } },
+				{ "BallonBleu", "", "ball", Vector3.new(1.1, 1.4, 1.1), Vector3.new(0.72, -2.5, 0.4), Vector3.zero, SKY, "Glass", { transparency = 0.55 } },
+				{ "BallonRouge", "", "ball", Vector3.new(1.1, 1.4, 1.1), Vector3.new(-0.7, -2.6, -0.35), Vector3.zero, RED, "Glass", { transparency = 0.55 } },
+			} },
+			ability = { superCooldown = 0.6, text = "Léger comme l'air : Supers rechargés 40 % plus vite" },
+			moves = {
+				-- J : il tapote un ballon sur le nez d'en face, l'air de rien
+				P_neutral = {
+					label = "Ballon au nez", startup = 0.07, active = 0.08, recovery = 0.14,
+					damage = 5, hitbox = box(4.5, 3, 2.6, 0.8), kbBase = 16, kbGrowth = 20, kbAngle = 30,
+					windup = { Root = { 2, -14, 0, 0, -0.1, 0.1 }, Waist = { 4, -16, 0 }, Neck = { 0, 12, 0 }, RS = { 120, 0, 30 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -30 }, LE = { 70, 0, 0 } },
+					strike = { Root = { -4, 12, 0, 0, -0.2, -0.2 }, Waist = { -6, 14, 0 }, Neck = { -4, -8, 0 }, RS = { 60, 0, 0 }, RE = { 30, 0, 0 }, RW = { 40, 0, 0 }, LS = { 20, 0, -30 }, LE = { 70, 0, 0 } },
+					follow = { Root = { -6, 14, 0, 0, -0.22, -0.24 }, Waist = { -8, 16, 0 }, Neck = { -4, -10, 0 }, RS = { 50, 0, 0 }, RE = { 40, 0, 0 }, RW = { 50, 0, 0 }, LS = { 20, 0, -30 }, LE = { 70, 0, 0 } },
+					trail = "prop", text = "…", hitText = "( POC )",
+				},
+				-- →J : il lâche un ballon qui dérive mollement vers l'avant… et vers le haut
+				P_side = {
+					label = "Ballon lâché", kind = "projectile", startup = 0.1, active = 0, recovery = 0.2,
+					damage = 6, kbBase = 18, kbGrowth = 28, kbAngle = 35,
+					projectile = { speed = 55, angle = 10, gravity = -15, lifetime = 0.4, size = 1.4, color = PINK, aim = false,
+						visual = { shape = "ball", size = 1.3, color = PINK, transparency = 0.5, spin = 2 } },
+					windup = { Root = { 4, -20, 0, 0, -0.15, 0.15 }, Waist = { 6, -24, 0 }, Neck = { 0, 16, 0 }, RS = { 140, 0, 30 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -20 }, LE = { 80, 0, 0 } },
+					strike = { Root = { -6, 16, 0, 0, -0.25, -0.3 }, Waist = { -8, 20, 0 }, Neck = { 0, -12, 0 }, RS = { 100, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -30 }, LE = { 80, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.35 } },
+					follow = { Root = { -8, 18, 0, 0, -0.26, -0.32 }, Waist = { -10, 22, 0 }, Neck = { 6, -14, 0 }, RS = { 110, 0, 4 }, RE = { 0, 0, 0 }, RW = { 0, 0, 30 }, LS = { 30, 0, -30 }, LE = { 80, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.38 } },
+					hitText = "( FLOP )",
+				},
+				-- ↓J : accroupi, il gonfle un ballon sous les pieds d'en face, qui enfle, enfle… et éclate
+				P_down = {
+					label = "Ballon gonflé au sol", startup = 0.1, active = 0.1, recovery = 0.2,
+					damage = 6, hitbox = box(5, 2.5, 2.8, -1.5), kbBase = 22, kbGrowth = 26, kbAngle = 75,
+					windup = { Root = { 8, 0, 0, 0, -0.8, 0.1 }, Waist = { 14, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 60, 0, 10 }, RE = { 120, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -10 }, LE = { 120, 0, 0 } },
+					strike = { Root = { 12, 0, 0, 0, -0.9, -0.2 }, Waist = { 22, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 40, 0, 30 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -30 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					follow = { Root = { 6, 0, 0, 0, -0.8, -0.2 }, Waist = { 16, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 60, 0, 60 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -60 }, LE = { 40, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					shake = true, fx = { { "burst", color = PINK, size = 3, at = "feet" } }, text = "( FFF… FFF… )", hitText = "( BANG )",
+				},
+				-- ↑J : il hisse le bouquet au ciel sur la pointe des pieds, les ballons cognent ce qui passe
+				P_up = {
+					label = "Bouquet au ciel", startup = 0.08, active = 0.12, recovery = 0.2,
+					damage = 7, hitbox = box(4.5, 5, 1, 3.6), kbBase = 26, kbGrowth = 32, kbAngle = 86,
+					windup = { Root = { -4, 0, 0, 0, -0.35, 0 }, Waist = { -6, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 60, 0, 10 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -30 }, LE = { 60, 0, 0 } },
+					strike = { Root = { 4, 0, 0, 0, 0.15, 0 }, Waist = { 8, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 182, 0, 8 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 10, 0, -50 }, LE = { 30, 0, 0 }, FR = { 0, 0, 0, 0, 0.15, 0 }, FL = { 0, 0, 0, 0, 0.15, 0 } },
+					follow = { Root = { 4, 0, 0, 0, 0.18, 0 }, Waist = { 8, 0, 0 }, Neck = { 34, 0, 0 }, RS = { 186, 0, 10 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 6, 0, -54 }, LE = { 30, 0, 0 }, FR = { 0, 0, 0, 0, 0.18, 0 }, FL = { 0, 0, 0, 0, 0.18, 0 } },
+					trail = "prop", fx = { { "symbols", symbols = { "🎈" }, count = 3, radius = 2, at = "above", color = PINK } }, hitText = "( BOING )",
+				},
+				-- J en l'air : il claque des deux mains sur un ballon devant lui, qui éclate à la figure d'en face
+				P_air = {
+					label = "Ballon claqué", startup = 0.08, active = 0.1, recovery = 0.16,
+					damage = 7, hitbox = box(5, 4, 2, 0), kbBase = 22, kbGrowth = 34, kbAngle = 35,
+					windup = { Root = { 6, 0, 0 }, Waist = { 8, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 80, 0, 60 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 80, 0, -60 }, LE = { 40, 0, 0 }, RH = { 50, 0, 0 }, RK = { -80, 0, 0 }, LH = { 40, 0, 0 }, LK = { -70, 0, 0 } },
+					strike = { Root = { -6, 0, 0 }, Waist = { -10, 0, 0 }, Neck = { -12, 0, 0 }, RS = { 92, 0, -10 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 92, 0, 10 }, LE = { 10, 0, 0 }, RH = { 30, 0, 0 }, RK = { -60, 0, 0 }, LH = { 30, 0, 0 }, LK = { -60, 0, 0 } },
+					follow = { Root = { -8, 0, 0 }, Waist = { -12, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 100, 0, 40 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 100, 0, -40 }, LE = { 30, 0, 0 }, RH = { 30, 0, 0 }, RK = { -60, 0, 0 }, LH = { 30, 0, 0 }, LK = { -60, 0, 0 } },
+					fx = { { "burst", color = RED, size = 3, at = "front" } }, hitText = "( PAN )",
+				},
+				-- dash J : il court, les ballons traînent derrière lui, et il se jette en avant tête baissée
+				P_dash = {
+					label = "Course aux ballons", startup = 0.08, active = 0.14, recovery = 0.24,
+					damage = 8, hitbox = box(5, 4, 3, 0.8), kbBase = 26, kbGrowth = 48, kbAngle = 28, selfVelocity = Vector2.new(40, 0),
+					windup = { Root = { -6, 0, 0, 0, -0.2, 0.1 }, Waist = { -6, 0, 0 }, Neck = { 6, 0, 0 }, RS = { -40, 0, 20 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -20 }, LE = { 80, 0, 0 } },
+					strike = { Root = { -22, 0, 0, 0, -0.35, -0.3 }, Waist = { -14, 0, 0 }, Neck = { -10, 0, 0 }, RS = { -50, 0, 24 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 100, 0, -10 }, LE = { 10, 0, 0 } },
+					follow = { Root = { -24, 0, 0, 0, -0.36, -0.34 }, Waist = { -16, 0, 0 }, Neck = { -12, 0, 0 }, RS = { -54, 0, 26 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 104, 0, -12 }, LE = { 10, 0, 0 } },
+					trail = "head", fx = { "dust", { "symbols", symbols = { "🎈" }, count = 2, radius = 2, color = SKY } }, hitText = "( TONK )",
+				},
+				-- K : il fait tournoyer un ballon d'eau géant au bout de sa ficelle et le balance comme une massue
+				K_neutral = {
+					label = "Ballon-massue", startup = 0.18, active = 0.12, recovery = 0.3,
+					damage = 11, hitbox = box(5.5, 4, 3, 0.8), kbBase = 30, kbGrowth = 68, kbAngle = 36,
+					windup = { Root = { 6, -30, 0, 0, -0.15, 0.2 }, Waist = { 8, -34, 0 }, Neck = { 0, 24, 0 }, RS = { 170, 0, 50 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -30 }, LE = { 70, 0, 0 } },
+					strike = { Root = { -10, 24, 0, 0, -0.3, -0.35 }, Waist = { -12, 30, 0 }, Neck = { -6, -16, 0 }, RS = { 80, 0, -10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -40 }, LE = { 70, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+					follow = { Root = { -12, 30, 0, 0, -0.32, -0.4 }, Waist = { -14, 36, 0 }, Neck = { -8, -20, 0 }, RS = { 60, 0, -24 }, RE = { 6, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -40 }, LE = { 70, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+					trail = "prop", fx = { { "burst", color = SKY, size = 2.5, at = "front" } }, hitText = "( SPLASH )",
+				},
+				-- →K : il lâche tout le bouquet en éventail, trois ballons qui dérivent vers l'avant
+				K_side = {
+					label = "Lâcher de bouquet", kind = "projectile", startup = 0.2, active = 0, recovery = 0.34,
+					damage = 9, kbBase = 28, kbGrowth = 58, kbAngle = 30,
+					projectile = { speed = 60, angle = 5, gravity = -10, lifetime = 0.5, size = 1.4, color = PINK, aim = false, fan = { count = 3, from = -10, to = 20 },
+						visual = { shape = "ball", size = 1.3, color = RED, transparency = 0.5, spin = 3 } },
+					windup = { Root = { 6, 0, 0, 0, -0.2, 0.2 }, Waist = { 10, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 60, 0, 20 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -20 }, LE = { 110, 0, 0 } },
+					strike = { Root = { -14, 0, 0, 0, -0.3, -0.4 }, Waist = { -16, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 100, 0, 30 }, RE = { 0, 0, 0 }, RW = { 0, 0, 40 }, LS = { 100, 0, -30 }, LE = { 0, 0, 0 }, LW = { 0, 0, -40 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+					follow = { Root = { -16, 0, 0, 0, -0.32, -0.44 }, Waist = { -18, 0, 0 }, Neck = { 8, 0, 0 }, RS = { 104, 0, 34 }, RE = { 0, 0, 0 }, RW = { 0, 0, 44 }, LS = { 104, 0, -34 }, LE = { 0, 0, 0 }, LW = { 0, 0, -44 }, FL = { 0, 0, 0, 0, 0, -0.48 } },
+					hideProp = "ballons", fx = { { "symbols", symbols = { "🎈", "🎈" }, count = 3, radius = 2.5, at = "front" } }, text = "( ENVOLEZ-VOUS )", hitText = "( POUF )",
+				},
+				-- ↓K : il noue un ballon à la cheville d'en face : le ballon le soulève tout doucement… puis d'un coup
+				K_down = {
+					label = "Ballon à la cheville", startup = 0.18, active = 0.12, recovery = 0.32,
+					damage = 10, hitbox = box(6, 2, 3.5, -1.5), kbBase = 28, kbGrowth = 60, kbAngle = 86,
+					windup = { Root = { 10, 0, 0, 0, -0.85, 0.1 }, Waist = { 16, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 50, 0, 20 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -20 }, LE = { 110, 0, 0 } },
+					strike = { Root = { 14, 0, 0, 0, -0.95, -0.2 }, Waist = { 24, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 60, 0, 0 }, RE = { 30, 0, 0 }, RW = { 60, 0, 0 }, LS = { 60, 0, -10 }, LE = { 30, 0, 0 }, LW = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					follow = { Root = { -4, 0, 0, 0, -0.3, -0.1 }, Waist = { -6, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 170, 0, 20 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -30 }, LE = { 60, 0, 0 } },
+					fx = { { "symbols", symbols = { "🎈", "▲" }, count = 3, radius = 2, at = "front", color = PINK } }, text = "( NŒUD )", hitText = "( ET HOP )",
+				},
+				-- ↑K : il balance un ballon d'eau droit au plafond, qui éclate sur ce qui passe au-dessus
+				K_up = {
+					label = "Ballon d'eau au plafond", kind = "projectile", startup = 0.18, active = 0, recovery = 0.32,
+					damage = 11, kbBase = 30, kbGrowth = 65, kbAngle = 85,
+					status = { name = "wet", duration = 1 },
+					projectile = { speed = 60, angle = 78, gravity = 50, lifetime = 0.5, size = 1.6, color = SKY, aim = false,
+						visual = { shape = "ball", size = 1.4, color = SKY, transparency = 0.4, spin = 4 } },
+					windup = { Root = { 8, 0, 0, 0, -0.4, 0.1 }, Waist = { 12, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 20, 0, 20 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -30 }, LE = { 80, 0, 0 } },
+					strike = { Root = { -8, 0, 0, 0, 0.1, -0.1 }, Waist = { -12, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 176, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -40 }, LE = { 60, 0, 0 }, FR = { 0, 0, 0, 0, 0.12, 0 }, FL = { 0, 0, 0, 0, 0.12, 0 } },
+					follow = { Root = { -10, 0, 0, 0, 0.12, -0.12 }, Waist = { -14, 0, 0 }, Neck = { 34, 0, 0 }, RS = { 182, 0, 12 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 16, 0, -42 }, LE = { 60, 0, 0 }, FR = { 0, 0, 0, 0, 0.14, 0 }, FL = { 0, 0, 0, 0, 0.14, 0 } },
+					trail = "rightHand", hitText = "( SPLATCH )",
+				},
+				-- K en l'air : suspendu aux ballons, il pédale dans le vide et ses pieds tapent sous lui
+				K_air = {
+					label = "Pédalage suspendu", startup = 0.12, active = 0.2, recovery = 0.2,
+					damage = 10, hits = 2, hitbox = box(5, 4, 1.5, -1), kbBase = 24, kbGrowth = 50, kbAngle = -40,
+					windup = { Root = { -6, 0, 0 }, Waist = { -6, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 182, 0, 10 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -30 }, LE = { 60, 0, 0 }, RH = { 60, 0, 0 }, RK = { -100, 0, 0 }, LH = { -20, 0, 0 }, LK = { -40, 0, 0 } },
+					strike = { Root = { 4, 0, 0 }, Waist = { 6, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 184, 0, 12 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -30 }, LE = { 60, 0, 0 }, RH = { 10, 0, 0 }, RK = { -10, 0, 0 }, RA = { -20, 0, 0 }, LH = { 70, 0, 0 }, LK = { -110, 0, 0 } },
+					follow = { Root = { 4, 0, 0 }, Waist = { 6, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 184, 0, 12 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -30 }, LE = { 60, 0, 0 }, RH = { 70, 0, 0 }, RK = { -110, 0, 0 }, LH = { 10, 0, 0 }, LK = { -10, 0, 0 }, LA = { -20, 0, 0 } },
+					trail = "bothFeet", hitText = "( TAC TAC )",
+				},
+				-- dash K : il s'accroche aux ballons et plane en avant, les deux pieds en avant comme un train d'atterrissage
+				K_dash = {
+					label = "Vol plané", startup = 0.1, active = 0.24, recovery = 0.3,
+					damage = 11, hitbox = box(6, 3, 3, 0), kbBase = 30, kbGrowth = 62, kbAngle = 38, selfVelocity = Vector2.new(50, 14),
+					windup = { Root = { -8, 0, 0, 0, -0.3, 0 }, Waist = { -8, 0, 0 }, RS = { 180, 0, 10 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 170, 0, -10 }, LE = { 10, 0, 0 } },
+					strike = { Root = { 18, 0, 0, 0, -0.2, 0.1 }, Waist = { 8, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 184, 0, 12 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 176, 0, -12 }, LE = { 10, 0, 0 }, RH = { 88, 0, 0 }, RK = { 0, 0, 0 }, RA = { 10, 0, 0 }, LH = { 84, 0, 0 }, LK = { -6, 0, 0 } },
+					follow = { Root = { 22, 0, 0, 0, -0.2, 0.14 }, Waist = { 10, 0, 0 }, Neck = { 8, 0, 0 }, RS = { 186, 0, 14 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 178, 0, -14 }, LE = { 10, 0, 0 }, RH = { 92, 0, 0 }, RK = { 0, 0, 0 }, RA = { 14, 0, 0 }, LH = { 88, 0, 0 }, LK = { -6, 0, 0 } },
+					trail = "bothFeet", fx = { { "symbols", symbols = { "🎈", "( FIOU )" }, count = 3, radius = 2, color = WHITE } }, hitText = "( BOUM )",
+				},
+				-- L : salve de ballons, quatre ballons lâchés d'un coup qui filent tous sur l'adversaire
+				S_neutral = {
+					label = "Salve de ballons", kind = "projectile", startup = 0.22, active = 0, recovery = 0.45,
+					damage = 5, kbBase = 22, kbGrowth = 40, kbAngle = 30,
+					projectile = { speed = 70, angle = 0, gravity = 0, lifetime = 0.7, size = 1.5, color = PINK, fan = { count = 4, from = -12, to = 12 },
+						visual = { shape = "ball", size = 1.3, color = PINK, transparency = 0.5, spin = 3 } },
+					windup = { Root = { 4, 0, 0, 0, -0.2, 0.2 }, Waist = { 8, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 170, 0, 20 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 170, 0, -20 }, LE = { 30, 0, 0 } },
+					strike = { Root = { -12, 0, 0, 0, -0.3, -0.35 }, Waist = { -14, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 96, 0, 20 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 96, 0, -20 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { -14, 0, 0, 0, -0.32, -0.4 }, Waist = { -16, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 100, 0, 24 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 100, 0, -24 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+					hideProp = "ballons", fx = { { "burst", color = PINK, size = 2.5, at = "hand" }, { "symbols", symbols = { "🎈" }, count = 4, radius = 3, at = "front" } }, text = "( FEU )", hitText = "( POC POC )",
+				},
+				-- →L : il sculpte un chien en ballon, le pose au sol et siffle : le chien fonce sur l'adversaire et le mord
+				S_side = {
+					label = "Chien en ballon", kind = "projectile", startup = 0.24, active = 0, recovery = 0.48,
+					damage = 14, kbBase = 30, kbGrowth = 58, kbAngle = 30,
+					projectile = { speed = 62, angle = 0, gravity = 0, lifetime = 0.9, size = 2, color = PINK, homing = 0.4, from = "feet",
+						visual = { shape = "ball", size = 1.1, color = PINK, transparency = 0.4, spin = 0,
+							parts = { { "ball", Vector3.new(1.4, 0.8, 0.8), Vector3.new(0, -0.1, 0.9), PINK }, { "ball", Vector3.new(0.5, 0.5, 0.5), Vector3.new(0, -0.6, 1.4), PINK }, { "ball", Vector3.new(0.5, 0.5, 0.5), Vector3.new(0, -0.6, 0.3), PINK }, { "ball", Vector3.new(0.3, 0.6, 0.3), Vector3.new(0, 0.5, 1.6), PINK } } } },
+					windup = { Root = { 8, 0, 0, 0, -0.3, 0.1 }, Waist = { 12, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 70, 0, 20 }, RE = { 110, 0, 0 }, RW = { 40, 0, 0 }, LS = { 70, 0, -20 }, LE = { 110, 0, 0 }, LW = { -40, 0, 0 } },
+					strike = { Root = { 14, 0, 0, 0, -0.75, -0.1 }, Waist = { 24, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 50, 0, 10 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -30 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					follow = { Root = { -4, 0, 0, 0, -0.25, -0.2 }, Waist = { -6, 0, 0 }, Neck = { 4, 0, 0 }, RS = { 96, 0, 6 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 110, 0, -30 }, LE = { 130, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.35 } },
+					windupFx = { { "symbols", symbols = { "( COUIC )", "( COUIC )" }, count = 2, radius = 2, color = WHITE } }, fx = { { "symbols", symbols = { "🐕", "( SIFFLE )" }, count = 3, radius = 2.5, at = "front", color = WHITE } },
+					text = "( AU PIED )", hitText = "( WAF )",
+				},
+				-- ↓L : ballon d'eau géant, posé par terre, qu'il pousse du pied : il roule et explose sur l'adversaire
+				S_down = {
+					label = "Ballon d'eau géant", kind = "projectile", startup = 0.24, active = 0, recovery = 0.48,
+					damage = 14, kbBase = 30, kbGrowth = 55, kbAngle = 40,
+					status = { name = "wet", duration = 2 },
+					projectile = { speed = 55, angle = 15, gravity = 55, lifetime = 0.8, size = 3, color = SKY, from = "feet",
+						visual = { shape = "ball", size = 2.6, color = SKY, transparency = 0.35, spin = 6 } },
+					windup = { Root = { 10, 0, 0, 0, -0.6, 0.1 }, Waist = { 18, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 60, 0, 40 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -40 }, LE = { 90, 0, 0 }, RH = { -30, 0, 0 }, RK = { -60, 0, 0 } },
+					strike = { Root = { 8, 0, 0, 0, -0.2, 0 }, Waist = { 10, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 40, 0, 50 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -50 }, LE = { 30, 0, 0 }, RH = { 95, 0, 0 }, RK = { -4, 0, 0 }, RA = { 10, 0, 0 } },
+					follow = { Root = { 10, 0, 0, 0, -0.2, 0.04 }, Waist = { 12, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 44, 0, 54 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 44, 0, -54 }, LE = { 30, 0, 0 }, RH = { 104, 0, 0 }, RK = { 0, 0, 0 }, RA = { 14, 0, 0 } },
+					trail = "rightFoot", fx = { { "ring", color = SKY, radius = 4, at = "feet" } }, text = "( ROULE )", hitText = "( SPLAAASH )",
+				},
+				-- ↑L : il saisit le bouquet à deux mains, une rafale l'emporte en diagonale, jambes qui pendent comme un pantin
+				S_up = {
+					label = "Envol en bouquet", startup = 0.15, active = 0.3, recovery = 0.4,
+					damage = 13, hitbox = box(10, 11, 3, 4), kbBase = 30, kbGrowth = 52, kbAngle = 72, selfVelocity = Vector2.new(42, 80),
+					windup = { Root = { 6, 0, 0, 0, -0.6, 0.1 }, Waist = { -10, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 100, 0, 10 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 100, 0, -10 }, LE = { 110, 0, 0 } },
+					strike = { Root = { -36, 0, 0, 0, 0.3, 0 }, Waist = { -6, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 184, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 184, 0, -10 }, LE = { 0, 0, 0 }, RH = { -20, 0, 6 }, RK = { -40, 0, 0 }, RA = { -30, 0, 0 }, LH = { -30, 0, -6 }, LK = { -50, 0, 0 }, LA = { -30, 0, 0 } },
+					follow = { Root = { -40, 0, 0, 0, 0.35, 0 }, Waist = { -8, 0, 0 }, Neck = { 32, 0, 0 }, RS = { 188, 0, 12 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 188, 0, -12 }, LE = { 0, 0, 0 }, RH = { -26, 0, 8 }, RK = { -48, 0, 0 }, RA = { -30, 0, 0 }, LH = { -36, 0, -8 }, LK = { -58, 0, 0 }, LA = { -30, 0, 0 } },
+					trail = "prop", fx = { { "ring", color = WIND, radius = 4, at = "feet" }, { "particles", tex = "smoke", color = WIND, dir = "up", at = "feet", time = 0.35, speed = 16, size = 0.7, rate = 60 }, { "symbols", symbols = { "🎈", "🎈", "( FIOU )" }, count = 4, radius = 2, color = WHITE } },
+					text = "…", hitText = "( POC )",
+				},
+				-- L en l'air : pluie de ballons d'eau lâchés sous lui, qui éclatent tous sur l'adversaire
+				S_air = {
+					label = "Pluie de ballons d'eau", kind = "projectile", startup = 0.15, active = 0, recovery = 0.4,
+					damage = 6, kbBase = 22, kbGrowth = 42, kbAngle = -40,
+					status = { name = "wet", duration = 1 },
+					projectile = { speed = 60, angle = -70, gravity = 40, lifetime = 0.7, size = 1.4, color = SKY, rain = { count = 4, spread = 6 },
+						visual = { shape = "ball", size = 1.2, color = SKY, transparency = 0.4, spin = 3 } },
+					windup = { Root = { 8, 0, 0 }, Waist = { 12, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 176, 0, 16 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 176, 0, -16 }, LE = { 40, 0, 0 }, RH = { 40, 0, 0 }, RK = { -80, 0, 0 }, LH = { 50, 0, 0 }, LK = { -90, 0, 0 } },
+					strike = { Root = { -12, 0, 0 }, Waist = { -26, 0, 0 }, Neck = { 28, 0, 0 }, RS = { 24, 0, 12 }, RE = { 0, 0, 0 }, RW = { -40, 0, 0 }, LS = { 24, 0, -12 }, LE = { 0, 0, 0 }, LW = { -40, 0, 0 }, RH = { 20, 0, 0 }, RK = { -40, 0, 0 }, LH = { 30, 0, 0 }, LK = { -60, 0, 0 } },
+					follow = { Root = { -16, 0, 0 }, Waist = { -30, 0, 0 }, Neck = { 32, 0, 0 }, RS = { 18, 0, 14 }, RE = { 4, 0, 0 }, RW = { -50, 0, 0 }, LS = { 18, 0, -14 }, LE = { 4, 0, 0 }, LW = { -50, 0, 0 }, RH = { 16, 0, 0 }, RK = { -36, 0, 0 }, LH = { 26, 0, 0 }, LK = { -56, 0, 0 } },
+					hideProp = "ballons", fx = { { "burst", color = SKY, size = 2, at = "feet" } }, text = "( LÂCHEZ TOUT )", hitText = "( SPLOTCH )",
+				},
+				-- Y : le bouquet infini, il tire du béret un bouquet sans fin et huit ballons en éventail filent sur l'adversaire
+				SUPER = {
+					label = "Le Bouquet infini !", kind = "projectile", startup = 0.35, active = 0, recovery = 0.6,
+					damage = 4, kbBase = 24, kbGrowth = 40, kbAngle = 40,
+					status = { name = "laughing", duration = 2 },
+					projectile = { speed = 72, angle = 0, gravity = 0, lifetime = 1.0, size = 1.6, color = PINK, fan = { count = 8, from = -24, to = 36 },
+						visual = { shape = "ball", size = 1.3, color = RED, transparency = 0.5, spin = 4 } },
+					windup = { Root = { 0, 0, 0, 0, -0.2, 0 }, Waist = { 4, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 150, 0, -30 }, RE = { 130, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -20 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -10, 0, 0, 0, -0.3, -0.3 }, Waist = { -12, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 100, 0, 30 }, RE = { 0, 0, 0 }, RW = { 0, 0, 40 }, LS = { 100, 0, -30 }, LE = { 0, 0, 0 }, LW = { 0, 0, -40 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { -12, 0, 0, 0, -0.32, -0.34 }, Waist = { -14, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 104, 0, 34 }, RE = { 0, 0, 0 }, RW = { 0, 0, 44 }, LS = { 104, 0, -34 }, LE = { 0, 0, 0 }, LW = { 0, 0, -44 }, FL = { 0, 0, 0, 0, 0, -0.44 } },
+					hideProp = "ballons", windupFx = { "super", { "symbols", symbols = { "🎩", "🎈" }, count = 6, radius = 3, color = PINK } },
+					fx = { { "burst", color = PINK, size = 4, at = "hand" }, { "symbols", symbols = { "🎈", "🎈", "🎈" }, count = 8, radius = 4, at = "front" }, { "shake", amount = 0.3 } },
+					text = "( TADAAA )", hitText = "( POC POC POC )",
+				},
+				-- →Y : la montgolfière, il gonfle un ballon jusqu'à la taille d'une montgolfière et la pousse : elle emporte tout le couloir
+				SUPER_side = {
+					label = "La Montgolfière !", kind = "projectile", startup = 0.4, active = 0, recovery = 0.7,
+					damage = 24, kbBase = 46, kbGrowth = 94, kbAngle = 22,
+					projectile = { speed = 78, angle = 0, gravity = 0, lifetime = 0.9, size = 3.6, color = RED, pierce = true,
+						visual = { shape = "ball", size = 3.2, color = RED, transparency = 0.4, spin = 2,
+							parts = { { "block", Vector3.new(1.2, 0.8, 1.2), Vector3.new(0, -2.3, 0), CUIR }, { "cyl", Vector3.new(0.08, 1.2, 0.08), Vector3.new(0.5, -1.6, 0.5), WHITE }, { "cyl", Vector3.new(0.08, 1.2, 0.08), Vector3.new(-0.5, -1.6, -0.5), WHITE } } } },
+					windup = { Root = { 8, 0, 0, 0, -0.3, 0.2 }, Waist = { 14, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 60, 0, 10 }, RE = { 120, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -10 }, LE = { 120, 0, 0 } },
+					strike = { Root = { -18, 0, 0, 0, -0.4, -0.5 }, Waist = { -16, 0, 0 }, Neck = { 4, 0, 0 }, RS = { 96, 0, 14 }, RE = { 0, 0, 0 }, RW = { 85, 0, 0 }, LS = { 96, 0, -14 }, LE = { 0, 0, 0 }, LW = { 85, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.6 } },
+					follow = { Root = { -20, 0, 0, 0, -0.42, -0.55 }, Waist = { -18, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 100, 0, 16 }, RE = { 0, 0, 0 }, RW = { 85, 0, 0 }, LS = { 100, 0, -16 }, LE = { 0, 0, 0 }, LW = { 85, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.62 } },
+					shake = true, hideProp = "ballons", windupFx = { "super", { "symbols", symbols = { "( FFFFF )" }, count = 3, radius = 2, color = WHITE } },
+					fx = { { "burst", color = RED, size = 4, at = "front" }, { "particles", tex = "fire", color = Color3.fromRGB(255, 180, 60), dir = "up", at = "front", time = 0.4, speed = 10, size = 0.8 }, { "shake", amount = 0.3 } },
+					text = "( BON VOYAGE )", hitText = "( EMPORTÉ )",
+				},
+				-- ↑Y : le vol du mime, accroché au bouquet, il s'élève à la verticale… et tout le couloir avec lui
+				SUPER_up = {
+					label = "Le Vol du mime !", startup = 0.35, active = 0.3, recovery = 0.7,
+					damage = 24, hitbox = box(14, 8, 7, 2), kbBase = 46, kbGrowth = 95, kbAngle = 88, invuln = 0.3, selfVelocity = Vector2.new(0, 58),
+					windup = { Root = { 0, 0, 0, 0, -0.8, 0 }, Waist = { -16, 0, 0 }, Neck = { 24, 0, 0 }, RS = { 120, 0, 10 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 120, 0, -10 }, LE = { 100, 0, 0 } },
+					strike = { Root = { 0, 0, 0, 0, 0.45, 0 }, Waist = { 0, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 186, 0, 6 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 186, 0, -6 }, LE = { 0, 0, 0 }, RH = { -20, 0, 8 }, RK = { -50, 0, 0 }, RA = { -30, 0, 0 }, LH = { -10, 0, -8 }, LK = { -40, 0, 0 }, LA = { -30, 0, 0 } },
+					follow = { Root = { 0, 0, 0, 0, 0.5, 0 }, Waist = { 0, 0, 0 }, Neck = { 34, 0, 0 }, RS = { 188, 0, 8 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 188, 0, -8 }, LE = { 0, 0, 0 }, RH = { -26, 0, 10 }, RK = { -56, 0, 0 }, RA = { -30, 0, 0 }, LH = { -14, 0, -10 }, LK = { -46, 0, 0 }, LA = { -30, 0, 0 } },
+					hold = 0.2, trail = "prop", windupFx = { "super", { "symbols", symbols = { "🎈", "🎈", "🎈" }, count = 6, radius = 3, color = PINK } },
+					fx = { { "pillar", color = PINK, height = 24, width = 6, at = "front" }, { "ring", color = WIND, radius = 7, at = "feet" }, { "particles", tex = "smoke", color = WIND, dir = "down", at = "feet", time = 0.5, speed = 14, size = 0.8 } },
+					text = "…", hitText = "( ENVOLÉ )",
+				},
+				-- ↓Y : le ballon d'eau du siècle, il siffle et un ballon d'eau gros comme une maison tombe du ciel sur l'adversaire
+				SUPER_down = {
+					label = "Ballon d'eau du siècle !", kind = "projectile", startup = 0.38, active = 0, recovery = 0.7,
+					damage = 26, kbBase = 44, kbGrowth = 90, kbAngle = 70,
+					status = { name = "wet", duration = 3 },
+					projectile = { speed = 60, gravity = 60, lifetime = 1.0, size = 5, color = SKY, rain = { count = 1, spread = 0.5, ahead = 8, height = 22 },
+						visual = { shape = "ball", size = 4.6, color = SKY, transparency = 0.35, spin = 2 } },
+					windup = { Root = { 0, 0, 0, 0, -0.15, 0 }, Waist = { 4, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 60, 0, 10 }, RE = { 130, 0, 0 }, RW = { 0, 0, 0 }, LS = { 176, 0, -20 }, LE = { 10, 0, 0 } },
+					strike = { Root = { 6, 0, 0, 0, -0.2, 0.1 }, Waist = { 8, 0, 0 }, Neck = { 36, 0, 0 }, RS = { 40, 0, 20 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, -40 }, LE = { 10, 0, 0 } },
+					follow = { Root = { 10, 0, 0, 0, -0.3, 0.2 }, Waist = { 12, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 110, 0, 20 }, RE = { 130, 0, 0 }, RW = { 0, 0, 0 }, LS = { 110, 0, -20 }, LE = { 130, 0, 0 } },
+					windupFx = { "super", { "symbols", symbols = { "( SIFFLE )", "▼" }, count = 3, radius = 2, color = WHITE } },
+					fx = { { "burst", color = SKY, size = 5, at = "above" }, { "puddle", color = SKY, width = 12, time = 2 }, { "shake", amount = 0.5 } },
+					text = "( ATTENTION LÀ-HAUT )", hitText = "( SPLAAAAASH )",
+				},
+			},
+			links = {
+				P_neutral = { P = "P_side", K = "K_neutral", S = "S_neutral" },
+				P_side = { P = "P_up", K = "K_side", S = "S_side" },
+				P_down = { P = "P_up", K = "K_down", S = "S_down" },
+				K_neutral = { P = "P_neutral", K = "K_up", S = "S_side" },
+				P_dash = { P = "P_neutral", K = "K_side", S = "S_neutral" },
+				K_dash = { P = "P_up", S = "S_up" },
+			},
+		},
+	},
 
 	look = {
 		body = {
@@ -521,6 +1009,19 @@ local data = {
 			hold = 0.5, windupFx = { "super" },
 			fx = { { "screen", color = Color3.fromRGB(10, 10, 20), alpha = 0.6, time = 0.8 }, { "ring", color = WHITE, radius = 12, at = "head" }, { "symbols", symbols = { "🤫", "…", "🔇" }, count = 8, radius = 5, color = WHITE } },
 			text = "CHUUUT…", hitText = "( … )",
+		},
+		-- La Cage de verre (→Y) : il tâte l'air, trouve une paroi, puis une autre, et pousse la cage de verre invisible qu'il vient
+		-- de mimer sur toute la longueur du couloir : tout le monde se retrouve enfermé dedans, incapable de bouger
+		SUPER_side = {
+			label = "La Cage de verre !", startup = 0.4, active = 0.24, recovery = 0.7,
+			damage = 24, hitbox = box(14, 6, 7, 1), kbBase = 44, kbGrowth = 90, kbAngle = 30,
+			status = { name = "rooted", duration = 2 },
+			windup = { Root = { 0, -20, 0, 0, -0.15, 0.1 }, Waist = { 2, -18, 0 }, Neck = { -6, 16, 0 }, RS = { 90, 0, 40 }, RE = { 10, 0, 0 }, RW = { 85, 0, 0 }, LS = { 90, 0, -10 }, LE = { 60, 0, 0 }, LW = { 85, 0, 0 } },
+			strike = { Root = { -20, 0, 0, 0, -0.45, -0.55 }, Waist = { -14, 0, 0 }, Neck = { 4, 0, 0 }, RS = { 98, 0, 16 }, RE = { 0, 0, 0 }, RW = { 85, 0, 0 }, LS = { 98, 0, -16 }, LE = { 0, 0, 0 }, LW = { 85, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.65 } },
+			follow = { Root = { -24, 0, 0, 0, -0.5, -0.65 }, Waist = { -16, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 102, 0, 20 }, RE = { 0, 0, 0 }, RW = { 85, 0, 0 }, LS = { 102, 0, -20 }, LE = { 0, 0, 0 }, LW = { 85, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.7 } },
+			hold = 0.3, shake = true, trail = "bothHands", windupFx = { "super", { "symbols", symbols = { "▯", "▯", "?" }, count = 4, radius = 2.5, color = WHITE } },
+			fx = { { "ring", color = GHOST, radius = 7, at = "front" }, { "beam", color = GHOST, length = 16, width = 5, at = "hand" }, { "symbols", symbols = { "▯", "( TOC )", "▯" }, count = 8, radius = 4, at = "front", color = GHOST }, { "shake", amount = 0.35 } },
+			text = "…!", hitText = "( ENFERMÉ )",
 		},
 		-- Ascenseur invisible (Y↑) : il appuie sur un bouton qui n'existe pas, soulève le plafond de la cabine à deux paumes
 		-- et tout le couloir devant lui monte au dernier étage avec lui

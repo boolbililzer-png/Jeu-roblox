@@ -37,11 +37,493 @@ local CHAIR_SHOT = { shape = "block", size = 2.4, color = CHAIR, spin = 4, parts
 	{ "cyl", Vector3.new(0.3, 0.5, 0.5), Vector3.new(-0.9, -1.4, 0), DARK },
 } }
 
+local PASTE = Color3.fromRGB(90, 200, 255) -- dentifrice (brosse géante, arme n° 2)
+local ANESTH = Color3.fromRGB(180, 140, 255) -- produit anesthésiant (seringue XL, arme n° 3)
 local data = {
 	id = "Fraise",
 	name = "Dr Fraise",
 	costume = "Fraise",
 	style = "doctor",
+	------------------------------------------------------------------ Les 3 armes de la Caisse Bizarre (une au hasard)
+	-- n° 1 : la fraise géante (ses coups sont ceux de moves). n° 2 : la brosse à dents géante, lourde, qui balaie large
+	-- et fait glisser sur la mousse. n° 3 : la seringue XL, piqûres rapides et jets d'anesthésiant qui endorment.
+	weapons = {
+		{ id = "fraise", name = "Fraise géante", icon = "🦷",
+			ability = { status = { name = "laughing", duration = 1.5 }, text = "Les L font pouffer de rire 1,5 s (ni K ni ⭐)" } },
+		{ id = "brosse", name = "Brosse à dents géante", icon = "🪥",
+			prop = { name = "PropBrosse", hand = "Right", pieces = {
+				{ "Manche", "", "cyl", Vector3.new(0.4, 3.2, 0.4), Vector3.new(0, -1.4, 0), Vector3.zero, MINT, "SmoothPlastic" },
+				{ "Col", "", "cyl", Vector3.new(0.3, 0.8, 0.3), Vector3.new(0, -3.3, -0.1), Vector3.new(15, 0, 0), COAT, "SmoothPlastic" },
+				{ "Tete", "", "block", Vector3.new(0.5, 1.3, 0.35), Vector3.new(0, -4.2, -0.3), Vector3.zero, COAT, "SmoothPlastic" },
+				{ "Poils", "", "block", Vector3.new(0.46, 1.2, 0.4), Vector3.new(0, -4.2, -0.65), Vector3.zero, TOOTH, "Fabric" },
+				{ "Mousse", "", "ball", Vector3.new(0.7, 0.9, 0.5), Vector3.new(0, -4.3, -0.95), Vector3.zero, PASTE, "SmoothPlastic", { transparency = 0.3 } },
+			} },
+			ability = { reach = 1.25, text = "Grand manche : portée de tous les coups +25 %" },
+			moves = {
+				-- J : il brosse l'adversaire de haut en bas, bras tendu, trois petits coups secs
+				P_neutral = {
+					label = "Brossage vertical", startup = 0.1, active = 0.18, recovery = 0.18, hits = 2,
+					damage = 4, hitbox = box(5, 3.5, 3, 0.8), kbBase = 18, kbGrowth = 24, kbAngle = 25,
+					windup = { Root = { 2, -10, 0, 0, -0.1, 0.1 }, Waist = { 2, -12, 0 }, Neck = { -6, 0, 0 }, RS = { 150, 0, 10 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -20 }, LE = { 80, 0, 0 } },
+					strike = { Root = { -8, 8, 0, 0, -0.25, -0.3 }, Waist = { -8, 10, 0 }, Neck = { -4, 0, 0 }, RS = { 70, 0, 0 }, RE = { 10, 0, 0 }, RW = { -30, 0, 0 }, LS = { 30, 0, -20 }, LE = { 80, 0, 0 } },
+					follow = { Root = { -10, 10, 0, 0, -0.28, -0.32 }, Waist = { -10, 12, 0 }, Neck = { -4, 0, 0 }, RS = { 110, 0, 0 }, RE = { 10, 0, 0 }, RW = { 20, 0, 0 }, LS = { 30, 0, -20 }, LE = { 80, 0, 0 } },
+					wobble = true, trail = "prop", fx = { { "particles", tex = "smoke", color = TOOTH, dir = "front", at = "hand", time = 0.2, speed = 6, size = 0.4, rate = 40 } }, hitText = "FROT FROT !",
+				},
+				-- →J : grand balayage horizontal de la brosse, de gauche à droite, le manche à deux mains
+				P_side = {
+					label = "Balayage mousseux", startup = 0.15, active = 0.12, recovery = 0.26,
+					damage = 9, hitbox = box(7, 3.5, 4, 0.8), kbBase = 26, kbGrowth = 42, kbAngle = 26, selfVelocity = Vector2.new(14, 0),
+					windup = { Root = { 4, 40, 0, 0, -0.2, 0.2 }, Waist = { 6, 46, 0 }, Neck = { 0, -20, 0 }, RS = { 80, 0, 60 }, RE = { 50, 0, 0 }, RW = { 0, 0, 0 }, LS = { 80, 0, 20 }, LE = { 50, 0, 0 } },
+					strike = { Root = { -8, -30, 0, 0, -0.3, -0.35 }, Waist = { -10, -36, 0 }, Neck = { 0, 20, 0 }, RS = { 92, 0, -30 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 92, 0, -60 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { -10, -40, 0, 0, -0.32, -0.4 }, Waist = { -12, -46, 0 }, Neck = { 0, 26, 0 }, RS = { 96, 0, -36 }, RE = { 10, 0, 0 }, RW = { -10, 0, 0 }, LS = { 96, 0, -66 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+					trail = "prop", fx = { { "toss", shape = "ball", color = TOOTH, size = 0.4, count = 4, speed = 14 } }, hitText = "SPLATCH !",
+				},
+				-- ↓J : accroupi, il frotte le sol avec la brosse et envoie la mousse dans les chevilles
+				P_down = {
+					label = "Récurage de chevilles", startup = 0.12, active = 0.14, recovery = 0.22,
+					damage = 7, hitbox = box(6.5, 2, 3.5, -1.5), kbBase = 22, kbGrowth = 30, kbAngle = 70,
+					windup = { Root = { 10, -10, 0, 0, -0.85, 0.1 }, Waist = { 16, -12, 0 }, Neck = { 10, 6, 0 }, RS = { 60, 0, 20 }, RE = { 70, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -30 }, LE = { 90, 0, 0 }, LH = { -40, 0, 0 }, LK = { -40, 0, 0 } },
+					strike = { Root = { 16, 12, 0, 0, -0.95, -0.2 }, Waist = { 24, 14, 0 }, Neck = { 12, -6, 0 }, RS = { 40, 0, 10 }, RE = { 0, 0, 0 }, RW = { -30, 0, 0 }, LS = { 40, 0, -30 }, LE = { 90, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					follow = { Root = { 18, 16, 0, 0, -0.95, -0.24 }, Waist = { 26, 18, 0 }, Neck = { 14, -8, 0 }, RS = { 34, 0, 14 }, RE = { 0, 0, 0 }, RW = { -40, 0, 0 }, LS = { 44, 0, -32 }, LE = { 90, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.32 } },
+					wobble = true, trail = "prop", fx = { { "puddle", color = TOOTH, width = 5 } }, hitText = "FROTTÉ !",
+				},
+				-- ↑J : il remonte la brosse sous le menton comme pour brosser les dents du bas
+				P_up = {
+					label = "Brossage du bas", startup = 0.12, active = 0.12, recovery = 0.24,
+					damage = 8, hitbox = box(4.5, 5.5, 1.5, 3), kbBase = 24, kbGrowth = 42, kbAngle = 86,
+					windup = { Root = { 10, 0, 0, 0, -0.3, 0.1 }, Waist = { 14, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 20, 0, 20 }, RE = { 100, 0, 0 }, RW = { 20, 0, 0 }, LS = { 30, 0, -20 }, LE = { 90, 0, 0 } },
+					strike = { Root = { -12, 0, 0, 0, 0.1, -0.1 }, Waist = { -16, 0, 0 }, Neck = { -24, 0, 0 }, RS = { 174, 0, 10 }, RE = { 6, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -30 }, LE = { 90, 0, 0 } },
+					follow = { Root = { -14, 0, 0, 0, 0.14, -0.12 }, Waist = { -18, 0, 0 }, Neck = { -28, 0, 0 }, RS = { 180, 0, 12 }, RE = { 6, 0, 0 }, RW = { -10, 0, 0 }, LS = { 44, 0, -32 }, LE = { 90, 0, 0 } },
+					trail = "prop", fx = { { "burst", color = TOOTH, size = 1.5, at = "above" } }, hitText = "FRRRT !",
+				},
+				-- J en l'air : il abat la brosse sous lui comme une rame
+				P_air = {
+					label = "Coup de rame", startup = 0.12, active = 0.14, recovery = 0.18,
+					damage = 9, hitbox = box(5, 4, 1.5, -1.5), kbBase = 22, kbGrowth = 40, kbAngle = -45,
+					windup = { Root = { 8, 0, 0 }, Waist = { 14, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 180, 0, 12 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, -20 }, LE = { 40, 0, 0 }, RH = { 40, 0, 0 }, RK = { -80, 0, 0 }, LH = { 50, 0, 0 }, LK = { -90, 0, 0 } },
+					strike = { Root = { -14, 0, 0 }, Waist = { -28, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 20, 0, 10 }, RE = { 0, 0, 0 }, RW = { -20, 0, 0 }, LS = { 20, 0, -10 }, LE = { 0, 0, 0 }, RH = { 20, 0, 10 }, RK = { -40, 0, 0 }, LH = { 30, 0, -10 }, LK = { -60, 0, 0 } },
+					follow = { Root = { -18, 0, 0 }, Waist = { -32, 0, 0 }, Neck = { 24, 0, 0 }, RS = { 14, 0, 12 }, RE = { 4, 0, 0 }, RW = { -30, 0, 0 }, LS = { 14, 0, -12 }, LE = { 4, 0, 0 }, RH = { 16, 0, 10 }, RK = { -36, 0, 0 }, LH = { 26, 0, -10 }, LK = { -56, 0, 0 } },
+					trail = "prop", hitText = "PAF !",
+				},
+				-- dash J : il court brosse en avant comme une lance de tournoi
+				P_dash = {
+					label = "Lance de tournoi", startup = 0.1, active = 0.16, recovery = 0.28,
+					damage = 9, hitbox = box(6, 3, 4, 0.5), kbBase = 26, kbGrowth = 44, kbAngle = 24, selfVelocity = Vector2.new(40, 0),
+					windup = { Root = { 8, -20, 0, 0, -0.2, 0.1 }, Waist = { 10, -24, 0 }, Neck = { 0, 16, 0 }, RS = { 40, 0, 20 }, RE = { 110, 0, 0 }, RW = { 60, 0, 0 }, LS = { 50, 0, -30 }, LE = { 80, 0, 0 } },
+					strike = { Root = { 14, 16, 0, 0, -0.3, -0.4 }, Waist = { 16, 20, 0 }, Neck = { -8, -12, 0 }, RS = { 94, 0, 0 }, RE = { 0, 0, 0 }, RW = { 90, 0, 0 }, LS = { -30, 0, -30 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+					follow = { Root = { 16, 18, 0, 0, -0.32, -0.44 }, Waist = { 18, 22, 0 }, Neck = { -10, -14, 0 }, RS = { 96, 0, 2 }, RE = { 0, 0, 0 }, RW = { 90, 0, 0 }, LS = { -34, 0, -32 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.48 } },
+					trail = "prop", fx = { "dust" }, hitText = "EMBROCHÉ !",
+				},
+				-- K : coup de pied frontal en s'appuyant sur le manche planté au sol, comme sur une canne
+				K_neutral = {
+					label = "Pied sur canne", startup = 0.15, active = 0.1, recovery = 0.28,
+					damage = 10, hitbox = box(5, 3.5, 3, 0.3), kbBase = 28, kbGrowth = 58, kbAngle = 35,
+					windup = { Root = { 6, -10, 0, 0, -0.2, 0.1 }, Waist = { 6, -10, 0 }, Neck = { 0, 6, 0 }, RS = { 30, 0, 30 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -40 }, LE = { 60, 0, 0 }, RH = { -30, 0, 0 }, RK = { -50, 0, 0 } },
+					strike = { Root = { 8, 0, 0, 0, -0.1, 0.05 }, Waist = { 10, 0, 0 }, Neck = { 0, 0, 0 }, RS = { 20, 0, 40 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, -55 }, LE = { 30, 0, 0 }, RH = { 95, 0, 0 }, RK = { -4, 0, 0 }, RA = { 10, 0, 0 } },
+					follow = { Root = { 12, 0, 0, 0, -0.1, 0.1 }, Waist = { 14, 0, 0 }, Neck = { 0, 0, 0 }, RS = { 20, 0, 44 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 74, 0, -60 }, LE = { 25, 0, 0 }, RH = { 104, 0, 0 }, RK = { 0, 0, 0 }, RA = { 15, 0, 0 } },
+					trail = "rightFoot", hitText = "PAF !",
+				},
+				-- →K : saut à la perche : il plante le manche et bascule par-dessus pour arriver les deux pieds en avant
+				K_side = {
+					label = "Saut à la perche", startup = 0.18, active = 0.14, recovery = 0.34,
+					damage = 13, hitbox = box(6, 4, 3.5, 0.5), kbBase = 34, kbGrowth = 72, kbAngle = 36, selfVelocity = Vector2.new(30, 22),
+					windup = { Root = { 10, 0, 0, 0, -0.3, 0.2 }, Waist = { 12, 0, 0 }, Neck = { 0, 0, 0 }, RS = { 120, 0, 10 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 110, 0, -10 }, LE = { 20, 0, 0 } },
+					strike = { Root = { -20, 0, 0, 0, 0.3, -0.2 }, Waist = { -16, 0, 0 }, Neck = { 0, 0, 0 }, RS = { 40, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -10 }, LE = { 0, 0, 0 }, RH = { 95, 0, 6 }, RK = { -6, 0, 0 }, RA = { 10, 0, 0 }, LH = { 95, 0, -6 }, LK = { -6, 0, 0 }, LA = { 10, 0, 0 } },
+					follow = { Root = { -24, 0, 0, 0, 0.34, -0.24 }, Waist = { -18, 0, 0 }, Neck = { 0, 0, 0 }, RS = { 36, 0, 12 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 36, 0, -12 }, LE = { 0, 0, 0 }, RH = { 100, 0, 8 }, RK = { 0, 0, 0 }, RA = { 14, 0, 0 }, LH = { 100, 0, -8 }, LK = { 0, 0, 0 }, LA = { 14, 0, 0 } },
+					trail = "bothFeet", hitText = "DOUBLE SEMELLE !",
+				},
+				-- ↓K : balayette basse avec le manche en appui, tête baissée
+				K_down = {
+					label = "Balayette au manche", startup = 0.14, active = 0.14, recovery = 0.3,
+					damage = 9, hitbox = box(7, 2, 3.5, -1.6), kbBase = 26, kbGrowth = 52, kbAngle = 75,
+					windup = { Root = { 12, 10, 0, 0, -0.85, 0.1 }, Waist = { 16, 14, 0 }, Neck = { 10, 0, 0 }, RS = { 50, 0, 30 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -40 }, LE = { 80, 0, 0 }, LH = { -30, 0, 0 }, LK = { -40, 0, 0 } },
+					strike = { Root = { 16, -20, 0, 0, -0.95, -0.1 }, Waist = { 20, -26, 0 }, Neck = { 10, 0, 0 }, RS = { 40, 0, 40 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -40 }, LE = { 80, 0, 0 }, LH = { 50, 0, -20 }, LK = { -4, 0, 0 }, LA = { 20, 0, 0 } },
+					follow = { Root = { 18, -26, 0, 0, -0.95, -0.14 }, Waist = { 22, -32, 0 }, Neck = { 10, 0, 0 }, RS = { 42, 0, 42 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 34, 0, -42 }, LE = { 80, 0, 0 }, LH = { 56, 0, -24 }, LK = { 0, 0, 0 }, LA = { 24, 0, 0 } },
+					trail = "leftFoot", fx = { "dust" }, hitText = "FAUCHÉ !",
+				},
+				-- ↑K : coup de pied monté, la brosse levée bien haut hors du chemin
+				K_up = {
+					label = "Pied monté hygiénique", startup = 0.16, active = 0.12, recovery = 0.32,
+					damage = 11, hitbox = box(4.5, 6, 1.5, 3.5), kbBase = 30, kbGrowth = 64, kbAngle = 88,
+					windup = { Root = { 10, 0, 0, 0, -0.25, 0.1 }, Waist = { 14, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 100, 0, 30 }, RE = { 50, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -40 }, LE = { 60, 0, 0 }, RH = { -20, 0, 0 }, RK = { -60, 0, 0 } },
+					strike = { Root = { -16, 0, 0, 0, 0.05, -0.1 }, Waist = { -20, 0, 0 }, Neck = { -24, 0, 0 }, RS = { 176, 0, 30 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -50 }, LE = { 30, 0, 0 }, RH = { 140, 0, 0 }, RK = { -6, 0, 0 }, RA = { 20, 0, 0 } },
+					follow = { Root = { -18, 0, 0, 0, 0.08, -0.12 }, Waist = { -22, 0, 0 }, Neck = { -28, 0, 0 }, RS = { 180, 0, 32 }, RE = { 0, 0, 0 }, RW = { 10, 0, 0 }, LS = { 34, 0, -52 }, LE = { 30, 0, 0 }, RH = { 148, 0, 0 }, RK = { 0, 0, 0 }, RA = { 24, 0, 0 } },
+					trail = "rightFoot", hitText = "KLANG !",
+				},
+				-- K en l'air : double pied en pédalant, la brosse tenue au-dessus de la tête comme un parapluie
+				K_air = {
+					label = "Pédalage sous la brosse", startup = 0.12, active = 0.2, recovery = 0.2,
+					damage = 10, hits = 2, hitbox = box(5, 4, 2.5, -0.5), kbBase = 22, kbGrowth = 46, kbAngle = 40,
+					windup = { Root = { -10, 0, 0 }, Waist = { -8, 0, 0 }, RS = { 180, 0, 10 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -40 }, LE = { 80, 0, 0 }, RH = { 60, 0, 0 }, RK = { -100, 0, 0 }, LH = { -20, 0, 0 }, LK = { -40, 0, 0 } },
+					strike = { Root = { -6, 0, 0 }, Waist = { 6, 0, 0 }, RS = { 184, 0, 12 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 64, 0, -44 }, LE = { 80, 0, 0 }, RH = { 90, 0, 0 }, RK = { -6, 0, 0 }, RA = { 10, 0, 0 }, LH = { 70, 0, 0 }, LK = { -110, 0, 0 } },
+					follow = { Root = { -4, 0, 0 }, Waist = { 8, 0, 0 }, RS = { 186, 0, 14 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 66, 0, -46 }, LE = { 80, 0, 0 }, RH = { 20, 0, 0 }, RK = { -60, 0, 0 }, LH = { 95, 0, 0 }, LK = { -4, 0, 0 }, LA = { 10, 0, 0 } },
+					trail = "bothFeet", hitText = "TAC TAC !",
+				},
+				-- dash K : glissade sur la mousse, assis sur la tête de la brosse comme sur une luge
+				K_dash = {
+					label = "Luge mousseuse", startup = 0.1, active = 0.26, recovery = 0.3,
+					damage = 11, hitbox = box(6, 3, 3, -0.8), kbBase = 30, kbGrowth = 64, kbAngle = 38, selfVelocity = Vector2.new(55, 10),
+					status = { name = "slippery", duration = 1.5 },
+					windup = { Root = { -8, 0, 0, 0, -0.4, 0 }, Waist = { -10, 0, 0 }, RS = { 60, 0, 40 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -40 } },
+					strike = { Root = { 20, 0, 0, 0, -0.7, 0.2 }, Waist = { 10, 0, 0 }, RS = { -30, 0, 50 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, -40 }, LE = { 30, 0, 0 }, RH = { 85, 0, 0 }, RK = { 0, 0, 0 }, RA = { 10, 0, 0 }, LH = { 80, 0, 0 }, LK = { -10, 0, 0 } },
+					follow = { Root = { 24, 0, 0, 0, -0.72, 0.24 }, Waist = { 12, 0, 0 }, RS = { -36, 0, 55 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 75, 0, -45 }, LE = { 30, 0, 0 }, RH = { 90, 0, 0 }, RK = { 0, 0, 0 }, RA = { 14, 0, 0 }, LH = { 85, 0, 0 }, LK = { -10, 0, 0 } },
+					trail = "bothFeet", fx = { { "puddle", color = TOOTH, width = 8 }, "dust" }, hitText = "SKRRRT !",
+				},
+				-- L : grand brossage : trois allers-retours de la brosse à deux mains qui récurent tout le couloir dans une avalanche de mousse
+				S_neutral = {
+					label = "Grand brossage", startup = 0.22, active = 0.3, recovery = 0.5, hits = 3,
+					damage = 5, hitbox = box(14, 5, 7, 0.8), kbBase = 24, kbGrowth = 44, kbAngle = 30,
+					status = { name = "slippery", duration = 2 },
+					windup = { Root = { 4, -30, 0, 0, -0.2, 0.2 }, Waist = { 6, -34, 0 }, Neck = { 0, 20, 0 }, RS = { 80, 0, 50 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 80, 0, 10 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -10, 30, 0, 0, -0.3, -0.35 }, Waist = { -12, 34, 0 }, Neck = { 0, -20, 0 }, RS = { 92, 0, -40 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 92, 0, -70 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { -10, -30, 0, 0, -0.3, -0.35 }, Waist = { -12, -34, 0 }, Neck = { 0, 20, 0 }, RS = { 92, 0, 40 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 92, 0, 10 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					wobble = true, trail = "prop", fx = { { "beam", color = TOOTH, length = 14, width = 4, at = "front" }, { "particles", tex = "smoke", color = TOOTH, dir = "front", at = "hand", time = 0.4, speed = 14, size = 0.8, rate = 80 }, { "puddle", color = PASTE, width = 12 } },
+					text = "ON FROTTE !", hitText = "RÉCURÉ !",
+				},
+				-- →L : il presse la tête de la brosse comme un tube : un gros paquet de mousse mentholée file droit sur l'adversaire
+				S_side = {
+					label = "Boule de mousse", kind = "projectile", startup = 0.24, active = 0, recovery = 0.5,
+					damage = 15, kbBase = 30, kbGrowth = 58, kbAngle = 32,
+					projectile = { speed = 72, angle = 0, gravity = 0, lifetime = 0.7, size = 2.4, color = TOOTH,
+						visual = { shape = "ball", size = 2.2, color = TOOTH, transparency = 0.15, spin = 4, parts = { { "ball", Vector3.new(1, 1, 1), Vector3.new(0.9, 0.7, 0), PASTE }, { "ball", Vector3.new(0.8, 0.8, 0.8), Vector3.new(-0.8, -0.6, 0.4), MINT } } } },
+					status = { name = "slippery", duration = 2 },
+					windup = { Root = { 6, -26, 0, 0, -0.2, 0.2 }, Waist = { 8, -30, 0 }, Neck = { 4, 18, 0 }, RS = { 50, 0, 20 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -20 }, LE = { 110, 0, 0 }, LW = { 0, 0, 0 } },
+					strike = { Root = { -12, 20, 0, 0, -0.3, -0.4 }, Waist = { -14, 24, 0 }, Neck = { -6, -14, 0 }, RS = { 94, 0, 0 }, RE = { 0, 0, 0 }, RW = { -30, 0, 0 }, LS = { 94, 0, -6 }, LE = { 0, 0, 0 }, LW = { -30, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+					follow = { Root = { -14, 24, 0, 0, -0.32, -0.45 }, Waist = { -16, 28, 0 }, Neck = { -8, -16, 0 }, RS = { 98, 0, 2 }, RE = { 4, 0, 0 }, RW = { -40, 0, 0 }, LS = { 98, 0, -8 }, LE = { 4, 0, 0 }, LW = { -40, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+					fx = { { "burst", color = TOOTH, size = 2.5, at = "hand" }, { "particles", tex = "smoke", color = TOOTH, dir = "front", at = "hand", time = 0.25, speed = 10, size = 0.6, rate = 50 } },
+					text = "PSCHHH !", hitText = "MOUSSÉ !",
+				},
+				-- ↓L : il frotte le sol si fort que la mousse monte en vague et roule sur tout le couloir
+				S_down = {
+					label = "Vague de dentifrice", startup = 0.22, active = 0.22, recovery = 0.5,
+					damage = 13, hitbox = box(14, 5, 7, 0.5), kbBase = 28, kbGrowth = 52, kbAngle = 45,
+					status = { name = "slippery", duration = 2.5 },
+					windup = { Root = { 14, 0, 0, 0, -0.9, 0.2 }, Waist = { 24, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 60, 0, 20 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -20 }, LE = { 60, 0, 0 }, LW = { 0, 0, 0 } },
+					strike = { Root = { 20, 0, 0, 0, -1.0, -0.3 }, Waist = { 30, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 30, 0, 20 }, RE = { 0, 0, 0 }, RW = { -30, 0, 0 }, LS = { 30, 0, -20 }, LE = { 0, 0, 0 }, LW = { -30, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { 22, 0, 0, 0, -1.0, -0.34 }, Waist = { 32, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 20, 0, 22 }, RE = { 0, 0, 0 }, RW = { -40, 0, 0 }, LS = { 20, 0, -22 }, LE = { 0, 0, 0 }, LW = { -40, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+					hold = 0.1, wobble = true, trail = "prop", fx = { { "puddle", color = PASTE, width = 14 }, { "beam", color = TOOTH, length = 14, width = 3, at = "feet" }, { "ring", color = PASTE, radius = 6, at = "feet" } },
+					text = "SCHLOUF !", hitText = "GLISSÉ !",
+				},
+				-- ↑L : il saute sur la brosse comme sur un bâton sauteur et le ressort de mousse le propulse en diagonale
+				S_up = {
+					label = "Bâton sauteur", startup = 0.14, active = 0.3, recovery = 0.42,
+					damage = 13, hitbox = box(10, 11, 3, 4), kbBase = 30, kbGrowth = 52, kbAngle = 74, selfVelocity = Vector2.new(42, 82),
+					windup = { Root = { 6, 0, 0, 0, -0.8, 0.1 }, Waist = { 10, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 60, 0, 10 }, RE = { 80, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -10 }, LE = { 80, 0, 0 }, LW = { 0, 0, 0 } },
+					strike = { Root = { -40, 0, 0, 0, 0.4, -0.2 }, Waist = { -6, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 30, 0, 10 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -10 }, LE = { 60, 0, 0 }, RH = { 40, 0, 5 }, RK = { -80, 0, 0 }, LH = { 40, 0, -5 }, LK = { -80, 0, 0 } },
+					follow = { Root = { -44, 0, 0, 0, 0.45, -0.25 }, Waist = { -8, 0, 0 }, Neck = { 32, 0, 0 }, RS = { 34, 0, 12 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 34, 0, -12 }, LE = { 60, 0, 0 }, RH = { 44, 0, 6 }, RK = { -84, 0, 0 }, LH = { 44, 0, -6 }, LK = { -84, 0, 0 } },
+					shake = true, trail = "prop", fx = { { "burst", color = TOOTH, size = 3, at = "feet" }, { "particles", tex = "smoke", color = TOOTH, dir = "down", at = "feet", time = 0.5, speed = 16, size = 0.7, rate = 90 }, { "ring", color = PASTE, radius = 5, at = "feet" } },
+					text = "BOÏNG !", hitText = "PROPULSÉ !",
+				},
+				-- L en l'air : il brosse l'air sous lui en tourbillon, un cyclone de mousse descend sur l'adversaire
+				S_air = {
+					label = "Cyclone mousseux", startup = 0.16, active = 0.3, recovery = 0.42,
+					damage = 13, hitbox = box(9, 6, 1, -2), kbBase = 26, kbGrowth = 54, kbAngle = -50, selfVelocity = Vector2.new(4, -70),
+					windup = { Root = { -8, 0, 0 }, Waist = { -10, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 170, 0, 20 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, -30 }, LE = { 40, 0, 0 }, RH = { 80, 0, 0 }, RK = { -110, 0, 0 }, LH = { 80, 0, 0 }, LK = { -110, 0, 0 } },
+					strike = { Root = { -26, 0, 0 }, Waist = { -26, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 10, 0, 40 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -60 }, LE = { 20, 0, 0 }, RH = { -10, 0, 6 }, RK = { -10, 0, 0 }, LH = { -10, 0, -6 }, LK = { -10, 0, 0 } },
+					follow = { Root = { -30, 0, 0 }, Waist = { -28, 0, 0 }, Neck = { -22, 0, 0 }, RS = { 12, 0, 44 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 44, 0, -64 }, LE = { 20, 0, 0 }, RH = { -12, 0, 6 }, RK = { -14, 0, 0 }, LH = { -12, 0, -6 }, LK = { -14, 0, 0 } },
+					spin = { axis = "y", degrees = 720 }, trail = "prop", fx = { { "particles", tex = "smoke", color = TOOTH, dir = "down", at = "hand", time = 0.3, speed = 14, size = 0.6, rate = 80 }, { "ring", color = PASTE, radius = 4, at = "feet" } },
+					text = "CYCLONE !", hitText = "ESSORÉ !",
+				},
+				-- Y : brossage obligatoire : il attrape l'adversaire par la nuque et lui brosse les dents de force, trois minutes montre en main (en accéléré), mousse jusqu'au plafond
+				SUPER = {
+					label = "Brossage obligatoire !", startup = 0.4, active = 0.4, recovery = 0.7, hits = 4,
+					damage = 6, hitbox = box(16, 6, 8, 1), kbBase = 36, kbGrowth = 70, kbAngle = 40,
+					status = { name = "slippery", duration = 3 },
+					windup = { Root = { 6, -24, 0, 0, -0.2, 0.25 }, Waist = { 8, -28, 0 }, Neck = { 6, 16, 0 }, RS = { 150, 0, 20 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 100, 0, -30 }, LE = { 30, 0, 0 } },
+					strike = { Root = { -10, 24, 0, 0, -0.3, -0.4 }, Waist = { -12, 28, 0 }, Neck = { -6, -16, 0 }, RS = { 100, 0, -20 }, RE = { 10, 0, 0 }, RW = { -40, 0, 0 }, LS = { 92, 0, 10 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+					follow = { Root = { -10, -10, 0, 0, -0.3, -0.4 }, Waist = { -12, -12, 0 }, Neck = { -6, 8, 0 }, RS = { 100, 0, 30 }, RE = { 10, 0, 0 }, RW = { 40, 0, 0 }, LS = { 92, 0, 10 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+					wobble = true, trail = "prop", windupFx = { "super", { "text", text = "3 MINUTES, PAS MOINS", color = PASTE, at = "above" } },
+					fx = { { "beam", color = TOOTH, length = 16, width = 5, at = "front" }, { "particles", tex = "smoke", color = TOOTH, dir = "all", at = "front", time = 0.6, speed = 16, size = 1.2, rate = 120 }, { "symbols", symbols = { "🪥", "✨", "🦷" }, count = 8, radius = 5, color = PASTE }, { "shake", amount = 0.3 } },
+					text = "ON BROSSE !", hitText = "HAUT, BAS, HAUT, BAS !",
+				},
+				-- →Y : la brosse-hélice : il la fait tournoyer à l'horizontale devant lui et la lâche : elle traverse le couloir en hélicoptère et revient dans sa main
+				SUPER_side = {
+					label = "Brosse-hélice !", kind = "projectile", startup = 0.4, active = 0, recovery = 0.7,
+					damage = 24, kbBase = 46, kbGrowth = 94, kbAngle = 34,
+					projectile = { speed = 82, angle = 0, gravity = 0, lifetime = 0.9, size = 3, color = MINT, returns = true, pierce = true,
+						visual = { shape = "block", size = 1, color = MINT, spin = 16, parts = { { "cyl", Vector3.new(0.5, 4.2, 0.5), Vector3.new(0, 0, 0), MINT }, { "block", Vector3.new(0.6, 1.3, 0.5), Vector3.new(0, 2.4, -0.3), TOOTH } } } },
+					status = { name = "inverted", duration = 2 },
+					windup = { Root = { 6, -36, 0, 0, -0.3, 0.3 }, Waist = { 10, -40, 0 }, Neck = { 10, 24, 0 }, RS = { 176, 0, 30 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, -20 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -16, 26, 0, 0, -0.34, -0.5 }, Waist = { -18, 30, 0 }, Neck = { -6, -18, 0 }, RS = { 94, 0, -6 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -40 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+					follow = { Root = { -18, 30, 0, 0, -0.36, -0.55 }, Waist = { -22, 34, 0 }, Neck = { -8, -20, 0 }, RS = { 98, 0, -8 }, RE = { 4, 0, 0 }, RW = { 6, 0, 0 }, LS = { 46, 0, -44 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.52 } },
+					spin = { axis = "y", degrees = 360 }, hideProp = "brosse", windupFx = { "super", { "symbols", symbols = { "🪥", "🚁" }, count = 6, radius = 3, color = MINT } },
+					fx = { { "burst", color = TOOTH, size = 3, at = "hand" }, { "ring", color = PASTE, radius = 4, at = "front" }, { "shake", amount = 0.3 } },
+					text = "HÉLICE !", hitText = "FAUCHÉ !",
+				},
+				-- ↑Y : geyser de mousse : il plante la brosse dans le sol et frotte comme un fou : un geyser de mousse mentholée jaillit sous lui et emporte tout au plafond
+				SUPER_up = {
+					label = "Geyser de mousse !", startup = 0.38, active = 0.3, recovery = 0.7,
+					damage = 24, hitbox = box(16, 12, 8, 5), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3, selfVelocity = Vector2.new(0, 55),
+					status = { name = "slippery", duration = 2 },
+					windup = { Root = { 14, 0, 0, 0, -0.9, 0.1 }, Waist = { 24, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 50, 0, 10 }, RE = { 70, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -10 }, LE = { 70, 0, 0 }, LW = { 0, 0, 0 } },
+					strike = { Root = { 6, 0, 0, 0, 0.5, 0 }, Waist = { 18, 0, 0 }, Neck = { 50, 0, 0 }, RS = { 186, 0, 6 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, -60 }, LE = { 10, 0, 0 }, RH = { 40, 0, 10 }, RK = { -90, 0, 0 }, LH = { 20, 0, -15 }, LK = { -60, 0, 0 } },
+					follow = { Root = { 10, 0, 0, 0, 0.55, 0 }, Waist = { 24, 0, 0 }, Neck = { 56, 0, 0 }, RS = { 188, 0, 10 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 156, 0, -66 }, LE = { 10, 0, 0 }, RH = { 60, 0, 20 }, RK = { -110, 0, 0 }, LH = { 10, 0, -25 }, LK = { -40, 0, 0 } },
+					hold = 0.2, shake = true, spin = { axis = "y", degrees = 360 }, trail = "prop",
+					windupFx = { "super", { "particles", tex = "smoke", color = TOOTH, dir = "up", at = "feet", time = 0.35, speed = 8, size = 0.6, rate = 60 } },
+					fx = { { "pillar", color = TOOTH, height = 22, width = 4, at = "front" }, { "beam", color = PASTE, length = 16, width = 5, at = "feet" }, { "burst", color = MINT, size = 4, at = "above" }, { "ring", color = PASTE, radius = 6, at = "feet" }, { "shake", amount = 0.4 } },
+					text = "GEYSER !", hitText = "MENTHE FRAÎCHE !",
+				},
+				-- ↓Y : le rinçage final : il crache un jet d'eau de rinçage de chaque côté sur toute la plateforme, comme une lance d'incendie
+				SUPER_down = {
+					label = "Rinçage final !", startup = 0.4, active = 0.2, recovery = 0.7,
+					damage = 22, hitbox = box(34, 7, 0, 2), kbBase = 36, kbGrowth = 64, kbAngle = 55,
+					status = { name = "wet", duration = 3 },
+					windup = { Root = { 14, 0, 0, 0, -0.2, 0.3 }, Waist = { 24, 0, 0 }, Neck = { 36, 0, 0 }, RS = { 40, 0, 40 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -40 }, LE = { 90, 0, 0 } },
+					strike = { Root = { -20, 0, 0, 0, -0.35, -0.3 }, Waist = { -26, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 20, 0, 80 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -80 }, LE = { 10, 0, 0 }, FR = { 0, 0, 0, 0.3, 0, 0 }, FL = { 0, 0, 0, -0.3, 0, 0 } },
+					follow = { Root = { -22, 0, 0, 0, -0.38, -0.34 }, Waist = { -28, 0, 0 }, Neck = { -22, 0, 0 }, RS = { 16, 0, 84 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 16, 0, -84 }, LE = { 10, 0, 0 }, FR = { 0, 0, 0, 0.3, 0, 0 }, FL = { 0, 0, 0, -0.3, 0, 0 } },
+					hold = 0.4, shake = true, windupFx = { "super", { "text", text = "GLOU GLOU GLOU", color = RINSE, at = "head" } },
+					fx = { { "beam", color = RINSE, length = 34, width = 4, at = "head" }, { "particles", tex = "smoke", color = RINSE, dir = "all", at = "head", time = 0.6, speed = 30, size = 1, rate = 150 }, { "puddle", color = RINSE, width = 20 }, { "shake", amount = 0.4 } },
+					text = "RINCEZ TOUS !", hitText = "TREMPÉ !",
+				},
+			},
+			links = {
+				P_neutral = { P = "P_side", K = "K_neutral", S = "S_neutral" },
+				P_side = { P = "P_up", K = "K_side", S = "S_down" },
+				P_down = { P = "P_up", K = "K_down", S = "S_down" },
+				K_neutral = { P = "P_neutral", K = "K_side", S = "S_side" },
+				P_dash = { P = "P_side", K = "K_side", S = "S_side" },
+				K_dash = { P = "P_up", S = "S_up" },
+			},
+		},
+		{ id = "seringue", name = "Seringue XL", icon = "💉",
+			prop = { name = "PropSeringueXL", hand = "Right", pieces = {
+				{ "Corps", "", "cyl", Vector3.new(0.6, 2.2, 0.6), Vector3.new(0, -1.1, 0), Vector3.zero, Color3.fromRGB(220, 240, 255), "Glass", { transparency = 0.3 } },
+				{ "Produit", "", "cyl", Vector3.new(0.45, 1.6, 0.45), Vector3.new(0, -1.2, 0), Vector3.zero, ANESTH, "Neon", { neon = true } },
+				{ "Piston", "", "cyl", Vector3.new(0.2, 1.2, 0.2), Vector3.new(0, 0.5, 0), Vector3.zero, STEEL, "Metal" },
+				{ "Poussoir", "", "cyl", Vector3.new(0.7, 0.15, 0.7), Vector3.new(0, 1.1, 0), Vector3.zero, STEEL, "Metal" },
+				{ "Aiguille", "", "cyl", Vector3.new(0.1, 1.4, 0.1), Vector3.new(0, -2.9, 0), Vector3.zero, STEEL, "Metal" },
+			} },
+			ability = { heal = 0.3, text = "Ça pique mais ça soigne : 30 % des dégâts infligés le remettent sur pied" },
+			moves = {
+				-- J : petite piqûre sèche dans l'épaule, le poignet cassé comme un escrimeur
+				P_neutral = {
+					label = "Piqûre à l'épaule", startup = 0.06, active = 0.08, recovery = 0.14,
+					damage = 5, hitbox = box(4.5, 3, 3, 0.8), kbBase = 16, kbGrowth = 22, kbAngle = 25,
+					windup = { Root = { 2, -14, 0, 0, -0.1, 0.1 }, Waist = { 2, -16, 0 }, Neck = { 0, 10, 0 }, RS = { 60, 0, 10 }, RE = { 110, 0, 0 }, RW = { 60, 0, 0 }, LS = { 30, 0, -20 }, LE = { 90, 0, 0 } },
+					strike = { Root = { -6, 12, 0, 0, -0.2, -0.3 }, Waist = { -6, 14, 0 }, Neck = { 0, -8, 0 }, RS = { 94, 0, 0 }, RE = { 0, 0, 0 }, RW = { 90, 0, 0 }, LS = { -20, 0, -30 }, LE = { 70, 0, 0 } },
+					follow = { Root = { -7, 14, 0, 0, -0.22, -0.33 }, Waist = { -7, 16, 0 }, Neck = { 0, -10, 0 }, RS = { 96, 0, -2 }, RE = { 4, 0, 0 }, RW = { 90, 0, 0 }, LS = { -24, 0, -32 }, LE = { 70, 0, 0 } },
+					trail = "prop", hitText = "PIC !",
+				},
+				-- →J : fente d'escrimeur, la seringue en avant comme un fleuret
+				P_side = {
+					label = "Fente au fleuret", startup = 0.1, active = 0.1, recovery = 0.2,
+					damage = 7, hitbox = box(7, 2.5, 4.5, 0.6), kbBase = 20, kbGrowth = 34, kbAngle = 20, selfVelocity = Vector2.new(20, 0),
+					windup = { Root = { 0, -30, 0, 0, -0.15, 0.2 }, Waist = { 2, -34, 0 }, Neck = { 0, 24, 0 }, RS = { 40, 0, 20 }, RE = { 120, 0, 0 }, RW = { 60, 0, 0 }, LS = { 100, 0, -30 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -6, 30, 0, 0, -0.5, -0.5 }, Waist = { -6, 34, 0 }, Neck = { 0, -22, 0 }, RS = { 96, 0, 0 }, RE = { 0, 0, 0 }, RW = { 90, 0, 0 }, LS = { 150, 0, -20 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.9 } },
+					follow = { Root = { -8, 32, 0, 0, -0.52, -0.55 }, Waist = { -8, 36, 0 }, Neck = { 0, -24, 0 }, RS = { 98, 0, -2 }, RE = { 0, 0, 0 }, RW = { 90, 0, 0 }, LS = { 154, 0, -22 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.95 } },
+					trail = "prop", text = "TOUCHÉ !", hitText = "PIC !",
+				},
+				-- ↓J : accroupi, petite piqûre dans le mollet, « ça ne fait pas mal »
+				P_down = {
+					label = "Piqûre au mollet", startup = 0.1, active = 0.1, recovery = 0.2,
+					damage = 6, hitbox = box(6, 2, 3.5, -1.5), kbBase = 20, kbGrowth = 28, kbAngle = 70,
+					windup = { Root = { 10, -14, 0, 0, -0.85, 0.1 }, Waist = { 16, -16, 0 }, Neck = { 10, 10, 0 }, RS = { 40, 0, 20 }, RE = { 100, 0, 0 }, RW = { 60, 0, 0 }, LS = { 30, 0, -30 }, LE = { 90, 0, 0 }, LH = { -40, 0, 0 }, LK = { -40, 0, 0 } },
+					strike = { Root = { 14, 12, 0, 0, -0.95, -0.2 }, Waist = { 22, 14, 0 }, Neck = { 8, -8, 0 }, RS = { 50, 0, 0 }, RE = { 0, 0, 0 }, RW = { 90, 0, 0 }, LS = { 40, 0, -30 }, LE = { 90, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					follow = { Root = { 16, 14, 0, 0, -0.95, -0.24 }, Waist = { 24, 16, 0 }, Neck = { 8, -10, 0 }, RS = { 46, 0, 2 }, RE = { 4, 0, 0 }, RW = { 90, 0, 0 }, LS = { 44, 0, -32 }, LE = { 90, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.32 } },
+					trail = "prop", text = "ÇA NE FAIT PAS MAL…", hitText = "AÏE !",
+				},
+				-- ↑J : piqûre remontante sous le menton, l'aiguille pointée au ciel
+				P_up = {
+					label = "Piqûre au menton", startup = 0.1, active = 0.1, recovery = 0.22,
+					damage = 7, hitbox = box(4, 5.5, 1.5, 3), kbBase = 22, kbGrowth = 40, kbAngle = 86,
+					windup = { Root = { 8, 0, 0, 0, -0.3, 0.1 }, Waist = { 12, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 20, 0, 20 }, RE = { 110, 0, 0 }, RW = { 60, 0, 0 }, LS = { 30, 0, -20 }, LE = { 90, 0, 0 } },
+					strike = { Root = { -12, 0, 0, 0, 0.1, -0.1 }, Waist = { -16, 0, 0 }, Neck = { -24, 0, 0 }, RS = { 176, 0, 8 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -30 }, LE = { 90, 0, 0 } },
+					follow = { Root = { -14, 0, 0, 0, 0.14, -0.12 }, Waist = { -18, 0, 0 }, Neck = { -28, 0, 0 }, RS = { 182, 0, 10 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 44, 0, -32 }, LE = { 90, 0, 0 } },
+					trail = "prop", hitText = "PIC !",
+				},
+				-- J en l'air : piqûre plongeante, l'aiguille pointée sous lui
+				P_air = {
+					label = "Piqûre plongeante", startup = 0.1, active = 0.12, recovery = 0.16,
+					damage = 8, hitbox = box(4.5, 4, 1.5, -1.5), kbBase = 20, kbGrowth = 36, kbAngle = -45,
+					windup = { Root = { 8, 0, 0 }, Waist = { 12, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 170, 0, 12 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -40 }, LE = { 80, 0, 0 }, RH = { 40, 0, 0 }, RK = { -80, 0, 0 }, LH = { 50, 0, 0 }, LK = { -90, 0, 0 } },
+					strike = { Root = { -12, 0, 0 }, Waist = { -26, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 10, 0, 10 }, RE = { 0, 0, 0 }, RW = { -40, 0, 0 }, LS = { 30, 0, -50 }, LE = { 60, 0, 0 }, RH = { 20, 0, 10 }, RK = { -40, 0, 0 }, LH = { 30, 0, -10 }, LK = { -60, 0, 0 } },
+					follow = { Root = { -16, 0, 0 }, Waist = { -30, 0, 0 }, Neck = { 24, 0, 0 }, RS = { 6, 0, 12 }, RE = { 4, 0, 0 }, RW = { -50, 0, 0 }, LS = { 34, 0, -54 }, LE = { 60, 0, 0 }, RH = { 16, 0, 10 }, RK = { -36, 0, 0 }, LH = { 26, 0, -10 }, LK = { -56, 0, 0 } },
+					trail = "prop", hitText = "PIC !",
+				},
+				-- dash J : en courant, il presse le piston et une giclée d'anesthésiant part devant lui
+				P_dash = {
+					label = "Giclée en courant", kind = "projectile", startup = 0.08, active = 0, recovery = 0.22,
+					damage = 6, kbBase = 20, kbGrowth = 32, kbAngle = 28, selfVelocity = Vector2.new(30, 0),
+					projectile = { speed = 85, angle = 4, gravity = 30, lifetime = 0.35, size = 1.2, color = ANESTH, aim = false,
+						visual = { shape = "ball", size = 1, color = ANESTH, neon = true, transparency = 0.2 } },
+					windup = { Root = { 8, -16, 0, 0, -0.15, 0.15 }, Waist = { 8, -20, 0 }, Neck = { 0, 12, 0 }, RS = { 60, 0, 10 }, RE = { 90, 0, 0 }, RW = { 60, 0, 0 }, LS = { -30, 0, -20 }, LE = { 60, 0, 0 } },
+					strike = { Root = { 10, 14, 0, 0, -0.2, -0.3 }, Waist = { 10, 18, 0 }, Neck = { -6, -10, 0 }, RS = { 96, 0, -2 }, RE = { 0, 0, 0 }, RW = { 90, 0, 0 }, LS = { 60, 0, -10 }, LE = { 100, 0, 0 }, LW = { -60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { 10, 14, 0, 0, -0.2, -0.32 }, Waist = { 10, 18, 0 }, Neck = { -6, -10, 0 }, RS = { 98, 0, -2 }, RE = { 4, 0, 0 }, RW = { 90, 0, 0 }, LS = { 64, 0, -10 }, LE = { 104, 0, 0 }, LW = { -70, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+					fx = { { "burst", color = ANESTH, size = 1, at = "hand" } }, text = "PSCHT !", hitText = "ASPERGÉ !",
+				},
+				-- K : coup de pied frontal, la seringue tenue haut comme une torche
+				K_neutral = {
+					label = "Pied du vaccinateur", startup = 0.15, active = 0.1, recovery = 0.28,
+					damage = 10, hitbox = box(5, 3.5, 3, 0.3), kbBase = 28, kbGrowth = 58, kbAngle = 35,
+					windup = { Root = { 6, -10, 0, 0, -0.2, 0.1 }, Waist = { 6, -10, 0 }, Neck = { 0, 6, 0 }, RS = { 150, 0, 30 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -40 }, LE = { 60, 0, 0 }, RH = { -30, 0, 0 }, RK = { -50, 0, 0 } },
+					strike = { Root = { 8, 0, 0, 0, -0.1, 0.05 }, Waist = { 10, 0, 0 }, Neck = { 0, 0, 0 }, RS = { 160, 0, 34 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, -55 }, LE = { 30, 0, 0 }, RH = { 95, 0, 0 }, RK = { -4, 0, 0 }, RA = { 10, 0, 0 } },
+					follow = { Root = { 12, 0, 0, 0, -0.1, 0.1 }, Waist = { 14, 0, 0 }, Neck = { 0, 0, 0 }, RS = { 164, 0, 36 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 74, 0, -60 }, LE = { 25, 0, 0 }, RH = { 104, 0, 0 }, RK = { 0, 0, 0 }, RA = { 15, 0, 0 } },
+					trail = "rightFoot", hitText = "PAF !",
+				},
+				-- →K : coup de pied en avançant suivi d'une piqûre dans la foulée (deux touches)
+				K_side = {
+					label = "Pied puis piqûre", startup = 0.16, active = 0.2, recovery = 0.3, hits = 2,
+					damage = 6, hitbox = box(6, 3.5, 3.5, 0.5), kbBase = 30, kbGrowth = 62, kbAngle = 34, selfVelocity = Vector2.new(22, 0),
+					windup = { Root = { 6, 20, 0, 0, -0.2, 0.1 }, Waist = { 8, 26, 0 }, Neck = { 0, -14, 0 }, RS = { 60, 0, 30 }, RE = { 110, 0, 0 }, RW = { 60, 0, 0 }, LS = { 40, 0, -40 }, LE = { 80, 0, 0 }, RH = { -20, 0, 0 }, RK = { -60, 0, 0 } },
+					strike = { Root = { 6, -10, 0, 0, -0.15, -0.2 }, Waist = { 8, -14, 0 }, Neck = { 0, 10, 0 }, RS = { 60, 0, 30 }, RE = { 110, 0, 0 }, RW = { 60, 0, 0 }, LS = { 50, 0, -50 }, LE = { 60, 0, 0 }, RH = { 100, 0, 10 }, RK = { -6, 0, 0 }, RA = { 10, 0, 0 } },
+					follow = { Root = { -8, 20, 0, 0, -0.3, -0.4 }, Waist = { -10, 24, 0 }, Neck = { 0, -14, 0 }, RS = { 96, 0, 0 }, RE = { 0, 0, 0 }, RW = { 90, 0, 0 }, LS = { -20, 0, -40 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+					trail = "rightFoot", hitText = "PAF-PIC !",
+				},
+				-- ↓K : balayette basse, la seringue plantée dans le sol pour s'appuyer
+				K_down = {
+					label = "Balayette piquée", startup = 0.14, active = 0.14, recovery = 0.3,
+					damage = 9, hitbox = box(7, 2, 3.5, -1.6), kbBase = 26, kbGrowth = 50, kbAngle = 75,
+					windup = { Root = { 12, 10, 0, 0, -0.85, 0.1 }, Waist = { 16, 14, 0 }, Neck = { 10, 0, 0 }, RS = { 50, 0, 30 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -40 }, LE = { 80, 0, 0 }, LH = { -30, 0, 0 }, LK = { -40, 0, 0 } },
+					strike = { Root = { 16, -20, 0, 0, -0.95, -0.1 }, Waist = { 20, -26, 0 }, Neck = { 10, 0, 0 }, RS = { 40, 0, 40 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -40 }, LE = { 80, 0, 0 }, LH = { 50, 0, -20 }, LK = { -4, 0, 0 }, LA = { 20, 0, 0 } },
+					follow = { Root = { 18, -26, 0, 0, -0.95, -0.14 }, Waist = { 22, -32, 0 }, Neck = { 10, 0, 0 }, RS = { 42, 0, 42 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 34, 0, -42 }, LE = { 80, 0, 0 }, LH = { 56, 0, -24 }, LK = { 0, 0, 0 }, LA = { 24, 0, 0 } },
+					trail = "leftFoot", fx = { "dust" }, hitText = "FAUCHÉ !",
+				},
+				-- ↑K : coup de pied monté, la seringue pointée au ciel pour chasser la bulle d'air (petite giclée)
+				K_up = {
+					label = "Pied monté, bulle chassée", startup = 0.16, active = 0.12, recovery = 0.32,
+					damage = 11, hitbox = box(4.5, 6, 1.5, 3.5), kbBase = 30, kbGrowth = 64, kbAngle = 88,
+					windup = { Root = { 10, 0, 0, 0, -0.25, 0.1 }, Waist = { 14, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 100, 0, 30 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -40 }, LE = { 60, 0, 0 }, RH = { -20, 0, 0 }, RK = { -60, 0, 0 } },
+					strike = { Root = { -16, 0, 0, 0, 0.05, -0.1 }, Waist = { -20, 0, 0 }, Neck = { -24, 0, 0 }, RS = { 176, 0, 20 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -50 }, LE = { 30, 0, 0 }, RH = { 140, 0, 0 }, RK = { -6, 0, 0 }, RA = { 20, 0, 0 } },
+					follow = { Root = { -18, 0, 0, 0, 0.08, -0.12 }, Waist = { -22, 0, 0 }, Neck = { -28, 0, 0 }, RS = { 180, 0, 22 }, RE = { 0, 0, 0 }, RW = { 10, 0, 0 }, LS = { 34, 0, -52 }, LE = { 30, 0, 0 }, RH = { 148, 0, 0 }, RK = { 0, 0, 0 }, RA = { 24, 0, 0 } },
+					trail = "rightFoot", fx = { { "particles", tex = "spark", color = ANESTH, dir = "up", at = "hand", time = 0.2, speed = 10, size = 0.3, rate = 40 } }, hitText = "KLANG !",
+				},
+				-- K en l'air : ciseaux de jambes, seringue pointée sur la cible
+				K_air = {
+					label = "Ciseaux stériles", startup = 0.12, active = 0.18, recovery = 0.2,
+					damage = 10, hits = 2, hitbox = box(5, 4, 2.5, -0.5), kbBase = 22, kbGrowth = 46, kbAngle = 40,
+					windup = { Root = { -8, 0, 0 }, Waist = { -6, 0, 0 }, RS = { 92, 0, 0 }, RE = { 0, 0, 0 }, RW = { 90, 0, 0 }, LS = { 40, 0, -40 }, LE = { 80, 0, 0 }, RH = { 60, 0, 0 }, RK = { -100, 0, 0 }, LH = { -20, 0, 0 }, LK = { -40, 0, 0 } },
+					strike = { Root = { -4, 0, 0 }, Waist = { 6, 0, 0 }, RS = { 94, 0, 0 }, RE = { 0, 0, 0 }, RW = { 90, 0, 0 }, LS = { 44, 0, -44 }, LE = { 80, 0, 0 }, RH = { 90, 0, 0 }, RK = { -6, 0, 0 }, RA = { 10, 0, 0 }, LH = { -30, 0, 0 }, LK = { -30, 0, 0 } },
+					follow = { Root = { -2, 0, 0 }, Waist = { 8, 0, 0 }, RS = { 96, 0, 0 }, RE = { 0, 0, 0 }, RW = { 90, 0, 0 }, LS = { 46, 0, -46 }, LE = { 80, 0, 0 }, RH = { -30, 0, 0 }, RK = { -30, 0, 0 }, LH = { 95, 0, 0 }, LK = { -4, 0, 0 }, LA = { 10, 0, 0 } },
+					trail = "bothFeet", hitText = "TCHAC TCHAC !",
+				},
+				-- dash K : glissade à genoux, seringue en avant, comme un rockeur en fin de concert
+				K_dash = {
+					label = "Glissade à genoux", startup = 0.1, active = 0.24, recovery = 0.3,
+					damage = 11, hitbox = box(6, 3, 3.5, -0.5), kbBase = 30, kbGrowth = 62, kbAngle = 36, selfVelocity = Vector2.new(50, 0),
+					windup = { Root = { 6, 0, 0, 0, -0.3, 0 }, Waist = { 8, 0, 0 }, RS = { 60, 0, 20 }, RE = { 100, 0, 0 }, RW = { 60, 0, 0 }, LS = { 50, 0, -40 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -16, 0, 0, 0, -1.0, 0 }, Waist = { -10, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 96, 0, 0 }, RE = { 0, 0, 0 }, RW = { 90, 0, 0 }, LS = { 150, 0, -40 }, LE = { 20, 0, 0 }, RH = { 0, 0, 0 }, RK = { -130, 0, 0 }, LH = { 0, 0, 0 }, LK = { -130, 0, 0 } },
+					follow = { Root = { -18, 0, 0, 0, -1.0, 0 }, Waist = { -12, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 98, 0, 0 }, RE = { 0, 0, 0 }, RW = { 90, 0, 0 }, LS = { 154, 0, -44 }, LE = { 20, 0, 0 }, RH = { 0, 0, 0 }, RK = { -130, 0, 0 }, LH = { 0, 0, 0 }, LK = { -130, 0, 0 } },
+					trail = "prop", fx = { "dust" }, hitText = "SKRRRT-PIC !",
+				},
+				-- L : jet d'anesthésiant : il presse le piston à fond, un long jet violet file droit sur l'adversaire, qui ralentit
+				S_neutral = {
+					label = "Jet d'anesthésiant", kind = "projectile", startup = 0.22, active = 0, recovery = 0.45,
+					damage = 13, kbBase = 26, kbGrowth = 46, kbAngle = 30,
+					projectile = { speed = 90, angle = 0, gravity = 0, lifetime = 0.6, size = 1.6, color = ANESTH,
+						visual = { shape = "ball", size = 1.4, color = ANESTH, neon = true, transparency = 0.2 } },
+					status = { name = "slowed", duration = 2.5 },
+					windup = { Root = { 4, -24, 0, 0, -0.2, 0.15 }, Waist = { 4, -28, 0 }, Neck = { 0, 18, 0 }, RS = { 70, 0, 10 }, RE = { 70, 0, 0 }, RW = { 60, 0, 0 }, LS = { 60, 0, -10 }, LE = { 100, 0, 0 }, LW = { -40, 0, 0 } },
+					strike = { Root = { -8, 20, 0, 0, -0.28, -0.3 }, Waist = { -10, 24, 0 }, Neck = { -4, -14, 0 }, RS = { 94, 0, -4 }, RE = { 0, 0, 0 }, RW = { 90, 0, 0 }, LS = { 90, 0, 0 }, LE = { 70, 0, 0 }, LW = { -80, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { -8, 20, 0, 0, -0.28, -0.3 }, Waist = { -10, 24, 0 }, Neck = { -4, -14, 0 }, RS = { 96, 0, -4 }, RE = { 0, 0, 0 }, RW = { 90, 0, 0 }, LS = { 92, 0, 0 }, LE = { 60, 0, 0 }, LW = { -90, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+					fx = { { "beam", color = ANESTH, length = 10, width = 1.5, at = "hand" }, { "burst", color = ANESTH, size = 1.8, at = "hand" } }, text = "PSCHHHT !", hitText = "ENGOURDI !",
+				},
+				-- →L : la grande piqûre : fente profonde, l'aiguille s'enfonce dans tout le couloir et l'adversaire s'endort sur place
+				S_side = {
+					label = "La grande piqûre", startup = 0.26, active = 0.14, recovery = 0.5,
+					damage = 15, hitbox = box(14, 4, 7, 0.6), kbBase = 24, kbGrowth = 44, kbAngle = 20, selfVelocity = Vector2.new(24, 0),
+					status = { name = "asleep", duration = 2 },
+					windup = { Root = { 0, -34, 0, 0, -0.15, 0.2 }, Waist = { 2, -38, 0 }, Neck = { 0, 26, 0 }, RS = { 30, 0, 20 }, RE = { 130, 0, 0 }, RW = { 60, 0, 0 }, LS = { 110, 0, -30 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -6, 34, 0, 0, -0.55, -0.6 }, Waist = { -6, 38, 0 }, Neck = { 0, -24, 0 }, RS = { 96, 0, 0 }, RE = { 0, 0, 0 }, RW = { 90, 0, 0 }, LS = { 160, 0, -20 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -1.0 } },
+					follow = { Root = { -8, 36, 0, 0, -0.58, -0.65 }, Waist = { -8, 40, 0 }, Neck = { 0, -26, 0 }, RS = { 98, 0, -2 }, RE = { 0, 0, 0 }, RW = { 90, 0, 0 }, LS = { 164, 0, -22 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -1.05 } },
+					hold = 0.1, trail = "prop", fx = { { "beam", color = STEEL, length = 14, width = 1, at = "hand" }, { "symbols", symbols = { "💤", "Zzz" }, count = 4, radius = 3, color = ANESTH, at = "front" } },
+					text = "PETITE PIQÛRE…", hitText = "DODO !",
+				},
+				-- ↓L : il plante la seringue dans le sol et pousse le piston : une flaque d'anesthésiant s'étale sur tout le couloir
+				S_down = {
+					label = "Flaque anesthésiante", startup = 0.24, active = 0.2, recovery = 0.5,
+					damage = 13, hitbox = box(14, 4, 7, -0.5), kbBase = 26, kbGrowth = 48, kbAngle = 60,
+					status = { name = "slowed", duration = 3 },
+					windup = { Root = { 10, 0, 0, 0, -0.4, 0.1 }, Waist = { 16, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 170, 0, 10 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -30 }, LE = { 90, 0, 0 } },
+					strike = { Root = { 20, 0, 0, 0, -0.95, -0.3 }, Waist = { 30, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 30, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -10 }, LE = { 0, 0, 0 }, LW = { -30, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { 22, 0, 0, 0, -1.0, -0.34 }, Waist = { 32, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 26, 0, 12 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 26, 0, -12 }, LE = { 0, 0, 0 }, LW = { -40, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+					hold = 0.12, fx = { { "puddle", color = ANESTH, width = 14 }, { "beam", color = ANESTH, length = 14, width = 3, at = "feet" }, { "ring", color = ANESTH, radius = 6, at = "feet" } },
+					text = "ÇA S'ÉTALE !", hitText = "ENGOURDI !",
+				},
+				-- ↑L : il s'injecte une dose de vitamines dans la cuisse et bondit en diagonale, frais comme un gardon
+				S_up = {
+					label = "Dose de vitamines", startup = 0.14, active = 0.3, recovery = 0.42,
+					damage = 13, hitbox = box(10, 11, 3, 4), kbBase = 30, kbGrowth = 52, kbAngle = 74, selfVelocity = Vector2.new(42, 82),
+					windup = { Root = { 10, 0, 0, 0, -0.8, 0.1 }, Waist = { 16, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 20, 0, 30 }, RE = { 110, 0, 0 }, RW = { 60, 0, 0 }, LS = { 30, 0, -20 }, LE = { 90, 0, 0 }, RH = { -30, 0, 0 }, RK = { -60, 0, 0 } },
+					strike = { Root = { -40, 0, 0, 0, 0.4, -0.2 }, Waist = { -6, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 176, 0, 20 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 176, 0, -20 }, LE = { 0, 0, 0 }, RH = { -25, 0, 5 }, RK = { -30, 0, 0 }, LH = { -15, 0, -5 }, LK = { -50, 0, 0 } },
+					follow = { Root = { -44, 0, 0, 0, 0.45, -0.25 }, Waist = { -8, 0, 0 }, Neck = { 32, 0, 0 }, RS = { 180, 0, 22 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 180, 0, -22 }, LE = { 0, 0, 0 }, RH = { -30, 0, 6 }, RK = { -35, 0, 0 }, LH = { -20, 0, -6 }, LK = { -55, 0, 0 } },
+					shake = true, trail = "body", fx = { { "burst", color = ANESTH, size = 2.5, at = "feet" }, { "symbols", symbols = { "💪", "✨" }, count = 4, radius = 3, color = SPARK }, { "ring", color = ANESTH, radius = 4, at = "feet" } },
+					text = "EN PLEINE FORME !", hitText = "BONDI !",
+				},
+				-- L en l'air : pluie de gouttes anesthésiantes secouées au-dessus de l'adversaire
+				S_air = {
+					label = "Pluie anesthésiante", kind = "projectile", startup = 0.15, active = 0, recovery = 0.4,
+					damage = 6, kbBase = 22, kbGrowth = 42, kbAngle = -40,
+					projectile = { speed = 60, angle = -70, gravity = 40, lifetime = 0.7, size = 1.1, color = ANESTH, rain = { count = 4, spread = 6 },
+						visual = { shape = "ball", size = 0.9, color = ANESTH, neon = true } },
+					status = { name = "slowed", duration = 1.5 },
+					windup = { Root = { 10, 0, 0 }, Waist = { 14, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 170, 0, 20 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -40 }, LE = { 80, 0, 0 }, RH = { 40, 0, 0 }, RK = { -80, 0, 0 }, LH = { 50, 0, 0 }, LK = { -90, 0, 0 } },
+					strike = { Root = { 24, 0, 0 }, Waist = { 26, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 20, 0, 10 }, RE = { 0, 0, 0 }, RW = { -40, 0, 0 }, LS = { 60, 0, -50 }, LE = { 60, 0, 0 }, RH = { -20, 0, 10 }, RK = { -30, 0, 0 }, LH = { -20, 0, -10 }, LK = { -30, 0, 0 } },
+					follow = { Root = { 28, 0, 0 }, Waist = { 30, 0, 0 }, Neck = { 32, 0, 0 }, RS = { 16, 0, 12 }, RE = { 4, 0, 0 }, RW = { -50, 0, 0 }, LS = { 64, 0, -54 }, LE = { 60, 0, 0 }, RH = { -24, 0, 10 }, RK = { -34, 0, 0 }, LH = { -24, 0, -10 }, LK = { -34, 0, 0 } },
+					shake = true, fx = { { "burst", color = ANESTH, size = 2, at = "hand" } }, text = "SECOUÉ !", hitText = "ENGOURDI !",
+				},
+				-- Y : anesthésie générale : il fait le tour du couloir en piquant tout le monde à toute vitesse et tout le monde s'écroule en ronflant
+				SUPER = {
+					label = "Anesthésie générale !", startup = 0.4, active = 0.3, recovery = 0.7, hits = 3,
+					damage = 8, hitbox = box(16, 6, 8, 0.8), kbBase = 30, kbGrowth = 60, kbAngle = 30, selfVelocity = Vector2.new(30, 0),
+					status = { name = "asleep", duration = 3 },
+					windup = { Root = { 4, -30, 0, 0, -0.2, 0.2 }, Waist = { 6, -34, 0 }, Neck = { 0, 24, 0 }, RS = { 40, 0, 20 }, RE = { 130, 0, 0 }, RW = { 60, 0, 0 }, LS = { 110, 0, -30 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -8, 30, 0, 0, -0.5, -0.55 }, Waist = { -8, 34, 0 }, Neck = { 0, -22, 0 }, RS = { 96, 0, 0 }, RE = { 0, 0, 0 }, RW = { 90, 0, 0 }, LS = { 160, 0, -20 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.9 } },
+					follow = { Root = { -8, -30, 0, 0, -0.5, -0.55 }, Waist = { -8, -34, 0 }, Neck = { 0, 22, 0 }, RS = { 96, 0, 40 }, RE = { 0, 0, 0 }, RW = { 90, 0, 0 }, LS = { 160, 0, -20 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.9 } },
+					wobble = true, trail = "prop", windupFx = { "super", { "text", text = "COMPTEZ JUSQU'À 10…", color = ANESTH, at = "above" } },
+					fx = { { "beam", color = ANESTH, length = 16, width = 3, at = "hand" }, { "symbols", symbols = { "💤", "Zzz", "💤" }, count = 10, radius = 6, color = ANESTH }, { "screen", color = ANESTH, alpha = 0.25 }, { "shake", amount = 0.3 } },
+					text = "PIC PIC PIC !", hitText = "RONFLE !",
+				},
+				-- →Y : la seringue-fusée : il pointe l'aiguille vers l'adversaire, presse le piston à fond et la seringue part comme une fusée en traînant son produit
+				SUPER_side = {
+					label = "Seringue-fusée !", kind = "projectile", startup = 0.4, active = 0, recovery = 0.7,
+					damage = 26, kbBase = 46, kbGrowth = 96, kbAngle = 32,
+					projectile = { speed = 100, angle = 0, gravity = 0, lifetime = 0.8, size = 3, color = ANESTH, pierce = true,
+						visual = { shape = "cyl", size = 1.2, color = Color3.fromRGB(220, 240, 255), spin = 0, parts = { { "cyl", Vector3.new(0.9, 3.2, 0.9), Vector3.new(0, 0, 0), ANESTH }, { "cyl", Vector3.new(0.2, 2.8, 0.2), Vector3.new(0, -3, 0), STEEL } } } },
+					status = { name = "asleep", duration = 2.5 },
+					windup = { Root = { 6, -30, 0, 0, -0.25, 0.25 }, Waist = { 8, -34, 0 }, Neck = { 4, 22, 0 }, RS = { 60, 0, 10 }, RE = { 110, 0, 0 }, RW = { 60, 0, 0 }, LS = { 60, 0, -10 }, LE = { 110, 0, 0 }, LW = { -40, 0, 0 } },
+					strike = { Root = { -14, 22, 0, 0, -0.34, -0.5 }, Waist = { -16, 26, 0 }, Neck = { -6, -16, 0 }, RS = { 94, 0, 0 }, RE = { 0, 0, 0 }, RW = { 90, 0, 0 }, LS = { 92, 0, 0 }, LE = { 60, 0, 0 }, LW = { -90, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+					follow = { Root = { -4, 22, 0, 0, -0.26, -0.3 }, Waist = { -6, 26, 0 }, Neck = { -6, -16, 0 }, RS = { 110, 0, 0 }, RE = { 10, 0, 0 }, RW = { 40, 0, 0 }, LS = { 98, 0, 0 }, LE = { 60, 0, 0 }, LW = { -90, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+					shake = true, hideProp = "seringuexl", windupFx = { "super", { "symbols", symbols = { "💉", "🚀" }, count = 6, radius = 3, color = ANESTH } },
+					fx = { { "beam", color = ANESTH, length = 16, width = 2.5, at = "hand" }, { "burst", color = ANESTH, size = 3.5, at = "hand" }, { "particles", tex = "smoke", color = ANESTH, dir = "front", at = "hand", time = 0.4, speed = 20, size = 0.8, rate = 80 }, { "shake", amount = 0.4 } },
+					text = "DÉCOLLAGE !", hitText = "PIQUÉ À VIF !",
+				},
+				-- ↑Y : la piqûre de rappel : il bondit en vrille, seringue au ciel, et retombe pour piquer tout le couloir qui part au plafond
+				SUPER_up = {
+					label = "Piqûre de rappel !", startup = 0.38, active = 0.3, recovery = 0.7,
+					damage = 24, hitbox = box(16, 12, 8, 5), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3, selfVelocity = Vector2.new(0, 55),
+					status = { name = "slowed", duration = 2 },
+					windup = { Root = { 12, 0, 0, 0, -0.9, 0.1 }, Waist = { 20, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 40, 0, 20 }, RE = { 110, 0, 0 }, RW = { 60, 0, 0 }, LS = { 40, 0, -20 }, LE = { 110, 0, 0 } },
+					strike = { Root = { 6, 0, 0, 0, 0.5, 0 }, Waist = { 18, 0, 0 }, Neck = { 50, 0, 0 }, RS = { 186, 0, 6 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, -60 }, LE = { 10, 0, 0 }, RH = { 40, 0, 10 }, RK = { -90, 0, 0 }, LH = { 20, 0, -15 }, LK = { -60, 0, 0 } },
+					follow = { Root = { 10, 0, 0, 0, 0.55, 0 }, Waist = { 24, 0, 0 }, Neck = { 56, 0, 0 }, RS = { 188, 0, 10 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 156, 0, -66 }, LE = { 10, 0, 0 }, RH = { 60, 0, 20 }, RK = { -110, 0, 0 }, LH = { 10, 0, -25 }, LK = { -40, 0, 0 } },
+					hold = 0.2, shake = true, spin = { axis = "y", degrees = 720 }, trail = "prop",
+					windupFx = { "super", { "text", text = "RAPPEL !", color = ANESTH, at = "above" } },
+					fx = { { "pillar", color = ANESTH, height = 22, width = 3, at = "front" }, { "burst", color = SPARK, size = 4, at = "above" }, { "rain", shape = "ball", color = ANESTH, count = 10, radius = 6, size = 0.5 }, { "ring", color = ANESTH, radius = 6, at = "feet" }, { "shake", amount = 0.4 } },
+					text = "PIQÛRE DE RAPPEL !", hitText = "AU PLAFOND !",
+				},
+				-- ↓Y : bombe de gaz : il presse le piston sans aiguille et un nuage violet envahit toute la plateforme : tout le monde pique du nez
+				SUPER_down = {
+					label = "Nuage d'anesthésiant !", startup = 0.4, active = 0.2, recovery = 0.7,
+					damage = 20, hitbox = box(70, 50, 0, 10), kbBase = 10, kbGrowth = 10, kbAngle = 60,
+					status = { name = "asleep", duration = 3 },
+					windup = { Root = { 0, 0, 0, 0, -0.3, 0 }, Waist = { -10, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 60, 0, 20 }, RE = { 100, 0, 0 }, RW = { 60, 0, 0 }, LS = { 60, 0, -20 }, LE = { 100, 0, 0 }, LW = { -40, 0, 0 } },
+					strike = { Root = { 6, 0, 0, 0, 0.1, 0 }, Waist = { 14, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 180, 0, 10 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 170, 0, -10 }, LE = { 40, 0, 0 }, LW = { -90, 0, 0 } },
+					follow = { Root = { 8, 0, 0, 0, 0.12, 0 }, Waist = { 18, 0, 0 }, Neck = { 36, 0, 0 }, RS = { 184, 0, 12 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 174, 0, -12 }, LE = { 30, 0, 0 }, LW = { -90, 0, 0 } },
+					hold = 0.4, windupFx = { "super" },
+					fx = { { "screen", color = ANESTH, alpha = 0.35, time = 0.8 }, { "particles", tex = "smoke", color = ANESTH, at = "hand", dir = "all", time = 0.8, rate = 120, speed = 18, size = 2 }, { "symbols", symbols = { "💤", "Zzz", "😴" }, color = ANESTH, count = 12, radius = 9, at = "above" } },
+					text = "TOUT LE MONDE DORT !", hitText = "RONFLEMENT !",
+				},
+			},
+			links = {
+				P_neutral = { P = "P_side", K = "K_neutral", S = "S_neutral" },
+				P_side = { P = "P_up", K = "K_side", S = "S_side" },
+				P_down = { P = "P_up", K = "K_down", S = "S_down" },
+				K_neutral = { P = "P_neutral", K = "K_side", S = "S_neutral" },
+				K_side = { P = "P_up", K = "K_up", S = "S_side" },
+				P_dash = { P = "P_side", K = "K_side", S = "S_neutral" },
+				K_dash = { P = "P_up", S = "S_up" },
+			},
+		},
+	},
 
 	look = {
 		body = { head = SKIN, upper = COAT, lower = SCRUBS, arms = COAT, forearms = COAT, hands = GLOVE, legs = SCRUBS, feet = COAT },
@@ -557,6 +1039,25 @@ local data = {
 			hold = 0.1, trail = "rightFoot", windupFx = { "super", { "symbols", symbols = { "🪑", "💺" }, color = CHAIR, count = 3, radius = 2, at = "front" } },
 			fx = { { "burst", color = CHAIR, size = 3.5, at = "front" }, "dust", { "shake", amount = 0.3 } },
 			text = "INSTALLEZ-VOUS !", hitText = "OUVREZ GRAND !",
+		},
+		-- Dentifrice géant (→Y) : il sort un tube de dentifrice gros comme lui, le coince sous le bras et presse de tout son poids :
+		-- un boudin de pâte mentholée rayée part à l'horizontale, traverse le couloir et laisse tout le monde glisser dessus
+		SUPER_side = {
+			label = "Dentifrice géant !", kind = "projectile", startup = 0.4, active = 0, recovery = 0.7,
+			damage = 26, kbBase = 46, kbGrowth = 96, kbAngle = 30,
+			projectile = { speed = 80, angle = 0, gravity = 0, lifetime = 0.9, size = 3.2, color = PASTE, pierce = true,
+				visual = { shape = "cyl", size = 2.8, color = TOOTH, spin = 6, parts = {
+					{ "block", Vector3.new(0.6, 3.0, 3.0), Vector3.new(1.2, 0, 0), PASTE },
+					{ "block", Vector3.new(0.6, 3.0, 3.0), Vector3.new(-1.2, 0, 0), MINT },
+					{ "ball", Vector3.new(2.6, 2.6, 2.6), Vector3.new(-2.4, 0, 0), TOOTH },
+				} } },
+			status = { name = "slippery", duration = 2.5 },
+			windup = { Root = { 10, -30, 0, 0, -0.35, 0.25 }, Waist = { 14, -34, 0 }, Neck = { 6, 20, 0 }, RS = { 40, 0, -20 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, 20 }, LE = { 110, 0, 0 }, LW = { 0, 0, 0 } },
+			strike = { Root = { -18, 20, 0, 0, -0.42, -0.5 }, Waist = { -22, 26, 0 }, Neck = { -8, -14, 0 }, RS = { 70, 0, -30 }, RE = { 60, 0, 0 }, RW = { -40, 0, 0 }, LS = { 70, 0, 30 }, LE = { 60, 0, 0 }, LW = { -40, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+			follow = { Root = { -20, 24, 0, 0, -0.45, -0.55 }, Waist = { -24, 30, 0 }, Neck = { -10, -16, 0 }, RS = { 66, 0, -34 }, RE = { 64, 0, 0 }, RW = { -50, 0, 0 }, LS = { 66, 0, 34 }, LE = { 64, 0, 0 }, LW = { -50, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.52 } },
+			shake = true, windupFx = { "super", { "symbols", symbols = { "🦷", "🪥" }, count = 6, radius = 3, color = PASTE } },
+			fx = { { "burst", color = PASTE, size = 4, at = "front" }, { "beam", color = TOOTH, length = 14, width = 3, at = "front" }, { "puddle", color = PASTE, width = 10 }, { "shake", amount = 0.4 } },
+			text = "PRESSEZ FORT !", hitText = "MENTHOLÉ !",
 		},
 		-- Super ↑ : Extraction royale, la pince géante racle tout le couloir au ras du sol, agrippe la « dent » et l'arrache d'un coup de reins vers le ciel
 		SUPER_up = {

@@ -33,6 +33,9 @@ local RUBBER_DUCK = {
 	},
 }
 
+local NOODLE = Color3.fromRGB(255, 95, 175) -- frite de piscine (arme n° 2)
+local BAZOOKA = Color3.fromRGB(80, 100, 125) -- bazooka à canards (arme n° 3)
+
 local data = {
 	id = "Canard",
 	name = "Capitaine Canard",
@@ -40,6 +43,495 @@ local data = {
 	style = "duck",
 	flying = true, -- sait voler : un saut en l\'air de plus, plané, et un ↑L très puissant
 
+	------------------------------------------------------------------ Les 3 armes de la Caisse Bizarre (une au hasard)
+	-- n° 1 : la bouée et le pistolet à eau (ses coups sont ceux de moves). n° 2 : la frite de piscine géante, longue, molle
+	-- et rapide, qui tapote de partout sans éjecter loin. n° 3 : le bazooka à canards, lourd et lent, qui tire des canards
+	-- en plastique comme des obus et éjecte à l'autre bout de la piscine.
+	weapons = {
+		{ id = "pistolet", name = "Bouée canard & pistolet à eau", icon = "🔫",
+			ability = { jumps = 1, text = "Un saut en l'air de plus pour planer encore plus haut" } },
+		{ id = "frite", name = "Frite de piscine géante", icon = "🍟",
+			prop = { name = "PropFrite", hand = "Right", pieces = {
+				{ "Frite", "", "cyl", Vector3.new(4.6, 0.55, 0.55), Vector3.new(0, -2.3, 0), Vector3.new(0, 0, 0), NOODLE, "SmoothPlastic", { axis = "y" } },
+				{ "Rayure1", "", "cyl", Vector3.new(0.3, 0.62, 0.62), Vector3.new(0, -1.3, 0), Vector3.new(0, 0, 0), TOY_GREEN, "SmoothPlastic", { axis = "y" } },
+				{ "Rayure2", "", "cyl", Vector3.new(0.3, 0.62, 0.62), Vector3.new(0, -3.3, 0), Vector3.new(0, 0, 0), TOY_GREEN, "SmoothPlastic", { axis = "y" } },
+				{ "Bout", "", "ball", Vector3.new(0.6, 0.6, 0.6), Vector3.new(0, -4.6, 0), Vector3.new(0, 0, 0), WHITE, "SmoothPlastic" },
+			} },
+			ability = { reach = 1.25, text = "Portée +25 % : la frite est longue, longue, longue" },
+			moves = {
+				-- J : pichenette du bout de la frite, qui tremblote dans tous les sens
+				P_neutral = {
+					label = "Pichenette de frite", startup = 0.07, active = 0.08, recovery = 0.14,
+					damage = 5, hitbox = box(6, 2.5, 4, 0.8), kbBase = 16, kbGrowth = 20, kbAngle = 25,
+					windup = { Root = { 2, -14, 0, 0, -0.15, 0.1 }, Waist = { 4, -16, 0 }, RS = { 70, 0, 20 }, RE = { 80, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -30 }, LE = { 70, 0, 0 } },
+					strike = { Root = { -6, 12, 0, 0, -0.2, -0.25 }, Waist = { -6, 14, 0 }, RS = { 94, 0, 0 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 30, 0, -40 }, LE = { 70, 0, 0 } },
+					follow = { Root = { -6, 14, 0, 0, -0.2, -0.28 }, Waist = { -6, 16, 0 }, RS = { 90, 0, -4 }, RE = { 6, 0, 0 }, RW = { -25, 0, 0 }, LS = { 26, 0, -42 }, LE = { 70, 0, 0 } },
+					wobble = true, trail = "prop", hitText = "FLOP !",
+				},
+				-- →J : la frite fouette deux fois d'un revers mou, comme une nouille géante
+				P_side = {
+					label = "Fouet de frite", startup = 0.08, active = 0.14, recovery = 0.18,
+					damage = 4, hits = 2, hitbox = box(7, 3, 4.5, 0.6), kbBase = 18, kbGrowth = 22, kbAngle = 28, selfVelocity = Vector2.new(14, 0),
+					windup = { Root = { 4, 30, 0, 0, -0.2, 0.15 }, Waist = { 4, 34, 0 }, Neck = { 0, -20, 0 }, RS = { 60, 0, 60 }, RE = { 40, 0, 0 }, RW = { 20, 0, 0 }, LS = { 40, 0, -40 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -6, -24, 0, 0, -0.25, -0.3 }, Waist = { -6, -28, 0 }, Neck = { 0, 14, 0 }, RS = { 92, 0, -20 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -30 }, LE = { 70, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					follow = { Root = { -6, 20, 0, 0, -0.25, -0.32 }, Waist = { -6, 24, 0 }, Neck = { 0, -10, 0 }, RS = { 92, 0, 30 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 46, 0, -34 }, LE = { 70, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.32 } },
+					wobble = true, trail = "prop", hitText = "FLAP FLAP !",
+				},
+				-- ↓J : accroupi, la frite rase le carrelage et cueille les chevilles
+				P_down = {
+					label = "Frite sous les palmes", startup = 0.09, active = 0.1, recovery = 0.2,
+					damage = 5, hitbox = box(7, 2, 4, -1.6), kbBase = 22, kbGrowth = 24, kbAngle = 70,
+					windup = { Root = { -6, -24, 0, 0, -0.8, 0.15 }, Waist = { -14, -16, 0 }, Neck = { -6, 16, 0 }, RS = { 20, 0, 40 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -30 }, LE = { 80, 0, 0 } },
+					strike = { Root = { -10, 22, 0, 0, -0.9, -0.1 }, Waist = { -20, 24, 0 }, Neck = { -6, -10, 0 }, RS = { 50, 0, -10 }, RE = { 5, 0, 0 }, RW = { -20, 0, 0 }, LS = { 30, 0, -40 }, LE = { 80, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					follow = { Root = { -10, 32, 0, 0, -0.9, -0.14 }, Waist = { -20, 34, 0 }, Neck = { -6, -14, 0 }, RS = { 44, 0, -30 }, RE = { 5, 0, 0 }, RW = { -30, 0, 0 }, LS = { 26, 0, -42 }, LE = { 80, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.32 } },
+					trail = "prop", fx = { { "puddle", color = WATER, width = 5 } }, hitText = "FLIP !",
+				},
+				-- ↑J : grand moulinet vers le ciel, la frite se plie en arc au-dessus de lui
+				P_up = {
+					label = "Frite au plafond", startup = 0.09, active = 0.12, recovery = 0.2,
+					damage = 6, hitbox = box(4.5, 6, 1.5, 3.5), kbBase = 26, kbGrowth = 30, kbAngle = 85,
+					windup = { Root = { 6, 0, 0, 0, -0.4, 0.1 }, Waist = { 10, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 20, 0, 30 }, RE = { 90, 0, 0 }, RW = { 20, 0, 0 }, LS = { 30, 0, -30 }, LE = { 80, 0, 0 } },
+					strike = { Root = { -8, 0, 0, 0, 0.1, -0.1 }, Waist = { -12, 0, 0 }, Neck = { -22, 0, 0 }, RS = { 172, 0, 10 }, RE = { 5, 0, 0 }, RW = { -30, 0, 0 }, LS = { 50, 0, -40 }, LE = { 70, 0, 0 } },
+					follow = { Root = { -10, 0, 0, 0, 0.12, -0.12 }, Waist = { -14, 0, 0 }, Neck = { -26, 0, 0 }, RS = { 182, 0, 12 }, RE = { 5, 0, 0 }, RW = { -45, 0, 0 }, LS = { 54, 0, -42 }, LE = { 70, 0, 0 } },
+					wobble = true, trail = "prop", hitText = "FLOUP !",
+				},
+				-- J en l'air : bras tendu, la frite tourne autour de lui comme une hélice molle (2 touches)
+				P_air = {
+					label = "Hélice de frite", startup = 0.08, active = 0.18, recovery = 0.18,
+					damage = 4, hits = 2, hitbox = box(7, 3.5, 0.5, 0), kbBase = 20, kbGrowth = 30, kbAngle = 35,
+					windup = { Root = { 0, -30, 0 }, Waist = { 0, -20, 0 }, RS = { 70, 0, 40 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -40 }, LE = { 70, 0, 0 }, RH = { 50, 0, 0 }, RK = { -80, 0, 0 }, LH = { 40, 0, 0 }, LK = { -70, 0, 0 } },
+					strike = { Root = { 0, 0, 0 }, Waist = { 0, 0, 0 }, RS = { 90, 0, 88 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, -88 }, LE = { 0, 0, 0 }, RH = { 30, 0, 10 }, RK = { -50, 0, 0 }, LH = { 30, 0, -10 }, LK = { -50, 0, 0 } },
+					follow = { Root = { 0, 10, 0 }, Waist = { 0, 5, 0 }, RS = { 90, 0, 90 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 90, 0, -90 }, LE = { 0, 0, 0 }, RH = { 25, 0, 12 }, RK = { -45, 0, 0 }, LH = { 25, 0, -12 }, LK = { -45, 0, 0 } },
+					spin = { axis = "y", degrees = 360 }, trail = "prop", hitText = "VROUF !",
+				},
+				-- dash J : il court en pointant la frite devant lui comme une lance en mousse
+				P_dash = {
+					label = "Lance-frite", startup = 0.08, active = 0.12, recovery = 0.22,
+					damage = 7, hitbox = box(7, 2.5, 4.5, 0.8), kbBase = 24, kbGrowth = 40, kbAngle = 25, selfVelocity = Vector2.new(40, 0),
+					windup = { Root = { -8, -16, 0, 0, -0.3, 0.1 }, Waist = { -6, -14, 0 }, RS = { 50, 0, 20 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { -20, 0, -20 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -18, 10, 0, 0, -0.4, -0.35 }, Waist = { -8, 12, 0 }, RS = { 96, 0, -4 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -40, 0, -25 }, LE = { 40, 0, 0 } },
+					follow = { Root = { -20, 12, 0, 0, -0.42, -0.4 }, Waist = { -10, 14, 0 }, RS = { 94, 0, -6 }, RE = { 0, 0, 0 }, RW = { -8, 0, 0 }, LS = { -44, 0, -26 }, LE = { 40, 0, 0 } },
+					wobble = true, trail = "prop", fx = { "dust" }, hitText = "POC !",
+				},
+				-- K : moulinet à deux mains au-dessus de la tête, la frite claque trois fois comme un battoir
+				K_neutral = {
+					label = "Moulinet de frite", startup = 0.14, active = 0.24, recovery = 0.28,
+					damage = 4, hits = 3, hitbox = box(6, 4, 3.5, 1), kbBase = 20, kbGrowth = 40, kbAngle = 40,
+					windup = { Root = { 8, 0, 0, 0, -0.1, 0.2 }, Waist = { 12, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 180, 0, 15 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 180, 0, -15 }, LE = { 40, 0, 0 } },
+					strike = { Root = { -12, 0, 0, 0, -0.4, -0.35 }, Waist = { -26, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 80, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 80, 0, 0 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.35 } },
+					follow = { Root = { 6, 0, 0, 0, -0.15, 0.1 }, Waist = { 10, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 170, 0, 20 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 170, 0, -20 }, LE = { 20, 0, 0 } },
+					wobble = true, trail = "prop", hitText = "FLOP FLOP FLOP !",
+				},
+				-- →K : grand coup de frite à deux mains en tournant sur lui-même, la mousse siffle
+				K_side = {
+					label = "Grand coup de frite", startup = 0.18, active = 0.14, recovery = 0.32,
+					damage = 11, hitbox = box(7.5, 3.5, 4, 0.5), kbBase = 28, kbGrowth = 62, kbAngle = 35, selfVelocity = Vector2.new(16, 0),
+					windup = { Root = { 6, 44, 0, 0, -0.2, 0.2 }, Waist = { 8, 40, 0 }, Neck = { 0, -30, 0 }, RS = { 60, 0, 60 }, RE = { 30, 0, 0 }, RW = { 20, 0, 0 }, LS = { 70, 0, 20 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -10, -30, 0, 0, -0.3, -0.35 }, Waist = { -12, -36, 0 }, Neck = { 0, 20, 0 }, RS = { 92, 0, -10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 92, 0, 10 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { -12, -40, 0, 0, -0.3, -0.4 }, Waist = { -14, -46, 0 }, Neck = { 0, 26, 0 }, RS = { 88, 0, -30 }, RE = { 5, 0, 0 }, RW = { -10, 0, 0 }, LS = { 88, 0, -10 }, LE = { 5, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+					spin = { axis = "y", degrees = 360 }, trail = "prop", hitText = "SCHPLAF !",
+				},
+				-- ↓K : accroupi, il tourne sur lui-même frite tendue au ras du sol, comme une toupie en mousse
+				K_down = {
+					label = "Toupie de frite", startup = 0.14, active = 0.2, recovery = 0.3,
+					damage = 9, hitbox = box(8, 2, 0.5, -1.5), kbBase = 26, kbGrowth = 50, kbAngle = 72,
+					windup = { Root = { -6, -30, 0, 0, -0.9, 0 }, Waist = { -16, -10, 0 }, RS = { 30, 0, 50 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -50 }, LE = { 30, 0, 0 } },
+					strike = { Root = { -10, 0, 0, 0, -1.1, 0 }, Waist = { -18, 0, 0 }, RS = { 10, 0, 85 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -70 }, LE = { 15, 0, 0 } },
+					follow = { Root = { -10, 0, 0, 0, -1.1, 0 }, Waist = { -16, 0, 0 }, RS = { 12, 0, 88 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 25, 0, -72 }, LE = { 15, 0, 0 } },
+					spin = { axis = "y", degrees = 720 }, trail = "prop", fx = { { "puddle", color = WATER, width = 6 } }, hitText = "FWIP !",
+				},
+				-- ↑K : il plie la frite contre le sol et la lâche : elle se détend d'un coup vers le ciel
+				K_up = {
+					label = "Frite-catapulte", startup = 0.16, active = 0.12, recovery = 0.3,
+					damage = 10, hitbox = box(4.5, 6, 2, 3.5), kbBase = 30, kbGrowth = 62, kbAngle = 88,
+					windup = { Root = { -14, 0, 0, 0, -0.7, 0.1 }, Waist = { -30, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 30, 0, 20 }, RE = { 20, 0, 0 }, RW = { 60, 0, 0 }, LS = { 40, 0, -30 }, LE = { 60, 0, 0 } },
+					strike = { Root = { 10, 0, 0, 0, 0.2, -0.1 }, Waist = { 14, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 176, 0, 8 }, RE = { 0, 0, 0 }, RW = { -20, 0, 0 }, LS = { 60, 0, -40 }, LE = { 60, 0, 0 }, FR = { 0, 0, 0, 0, 0.2, 0 }, FL = { 0, 0, 0, 0, 0.2, 0 } },
+					follow = { Root = { 12, 0, 0, 0, 0.25, -0.12 }, Waist = { 16, 0, 0 }, Neck = { 34, 0, 0 }, RS = { 184, 0, 10 }, RE = { 0, 0, 0 }, RW = { -40, 0, 0 }, LS = { 64, 0, -42 }, LE = { 60, 0, 0 }, FR = { 0, 0, 0, 0, 0.25, 0 }, FL = { 0, 0, 0, 0, 0.25, 0 } },
+					shake = true, trail = "prop", fx = { { "burst", color = NOODLE, size = 2, at = "above" } }, hitText = "BOÏNG !",
+				},
+				-- K en l'air : il se sert de la frite comme d'un bâton de pogo et rebondit sur la tête de l'adversaire
+				K_air = {
+					label = "Frite-pogo", startup = 0.14, active = 0.14, recovery = 0.24,
+					damage = 10, hitbox = box(5, 4, 1, -2), kbBase = 26, kbGrowth = 55, kbAngle = -40, selfVelocity = Vector2.new(4, 28),
+					windup = { Root = { 6, 0, 0 }, Waist = { 10, 0, 0 }, RS = { 60, 0, 10 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -10 }, LE = { 100, 0, 0 }, RH = { 60, 0, 0 }, RK = { -100, 0, 0 }, LH = { 60, 0, 0 }, LK = { -100, 0, 0 } },
+					strike = { Root = { -10, 0, 0 }, Waist = { -20, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 20, 0, 5 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -5 }, LE = { 0, 0, 0 }, RH = { 20, 0, 5 }, RK = { -30, 0, 0 }, LH = { 20, 0, -5 }, LK = { -30, 0, 0 } },
+					follow = { Root = { -6, 0, 0 }, Waist = { -14, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 26, 0, 6 }, RE = { 4, 0, 0 }, RW = { -10, 0, 0 }, LS = { 26, 0, -6 }, LE = { 4, 0, 0 }, RH = { 30, 0, 5 }, RK = { -50, 0, 0 }, LH = { 30, 0, -5 }, LK = { -50, 0, 0 } },
+					shake = true, trail = "prop", hitText = "POGO !",
+				},
+				-- dash K : il plante la frite et saute à la perche par-dessus, palmes en avant
+				K_dash = {
+					label = "Perche de piscine", startup = 0.1, active = 0.2, recovery = 0.3,
+					damage = 10, hitbox = box(5, 4, 3, 0.5), kbBase = 28, kbGrowth = 60, kbAngle = 55, selfVelocity = Vector2.new(40, 40),
+					windup = { Root = { -10, 0, 0, 0, -0.5, 0 }, Waist = { -14, 0, 0 }, RS = { 60, 0, 10 }, RE = { 60, 0, 0 }, RW = { 40, 0, 0 }, LS = { 50, 0, -10 }, LE = { 70, 0, 0 } },
+					strike = { Root = { 20, 0, 0, 0, 0.2, 0 }, Waist = { 14, 0, 0 }, Neck = { -10, 0, 0 }, RS = { -30, 0, 20 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { -30, 0, -20 }, LE = { 10, 0, 0 }, RH = { 90, 0, 5 }, RK = { 0, 0, 0 }, RA = { 30, 0, 0 }, LH = { 90, 0, -5 }, LK = { 0, 0, 0 }, LA = { 30, 0, 0 } },
+					follow = { Root = { 24, 0, 0, 0, 0.25, 0 }, Waist = { 16, 0, 0 }, Neck = { -12, 0, 0 }, RS = { -36, 0, 22 }, RE = { 10, 0, 0 }, RW = { -10, 0, 0 }, LS = { -36, 0, -22 }, LE = { 10, 0, 0 }, RH = { 96, 0, 5 }, RK = { 0, 0, 0 }, RA = { 30, 0, 0 }, LH = { 96, 0, -5 }, LK = { 0, 0, 0 }, LA = { 30, 0, 0 } },
+					trail = "bothFeet", fx = { "dust" }, text = "HOP !", hitText = "SPLATCH !",
+				},
+				-- L : frite-tornade, il tourne trois tours sur lui-même et la frite fouette tout le couloir (3 touches)
+				S_neutral = {
+					label = "Frite-tornade", startup = 0.2, active = 0.4, recovery = 0.45,
+					damage = 5, hits = 3, hitbox = box(14, 5, 7, 1), kbBase = 24, kbGrowth = 40, kbAngle = 40,
+					windup = { Root = { 4, -50, 0, 0, -0.3, 0.1 }, Waist = { 6, -30, 0 }, Neck = { 0, 30, 0 }, RS = { 70, 0, 60 }, RE = { 30, 0, 0 }, RW = { 20, 0, 0 }, LS = { 50, 0, -50 }, LE = { 40, 0, 0 } },
+					strike = { Root = { 0, 0, 0, 0, -0.2, 0 }, Waist = { 0, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 92, 0, 85 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 92, 0, -85 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					follow = { Root = { 0, 20, 0, 0, -0.2, 0 }, Waist = { 0, 10, 0 }, Neck = { -8, 0, 0 }, RS = { 90, 0, 88 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 90, 0, -88 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					spin = { axis = "y", degrees = 1080 }, wobble = true, trail = "prop",
+					fx = { { "ring", color = NOODLE, radius = 7, at = "root" }, { "particles", tex = "smoke", color = FOAM, at = "root", dir = "all", time = 0.4, speed = 10, rate = 80 } },
+					text = "TORNADE !", hitText = "WOUP WOUP WOUP !",
+				},
+				-- →L : la frite-javelot, lancée comme un javelot en mousse, qui fonce sur l'adversaire et revient en boomerang mou
+				S_side = {
+					label = "Frite-javelot", kind = "projectile", startup = 0.22, active = 0, recovery = 0.48,
+					damage = 14, kbBase = 28, kbGrowth = 55, kbAngle = 30,
+					projectile = { speed = 80, angle = 0, gravity = 0, lifetime = 0.7, size = 2, color = NOODLE, returns = true,
+						visual = { shape = "ball", size = 0.4, color = NOODLE, spin = 6, parts = {
+							{ "cyl", Vector3.new(4.4, 0.55, 0.55), Vector3.new(0, 0, 0), NOODLE },
+							{ "cyl", Vector3.new(0.3, 0.62, 0.62), Vector3.new(1, 0, 0), TOY_GREEN },
+							{ "cyl", Vector3.new(0.3, 0.62, 0.62), Vector3.new(-1, 0, 0), TOY_GREEN },
+						} } },
+					windup = { Root = { 6, -36, 0, 0, -0.25, 0.25 }, Waist = { 8, -40, 0 }, Neck = { 6, 24, 0 }, RS = { 170, 0, 30 }, RE = { 50, 0, 0 }, RW = { 0, 0, 0 }, LS = { 80, 0, -20 }, LE = { 50, 0, 0 } },
+					strike = { Root = { -14, 24, 0, 0, -0.32, -0.45 }, Waist = { -16, 28, 0 }, Neck = { -6, -18, 0 }, RS = { 96, 0, -6 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -40 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+					follow = { Root = { -16, 28, 0, 0, -0.34, -0.5 }, Waist = { -18, 32, 0 }, Neck = { -8, -20, 0 }, RS = { 100, 0, -8 }, RE = { 4, 0, 0 }, RW = { 6, 0, 0 }, LS = { 36, 0, -44 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.48 } },
+					hideProp = "frite", fx = { { "burst", color = NOODLE, size = 2, at = "hand" } }, text = "JAVELOT !", hitText = "ZIOUUU !",
+				},
+				-- ↓L : il plante la frite dans le carrelage ; elle se plie, se tend et claque tout le couloir vers le haut
+				S_down = {
+					label = "Frite plantée", startup = 0.22, active = 0.18, recovery = 0.48,
+					damage = 13, hitbox = box(14, 5, 7, 0.5), kbBase = 30, kbGrowth = 55, kbAngle = 80,
+					windup = { Root = { 10, 0, 0, 0, -0.3, 0.2 }, Waist = { 16, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 170, 0, 20 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 170, 0, -20 }, LE = { 30, 0, 0 } },
+					strike = { Root = { -16, 0, 0, 0, -0.7, -0.3 }, Waist = { -30, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 60, 0, 10 }, RE = { 0, 0, 0 }, RW = { 40, 0, 0 }, LS = { 60, 0, -10 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { 8, 0, 0, 0, -0.1, -0.1 }, Waist = { 14, 0, 0 }, Neck = { 24, 0, 0 }, RS = { 150, 0, 20 }, RE = { 0, 0, 0 }, RW = { -30, 0, 0 }, LS = { 150, 0, -20 }, LE = { 0, 0, 0 } },
+					hold = 0.12, shake = true, trail = "prop",
+					fx = { { "beam", color = NOODLE, length = 14, width = 2, at = "feet" }, { "toss", shape = "ball", color = WATER, size = 0.5, count = 6, speed = 20 }, { "ring", color = FOAM, radius = 6, at = "feet" } },
+					text = "PLANTÉE !", hitText = "BOÏÏÏNG !",
+				},
+				-- ↑L : saut à la perche sur la frite : décollage en diagonale, palmes qui battent, la frite traîne derrière
+				S_up = {
+					label = "Perche de frite", startup = 0.14, active = 0.3, recovery = 0.42,
+					damage = 13, hitbox = box(10, 11, 3, 4), kbBase = 32, kbGrowth = 50, kbAngle = 78, selfVelocity = Vector2.new(42, 82),
+					windup = { Root = { 0, 0, 0, 0, -0.8, 0 }, Waist = { -14, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 60, 0, 10 }, RE = { 60, 0, 0 }, RW = { 40, 0, 0 }, LS = { 60, 0, -10 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -42, 0, 0, 0, 0.3, -0.1 }, Waist = { -6, 0, 0 }, Neck = { 30, 0, 0 }, RS = { -60, 0, 20 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 160, 0, -20 }, LE = { 10, 0, 0 }, RH = { -24, 0, 5 }, RK = { -34, 0, 0 }, RA = { -30, 0, 0 }, LH = { -30, 0, -5 }, LK = { -44, 0, 0 }, LA = { -30, 0, 0 } },
+					follow = { Root = { -46, 0, 0, 0, 0.35, -0.15 }, Waist = { -8, 0, 0 }, Neck = { 34, 0, 0 }, RS = { -66, 0, 22 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 166, 0, -22 }, LE = { 10, 0, 0 }, RH = { -28, 0, 5 }, RK = { -40, 0, 0 }, RA = { -30, 0, 0 }, LH = { -34, 0, -5 }, LK = { -50, 0, 0 }, LA = { -30, 0, 0 } },
+					wobble = true, trail = "body", fx = { { "burst", color = NOODLE, size = 3.5, at = "feet" }, { "ring", color = WATER, radius = 6, at = "feet" }, { "particles", tex = "smoke", color = FOAM, at = "feet", dir = "down", time = 0.4, speed = 16, rate = 100 } },
+					text = "HOP LÀ !", hitText = "ENVOLÉ !",
+				},
+				-- L en l'air : la frite tourne au-dessus de sa tête comme un rotor d'hélico et hache tout autour (3 touches)
+				S_air = {
+					label = "Frite-rotor", startup = 0.14, active = 0.36, recovery = 0.4,
+					damage = 5, hits = 3, hitbox = box(9, 4, 0, 0.5), kbBase = 24, kbGrowth = 40, kbAngle = 35, selfVelocity = Vector2.new(0, 18),
+					windup = { Root = { -8, 0, 0 }, Waist = { -10, 0, 0 }, RS = { 30, 0, 40 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -30 }, LE = { 80, 0, 0 }, RH = { 70, 0, 0 }, RK = { -100, 0, 0 }, LH = { 70, 0, 0 }, LK = { -100, 0, 0 } },
+					strike = { Root = { 4, 0, 0 }, Waist = { 4, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 178, 0, 0 }, RE = { 0, 0, 0 }, RW = { 90, 0, 0 }, LS = { 10, 0, -40 }, LE = { 40, 0, 0 }, RH = { 10, 0, 5 }, RK = { -20, 0, 0 }, LH = { 10, 0, -5 }, LK = { -20, 0, 0 } },
+					follow = { Root = { 6, 0, 0 }, Waist = { 6, 0, 0 }, Neck = { 24, 0, 0 }, RS = { 182, 0, 4 }, RE = { 0, 0, 0 }, RW = { 90, 0, 0 }, LS = { 14, 0, -42 }, LE = { 40, 0, 0 }, RH = { 14, 0, 5 }, RK = { -24, 0, 0 }, LH = { 14, 0, -5 }, LK = { -24, 0, 0 } },
+					spin = { axis = "y", degrees = 1080 }, trail = "prop", fx = { { "ring", color = NOODLE, radius = 5, at = "above" } }, text = "ROTOR !", hitText = "TAC TAC TAC !",
+				},
+				-- Y : la frite XXL, gonflée jusqu'à devenir un tronc d'arbre en mousse, abattue sur tout le couloir
+				SUPER = {
+					label = "Frite XXL !", startup = 0.4, active = 0.2, recovery = 0.7,
+					damage = 24, hitbox = box(14, 6, 7, 1), kbBase = 44, kbGrowth = 90, kbAngle = 40,
+					status = { name = "slippery", duration = 2 },
+					windup = { Root = { 10, 0, 0, 0, -0.1, 0.2 }, Waist = { 16, 0, 0 }, Neck = { 18, 0, 0 }, RS = { 190, 0, 20 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 190, 0, -20 }, LE = { 30, 0, 0 } },
+					strike = { Root = { -18, 0, 0, 0, -0.6, -0.4 }, Waist = { -34, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 70, 0, 8 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, -8 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+					follow = { Root = { -20, 0, 0, 0, -0.65, -0.45 }, Waist = { -36, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 52, 0, 8 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 52, 0, -8 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.48 } },
+					hold = 0.2, shake = true, trail = "prop", windupFx = { "super", { "symbols", symbols = { "🍟", "💦" }, count = 6, radius = 3, color = NOODLE } },
+					fx = { { "beam", color = NOODLE, length = 16, width = 4, at = "front" }, { "puddle", color = WATER, width = 14 }, { "burst", color = FOAM, size = 4, at = "front" }, { "shake", amount = 0.5 } },
+					text = "FRITE XXL !", hitText = "ÉCRABOUILLÉ !",
+				},
+				-- →Y : la frite-harpon : lancée à travers tout le couloir comme un harpon de baleinier, elle embroche et traverse
+				SUPER_side = {
+					label = "Frite-harpon !", kind = "projectile", startup = 0.4, active = 0, recovery = 0.7,
+					damage = 24, kbBase = 46, kbGrowth = 90, kbAngle = 28,
+					projectile = { speed = 95, angle = 0, gravity = 0, lifetime = 0.9, size = 3, color = NOODLE, pierce = true,
+						visual = { shape = "ball", size = 0.4, color = NOODLE, parts = {
+							{ "cyl", Vector3.new(5.2, 0.7, 0.7), Vector3.new(0, 0, 0), NOODLE },
+							{ "wedge", Vector3.new(0.8, 0.9, 0.9), Vector3.new(2.9, 0, 0), WHITE },
+							{ "cyl", Vector3.new(0.3, 0.76, 0.76), Vector3.new(-1.2, 0, 0), TOY_GREEN },
+						} } },
+					status = { name = "wet", duration = 2 },
+					windup = { Root = { 8, -40, 0, 0, -0.3, 0.3 }, Waist = { 10, -44, 0 }, Neck = { 8, 28, 0 }, RS = { 176, 0, 30 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, -10 }, LE = { 30, 0, 0 } },
+					strike = { Root = { -18, 28, 0, 0, -0.36, -0.5 }, Waist = { -20, 32, 0 }, Neck = { -8, -20, 0 }, RS = { 96, 0, -6 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -40 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+					follow = { Root = { -20, 32, 0, 0, -0.38, -0.55 }, Waist = { -24, 36, 0 }, Neck = { -10, -22, 0 }, RS = { 100, 0, -8 }, RE = { 4, 0, 0 }, RW = { 6, 0, 0 }, LS = { 36, 0, -44 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.52 } },
+					hideProp = "frite", windupFx = { "super" }, fx = { { "burst", color = NOODLE, size = 3, at = "hand" }, { "beam", color = FOAM, length = 12, width = 1.5, at = "hand" }, { "shake", amount = 0.3 } },
+					text = "HARPON !", hitText = "EMBROCHÉ !",
+				},
+				-- ↑Y : la frite-trampoline : il la plie en arc sous ses palmes et se fait catapulter à la verticale en vrille, tout le couloir part avec lui
+				SUPER_up = {
+					label = "Frite-trampoline !", startup = 0.35, active = 0.3, recovery = 0.7,
+					damage = 22, hitbox = box(14, 12, 7, 5), kbBase = 44, kbGrowth = 92, kbAngle = 86, invuln = 0.3, selfVelocity = Vector2.new(0, 60),
+					windup = { Root = { -8, 0, 0, 0, -0.95, 0 }, Waist = { -30, 0, 0 }, Neck = { -16, 0, 0 }, RS = { 40, 0, 20 }, RE = { 60, 0, 0 }, RW = { 60, 0, 0 }, LS = { 40, 0, -20 }, LE = { 60, 0, 0 } },
+					strike = { Root = { 6, 0, 0, 0, 0.5, 0 }, Waist = { 16, 0, 0 }, Neck = { 40, 0, 0 }, RS = { 184, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 184, 0, -10 }, LE = { 0, 0, 0 }, RH = { 30, 0, 10 }, RK = { -80, 0, 0 }, LH = { 20, 0, -10 }, LK = { -60, 0, 0 } },
+					follow = { Root = { 10, 0, 0, 0, 0.55, 0 }, Waist = { 20, 0, 0 }, Neck = { 46, 0, 0 }, RS = { 188, 0, 12 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 188, 0, -12 }, LE = { 0, 0, 0 }, RH = { 50, 0, 20 }, RK = { -100, 0, 0 }, LH = { 10, 0, -20 }, LK = { -40, 0, 0 } },
+					hold = 0.2, shake = true, spin = { axis = "y", degrees = 720 }, trail = "body", windupFx = { "super" },
+					fx = { { "pillar", color = NOODLE, height = 20, width = 3, at = "root" }, { "burst", color = FOAM, size = 4, at = "feet" }, { "ring", color = WATER, radius = 7, at = "feet" }, { "shake", amount = 0.5 } },
+					text = "TRAMPOLINE !", hitText = "BOÏÏÏNG !",
+				},
+				-- ↓Y : battement de frite : il frappe le carrelage à répétition avec la frite, la mousse claque trois fois sur tout le couloir
+				SUPER_down = {
+					label = "Battement de frite !", startup = 0.35, active = 0.45, recovery = 0.7,
+					damage = 8, hits = 3, hitbox = box(16, 4, 8, -0.5), kbBase = 40, kbGrowth = 70, kbAngle = 60,
+					status = { name = "stunned", duration = 0.8 },
+					windup = { Root = { 12, 0, 0, 0, -0.2, 0.2 }, Waist = { 18, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 180, 0, 10 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 180, 0, -10 }, LE = { 30, 0, 0 } },
+					strike = { Root = { -20, 0, 0, 0, -0.8, -0.3 }, Waist = { -34, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 50, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -10 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { 10, 0, 0, 0, -0.2, 0.1 }, Waist = { 16, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 176, 0, 12 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 176, 0, -12 }, LE = { 10, 0, 0 } },
+					shake = true, wobble = true, trail = "prop", windupFx = { "super" },
+					fx = { { "beam", color = NOODLE, length = 16, width = 3, at = "feet" }, { "puddle", color = WATER, width = 16, time = 1.2 }, { "toss", shape = "ball", color = WATER, size = 0.6, count = 8, speed = 24 }, { "shake", amount = 0.5 } },
+					text = "PLAF PLAF PLAF !", hitText = "APLATI !",
+				},
+			},
+			links = {
+				P_neutral = { P = "P_side", K = "K_neutral", S = "S_neutral" },
+				P_side = { P = "P_up", K = "K_side", S = "S_side" },
+				P_down = { P = "P_up", K = "K_down", S = "S_down" },
+				K_neutral = { P = "P_neutral", K = "K_side", S = "S_neutral" },
+				K_side = { P = "P_up", K = "K_up", S = "S_side" },
+				P_dash = { P = "P_side", K = "K_dash", S = "S_side" },
+				K_dash = { P = "P_up", S = "S_up" },
+			},
+		},
+		{ id = "bazooka", name = "Bazooka à canards", icon = "🦆",
+			prop = { name = "PropBazooka", hand = "Right", pieces = {
+				{ "Poignee", "", "block", Vector3.new(0.28, 0.5, 0.42), Vector3.new(0, -0.12, 0), Vector3.new(0, 0, 0), BLACK, "SmoothPlastic" },
+				{ "Tube", "", "cyl", Vector3.new(2.8, 0.72, 0.72), Vector3.new(0, -1.35, 0.32), Vector3.new(0, 0, 0), BAZOOKA, "Metal", { axis = "y" } },
+				{ "Bouche", "", "cyl", Vector3.new(0.32, 0.98, 0.98), Vector3.new(0, -2.78, 0.32), Vector3.new(0, 0, 0), BEAK, "SmoothPlastic", { axis = "y" } },
+				{ "CanardCharge", "", "ball", Vector3.new(0.7, 0.7, 0.7), Vector3.new(0, -2.86, 0.32), Vector3.new(0, 0, 0), DUCK, "SmoothPlastic" },
+				{ "Viseur", "", "block", Vector3.new(0.14, 0.42, 0.14), Vector3.new(0, -1.5, -0.14), Vector3.new(0, 0, 0), BLACK, "SmoothPlastic" },
+				{ "Ancre", "", "block", Vector3.new(0.3, 0.3, 0.05), Vector3.new(0, -1.0, 0.72), Vector3.new(0, 0, 45), GOLD, "Metal" },
+			} },
+			ability = { knockback = 1.25, text = "Éjection +25 % : chaque canard est un boulet de canon" },
+			moves = {
+				-- J : coup de crosse du bazooka, lourd, en pivotant les hanches
+				P_neutral = {
+					label = "Coup de crosse", startup = 0.1, active = 0.08, recovery = 0.16,
+					damage = 7, hitbox = box(4.5, 3, 2.8, 0.6), kbBase = 24, kbGrowth = 30, kbAngle = 25,
+					windup = { Root = { 2, 24, 0, 0, -0.2, 0.15 }, Waist = { 4, 28, 0 }, Neck = { 0, -18, 0 }, RS = { 40, 0, 40 }, RE = { 100, 0, 0 }, RW = { 60, 0, 0 }, LS = { 70, 0, -10 }, LE = { 90, 0, 0 } },
+					strike = { Root = { -6, -18, 0, 0, -0.25, -0.3 }, Waist = { -8, -22, 0 }, Neck = { 0, 12, 0 }, RS = { 70, 0, 50 }, RE = { 60, 0, 0 }, RW = { 60, 0, 0 }, LS = { 90, 0, -10 }, LE = { 70, 0, 0 } },
+					follow = { Root = { -6, -24, 0, 0, -0.25, -0.34 }, Waist = { -8, -28, 0 }, Neck = { 0, 16, 0 }, RS = { 66, 0, 56 }, RE = { 60, 0, 0 }, RW = { 60, 0, 0 }, LS = { 92, 0, -12 }, LE = { 70, 0, 0 } },
+					trail = "prop", hitText = "BONK !",
+				},
+				-- →J : un canard tiré à bout portant, qui rebondit sur le front (recul sur ses palmes)
+				P_side = {
+					label = "Canard à bout portant", kind = "projectile", startup = 0.1, active = 0, recovery = 0.22,
+					damage = 8, kbBase = 26, kbGrowth = 45, kbAngle = 30, selfVelocity = Vector2.new(-6, 0),
+					projectile = { speed = 70, angle = 4, gravity = 30, lifetime = 0.3, size = 1.3, color = DUCK, visual = RUBBER_DUCK, aim = false },
+					windup = { Root = { 4, -20, 0, 0, -0.25, 0.1 }, Waist = { 4, -22, 0 }, RS = { 80, 0, 10 }, RE = { 50, 0, 0 }, RW = { 0, 0, 0 }, LS = { 80, 0, 25 }, LE = { 70, 0, 0 } },
+					strike = { Root = { 6, 10, 0, 0, -0.28, 0.2 }, Waist = { 6, 10, 0 }, Neck = { 8, 0, 0 }, RS = { 94, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 88, 0, 22 }, LE = { 30, 0, 0 } },
+					follow = { Root = { 10, 10, 0, 0, -0.28, 0.3 }, Waist = { 10, 10, 0 }, Neck = { 10, 0, 0 }, RS = { 100, 0, 0 }, RE = { 5, 0, 0 }, RW = { 10, 0, 0 }, LS = { 92, 0, 22 }, LE = { 30, 0, 0 } },
+					shake = true, fx = { { "burst", color = FOAM, size = 1.5, at = "hand" } }, text = "POUF !", hitText = "COUIC !",
+				},
+				-- ↓J : canon posé sur le carrelage, il tire un canard qui ricoche dans les tibias
+				P_down = {
+					label = "Tir dans les tibias", kind = "projectile", startup = 0.1, active = 0, recovery = 0.22,
+					damage = 7, kbBase = 24, kbGrowth = 35, kbAngle = 70,
+					projectile = { speed = 65, angle = 0, gravity = 0, lifetime = 0.3, size = 1.2, color = DUCK, visual = RUBBER_DUCK, aim = false, from = "feet" },
+					windup = { Root = { -8, -16, 0, 0, -0.85, 0.1 }, Waist = { -16, -12, 0 }, Neck = { -8, 10, 0 }, RS = { 20, 0, 20 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -10 }, LE = { 90, 0, 0 } },
+					strike = { Root = { -10, 6, 0, 0, -0.95, -0.1 }, Waist = { -20, 6, 0 }, Neck = { -4, -4, 0 }, RS = { 40, 0, 0 }, RE = { 0, 0, 0 }, RW = { -20, 0, 0 }, LS = { 50, 0, 10 }, LE = { 40, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					follow = { Root = { -8, 6, 0, 0, -0.95, 0 }, Waist = { -18, 6, 0 }, Neck = { -4, -4, 0 }, RS = { 44, 0, 0 }, RE = { 4, 0, 0 }, RW = { -20, 0, 0 }, LS = { 52, 0, 10 }, LE = { 40, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					shake = true, fx = { { "particles", tex = "smoke", color = FOAM, at = "feet", dir = "front", time = 0.15, speed = 10 } }, hitText = "COUIC !",
+				},
+				-- ↑J : canon pointé au ciel, un canard part en cloche cueillir ce qui passe au-dessus
+				P_up = {
+					label = "Canard anti-aérien", kind = "projectile", startup = 0.1, active = 0, recovery = 0.22,
+					damage = 7, kbBase = 26, kbGrowth = 40, kbAngle = 85,
+					projectile = { speed = 60, angle = 80, gravity = 40, lifetime = 0.4, size = 1.3, color = DUCK, visual = RUBBER_DUCK, aim = false },
+					windup = { Root = { 6, 0, 0, 0, -0.4, 0.1 }, Waist = { 10, 0, 0 }, Neck = { 8, 0, 0 }, RS = { 60, 0, 20 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, 10 }, LE = { 90, 0, 0 } },
+					strike = { Root = { -4, 0, 0, 0, -0.35, -0.05 }, Waist = { -8, 0, 0 }, Neck = { -24, 0, 0 }, RS = { 170, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, 0 }, LE = { 20, 0, 0 } },
+					follow = { Root = { 0, 0, 0, 0, -0.4, 0 }, Waist = { -4, 0, 0 }, Neck = { -28, 0, 0 }, RS = { 160, 0, 12 }, RE = { 10, 0, 0 }, RW = { -10, 0, 0 }, LS = { 140, 0, 0 }, LE = { 30, 0, 0 } },
+					shake = true, fx = { { "burst", color = FOAM, size = 1.5, at = "above" } }, hitText = "COUIC !",
+				},
+				-- J en l'air : il vise sous lui et tire un canard en piqué
+				P_air = {
+					label = "Tir en piqué", kind = "projectile", startup = 0.1, active = 0, recovery = 0.2,
+					damage = 8, kbBase = 22, kbGrowth = 40, kbAngle = -40, selfVelocity = Vector2.new(0, 10),
+					projectile = { speed = 70, angle = -45, gravity = 20, lifetime = 0.35, size = 1.3, color = DUCK, visual = RUBBER_DUCK, aim = false },
+					windup = { Root = { 10, 0, 0 }, Waist = { 14, 0, 0 }, RS = { 60, 0, 10 }, RE = { 70, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, 20 }, LE = { 80, 0, 0 }, RH = { 60, 0, 0 }, RK = { -90, 0, 0 }, LH = { 50, 0, 0 }, LK = { -80, 0, 0 } },
+					strike = { Root = { -12, 0, 0 }, Waist = { -24, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 40, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, 20 }, LE = { 20, 0, 0 }, RH = { 20, 0, 0 }, RK = { -40, 0, 0 }, LH = { 30, 0, 0 }, LK = { -60, 0, 0 } },
+					follow = { Root = { -8, 0, 0 }, Waist = { -20, 0, 0 }, Neck = { 18, 0, 0 }, RS = { 46, 0, 0 }, RE = { 4, 0, 0 }, RW = { 10, 0, 0 }, LS = { 44, 0, 20 }, LE = { 20, 0, 0 }, RH = { 24, 0, 0 }, RK = { -44, 0, 0 }, LH = { 34, 0, 0 }, LK = { -64, 0, 0 } },
+					shake = true, fx = { { "burst", color = FOAM, size = 1.5, at = "hand" } }, hitText = "COUIC !",
+				},
+				-- dash J : charge à la baïonnette, le canard chargé dans le canon sert de pointe
+				P_dash = {
+					label = "Charge à la baïonnette", startup = 0.08, active = 0.12, recovery = 0.24,
+					damage = 8, hitbox = box(5, 3, 3, 0.6), kbBase = 28, kbGrowth = 50, kbAngle = 28, selfVelocity = Vector2.new(42, 0),
+					windup = { Root = { -8, -16, 0, 0, -0.3, 0.1 }, Waist = { -6, -14, 0 }, RS = { 50, 0, 10 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, 20 }, LE = { 90, 0, 0 } },
+					strike = { Root = { -18, 12, 0, 0, -0.4, -0.35 }, Waist = { -8, 12, 0 }, RS = { 96, 0, -4 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, 20 }, LE = { 20, 0, 0 } },
+					follow = { Root = { -20, 14, 0, 0, -0.42, -0.4 }, Waist = { -10, 14, 0 }, RS = { 94, 0, -6 }, RE = { 0, 0, 0 }, RW = { -8, 0, 0 }, LS = { 92, 0, 20 }, LE = { 20, 0, 0 } },
+					trail = "prop", fx = { "dust" }, text = "À L'ABORDAGE !", hitText = "PIQUÉ !",
+				},
+				-- K : le gros canard : un canard de bain géant tiré de face, le recul le fait reculer d'un pas
+				K_neutral = {
+					label = "Gros canard", kind = "projectile", startup = 0.2, active = 0, recovery = 0.32,
+					damage = 11, kbBase = 30, kbGrowth = 80, kbAngle = 30, selfVelocity = Vector2.new(-12, 0),
+					projectile = { speed = 60, angle = 2, gravity = 20, lifetime = 0.5, size = 2.4, color = DUCK, visual = RUBBER_DUCK, aim = false },
+					windup = { Root = { 6, -24, 0, 0, -0.3, 0.2 }, Waist = { 8, -26, 0 }, Neck = { 6, 16, 0 }, RS = { 76, 0, 10 }, RE = { 50, 0, 0 }, RW = { 0, 0, 0 }, LS = { 80, 0, 25 }, LE = { 70, 0, 0 }, FR = { 0, 0, 0, 0, 0, 0.3 } },
+					strike = { Root = { 12, 10, 0, 0, -0.3, 0.35 }, Waist = { 12, 10, 0 }, Neck = { 14, -4, 0 }, RS = { 92, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 88, 0, 22 }, LE = { 30, 0, 0 }, FR = { 0, 0, 0, 0, 0, 0.4 } },
+					follow = { Root = { 16, 10, 0, 0, -0.3, 0.45 }, Waist = { 16, 10, 0 }, Neck = { 16, -4, 0 }, RS = { 102, 0, 0 }, RE = { 6, 0, 0 }, RW = { 12, 0, 0 }, LS = { 92, 0, 22 }, LE = { 30, 0, 0 }, FR = { 0, 0, 0, 0, 0, 0.5 } },
+					shake = true, fx = { { "burst", color = FOAM, size = 2.5, at = "hand" }, { "particles", tex = "smoke", color = FOAM, at = "hand", dir = "front", time = 0.2, speed = 16 } }, text = "BOUM !", hitText = "COUIIIC !",
+				},
+				-- →K : un genou à terre, bazooka à l'épaule : tir lourd qui éjecte loin et le fait glisser en arrière
+				K_side = {
+					label = "Tir à l'épaule", kind = "projectile", startup = 0.24, active = 0, recovery = 0.36,
+					damage = 13, kbBase = 34, kbGrowth = 90, kbAngle = 28, selfVelocity = Vector2.new(-16, 0),
+					projectile = { speed = 75, angle = 0, gravity = 0, lifetime = 0.6, size = 2, color = DUCK, visual = RUBBER_DUCK, aim = false },
+					windup = { Root = { 4, -16, 0, 0, -0.7, 0.1 }, Waist = { 6, -18, 0 }, Neck = { 4, 12, 0 }, RS = { 110, 0, 20 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 100, 0, 20 }, LE = { 60, 0, 0 }, RH = { -40, 0, 0 }, RK = { -90, 0, 0 }, RA = { -20, 0, 0 } },
+					strike = { Root = { 10, 0, 0, 0, -0.75, 0.3 }, Waist = { 12, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 100, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 95, 0, 25 }, LE = { 30, 0, 0 }, RH = { -40, 0, 0 }, RK = { -90, 0, 0 }, RA = { -20, 0, 0 } },
+					follow = { Root = { 14, 0, 0, 0, -0.75, 0.4 }, Waist = { 16, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 108, 0, 0 }, RE = { 6, 0, 0 }, RW = { 12, 0, 0 }, LS = { 98, 0, 25 }, LE = { 30, 0, 0 }, RH = { -40, 0, 0 }, RK = { -90, 0, 0 }, RA = { -20, 0, 0 } },
+					shake = true, fx = { { "burst", color = BEAK, size = 3, at = "hand" }, { "beam", color = FOAM, length = 8, width = 1.4, at = "hand" }, { "shake", amount = 0.25 } }, text = "FEU !", hitText = "KABOUM-COUIC !",
+				},
+				-- ↓K : mortier de canard : accroupi, il tire en cloche un canard qui retombe lourdement devant lui
+				K_down = {
+					label = "Mortier de canard", kind = "projectile", startup = 0.2, active = 0, recovery = 0.34,
+					damage = 11, kbBase = 28, kbGrowth = 60, kbAngle = 60,
+					projectile = { speed = 55, angle = 70, gravity = 90, lifetime = 0.9, size = 1.8, color = DUCK, visual = RUBBER_DUCK, aim = false },
+					windup = { Root = { -6, 0, 0, 0, -0.9, 0.1 }, Waist = { -16, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 40, 0, 20 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, 10 }, LE = { 90, 0, 0 } },
+					strike = { Root = { -2, 0, 0, 0, -0.95, 0 }, Waist = { -10, 0, 0 }, Neck = { -30, 0, 0 }, RS = { 150, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 140, 0, 0 }, LE = { 20, 0, 0 } },
+					follow = { Root = { 2, 0, 0, 0, -0.95, 0.05 }, Waist = { -6, 0, 0 }, Neck = { -32, 0, 0 }, RS = { 140, 0, 12 }, RE = { 10, 0, 0 }, RW = { -10, 0, 0 }, LS = { 130, 0, 0 }, LE = { 30, 0, 0 } },
+					shake = true, fx = { { "burst", color = FOAM, size = 2, at = "hand" }, { "particles", tex = "smoke", color = FOAM, at = "hand", dir = "up", time = 0.2, speed = 14 } }, text = "PLOMB !", hitText = "SPLATCH-COUIC !",
+				},
+				-- ↑K : recul vertical : il tire droit dans le carrelage, le recul le propulse et le canon cogne tout ce qui est au-dessus
+				K_up = {
+					label = "Recul vertical", startup = 0.16, active = 0.14, recovery = 0.3,
+					damage = 10, hitbox = box(4.5, 5.5, 0.5, 3), kbBase = 32, kbGrowth = 70, kbAngle = 88, selfVelocity = Vector2.new(0, 36),
+					windup = { Root = { -8, 0, 0, 0, -0.6, 0 }, Waist = { -20, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 20, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, 10 }, LE = { 30, 0, 0 } },
+					strike = { Root = { 8, 0, 0, 0, 0.4, 0 }, Waist = { 14, 0, 0 }, Neck = { -24, 0, 0 }, RS = { 176, 0, 8 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 170, 0, -8 }, LE = { 10, 0, 0 }, FR = { 0, 0, 0, 0, 0.3, 0 }, FL = { 0, 0, 0, 0, 0.3, 0 } },
+					follow = { Root = { 10, 0, 0, 0, 0.5, 0 }, Waist = { 16, 0, 0 }, Neck = { -28, 0, 0 }, RS = { 182, 0, 10 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 176, 0, -10 }, LE = { 10, 0, 0 }, FR = { 0, 0, 0, 0, 0.4, 0 }, FL = { 0, 0, 0, 0, 0.4, 0 } },
+					shake = true, trail = "prop", fx = { { "pillar", color = FOAM, height = 8, width = 1.8, at = "feet" }, { "burst", color = DUCK, size = 2, at = "feet" } }, text = "PSCHOUM !", hitText = "KLONG !",
+				},
+				-- K en l'air : bazooka-marteau, il abat le tube à deux mains sur la tête de l'adversaire
+				K_air = {
+					label = "Bazooka-marteau", startup = 0.16, active = 0.12, recovery = 0.26,
+					damage = 11, hitbox = box(5, 4, 2, -1), kbBase = 28, kbGrowth = 65, kbAngle = -45,
+					windup = { Root = { 10, 0, 0 }, Waist = { 14, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 185, 0, 12 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 185, 0, -12 }, LE = { 30, 0, 0 }, RH = { 50, 0, 0 }, RK = { -90, 0, 0 }, LH = { 50, 0, 0 }, LK = { -90, 0, 0 } },
+					strike = { Root = { -16, 0, 0 }, Waist = { -32, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 50, 0, 8 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -8 }, LE = { 0, 0, 0 }, RH = { 20, 0, 0 }, RK = { -40, 0, 0 }, LH = { 30, 0, 0 }, LK = { -60, 0, 0 } },
+					follow = { Root = { -20, 0, 0 }, Waist = { -36, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 30, 0, 8 }, RE = { 6, 0, 0 }, RW = { -10, 0, 0 }, LS = { 30, 0, -8 }, LE = { 6, 0, 0 }, RH = { 15, 0, 0 }, RK = { -35, 0, 0 }, LH = { 25, 0, 0 }, LK = { -55, 0, 0 } },
+					trail = "prop", hitText = "KLONK !",
+				},
+				-- dash K : il tire vers l'arrière pour se propulser et percute avec la crosse en glissant sur ses palmes
+				K_dash = {
+					label = "Recul-glissade", startup = 0.1, active = 0.22, recovery = 0.3,
+					damage = 11, hitbox = box(5, 3.5, 3, 0), kbBase = 30, kbGrowth = 65, kbAngle = 35, selfVelocity = Vector2.new(56, 0),
+					windup = { Root = { -8, 40, 0, 0, -0.4, 0 }, Waist = { -10, 30, 0 }, Neck = { 0, -30, 0 }, RS = { -60, 0, 30 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -30 }, LE = { 60, 0, 0 } },
+					strike = { Root = { 18, -10, 0, 0, -0.6, 0 }, Waist = { 8, -10, 0 }, Neck = { -10, 6, 0 }, RS = { -70, 0, 30 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, -30 }, LE = { 30, 0, 0 }, RH = { 60, 0, 0 }, RK = { -20, 0, 0 }, RA = { 20, 0, 0 }, LH = { 80, 0, 0 }, LK = { -90, 0, 0 } },
+					follow = { Root = { 20, -12, 0, 0, -0.62, 0 }, Waist = { 10, -12, 0 }, Neck = { -12, 6, 0 }, RS = { -74, 0, 32 }, RE = { 10, 0, 0 }, RW = { -5, 0, 0 }, LS = { 92, 0, -32 }, LE = { 30, 0, 0 }, RH = { 62, 0, 0 }, RK = { -20, 0, 0 }, RA = { 20, 0, 0 }, LH = { 82, 0, 0 }, LK = { -92, 0, 0 } },
+					shake = true, trail = "prop", fx = { { "burst", color = FOAM, size = 2.5, at = "root" }, { "puddle", color = WATER, width = 6 } }, text = "VRRROUM !", hitText = "BLAM !",
+				},
+				-- L : rafale de canards, trois canards tirés à la suite qui filent tous sur l'adversaire
+				S_neutral = {
+					label = "Rafale de canards", kind = "projectile", startup = 0.22, active = 0, recovery = 0.48,
+					damage = 6, kbBase = 26, kbGrowth = 45, kbAngle = 30,
+					projectile = { speed = 80, angle = 0, gravity = 0, lifetime = 0.6, size = 1.5, color = DUCK, visual = RUBBER_DUCK, fan = { count = 3, from = -8, to = 8, gap = 0.06 } },
+					windup = { Root = { 6, -24, 0, 0, -0.3, 0.2 }, Waist = { 8, -28, 0 }, Neck = { 4, 18, 0 }, RS = { 74, 0, 10 }, RE = { 50, 0, 0 }, RW = { 0, 0, 0 }, LS = { 80, 0, 25 }, LE = { 70, 0, 0 } },
+					strike = { Root = { 10, 12, 0, 0, -0.3, 0.3 }, Waist = { 10, 12, 0 }, Neck = { 10, -6, 0 }, RS = { 94, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, 22 }, LE = { 30, 0, 0 }, FR = { 0, 0, 0, 0, 0, 0.3 } },
+					follow = { Root = { 14, 12, 0, 0, -0.3, 0.4 }, Waist = { 14, 12, 0 }, Neck = { 12, -6, 0 }, RS = { 102, 0, 0 }, RE = { 6, 0, 0 }, RW = { 12, 0, 0 }, LS = { 94, 0, 22 }, LE = { 30, 0, 0 }, FR = { 0, 0, 0, 0, 0, 0.4 } },
+					shake = true, wobble = true, fx = { { "burst", color = FOAM, size = 2.5, at = "hand" }, { "symbols", symbols = { "COIN", "🦆" }, color = DUCK, count = 4, radius = 3, at = "front" } }, text = "RAFALE !", hitText = "COIN COIN COIN !",
+				},
+				-- →L : le canard-obus : un canard géant tiré à pleine charge, qui traverse tout sur son passage et éjecte très loin
+				S_side = {
+					label = "Canard-obus", kind = "projectile", startup = 0.26, active = 0, recovery = 0.52,
+					damage = 15, kbBase = 34, kbGrowth = 80, kbAngle = 28, selfVelocity = Vector2.new(-14, 0),
+					projectile = { speed = 90, angle = 0, gravity = 0, lifetime = 0.7, size = 2.8, color = DUCK, visual = RUBBER_DUCK, pierce = true },
+					windup = { Root = { 8, -30, 0, 0, -0.35, 0.25 }, Waist = { 10, -34, 0 }, Neck = { 6, 20, 0 }, RS = { 70, 0, 10 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 80, 0, 25 }, LE = { 80, 0, 0 }, FR = { 0, 0, 0, 0, 0, 0.3 } },
+					strike = { Root = { 14, 14, 0, 0, -0.35, 0.4 }, Waist = { 14, 14, 0 }, Neck = { 14, -8, 0 }, RS = { 94, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, 22 }, LE = { 30, 0, 0 }, FR = { 0, 0, 0, 0, 0, 0.45 } },
+					follow = { Root = { 18, 14, 0, 0, -0.35, 0.5 }, Waist = { 18, 14, 0 }, Neck = { 16, -8, 0 }, RS = { 104, 0, 0 }, RE = { 6, 0, 0 }, RW = { 14, 0, 0 }, LS = { 94, 0, 22 }, LE = { 30, 0, 0 }, FR = { 0, 0, 0, 0, 0, 0.55 } },
+					shake = true, fx = { { "burst", color = BEAK, size = 3.5, at = "hand" }, { "beam", color = FOAM, length = 12, width = 2, at = "hand" }, { "particles", tex = "smoke", color = FOAM, at = "hand", dir = "front", time = 0.3, speed = 20, rate = 80 }, { "shake", amount = 0.3 } },
+					text = "OBUS !", hitText = "KABLAM-COUIC !",
+				},
+				-- ↓L : la mine canard : il pose un canard piégé devant lui ; le premier qui marche dessus décolle
+				S_down = {
+					label = "Mine canard", kind = "trap", startup = 0.22, active = 0.12, recovery = 0.48,
+					damage = 13, kbBase = 40, kbGrowth = 60, kbAngle = 82,
+					trap = { size = Vector3.new(4, 2, 6), offset = 5, lifetime = 8, max = 2, color = DUCK,
+						visual = { shape = "ball", size = 1.4, color = DUCK, spin = 0, trail = false, parts = {
+							{ "ball", Vector3.new(0.85, 0.85, 0.85), Vector3.new(0.35, 0.75, 0), DUCK },
+							{ "block", Vector3.new(0.5, 0.18, 0.4), Vector3.new(0.85, 0.7, 0), BEAK },
+							{ "ball", Vector3.new(0.3, 0.3, 0.3), Vector3.new(-0.4, 0.9, 0), Color3.fromRGB(220, 40, 40) },
+						} } },
+					windup = { Root = { 6, 0, 0, 0, -0.5, 0.2 }, Waist = { 12, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 40, 0, 20 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 80, 0, -20 }, LE = { 60, 0, 0 }, LW = { 0, 0, 0 } },
+					strike = { Root = { -14, 10, 0, 0, -0.9, -0.3 }, Waist = { -24, 12, 0 }, Neck = { 10, 0, 0 }, RS = { 40, 0, 40 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -20 }, LE = { 0, 0, 0 }, LW = { -30, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { 4, 0, 0, 0, -0.3, 0.2 }, Waist = { 8, 0, 0 }, Neck = { 8, 0, 0 }, RS = { 50, 0, 30 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -30 }, LE = { 60, 0, 0 }, LW = { 0, 0, 0 } },
+					trail = "leftHand", fx = { { "symbols", symbols = { "💣", "🦆" }, color = DUCK, count = 3, radius = 2, at = "front" } }, text = "MINE POSÉE…", hitText = "COUIC-BOUM !",
+				},
+				-- ↑L : recul-décollage : il tire plein pot vers le bas et le recul le catapulte en diagonale, bazooka fumant derrière lui
+				S_up = {
+					label = "Recul-décollage", startup = 0.15, active = 0.3, recovery = 0.45,
+					damage = 13, hitbox = box(10, 11, 3, 4), kbBase = 32, kbGrowth = 50, kbAngle = 78, selfVelocity = Vector2.new(42, 82),
+					windup = { Root = { 0, 0, 0, 0, -0.8, 0 }, Waist = { -14, 0, 0 }, Neck = { 20, 0, 0 }, RS = { -20, 0, 20 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -30 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -42, 0, 0, 0, 0.3, -0.1 }, Waist = { -6, 0, 0 }, Neck = { 30, 0, 0 }, RS = { -70, 0, 20 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 170, 0, -20 }, LE = { 10, 0, 0 }, RH = { -24, 0, 5 }, RK = { -34, 0, 0 }, RA = { -30, 0, 0 }, LH = { -30, 0, -5 }, LK = { -44, 0, 0 }, LA = { -30, 0, 0 } },
+					follow = { Root = { -46, 0, 0, 0, 0.35, -0.15 }, Waist = { -8, 0, 0 }, Neck = { 34, 0, 0 }, RS = { -76, 0, 22 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 176, 0, -22 }, LE = { 10, 0, 0 }, RH = { -28, 0, 5 }, RK = { -40, 0, 0 }, RA = { -30, 0, 0 }, LH = { -34, 0, -5 }, LK = { -50, 0, 0 }, LA = { -30, 0, 0 } },
+					shake = true, trail = "body", fx = { { "burst", color = BEAK, size = 4, at = "feet" }, { "pillar", color = FOAM, height = 10, width = 3, at = "feet" }, { "particles", tex = "smoke", color = FOAM, at = "feet", dir = "down", time = 0.45, speed = 18, rate = 110 }, { "shake", amount = 0.3 } },
+					text = "RECUL !", hitText = "EMPORTÉ !",
+				},
+				-- L en l'air : bombardement, il vise le sol et lâche trois canards qui tombent sur l'adversaire
+				S_air = {
+					label = "Bombardement", kind = "projectile", startup = 0.16, active = 0, recovery = 0.42,
+					damage = 7, kbBase = 24, kbGrowth = 45, kbAngle = -40, selfVelocity = Vector2.new(0, 14),
+					projectile = { speed = 60, angle = -70, gravity = 40, lifetime = 0.7, size = 1.4, color = DUCK, visual = RUBBER_DUCK, rain = { count = 3, spread = 5 } },
+					windup = { Root = { 10, 0, 0 }, Waist = { 14, 0, 0 }, RS = { 60, 0, 10 }, RE = { 70, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, 20 }, LE = { 80, 0, 0 }, RH = { 50, 0, 0 }, RK = { -80, 0, 0 }, LH = { 50, 0, 0 }, LK = { -80, 0, 0 } },
+					strike = { Root = { -14, 0, 0 }, Waist = { -26, 0, 0 }, Neck = { 24, 0, 0 }, RS = { 30, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, 20 }, LE = { 20, 0, 0 }, RH = { 20, 0, 0 }, RK = { -40, 0, 0 }, LH = { 30, 0, 0 }, LK = { -60, 0, 0 } },
+					follow = { Root = { -10, 0, 0 }, Waist = { -22, 0, 0 }, Neck = { 22, 0, 0 }, RS = { 36, 0, 0 }, RE = { 4, 0, 0 }, RW = { 10, 0, 0 }, LS = { 34, 0, 20 }, LE = { 20, 0, 0 }, RH = { 24, 0, 0 }, RK = { -44, 0, 0 }, LH = { 34, 0, 0 }, LK = { -64, 0, 0 } },
+					shake = true, fx = { { "burst", color = FOAM, size = 2, at = "hand" } }, text = "BOMBARDEMENT !", hitText = "COUIC COUIC !",
+				},
+				-- Y : le canard nucléaire : un canard de bain énorme, jaune fluo, tiré à pleine charge qui traverse tout le couloir
+				SUPER = {
+					label = "Canard nucléaire !", kind = "projectile", startup = 0.4, active = 0, recovery = 0.7,
+					damage = 26, kbBase = 50, kbGrowth = 100, kbAngle = 30, selfVelocity = Vector2.new(-20, 0),
+					projectile = { speed = 65, angle = 0, gravity = 0, lifetime = 1.0, size = 4.2, color = DUCK, pierce = true,
+						visual = { shape = "ball", size = 3.6, color = DUCK, neon = true, spin = 0, parts = {
+							{ "ball", Vector3.new(2.2, 2.2, 2.2), Vector3.new(1, 1.9, 0), DUCK },
+							{ "block", Vector3.new(1.3, 0.45, 1.0), Vector3.new(2.3, 1.75, 0), BEAK },
+							{ "ball", Vector3.new(0.45, 0.45, 0.45), Vector3.new(1.6, 2.4, -0.8), BLACK },
+						} } },
+					status = { name = "wet", duration = 3 },
+					windup = { Root = { 10, -34, 0, 0, -0.5, 0.3 }, Waist = { 12, -38, 0 }, Neck = { 8, 24, 0 }, RS = { 70, 0, 10 }, RE = { 70, 0, 0 }, RW = { 0, 0, 0 }, LS = { 80, 0, 25 }, LE = { 90, 0, 0 }, FR = { 0, 0, 0, 0, 0, 0.3 } },
+					strike = { Root = { 18, 16, 0, 0, -0.4, 0.5 }, Waist = { 18, 16, 0 }, Neck = { 16, -8, 0 }, RS = { 96, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 92, 0, 22 }, LE = { 30, 0, 0 }, FR = { 0, 0, 0, 0, 0, 0.5 } },
+					follow = { Root = { 24, 16, 0, 0, -0.4, 0.6 }, Waist = { 24, 16, 0 }, Neck = { 18, -8, 0 }, RS = { 108, 0, 0 }, RE = { 8, 0, 0 }, RW = { 16, 0, 0 }, LS = { 96, 0, 22 }, LE = { 30, 0, 0 }, FR = { 0, 0, 0, 0, 0, 0.6 } },
+					shake = true, windupFx = { "super", { "symbols", symbols = { "☢️", "🦆" }, count = 6, radius = 3, color = DUCK } },
+					fx = { { "burst", color = DUCK, size = 5, at = "hand" }, { "beam", color = BEAK, length = 14, width = 3, at = "hand" }, { "screen", color = DUCK, alpha = 0.2 }, { "shake", amount = 0.6 } },
+					text = "CANARD NUCLÉAIRE !", hitText = "KA-COUIIIC !",
+				},
+				-- →Y : tir à la chevrotine : six canards tirés d'un coup en éventail, qui filent tous sur l'adversaire
+				SUPER_side = {
+					label = "Chevrotine de canards !", kind = "projectile", startup = 0.38, active = 0, recovery = 0.7,
+					damage = 5, kbBase = 30, kbGrowth = 50, kbAngle = 35, selfVelocity = Vector2.new(-18, 0),
+					projectile = { speed = 85, angle = 0, gravity = 0, lifetime = 0.9, size = 1.5, color = DUCK, visual = RUBBER_DUCK, fan = { count = 6, from = -18, to = 24 } },
+					status = { name = "wet", duration = 2 },
+					windup = { Root = { 8, -28, 0, 0, -0.35, 0.25 }, Waist = { 10, -32, 0 }, Neck = { 6, 20, 0 }, RS = { 72, 0, 10 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 82, 0, 25 }, LE = { 80, 0, 0 }, FR = { 0, 0, 0, 0, 0, 0.3 } },
+					strike = { Root = { 14, 12, 0, 0, -0.35, 0.4 }, Waist = { 14, 12, 0 }, Neck = { 12, -6, 0 }, RS = { 94, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, 22 }, LE = { 30, 0, 0 }, FR = { 0, 0, 0, 0, 0, 0.45 } },
+					follow = { Root = { 18, 12, 0, 0, -0.35, 0.5 }, Waist = { 18, 12, 0 }, Neck = { 14, -6, 0 }, RS = { 104, 0, 0 }, RE = { 6, 0, 0 }, RW = { 14, 0, 0 }, LS = { 94, 0, 22 }, LE = { 30, 0, 0 }, FR = { 0, 0, 0, 0, 0, 0.55 } },
+					shake = true, windupFx = { "super" }, fx = { { "burst", color = BEAK, size = 4, at = "hand" }, { "symbols", symbols = { "COIN", "COIN", "🦆" }, color = DUCK, count = 8, radius = 5, at = "front" }, { "shake", amount = 0.4 } },
+					text = "CHEVROTINE !", hitText = "COIN-COIN-COIN-COIN !",
+				},
+				-- ↑Y : le tire-bouchon : il tire dans le carrelage et le recul l'envoie en vrille à la verticale, le canon fauche tout le couloir
+				SUPER_up = {
+					label = "Tire-bouchon de bazooka !", startup = 0.35, active = 0.3, recovery = 0.7,
+					damage = 22, hitbox = box(14, 12, 7, 5), kbBase = 44, kbGrowth = 92, kbAngle = 86, invuln = 0.3, selfVelocity = Vector2.new(0, 65),
+					windup = { Root = { -8, 0, 0, 0, -0.9, 0 }, Waist = { -26, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 10, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 10, 0, 10 }, LE = { 20, 0, 0 } },
+					strike = { Root = { 6, 0, 0, 0, 0.5, 0 }, Waist = { 16, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 90, 0, 90 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, -90 }, LE = { 0, 0, 0 }, RH = { 20, 0, 10 }, RK = { -60, 0, 0 }, LH = { 20, 0, -10 }, LK = { -60, 0, 0 } },
+					follow = { Root = { 10, 0, 0, 0, 0.55, 0 }, Waist = { 20, 0, 0 }, Neck = { -24, 0, 0 }, RS = { 90, 0, 92 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 90, 0, -92 }, LE = { 0, 0, 0 }, RH = { 30, 0, 14 }, RK = { -70, 0, 0 }, LH = { 30, 0, -14 }, LK = { -70, 0, 0 } },
+					hold = 0.2, shake = true, spin = { axis = "y", degrees = 1080 }, trail = "prop", windupFx = { "super" },
+					fx = { { "pillar", color = BEAK, height = 22, width = 3.5, at = "root" }, { "burst", color = FOAM, size = 5, at = "feet" }, { "ring", color = DUCK, radius = 8, at = "feet" }, { "shake", amount = 0.5 } },
+					text = "TIRE-BOUCHON !", hitText = "VRILLÉ !",
+				},
+				-- ↓Y : la balayeuse : allongé sur le ventre, il tire en rafale au ras du carrelage en balayant tout le couloir (2 touches)
+				SUPER_down = {
+					label = "Bazooka-balayeuse !", startup = 0.35, active = 0.4, recovery = 0.7,
+					damage = 11, hits = 2, hitbox = box(16, 4, 8, -0.5), kbBase = 42, kbGrowth = 80, kbAngle = 55,
+					status = { name = "slowed", duration = 2 },
+					windup = { Root = { -14, 0, 0, 0, -0.6, 0.1 }, Waist = { -14, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 120, 0, 20 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 120, 0, -20 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -78, 0, 0, 0, -1.45, -0.3 }, Waist = { 8, 0, 0 }, Neck = { 40, 0, 0 }, RS = { 176, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 176, 0, -10 }, LE = { 0, 0, 0 }, RH = { -8, 0, 6 }, RK = { -20, 0, 0 }, RA = { -30, 0, 0 }, LH = { -8, 0, -6 }, LK = { -20, 0, 0 }, LA = { -30, 0, 0 } },
+					follow = { Root = { -80, 0, 0, 0, -1.5, -0.35 }, Waist = { 10, 0, 0 }, Neck = { 42, 0, 0 }, RS = { 178, 0, 30 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 178, 0, -30 }, LE = { 0, 0, 0 }, RH = { -10, 0, 6 }, RK = { -30, 0, 0 }, RA = { -30, 0, 0 }, LH = { -10, 0, -6 }, LK = { -30, 0, 0 }, LA = { -30, 0, 0 } },
+					hold = 0.2, shake = true, trail = "prop", windupFx = { "super" },
+					fx = { { "beam", color = BEAK, length = 16, width = 2.5, at = "feet" }, { "toss", shape = "ball", color = DUCK, size = 1, count = 6, speed = 26 }, { "particles", tex = "smoke", color = FOAM, at = "hand", dir = "front", time = 0.5, speed = 18, rate = 100 }, { "shake", amount = 0.4 } },
+					text = "BALAYAGE !", hitText = "COUIC-COUIC-COUIC !",
+				},
+			},
+			links = {
+				P_neutral = { P = "P_side", K = "K_neutral", S = "S_neutral" },
+				P_side = { P = "P_up", K = "K_side", S = "S_side" },
+				P_down = { P = "P_neutral", K = "K_down", S = "S_down" },
+				K_neutral = { P = "P_neutral", K = "K_side", S = "S_side" },
+				P_dash = { P = "P_side", K = "K_side", S = "S_neutral" },
+				K_dash = { P = "P_up", K = "K_up", S = "S_up" },
+			},
+		},
+	},
 	look = {
 		body = { head = SKIN, upper = WHITE, lower = Color3.fromRGB(210, 50, 50), arms = SKIN, hands = SKIN,
 			legs = SKIN, feet = BEAK, forearms = SKIN, shins = SKIN },
@@ -556,6 +1048,19 @@ local data = {
 			hold = 0.2, prop = "corne", windupFx = { "super" },
 			fx = { { "puddle", color = WATER, width = 16, time = 1.5 }, { "symbols", symbols = { "🦆", "COIN" }, color = DUCK, count = 8, radius = 6 }, { "shake", amount = 0.4 } },
 			text = "RAZ-DE-MARÉE !", hitText = "COUIIIC !",
+		},
+		-- Super → : Vague scélérate, pistolet pointé dans le carrelage à pression maximale : une vague géante se dresse devant lui et roule
+		-- sur tout le couloir, le Capitaine debout sur la crête comme un surfeur, bouée en guise de planche
+		SUPER_side = {
+			label = "Vague scélérate !", startup = 0.4, active = 0.3, recovery = 0.7,
+			damage = 25, hitbox = box(14, 7, 7, 1), kbBase = 46, kbGrowth = 92, kbAngle = 42, selfVelocity = Vector2.new(34, 18),
+			status = { name = "wet", duration = 3 },
+			windup = { Root = { 10, 0, 0, 0, -0.5, 0.2 }, Waist = { 20, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 30, 0, 10 }, RE = { 20, 0, 0 }, RW = { 60, 0, 0 }, LS = { 60, 0, -30 }, LE = { 90, 0, 0 } },
+			strike = { Root = { -10, 30, 0, 0, 0.2, -0.3 }, Waist = { -8, 20, 0 }, Neck = { 0, -20, 0 }, RS = { 60, 0, 80 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -80 }, LE = { 10, 0, 0 }, FR = { 0, 0, 0, 0, 0.3, 0.3 }, FL = { 0, 0, 0, 0, 0.3, -0.4 } },
+			follow = { Root = { -12, 36, 0, 0, 0.25, -0.4 }, Waist = { -10, 26, 0 }, Neck = { 0, -24, 0 }, RS = { 64, 0, 84 }, RE = { 10, 0, 0 }, RW = { -10, 0, 0 }, LS = { 64, 0, -84 }, LE = { 10, 0, 0 }, FR = { 0, 0, 0, 0, 0.35, 0.3 }, FL = { 0, 0, 0, 0, 0.35, -0.45 } },
+			hold = 0.2, shake = true, wobble = true, trail = "body", windupFx = { "super", { "particles", tex = "smoke", color = FOAM, at = "feet", dir = "up", time = 0.35, speed = 12, rate = 80 } },
+			fx = { { "pillar", color = WATER, height = 12, width = 7, at = "front", time = 0.5 }, { "beam", color = WATER, length = 16, width = 6, at = "feet" }, { "puddle", color = FOAM, width = 16, time = 1.5 }, { "symbols", symbols = { "🌊", "🏄", "COIN" }, color = WATER, count = 6, radius = 5, at = "above" }, { "shake", amount = 0.5 } },
+			text = "SURF'S UP, MOUSSAILLON !", hitText = "EMPORTÉ PAR LA VAGUE !",
 		},
 		-- Super ↑ : Fusée de bain, pistolet à deux mains pointé entre ses palmes, le jet le propulse en vrille verticale comme une fusée et la gerbe fauche tout le couloir
 		SUPER_up = {
