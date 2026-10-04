@@ -48,6 +48,203 @@ local data = {
 	name = "Madame Ventouse",
 	costume = "Ventouse",
 	style = "plumber",
+	------------------------------------------------------------------ Mains nues (sans Caisse Bizarre) : dépannage à l'ancienne
+	-- Ses propres J / K et ses combos sans arme (les L et les Y restent ceux de moves). Sans ventouse, Madame Ventouse
+	-- se sert de ses paumes comme de ventouses (SPLOTCH), tape sur la tuyauterie à coups de poing-marteau et répare
+	-- tout d'un bon coup de pied au radiateur ; ses combos finissent en double débouchage ou en geyser réparateur.
+	bare = {
+		moves = {
+			-- J : paume-ventouse : elle crache dans sa main et la plaque en pleine figure, SPLOTCH, ça colle
+			P_neutral = {
+				label = "Paume-ventouse", startup = 0.07, active = 0.08, recovery = 0.14,
+				damage = 5, hitbox = box(4, 3, 2.7, 1), kbBase = 18, kbGrowth = 22, kbAngle = 22,
+				windup = { Root = { 0, 20, 0, 0, -0.2, 0.1 }, Waist = { 0, 15, 0 }, Neck = { 0, -10, 0 }, RS = { 60, 0, 20 }, RE = { 110, 0, 0 }, RW = { -40, 0, 0 }, LS = { 50, 0, -20 }, LE = { 80, 0, 0 } },
+				strike = { Root = { -6, -10, 0, 0, -0.22, -0.25 }, Waist = { -6, -10, 0 }, Neck = { 0, 0, 0 }, RS = { 92, 0, 0 }, RE = { 10, 0, 0 }, RW = { -70, 0, 0 }, LS = { 50, 0, -20 }, LE = { 80, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.2 } },
+				follow = { Root = { -6, -12, 0, 0, -0.22, -0.27 }, Waist = { -6, -12, 0 }, Neck = { 0, 0, 0 }, RS = { 92, 0, -2 }, RE = { 10, 0, 0 }, RW = { -75, 0, 0 }, LS = { 50, 0, -20 }, LE = { 80, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.22 } },
+				hold = 0.05, trail = "rightHand", hitText = "SPLOTCH !",
+			},
+			-- J J : l'autre paume se colle à son tour, de la main gauche, avec un petit bruit de succion
+			P_combo2 = {
+				label = "Paume gauche", startup = 0.06, active = 0.08, recovery = 0.14,
+				damage = 5, hitbox = box(4, 3, 2.8, 1), kbBase = 18, kbGrowth = 22, kbAngle = 25,
+				windup = { Root = { 0, -20, 0, 0, -0.2, 0.08 }, Waist = { 0, -15, 0 }, Neck = { 0, 10, 0 }, RS = { 70, 0, 20 }, RE = { 60, 0, 0 }, LS = { 60, 0, -20 }, LE = { 110, 0, 0 }, LW = { -40, 0, 0 } },
+				strike = { Root = { -6, 15, 0, 0, -0.22, -0.28 }, Waist = { -6, 15, 0 }, Neck = { 0, 0, 0 }, RS = { 70, 0, 20 }, RE = { 60, 0, 0 }, LS = { 92, 0, 0 }, LE = { 10, 0, 0 }, LW = { -70, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.28 } },
+				follow = { Root = { -6, 17, 0, 0, -0.22, -0.3 }, Waist = { -6, 17, 0 }, Neck = { 0, 0, 0 }, RS = { 70, 0, 20 }, RE = { 60, 0, 0 }, LS = { 92, 0, 2 }, LE = { 10, 0, 0 }, LW = { -75, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+				hold = 0.05, trail = "leftHand", hitText = "SPLOUTCH !",
+			},
+			-- J J J : double débouchage à mains nues : les deux paumes collées, elle tire de tout son poids en arrière… POP ! (finition)
+			P_combo3 = {
+				label = "Débouchage à mains nues", startup = 0.13, active = 0.12, recovery = 0.32,
+				damage = 9, hitbox = box(4.5, 3.5, 2.6, 1), kbBase = 30, kbGrowth = 60, kbAngle = 40,
+				windup = { Root = { -10, 0, 0, 0, -0.2, -0.2 }, Waist = { -14, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 92, 0, 10 }, RE = { 0, 0, 0 }, RW = { -70, 0, 0 }, LS = { 92, 0, -10 }, LE = { 0, 0, 0 }, LW = { -70, 0, 0 } },
+				strike = { Root = { 18, 0, 0, 0, -0.5, 0.45 }, Waist = { 14, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 60, 0, 20 }, RE = { 70, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -20 }, LE = { 70, 0, 0 }, LW = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+				follow = { Root = { 20, 0, 0, 0, -0.52, 0.48 }, Waist = { 16, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 50, 0, 25 }, RE = { 80, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -25 }, LE = { 80, 0, 0 }, LW = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.32 } },
+				shake = true, trail = "bothHands",
+				fx = { { "burst", color = RUBBER, size = 2.5, at = "front" }, { "text", text = "POP !", color = RUBBER, at = "front" } },
+				hitText = "SCHPLOP !",
+			},
+			-- J K : cric de dépanneuse : elle se glisse sous l'adversaire et le soulève des épaules comme une voiture en panne
+			PK_combo = {
+				label = "Cric de dépanneuse", startup = 0.1, active = 0.1, recovery = 0.24,
+				damage = 7, hitbox = box(4, 4.5, 1.8, 1.5), kbBase = 24, kbGrowth = 40, kbAngle = 80, selfVelocity = Vector2.new(10, 0),
+				windup = { Root = { -20, 0, 0, 0, -0.8, -0.1 }, Waist = { -25, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 140, 0, 30 }, RE = { 100, 0, 0 }, LS = { 140, 0, -30 }, LE = { 100, 0, 0 } },
+				strike = { Root = { -4, 0, 0, 0, 0.1, -0.25 }, Waist = { -6, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 175, 0, 20 }, RE = { 30, 0, 0 }, LS = { 175, 0, -20 }, LE = { 30, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.25 } },
+				follow = { Root = { -4, 0, 0, 0, 0.12, -0.27 }, Waist = { -6, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 178, 0, 20 }, RE = { 26, 0, 0 }, LS = { 178, 0, -20 }, LE = { 26, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.27 } },
+				shake = true, trail = "bothHands", fx = { { "text", text = "HNNG… HOP !", color = BOOT, at = "head" } }, hitText = "CRIC !",
+			},
+			-- K J : coup de queue de cheval : elle tourne la tête d'un coup sec, la queue de cheval fouette d'un tour complet
+			KP_combo = {
+				label = "Fouet de queue de cheval", startup = 0.1, active = 0.14, recovery = 0.24,
+				damage = 8, hitbox = box(5, 3.5, 2, 1.4), kbBase = 24, kbGrowth = 45, kbAngle = 35,
+				windup = { Root = { 0, -40, 0, 0, -0.15, 0.1 }, Waist = { 0, -20, 0 }, Neck = { 10, -40, 0 }, RS = { 30, 0, 40 }, RE = { 70, 0, 0 }, LS = { 30, 0, -40 }, LE = { 70, 0, 0 } },
+				strike = { Root = { 0, 0, 0, 0, -0.2, -0.15 }, Waist = { 0, 0, 0 }, Neck = { -15, 30, 0 }, RS = { 40, 0, 60 }, RE = { 40, 0, 0 }, LS = { 40, 0, -60 }, LE = { 40, 0, 0 } },
+				follow = { Root = { 0, 10, 0, 0, -0.2, -0.17 }, Waist = { 0, 10, 0 }, Neck = { -15, 40, 0 }, RS = { 40, 0, 62 }, RE = { 40, 0, 0 }, LS = { 40, 0, -62 }, LE = { 40, 0, 0 } },
+				spin = { axis = "y", degrees = 360 }, trail = "head", hitText = "FOUETTÉ !",
+			},
+			-- K K : « ça marche toujours pas ! » : deuxième coup de pied au radiateur, plus haut et plus énervé
+			K_combo2 = {
+				label = "Ça marche toujours pas !", startup = 0.1, active = 0.1, recovery = 0.24,
+				damage = 8, hitbox = box(4.5, 3, 2.8, 0.4), kbBase = 24, kbGrowth = 45, kbAngle = 38, selfVelocity = Vector2.new(10, 0),
+				windup = { Root = { 6, 0, 0, 0, -0.15, 0.15 }, Waist = { 10, 0, 0 }, Neck = { 10, 0, 0 }, RS = { -20, 0, 40 }, RE = { 90, 0, 0 }, LS = { -20, 0, -40 }, LE = { 90, 0, 0 }, LH = { 70, 0, 0 }, LK = { -100, 0, 0 } },
+				strike = { Root = { -10, 0, 0, 0, -0.1, -0.15 }, Waist = { -10, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 40, 0, 50 }, RE = { 60, 0, 0 }, LS = { -40, 0, -50 }, LE = { 60, 0, 0 }, LH = { 100, 0, 0 }, LK = { -5, 0, 0 }, LA = { 20, 0, 0 } },
+				follow = { Root = { -10, 0, 0, 0, -0.1, -0.17 }, Waist = { -10, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 42, 0, 52 }, RE = { 60, 0, 0 }, LS = { -42, 0, -52 }, LE = { 60, 0, 0 }, LH = { 104, 0, 0 }, LK = { -2, 0, 0 }, LA = { 20, 0, 0 } },
+				trail = "leftFoot", fx = { { "text", text = "GRRR", color = CAP, at = "head" } }, hitText = "BONNNG !",
+			},
+			-- K K K : le coup qui répare tout : coup de pied retourné de toutes ses forces… et un geyser jaillit, réparé ! (finition)
+			KKK_combo = {
+				label = "Le coup qui répare tout", startup = 0.14, active = 0.12, recovery = 0.32,
+				damage = 10, hitbox = box(5.5, 4, 3, 0.6), kbBase = 30, kbGrowth = 60, kbAngle = 42, selfVelocity = Vector2.new(12, 0),
+				windup = { Root = { 6, 40, 0, 0, -0.2, 0.15 }, Waist = { 10, 20, 0 }, Neck = { 0, -60, 0 }, RS = { 30, 0, 50 }, RE = { 60, 0, 0 }, LS = { 30, 0, -50 }, LE = { 60, 0, 0 }, RH = { 60, 0, 0 }, RK = { -100, 0, 0 } },
+				strike = { Root = { -10, 0, 0, 0, -0.1, -0.2 }, Waist = { -10, 0, 0 }, Neck = { 0, 0, 0 }, RS = { 60, 0, 70 }, RE = { 20, 0, 0 }, LS = { 60, 0, -70 }, LE = { 20, 0, 0 }, RH = { 100, 0, 0 }, RK = { 0, 0, 0 }, RA = { 20, 0, 0 } },
+				follow = { Root = { -10, -4, 0, 0, -0.1, -0.22 }, Waist = { -10, 0, 0 }, Neck = { 0, 0, 0 }, RS = { 62, 0, 72 }, RE = { 20, 0, 0 }, LS = { 62, 0, -72 }, LE = { 20, 0, 0 }, RH = { 104, 0, 0 }, RK = { 0, 0, 0 }, RA = { 20, 0, 0 } },
+				hold = 0.08, spin = { axis = "y", degrees = 360 }, trail = "rightFoot",
+				fx = { { "pillar", color = WATER, height = 12, width = 2.5, at = "front" }, { "text", text = "RÉPARÉ !", color = WATER, at = "head" } },
+				hitText = "KLONNNG !",
+			},
+			-- →J : poing-marteau : le poing fermé tape à l'horizontale comme sur un tuyau grippé
+			P_side = {
+				label = "Poing-marteau", startup = 0.1, active = 0.1, recovery = 0.18,
+				damage = 7, hitbox = box(5, 3, 2.9, 0.8), kbBase = 22, kbGrowth = 35, kbAngle = 28, selfVelocity = Vector2.new(16, 0),
+				windup = { Root = { 0, 40, 0, 0, -0.2, 0.15 }, Waist = { 0, 30, 0 }, Neck = { 0, -30, 0 }, RS = { 120, 0, 90 }, RE = { 60, 0, 0 }, LS = { 50, 0, -20 }, LE = { 80, 0, 0 } },
+				strike = { Root = { -8, -30, 0, 0, -0.28, -0.35 }, Waist = { -8, -30, 0 }, Neck = { 0, 20, 0 }, RS = { 85, 0, -20 }, RE = { 10, 0, 0 }, LS = { 30, 0, -30 }, LE = { 80, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.35 } },
+				follow = { Root = { -8, -34, 0, 0, -0.28, -0.38 }, Waist = { -8, -34, 0 }, Neck = { 0, 22, 0 }, RS = { 80, 0, -30 }, RE = { 12, 0, 0 }, LS = { 28, 0, -32 }, LE = { 80, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.38 } },
+				trail = "rightHand", hitText = "BLANG !",
+			},
+			-- ↓J : bras dans le siphon : à genoux, elle plonge le bras jusqu'au coude dans un siphon imaginaire et attrape une cheville
+			P_down = {
+				label = "Bras dans le siphon", startup = 0.08, active = 0.1, recovery = 0.2,
+				damage = 5, hitbox = box(4, 2, 2.6, -1.4), kbBase = 20, kbGrowth = 25, kbAngle = 65,
+				windup = { Root = { -10, 0, 0, 0, -0.9, 0.1 }, Waist = { -20, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 120, 0, 10 }, RE = { 60, 0, 0 }, LS = { 30, 0, -20 }, LE = { 60, 0, 0 } },
+				strike = { Root = { -20, 0, 0, 0, -1.0, -0.15 }, Waist = { -35, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 40, 0, 0 }, RE = { 0, 0, 0 }, RW = { -20, 0, 0 }, LS = { 30, 0, -20 }, LE = { 60, 0, 0 } },
+				follow = { Root = { -20, 0, 0, 0, -1.0, -0.15 }, Waist = { -35, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 45, 0, 10 }, RE = { 10, 0, 0 }, RW = { -30, 0, 0 }, LS = { 30, 0, -20 }, LE = { 60, 0, 0 } },
+				wobble = true, trail = "rightHand", fx = { { "puddle", color = WATER, width = 4 } }, hitText = "GLOUP !",
+			},
+			-- ↑J : poing au plafond : uppercut tout droit dans le tuyau qui fuit au-dessus d'elle (et dans le menton au passage)
+			P_up = {
+				label = "Poing au plafond", startup = 0.08, active = 0.1, recovery = 0.2,
+				damage = 6, hitbox = box(4, 5, 1.5, 3), kbBase = 22, kbGrowth = 38, kbAngle = 86,
+				windup = { Root = { 0, 15, 0, 0, -0.45, 0.05 }, Waist = { -10, 15, 0 }, Neck = { 10, 0, 0 }, RS = { 10, 0, 20 }, RE = { 120, 0, 0 }, LS = { 50, 0, -20 }, LE = { 80, 0, 0 } },
+				strike = { Root = { 6, -10, 0, 0, 0.2, 0 }, Waist = { 6, -10, 0 }, Neck = { -20, 0, 0 }, RS = { 175, 0, 5 }, RE = { 0, 0, 0 }, LS = { 20, 0, -30 }, LE = { 80, 0, 0 } },
+				follow = { Root = { 6, -12, 0, 0, 0.22, 0 }, Waist = { 6, -12, 0 }, Neck = { -22, 0, 0 }, RS = { 178, 0, 5 }, RE = { 0, 0, 0 }, LS = { 18, 0, -30 }, LE = { 80, 0, 0 } },
+				trail = "rightHand", fx = { { "toss", shape = "ball", color = WATER, size = 0.4, count = 3, speed = 10 } }, hitText = "BING !",
+			},
+			-- J en l'air : casquette claquée : elle arrache sa casquette et l'abat sur le crâne d'en dessous
+			P_air = {
+				label = "Casquette claquée", startup = 0.09, active = 0.12, recovery = 0.18,
+				damage = 7, hitbox = box(4.5, 4, 1.6, -0.8), kbBase = 20, kbGrowth = 32, kbAngle = -40,
+				windup = { Root = { 10, 0, 0 }, Waist = { 10, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 175, 0, 10 }, RE = { 60, 0, 0 }, LS = { 60, 0, -40 }, LE = { 30, 0, 0 }, RH = { 40, 0, 0 }, RK = { -80, 0, 0 }, LH = { 20, 0, 0 }, LK = { -50, 0, 0 } },
+				strike = { Root = { -15, 0, 0 }, Waist = { -15, 0, 0 }, Neck = { -15, 0, 0 }, RS = { 40, 0, 0 }, RE = { 0, 0, 0 }, RW = { -30, 0, 0 }, LS = { 60, 0, -40 }, LE = { 30, 0, 0 }, RH = { 50, 0, 0 }, RK = { -90, 0, 0 }, LH = { 30, 0, 0 }, LK = { -60, 0, 0 } },
+				follow = { Root = { -17, 0, 0 }, Waist = { -16, 0, 0 }, Neck = { -16, 0, 0 }, RS = { 28, 0, 0 }, RE = { 0, 0, 0 }, RW = { -40, 0, 0 }, LS = { 60, 0, -40 }, LE = { 30, 0, 0 }, RH = { 50, 0, 0 }, RK = { -90, 0, 0 }, LH = { 30, 0, 0 }, LK = { -60, 0, 0 } },
+				trail = "rightHand", hitText = "FLAC !",
+			},
+			-- dash J : épaule de déménageuse : lancée, épaule rentrée, elle enfonce l'adversaire comme une porte coincée
+			P_dash = {
+				label = "Épaule de déménageuse", startup = 0.08, active = 0.18, recovery = 0.24,
+				damage = 7, hitbox = box(5, 3.5, 2.5, 0.8), kbBase = 24, kbGrowth = 38, kbAngle = 30, selfVelocity = Vector2.new(36, 0),
+				windup = { Root = { -10, 40, 0, 0, -0.3, 0.15 }, Waist = { -10, 20, 0 }, Neck = { 0, -30, 0 }, RS = { 20, 0, 10 }, RE = { 100, 0, 0 }, LS = { 40, 0, -20 }, LE = { 100, 0, 0 } },
+				strike = { Root = { -20, 70, 0, 0, -0.35, -0.4 }, Waist = { -10, 20, 0 }, Neck = { 0, -60, 0 }, RS = { 10, 0, 5 }, RE = { 110, 0, 0 }, LS = { 50, 0, -20 }, LE = { 110, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+				follow = { Root = { -20, 72, 0, 0, -0.35, -0.42 }, Waist = { -10, 22, 0 }, Neck = { 0, -62, 0 }, RS = { 10, 0, 5 }, RE = { 110, 0, 0 }, LS = { 50, 0, -20 }, LE = { 110, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+				trail = "body", fx = { "dust" }, hitText = "ÇA PASSE !",
+			},
+			-- K : coup de pied au radiateur : le petit coup sec qu'on donne à un vieux radiateur pour qu'il redémarre
+			K_neutral = {
+				label = "Coup de pied au radiateur", startup = 0.12, active = 0.1, recovery = 0.24,
+				damage = 8, hitbox = box(4.5, 2.8, 2.6, -0.4), kbBase = 24, kbGrowth = 45, kbAngle = 35,
+				windup = { Root = { 4, 0, 0, 0, -0.15, 0.15 }, Waist = { 6, 0, 0 }, Neck = { 15, 0, 0 }, RS = { 0, 0, 20 }, RE = { 100, 0, 0 }, LS = { 0, 0, -20 }, LE = { 100, 0, 0 }, RH = { -20, 0, 0 }, RK = { -70, 0, 0 } },
+				strike = { Root = { -6, 0, 0, 0, -0.15, -0.1 }, Waist = { -6, 0, 0 }, Neck = { 15, 0, 0 }, RS = { -10, 0, 25 }, RE = { 100, 0, 0 }, LS = { -10, 0, -25 }, LE = { 100, 0, 0 }, RH = { 60, 0, 0 }, RK = { -10, 0, 0 }, RA = { 10, 0, 0 } },
+				follow = { Root = { -6, 0, 0, 0, -0.15, -0.12 }, Waist = { -6, 0, 0 }, Neck = { 15, 0, 0 }, RS = { -10, 0, 25 }, RE = { 100, 0, 0 }, LS = { -10, 0, -25 }, LE = { 100, 0, 0 }, RH = { 64, 0, 0 }, RK = { -8, 0, 0 }, RA = { 10, 0, 0 } },
+				trail = "rightFoot", hitText = "BONG !",
+			},
+			-- →K : jambe d'équerre : de profil, jambe tendue pile à l'horizontale, elle vérifie le niveau… bulle au centre !
+			K_side = {
+				label = "Jambe d'équerre", startup = 0.14, active = 0.12, recovery = 0.28,
+				damage = 9, hitbox = box(6, 3, 3.4, 0.3), kbBase = 26, kbGrowth = 50, kbAngle = 30, selfVelocity = Vector2.new(14, 0),
+				windup = { Root = { 0, 80, 0, 0, -0.2, 0.15 }, Waist = { 0, 0, 0 }, Neck = { 0, -80, 0 }, RS = { 60, 0, 30 }, RE = { 90, 0, 0 }, LS = { 20, 0, -40 }, LE = { 60, 0, 0 }, RH = { 40, 0, 30 }, RK = { -90, 0, 0 } },
+				strike = { Root = { 0, 90, 18, 0, -0.15, -0.1 }, Waist = { 0, 0, -6 }, Neck = { 0, -85, 0 }, RS = { 90, 0, 80 }, RE = { 0, 0, 0 }, LS = { 0, 0, -60 }, LE = { 30, 0, 0 }, RH = { 0, 0, 90 }, RK = { 0, 0, 0 }, RA = { 0, 0, 0 } },
+				follow = { Root = { 0, 90, 18, 0, -0.15, -0.12 }, Waist = { 0, 0, -6 }, Neck = { 0, -85, 0 }, RS = { 90, 0, 82 }, RE = { 0, 0, 0 }, LS = { 0, 0, -62 }, LE = { 30, 0, 0 }, RH = { 0, 0, 90 }, RK = { 0, 0, 0 }, RA = { 0, 0, 0 } },
+				hold = 0.06, trail = "rightLeg", fx = { { "text", text = "D'ÉQUERRE", color = BRASS, at = "head" } }, hitText = "PILE !",
+			},
+			-- ↓K : fesses dans la flaque : elle glisse et tombe assise dans une flaque, l'éclaboussure fauche tout autour
+			K_down = {
+				label = "Fesses dans la flaque", startup = 0.12, active = 0.14, recovery = 0.3,
+				damage = 8, hitbox = box(6, 2, 2.4, -1.4), kbBase = 26, kbGrowth = 45, kbAngle = 72,
+				windup = { Root = { 10, 0, 0, 0, 0.1, 0 }, Waist = { 10, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 120, 0, 50 }, RE = { 20, 0, 0 }, LS = { 120, 0, -50 }, LE = { 20, 0, 0 }, RH = { 30, 0, 0 } },
+				strike = { Root = { 20, 0, 0, 0, -1.2, 0.2 }, Waist = { 0, 0, 0 }, Neck = { 0, 0, 0 }, RS = { 70, 0, 70 }, RE = { 10, 0, 0 }, LS = { 70, 0, -70 }, LE = { 10, 0, 0 }, RH = { 85, 0, 15 }, RK = { -5, 0, 0 }, LH = { 85, 0, -15 }, LK = { -5, 0, 0 } },
+				follow = { Root = { 22, 0, 0, 0, -1.22, 0.22 }, Waist = { 0, 0, 0 }, Neck = { 0, 0, 0 }, RS = { 66, 0, 74 }, RE = { 10, 0, 0 }, LS = { 66, 0, -74 }, LE = { 10, 0, 0 }, RH = { 88, 0, 18 }, RK = { -2, 0, 0 }, LH = { 88, 0, -18 }, LK = { -2, 0, 0 } },
+				trail = "bothFeet", fx = { { "puddle", color = WATER, width = 7 }, { "toss", shape = "ball", color = WATER, size = 0.4, count = 5, speed = 14 } },
+				hitText = "SPLATCH !",
+			},
+			-- ↑K : coup de pied au tuyau du plafond : jambe tendue tout droit vers le haut, des gouttes retombent
+			K_up = {
+				label = "Pied au plafond", startup = 0.14, active = 0.12, recovery = 0.3,
+				damage = 9, hitbox = box(4, 6, 1.2, 3.3), kbBase = 26, kbGrowth = 55, kbAngle = 88,
+				windup = { Root = { 0, 0, 0, 0, -0.3, 0.1 }, Waist = { 10, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 40, 0, 50 }, RE = { 60, 0, 0 }, LS = { 40, 0, -50 }, LE = { 60, 0, 0 }, RH = { 40, 0, 0 }, RK = { -90, 0, 0 } },
+				strike = { Root = { 20, 0, 0, 0, -0.1, 0.15 }, Waist = { 14, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 10, 0, 60 }, RE = { 20, 0, 0 }, LS = { 10, 0, -60 }, LE = { 20, 0, 0 }, RH = { 165, 0, 0 }, RK = { -5, 0, 0 }, RA = { 10, 0, 0 } },
+				follow = { Root = { 22, 0, 0, 0, -0.1, 0.17 }, Waist = { 15, 0, 0 }, Neck = { 22, 0, 0 }, RS = { 8, 0, 62 }, RE = { 20, 0, 0 }, LS = { 8, 0, -62 }, LE = { 20, 0, 0 }, RH = { 170, 0, 0 }, RK = { -2, 0, 0 }, RA = { 10, 0, 0 } },
+				trail = "rightFoot", fx = { { "rain", shape = "ball", color = WATER, count = 5, radius = 2, size = 0.3 } }, hitText = "DING-PLOC !",
+			},
+			-- K en l'air : escalade de colonne : elle grimpe à une colonne imaginaire, genou puis pied, genou puis pied (2 touches)
+			K_air = {
+				label = "Escalade de colonne", startup = 0.1, active = 0.2, recovery = 0.2,
+				damage = 8, hits = 2, hitbox = box(4.5, 4, 2, -0.2), kbBase = 22, kbGrowth = 40, kbAngle = 45,
+				windup = { Root = { -6, 0, 0 }, Waist = { -6, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 160, 0, 10 }, RE = { 40, 0, 0 }, LS = { 120, 0, -10 }, LE = { 60, 0, 0 }, RH = { 100, 0, 0 }, RK = { -110, 0, 0 }, LH = { 10, 0, 0 }, LK = { -20, 0, 0 } },
+				strike = { Root = { -10, 0, 0 }, Waist = { -6, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 120, 0, 10 }, RE = { 60, 0, 0 }, LS = { 160, 0, -10 }, LE = { 40, 0, 0 }, RH = { 90, 0, 0 }, RK = { -10, 0, 0 }, LH = { 100, 0, 0 }, LK = { -110, 0, 0 } },
+				follow = { Root = { -10, 0, 0 }, Waist = { -6, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 160, 0, 10 }, RE = { 40, 0, 0 }, LS = { 120, 0, -10 }, LE = { 60, 0, 0 }, RH = { 100, 0, 0 }, RK = { -110, 0, 0 }, LH = { 90, 0, 0 }, LK = { -10, 0, 0 } },
+				trail = "bothFeet", hitText = "HOP, HOP !",
+			},
+			-- dash K : pied dans le seau : en courant, son pied se coince dans un seau et elle shoote avec, seau compris
+			K_dash = {
+				label = "Pied dans le seau", startup = 0.1, active = 0.22, recovery = 0.3,
+				damage = 9, hitbox = box(5.5, 2.8, 3, -0.4), kbBase = 28, kbGrowth = 55, kbAngle = 38, selfVelocity = Vector2.new(46, 6),
+				windup = { Root = { -6, 0, 0, 0, -0.2, 0.1 }, Waist = { -8, 0, 0 }, Neck = { 25, 0, 0 }, RS = { 70, 0, 50 }, RE = { 30, 0, 0 }, LS = { 70, 0, -50 }, LE = { 30, 0, 0 }, RH = { -20, 0, 0 }, RK = { -80, 0, 0 } },
+				strike = { Root = { 14, 0, 0, 0, -0.3, 0 }, Waist = { 6, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 120, 0, 60 }, RE = { 10, 0, 0 }, LS = { 120, 0, -60 }, LE = { 10, 0, 0 }, RH = { 95, 0, 0 }, RK = { 0, 0, 0 }, RA = { 10, 0, 0 } },
+				follow = { Root = { 16, 0, 0, 0, -0.32, 0.02 }, Waist = { 6, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 124, 0, 62 }, RE = { 10, 0, 0 }, LS = { 124, 0, -62 }, LE = { 10, 0, 0 }, RH = { 98, 0, 0 }, RK = { 0, 0, 0 }, RA = { 10, 0, 0 } },
+				trail = "rightFoot", fx = { "dust", { "symbols", symbols = { "🪣" } } }, hitText = "CLANG-CLONG !",
+			},
+		},
+		-- Combos à mains nues : J J J (paume, paume, débouchage à mains nues), J K (cric de dépanneuse),
+		-- K K K (radiateur, toujours pas, le coup qui répare tout), K J (queue de cheval). Un L pour finir envoie son spécial.
+		links = {
+			P_neutral = { P = "P_combo2", K = "PK_combo", S = "S_side" },
+			P_combo2 = { P = "P_combo3", up_K = "PK_combo", S = "S_neutral" },
+			P_combo3 = { S = "S_side" },
+			PK_combo = { P = "P_up", K = "K_up", S = "S_up" },
+			K_neutral = { K = "K_combo2", P = "KP_combo", S = "S_down" },
+			K_combo2 = { K = "KKK_combo", down_P = "P_down", S = "S_side" },
+			KKK_combo = { S = "S_neutral" },
+			KP_combo = { P = "P_side", K = "K_combo2", S = "S_neutral" },
+			P_side = { P = "P_combo2", K = "K_side", S = "S_side" },
+			P_down = { K = "K_down", P = "PK_combo", S = "S_down" },
+			P_up = { K = "K_up", S = "S_up" },
+			K_side = { P = "KP_combo", S = "S_side" },
+			K_down = { P = "P_up", S = "S_down" },
+			K_up = { S = "S_up" },
+			P_dash = { P = "P_combo2", K = "K_side", S = "S_side" },
+			K_dash = { K = "K_up", S = "S_up" },
+			P_air = { K = "K_air", S = "S_air" },
+			K_air = { P = "P_air", S = "S_air" },
+		},
+	},
 	------------------------------------------------------------------ Les 3 armes de la Caisse Bizarre (une au hasard)
 	-- n° 1 : la ventouse géante (ses coups sont ceux de moves). n° 2 : le chalumeau, rapide et court, qui brûle tout
 	-- ce qu'il touche. n° 3 : la cuvette de WC, lourde, à chasse d'eau, qui frappe fort et éjecte loin.
