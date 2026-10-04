@@ -33,11 +33,492 @@ local PLANE = { shape = "block", size = 0.5, color = PAPER, parts = {
 	{ "block", Vector3.new(0.3, 0.07, 0.3), Vector3.new(-0.3, 0.2, 0), INK },
 } }
 
+local COPIER = Color3.fromRGB(215, 215, 210) -- photocopieuse (arme n° 2)
+local COPIER_DARK = Color3.fromRGB(90, 90, 100)
+local SCANLIGHT = Color3.fromRGB(120, 255, 120)
+local COFFEE = Color3.fromRGB(80, 50, 30) -- machine à café (arme n° 3)
+local CUP = Color3.fromRGB(245, 245, 240)
+local SILVER_B = Color3.fromRGB(200, 205, 215)
+-- Feuille photocopiée (projectiles de l'arme n° 2)
+local SHEET = { shape = "block", size = 1.2, color = PAPER, spin = 6, parts = {
+	{ "block", Vector3.new(1.0, 0.04, 1.3), Vector3.new(0, 0, 0), PAPER },
+	{ "block", Vector3.new(0.7, 0.05, 0.1), Vector3.new(0, 0.03, -0.3), BLACK },
+	{ "block", Vector3.new(0.5, 0.05, 0.1), Vector3.new(-0.1, 0.03, 0.1), BLACK },
+} }
+
 local data = {
 	id = "Bernard",
 	name = "Bernard du Guichet",
 	costume = "Bernard",
 	style = "bored",
+
+	------------------------------------------------------------------ Les 3 armes de la Caisse Bizarre (une au hasard)
+	-- n° 1 : le tampon géant (ses coups sont ceux de moves). n° 2 : la photocopieuse portative, jeu de projectiles en papier à
+	-- longue portée. n° 3 : la machine à café du couloir, lourde et lente, qui requinque à chaque coup.
+	weapons = {
+		{ id = "tampon", name = "Tampon géant & dossiers", icon = "📋",
+			ability = { status = { name = "slowed", duration = 1.5 }, text = "Ses L enlisent l'adversaire dans la paperasse" } },
+		{ id = "photocopieuse", name = "Photocopieuse portative", icon = "🖨️",
+			prop = { name = "PropPhotocopieuse", hand = "Right", pieces = {
+				{ "Poignee", "", "cyl", Vector3.new(0.7, 0.18, 0.18), Vector3.new(0, -0.15, 0), Vector3.new(0, 0, 0), BLACK, "SmoothPlastic", { axis = "x" } },
+				{ "Caisson", "", "block", Vector3.new(1.6, 0.9, 1.4), Vector3.new(0, -0.95, 0), Vector3.new(0, 0, 0), COPIER, "SmoothPlastic" },
+				{ "Capot", "", "block", Vector3.new(1.65, 0.12, 1.45), Vector3.new(0, -0.44, 0), Vector3.new(0, 0, 0), COPIER_DARK, "SmoothPlastic" },
+				{ "Vitre", "", "block", Vector3.new(1.3, 0.04, 1.1), Vector3.new(0, -0.5, 0), Vector3.new(0, 0, 0), SCANLIGHT, "Neon" },
+				{ "Bac", "", "block", Vector3.new(1.2, 0.08, 0.9), Vector3.new(0, -1.1, -1.0), Vector3.new(-10, 0, 0), PAPER, "SmoothPlastic" },
+				{ "Voyant", "", "ball", Vector3.new(0.18, 0.18, 0.18), Vector3.new(0.6, -0.6, -0.72), Vector3.new(0, 0, 0), INK, "Neon" },
+			} },
+			ability = { reach = 1.2, text = "Portée +20 % (il envoie des copies partout)" },
+			moves = {
+				-- J : coup de bac à papier : il tend la machine devant lui, le bac en avant cogne le nez
+				P_neutral = {
+					label = "Coup de bac", startup = 0.09, active = 0.08, recovery = 0.16,
+					damage = 6, hitbox = box(4.5, 3, 2.8, 0.6), kbBase = 20, kbGrowth = 26, kbAngle = 25,
+					windup = { Root = { 2, -16, 0, 0, -0.12, 0.12 }, Waist = { 4, -20, 0 }, Neck = { -4, 14, 0 }, RS = { 50, 0, 25 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -20 }, LE = { 80, 0, 0 } },
+					strike = { Root = { -8, 16, 0, 0, -0.24, -0.3 }, Waist = { -10, 22, 0 }, Neck = { 0, -12, 0 }, RS = { 94, 0, 4 }, RE = { 6, 0, 0 }, RW = { -20, 0, 0 }, LS = { 10, 0, -30 }, LE = { 90, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					follow = { Root = { -10, 20, 0, 0, -0.26, -0.34 }, Waist = { -12, 26, 0 }, Neck = { 0, -14, 0 }, RS = { 96, 0, 6 }, RE = { 10, 0, 0 }, RW = { -30, 0, 0 }, LS = { 8, 0, -32 }, LE = { 90, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.32 } },
+					trail = "prop", hitText = "CLOC !",
+				},
+				-- →J : une copie éjectée à bout portant, qui claque sur le front comme une gifle en papier
+				P_side = {
+					label = "Copie éjectée", kind = "projectile", startup = 0.1, active = 0, recovery = 0.2,
+					damage = 7, kbBase = 22, kbGrowth = 34, kbAngle = 28,
+					projectile = { speed = 70, angle = 4, gravity = 25, lifetime = 0.3, size = 1.2, color = PAPER, aim = false, visual = SHEET },
+					windup = { Root = { 4, -24, 0, 0, -0.15, 0.2 }, Waist = { 6, -28, 0 }, Neck = { -6, 20, 0 }, RS = { 60, 0, 30 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -20 }, LE = { 90, 0, 0 } },
+					strike = { Root = { -10, 18, 0, 0, -0.28, -0.35 }, Waist = { -12, 24, 0 }, Neck = { 0, -14, 0 }, RS = { 92, 0, 0 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -30 }, LE = { 70, 0, 0 }, LW = { -30, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.35 } },
+					follow = { Root = { -12, 22, 0, 0, -0.3, -0.4 }, Waist = { -14, 28, 0 }, Neck = { 0, -16, 0 }, RS = { 94, 0, 2 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 26, 0, -32 }, LE = { 70, 0, 0 }, LW = { -40, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.38 } },
+					fx = { { "particles", tex = "spark", color = SCANLIGHT, dir = "front", at = "hand", time = 0.15, speed = 8, size = 0.4 } }, hitText = "FLAP !",
+				},
+				-- ↓J : accroupi, il rabat le capot de la machine sur les orteils de l'adversaire
+				P_down = {
+					label = "Capot claqué", startup = 0.1, active = 0.1, recovery = 0.2,
+					damage = 6, hitbox = box(5, 2, 3, -1.9), kbBase = 22, kbGrowth = 26, kbAngle = 72,
+					windup = { Root = { 6, 0, 0, 0, -0.6, 0.1 }, Waist = { 14, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 60, 0, 20 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 120, 0, -20 }, LE = { 90, 0, 0 }, LW = { 0, 0, 0 } },
+					strike = { Root = { 12, 0, 0, 0, -0.9, -0.2 }, Waist = { 24, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 44, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -10 }, LE = { 0, 0, 0 }, LW = { -60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					follow = { Root = { 14, 0, 0, 0, -0.9, -0.24 }, Waist = { 26, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 40, 0, 12 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 46, 0, -12 }, LE = { 0, 0, 0 }, LW = { -70, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.32 } },
+					trail = "leftHand", hitText = "CLAC !",
+				},
+				-- ↑J : il lève la machine au-dessus de lui, le scanner flashe vert dans les yeux de celui qui passe
+				P_up = {
+					label = "Flash du scanner", startup = 0.1, active = 0.12, recovery = 0.22,
+					damage = 7, hitbox = box(5, 5, 1.5, 3.2), kbBase = 24, kbGrowth = 36, kbAngle = 85,
+					windup = { Root = { 6, 0, 0, 0, -0.4, 0.1 }, Waist = { 10, 0, 0 }, Neck = { 8, 0, 0 }, RS = { 50, 0, 25 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -25 }, LE = { 110, 0, 0 } },
+					strike = { Root = { -8, 0, 0, 0, 0.15, -0.05 }, Waist = { -12, 0, 0 }, Neck = { -24, 0, 0 }, RS = { 178, 0, 8 }, RE = { 5, 0, 0 }, RW = { 170, 0, 0 }, LS = { 170, 0, -8 }, LE = { 5, 0, 0 }, FR = { 0, 0, 0, 0, 0.15, 0 }, FL = { 0, 0, 0, 0, 0.15, 0 } },
+					follow = { Root = { -10, 0, 0, 0, 0.18, -0.06 }, Waist = { -14, 0, 0 }, Neck = { -28, 0, 0 }, RS = { 182, 0, 10 }, RE = { 5, 0, 0 }, RW = { 175, 0, 0 }, LS = { 174, 0, -10 }, LE = { 5, 0, 0 }, FR = { 0, 0, 0, 0, 0.18, 0 }, FL = { 0, 0, 0, 0, 0.18, 0 } },
+					trail = "prop", fx = { { "burst", color = SCANLIGHT, size = 2.5, at = "above" }, { "screen", color = SCANLIGHT, alpha = 0.15 } }, text = "SCAN…", hitText = "FLASHÉ !",
+				},
+				-- J en l'air : la machine plaquée à plat devant lui, jambes repliées comme assis sur son bureau
+				P_air = {
+					label = "Copieuse aérienne", startup = 0.1, active = 0.12, recovery = 0.18,
+					damage = 8, hitbox = box(5, 4, 2.8, 0.2), kbBase = 24, kbGrowth = 40, kbAngle = 25,
+					windup = { Root = { 4, -22, 0 }, Waist = { 6, -26, 0 }, Neck = { 0, 18, 0 }, RS = { 60, 0, 40 }, RE = { 120, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -30 }, LE = { 80, 0, 0 }, RH = { 80, 0, 0 }, RK = { -90, 0, 0 }, LH = { 80, 0, 0 }, LK = { -90, 0, 0 } },
+					strike = { Root = { -8, 16, 0 }, Waist = { -8, 20, 0 }, Neck = { 0, -12, 0 }, RS = { 96, 0, -4 }, RE = { 0, 0, 0 }, RW = { 90, 0, 0 }, LS = { 20, 0, -40 }, LE = { 60, 0, 0 }, RH = { 85, 0, 0 }, RK = { -85, 0, 0 }, LH = { 85, 0, 0 }, LK = { -85, 0, 0 } },
+					follow = { Root = { -10, 20, 0 }, Waist = { -10, 24, 0 }, Neck = { 0, -14, 0 }, RS = { 98, 0, -8 }, RE = { 0, 0, 0 }, RW = { 90, 0, 0 }, LS = { 15, 0, -42 }, LE = { 60, 0, 0 }, RH = { 85, 0, 0 }, RK = { -85, 0, 0 }, LH = { 85, 0, 0 }, LK = { -85, 0, 0 } },
+					trail = "prop", hitText = "CHTONK !",
+				},
+				-- dash J : transfert de service : il court la machine serrée contre lui et bouscule tout sur son passage
+				P_dash = {
+					label = "Transfert de service", startup = 0.08, active = 0.15, recovery = 0.25,
+					damage = 8, hitbox = box(5.5, 4, 2.8, 0.6), kbBase = 28, kbGrowth = 50, kbAngle = 25, selfVelocity = Vector2.new(40, 0),
+					windup = { Root = { -8, 0, 0, 0, -0.25, 0.1 }, Waist = { -8, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 60, 0, 10 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -10 }, LE = { 110, 0, 0 } },
+					strike = { Root = { -22, 0, 0, 0, -0.35, -0.3 }, Waist = { -12, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 92, 0, 6 }, RE = { 8, 0, 0 }, RW = { 0, 0, 0 }, LS = { 92, 0, -6 }, LE = { 8, 0, 0 } },
+					follow = { Root = { -24, 0, 0, 0, -0.38, -0.35 }, Waist = { -14, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 94, 0, 8 }, RE = { 8, 0, 0 }, RW = { -8, 0, 0 }, LS = { 94, 0, -8 }, LE = { 8, 0, 0 } },
+					trail = "prop", fx = { { "particles", tex = "smoke", color = Color3.fromRGB(220, 220, 220), dir = "up", at = "feet", time = 0.3, speed = 5 } }, text = "MUTATION !", hitText = "TRANSFÉRÉ !",
+				},
+				-- K : il pose la machine et shoote dedans : elle recrache deux copies dans la figure de l'adversaire
+				K_neutral = {
+					label = "Coup de pied dans la machine", startup = 0.18, active = 0.12, recovery = 0.32,
+					damage = 11, hitbox = box(6, 3.5, 3.5, 0.3), kbBase = 30, kbGrowth = 68, kbAngle = 30,
+					windup = { Root = { 8, -8, 0, 0, -0.3, 0.15 }, Waist = { 8, -6, 0 }, Neck = { 8, 0, 0 }, RS = { 60, 0, 30 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -30 }, LE = { 70, 0, 0 }, RH = { -30, 0, 0 }, RK = { -70, 0, 0 } },
+					strike = { Root = { 12, 0, 0, 0, -0.15, 0.05 }, Waist = { 12, 0, 0 }, Neck = { 0, 0, 0 }, RS = { 20, 0, 50 }, RE = { 50, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -50 }, LE = { 30, 0, 0 }, RH = { 94, 0, 0 }, RK = { -4, 0, 0 }, RA = { 14, 0, 0 } },
+					follow = { Root = { 14, 0, 0, 0, -0.15, 0.1 }, Waist = { 14, 0, 0 }, Neck = { -2, 0, 0 }, RS = { 22, 0, 52 }, RE = { 50, 0, 0 }, RW = { 0, 0, 0 }, LS = { 64, 0, -54 }, LE = { 30, 0, 0 }, RH = { 100, 0, 0 }, RK = { 0, 0, 0 }, RA = { 18, 0, 0 } },
+					trail = "rightFoot", fx = { { "toss", shape = "flat", color = PAPER, size = 0.9, count = 2, speed = 18 } }, text = "SALETÉ DE MACHINE.", hitText = "BONK !",
+				},
+				-- →K : bourrage papier : une boule de feuilles froissées grosse comme un ballon part en grand revers de la machine
+				K_side = {
+					label = "Bourrage papier", startup = 0.18, active = 0.14, recovery = 0.32,
+					damage = 12, hitbox = box(6.5, 3.5, 3.5, 0.8), kbBase = 32, kbGrowth = 74, kbAngle = 30, selfVelocity = Vector2.new(16, 0),
+					windup = { Root = { 6, 40, 0, 0, -0.2, 0.2 }, Waist = { 8, 46, 0 }, Neck = { -4, -30, 0 }, RS = { 70, 0, 70 }, RE = { 50, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, 20 }, LE = { 70, 0, 0 } },
+					strike = { Root = { -8, -30, 0, 0, -0.3, -0.35 }, Waist = { -10, -36, 0 }, Neck = { 0, 24, 0 }, RS = { 92, 0, -30 }, RE = { 6, 0, 0 }, RW = { 0, 0, 0 }, LS = { 80, 0, -60 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { -10, -42, 0, 0, -0.32, -0.4 }, Waist = { -12, -48, 0 }, Neck = { 0, 30, 0 }, RS = { 96, 0, -40 }, RE = { 10, 0, 0 }, RW = { -10, 0, 0 }, LS = { 84, 0, -66 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+					trail = "prop", fx = { { "toss", shape = "ball", color = PAPER, size = 1.2, count = 3, speed = 16 }, { "symbols", symbols = { "BOURRAGE", "⚠️" }, count = 2, radius = 2, at = "front", color = INK } }, text = "BOURRAGE !", hitText = "FROISSÉ !",
+				},
+				-- ↓K : tiroir à toner : accroupi, il ouvre le tiroir du bas d'un coup de pied, il part dans les tibias
+				K_down = {
+					label = "Tiroir à toner", startup = 0.16, active = 0.12, recovery = 0.3,
+					damage = 11, hitbox = box(6, 2, 3.5, -1.8), kbBase = 28, kbGrowth = 60, kbAngle = 62,
+					windup = { Root = { -4, -16, 0, 0, -0.6, 0.15 }, Waist = { -10, -12, 0 }, Neck = { 10, 10, 0 }, RS = { 60, 0, 30 }, RE = { 80, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -35 }, LE = { 60, 0, 0 }, RH = { -20, 0, 10 }, RK = { -70, 0, 0 } },
+					strike = { Root = { -8, 14, 0, 0, -0.75, -0.15 }, Waist = { -16, 12, 0 }, Neck = { 12, -8, 0 }, RS = { 40, 0, 20 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -30 }, LE = { 50, 0, 0 }, RH = { 55, 0, 6 }, RK = { 0, 0, 0 }, RA = { 10, 0, 0 } },
+					follow = { Root = { -9, 18, 0, 0, -0.75, -0.18 }, Waist = { -17, 14, 0 }, Neck = { 12, -10, 0 }, RS = { 38, 0, 22 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 62, 0, -30 }, LE = { 50, 0, 0 }, RH = { 58, 0, 2 }, RK = { 0, 0, 0 }, RA = { 10, 0, 0 } },
+					trail = "rightFoot", fx = { { "particles", tex = "smoke", color = BLACK, dir = "front", at = "feet", time = 0.25, speed = 8, size = 0.5 } }, hitText = "TOC !",
+				},
+				-- ↑K : capot à la volée : il cabre la machine d'un coup de genou, le capot s'ouvre dans le menton
+				K_up = {
+					label = "Capot à la volée", startup = 0.17, active = 0.12, recovery = 0.3,
+					damage = 11, hitbox = box(4.5, 5.5, 1.5, 3.5), kbBase = 32, kbGrowth = 68, kbAngle = 88,
+					windup = { Root = { 8, 0, 0, 0, -0.35, 0.1 }, Waist = { 12, 0, 0 }, Neck = { 8, 0, 0 }, RS = { 50, 0, 20 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -30 }, LE = { 60, 0, 0 }, RH = { -20, 0, 0 }, RK = { -60, 0, 0 } },
+					strike = { Root = { -14, 0, 0, 0, 0.05, -0.1 }, Waist = { -18, 0, 0 }, Neck = { -22, 0, 0 }, RS = { 170, 0, 10 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -50 }, LE = { 30, 0, 0 }, RH = { 110, 0, 0 }, RK = { -120, 0, 0 }, RA = { -20, 0, 0 } },
+					follow = { Root = { -16, 0, 0, 0, 0.08, -0.12 }, Waist = { -20, 0, 0 }, Neck = { -26, 0, 0 }, RS = { 176, 0, 12 }, RE = { 10, 0, 0 }, RW = { -20, 0, 0 }, LS = { 34, 0, -52 }, LE = { 30, 0, 0 }, RH = { 116, 0, 0 }, RK = { -124, 0, 0 }, RA = { -20, 0, 0 } },
+					trail = "prop", fx = { { "burst", color = SCANLIGHT, size = 2, at = "above" } }, hitText = "CLANG !",
+				},
+				-- K en l'air : scan aérien : il tourne la machine vitre vers le bas, le flash vert assomme ce qui est dessous
+				K_air = {
+					label = "Scan aérien", startup = 0.15, active = 0.14, recovery = 0.24,
+					damage = 11, hitbox = box(5, 4, 2, -1.2), kbBase = 28, kbGrowth = 64, kbAngle = -50,
+					windup = { Root = { 12, 0, 0 }, Waist = { 16, 0, 0 }, Neck = { 8, 0, 0 }, RS = { 185, 0, 12 }, RE = { 50, 0, 0 }, RW = { 0, 0, 0 }, LS = { 175, 0, -12 }, LE = { 50, 0, 0 }, RH = { 60, 0, 0 }, RK = { -100, 0, 0 }, LH = { 70, 0, 0 }, LK = { -110, 0, 0 } },
+					strike = { Root = { -18, 0, 0 }, Waist = { -30, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 55, 0, 6 }, RE = { 0, 0, 0 }, RW = { 90, 0, 0 }, LS = { 55, 0, -6 }, LE = { 0, 0, 0 }, RH = { 20, 0, 0 }, RK = { -40, 0, 0 }, LH = { 30, 0, 0 }, LK = { -60, 0, 0 } },
+					follow = { Root = { -22, 0, 0 }, Waist = { -34, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 40, 0, 6 }, RE = { 6, 0, 0 }, RW = { 90, 0, 0 }, LS = { 40, 0, -6 }, LE = { 6, 0, 0 }, RH = { 15, 0, 0 }, RK = { -35, 0, 0 }, LH = { 25, 0, 0 }, LK = { -55, 0, 0 } },
+					trail = "prop", fx = { { "burst", color = SCANLIGHT, size = 2.5, at = "feet" } }, hitText = "SCANNÉ !",
+				},
+				-- dash K : glissade sur une rame de papier, à plat ventre, machine tendue devant
+				K_dash = {
+					label = "Glissade sur rame", startup = 0.1, active = 0.25, recovery = 0.32,
+					damage = 11, hitbox = box(6, 3, 3.5, -0.5), kbBase = 30, kbGrowth = 62, kbAngle = 45, selfVelocity = Vector2.new(50, 8),
+					windup = { Root = { -8, 0, 0, 0, -0.5, 0 }, Waist = { -14, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 120, 0, 25 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 120, 0, -25 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -75, 0, 0, 0, -1.3, -0.3 }, Waist = { -8, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 178, 0, 12 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 178, 0, -12 }, LE = { 0, 0, 0 }, RH = { -10, 0, 4 }, RK = { -15, 0, 0 }, LH = { -10, 0, -4 }, LK = { -25, 0, 0 } },
+					follow = { Root = { -80, 0, 0, 0, -1.35, -0.35 }, Waist = { -10, 0, 0 }, Neck = { 34, 0, 0 }, RS = { 180, 0, 16 }, RE = { 0, 0, 0 }, RW = { -8, 0, 0 }, LS = { 180, 0, -16 }, LE = { 0, 0, 0 }, RH = { -14, 0, 5 }, RK = { -30, 0, 0 }, LH = { -6, 0, -5 }, LK = { -15, 0, 0 } },
+					trail = "prop", fx = { { "toss", shape = "flat", color = PAPER, size = 0.8, count = 4, speed = 14 } }, text = "80 GRAMMES !", hitText = "ÉCRASÉ !",
+				},
+				-- L : rafale de copies : trois feuilles éjectées en éventail qui foncent sur l'adversaire
+				S_neutral = {
+					label = "Rafale de copies", kind = "projectile", startup = 0.22, active = 0, recovery = 0.45,
+					damage = 5, kbBase = 24, kbGrowth = 40, kbAngle = 30,
+					projectile = { speed = 80, angle = 0, gravity = 0, lifetime = 0.7, size = 1.3, color = PAPER, visual = SHEET, fan = { count = 3, from = -8, to = 8 } },
+					windup = { Root = { 6, -20, 0, 0, -0.2, 0.2 }, Waist = { 8, -26, 0 }, Neck = { 4, 16, 0 }, RS = { 60, 0, 30 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, 0 }, LE = { 110, 0, 0 }, LW = { 0, 0, 0 } },
+					strike = { Root = { -12, 18, 0, 0, -0.3, -0.35 }, Waist = { -14, 24, 0 }, Neck = { 0, -12, 0 }, RS = { 96, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -30 }, LE = { 60, 0, 0 }, LW = { -60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { -14, 22, 0, 0, -0.34, -0.42 }, Waist = { -18, 28, 0 }, Neck = { 0, -16, 0 }, RS = { 100, 0, 6 }, RE = { 6, 0, 0 }, RW = { -8, 0, 0 }, LS = { 36, 0, -34 }, LE = { 60, 0, 0 }, LW = { -70, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+					shake = true, fx = { { "burst", color = SCANLIGHT, size = 2, at = "hand" }, { "symbols", symbols = { "COPIE", "COPIE", "COPIE" }, count = 3, radius = 2.5, at = "front", color = INK } }, text = "EN TROIS EXEMPLAIRES !", hitText = "FLAP FLAP !",
+				},
+				-- →L : copie conforme : une seule grande feuille certifiée part en flèche, traverse le couloir et oblige à patienter
+				S_side = {
+					label = "Copie certifiée conforme", kind = "projectile", startup = 0.26, active = 0, recovery = 0.5,
+					damage = 15, kbBase = 32, kbGrowth = 60, kbAngle = 34,
+					projectile = { speed = 90, angle = 0, gravity = 0, lifetime = 0.8, size = 2.2, color = PAPER, pierce = true,
+						visual = { shape = "block", size = 2, color = PAPER, spin = 4, parts = { { "block", Vector3.new(1.8, 0.05, 2.4), Vector3.new(0, 0, 0), PAPER }, { "ball", Vector3.new(0.7, 0.08, 0.7), Vector3.new(0.4, 0.05, 0.6), INK }, { "block", Vector3.new(1.2, 0.06, 0.15), Vector3.new(0, 0.05, -0.6), BLACK } } } },
+					status = { name = "waiting", duration = 1.5 },
+					windup = { Root = { 8, -30, 0, 0, -0.2, 0.25 }, Waist = { 10, -34, 0 }, Neck = { 6, 20, 0 }, RS = { 40, 0, 20 }, RE = { 120, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -20 }, LE = { 110, 0, 0 } },
+					strike = { Root = { -14, 20, 0, 0, -0.32, -0.4 }, Waist = { -16, 26, 0 }, Neck = { -4, -14, 0 }, RS = { 94, 0, -4 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, 6 }, LE = { 5, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+					follow = { Root = { -16, 24, 0, 0, -0.36, -0.46 }, Waist = { -20, 30, 0 }, Neck = { -6, -16, 0 }, RS = { 98, 0, -6 }, RE = { 4, 0, 0 }, RW = { 6, 0, 0 }, LS = { 94, 0, 8 }, LE = { 5, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+					fx = { { "beam", color = SCANLIGHT, length = 12, width = 2, at = "hand" }, { "text", text = "CONFORME", color = INK } }, text = "CERTIFIÉ CONFORME.", hitText = "TAMPONNÉ À DISTANCE !",
+				},
+				-- ↓L : nuage de toner : il secoue la cartouche au-dessus du couloir, la poudre noire aveugle tout le monde
+				S_down = {
+					label = "Nuage de toner", startup = 0.22, active = 0.22, recovery = 0.45,
+					damage = 12, hitbox = box(14, 5, 7, 0.8), kbBase = 18, kbGrowth = 30, kbAngle = 40,
+					status = { name = "blinded", duration = 1.5 },
+					windup = { Root = { 4, -10, 0, 0, -0.3, 0.1 }, Waist = { -8, -10, 0 }, Neck = { -14, 0, 0 }, RS = { 120, 0, 20 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 120, 0, -20 }, LE = { 90, 0, 0 } },
+					strike = { Root = { -6, 10, 0, 0, -0.35, -0.15 }, Waist = { -18, 10, 0 }, Neck = { -20, 0, 0 }, RS = { 150, 0, 30 }, RE = { 40, 0, 0 }, RW = { 90, 0, 0 }, LS = { 150, 0, -30 }, LE = { 40, 0, 0 } },
+					follow = { Root = { -6, -10, 0, 0, -0.35, -0.15 }, Waist = { -18, -10, 0 }, Neck = { -20, 0, 0 }, RS = { 140, 0, 40 }, RE = { 50, 0, 0 }, RW = { 90, 0, 0 }, LS = { 140, 0, -40 }, LE = { 50, 0, 0 } },
+					wobble = true, trail = "prop", fx = { { "beam", color = BLACK, length = 14, width = 4, at = "head" }, { "particles", tex = "smoke", color = BLACK, dir = "front", at = "hand", time = 0.4, speed = 16, size = 1, rate = 80 }, { "symbols", symbols = { "☁️", "💨" }, count = 4, radius = 3, at = "front", color = GREY } },
+					text = "RECHARGE DE TONER…", hitText = "NOIRCI !",
+				},
+				-- ↑L : bourrage explosif : la machine bourre, explose sous lui en pluie de feuilles et le propulse en diagonale
+				S_up = {
+					label = "Bourrage explosif", startup = 0.12, active = 0.3, recovery = 0.4,
+					damage = 13, hitbox = box(10, 11, 3, 4), kbBase = 32, kbGrowth = 50, kbAngle = 74, selfVelocity = Vector2.new(42, 80),
+					windup = { Root = { 4, 0, 0, 0, -0.7, 0 }, Waist = { -12, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 40, 0, 20 }, RE = { 80, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -20 }, LE = { 80, 0, 0 } },
+					strike = { Root = { -40, 0, 0, 0, 0.4, -0.2 }, Waist = { -6, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 168, 0, 10 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, -60 }, LE = { 20, 0, 0 }, RH = { -25, 0, 5 }, RK = { -30, 0, 0 }, LH = { -15, 0, -5 }, LK = { -50, 0, 0 } },
+					follow = { Root = { -44, 0, 0, 0, 0.45, -0.25 }, Waist = { -8, 0, 0 }, Neck = { 32, 0, 0 }, RS = { 172, 0, 12 }, RE = { 10, 0, 0 }, RW = { -8, 0, 0 }, LS = { 156, 0, -64 }, LE = { 20, 0, 0 }, RH = { -30, 0, 6 }, RK = { -35, 0, 0 }, LH = { -20, 0, -6 }, LK = { -55, 0, 0 } },
+					shake = true, trail = "prop", fx = { { "burst", color = PAPER, size = 3.5, at = "feet" }, { "toss", shape = "flat", color = PAPER, size = 0.8, count = 8, speed = 18 }, { "ring", color = SCANLIGHT, radius = 5, at = "feet" } },
+					text = "BOURRAGE !!", hitText = "PROPULSÉ !",
+				},
+				-- L en l'air : rames lâchées : il renverse le bac, les feuilles tombent en pluie sur l'adversaire
+				S_air = {
+					label = "Rames lâchées", kind = "projectile", startup = 0.15, active = 0, recovery = 0.4,
+					damage = 6, kbBase = 24, kbGrowth = 45, kbAngle = -40,
+					projectile = { speed = 60, angle = -70, gravity = 40, lifetime = 0.7, size = 1.2, color = PAPER, visual = SHEET, rain = { count = 5, spread = 6 } },
+					windup = { Root = { 8, 0, 0 }, Waist = { 12, 0, 0 }, RS = { 170, 0, 20 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 170, 0, -20 }, LE = { 60, 0, 0 }, RH = { 40, 0, 0 }, RK = { -80, 0, 0 }, LH = { 50, 0, 0 }, LK = { -90, 0, 0 } },
+					strike = { Root = { -12, 0, 0 }, Waist = { -26, 0, 0 }, Neck = { 28, 0, 0 }, RS = { 30, 0, 10 }, RE = { 0, 0, 0 }, RW = { 170, 0, 0 }, LS = { 30, 0, -10 }, LE = { 0, 0, 0 }, LW = { -40, 0, 0 }, RH = { 20, 0, 0 }, RK = { -40, 0, 0 }, LH = { 30, 0, 0 }, LK = { -60, 0, 0 } },
+					follow = { Root = { -16, 0, 0 }, Waist = { -30, 0, 0 }, Neck = { 32, 0, 0 }, RS = { 26, 0, 12 }, RE = { 4, 0, 0 }, RW = { 175, 0, 0 }, LS = { 26, 0, -12 }, LE = { 4, 0, 0 }, LW = { -50, 0, 0 }, RH = { 16, 0, 0 }, RK = { -36, 0, 0 }, LH = { 26, 0, 0 }, LK = { -56, 0, 0 } },
+					fx = { { "burst", color = PAPER, size = 2, at = "feet" } }, text = "500 FEUILLES !", hitText = "ENSEVELI !",
+				},
+				-- Y : mille exemplaires : il appuie sur « 1000 » et la machine crache un éventail de copies qui filent toutes sur l'adversaire
+				SUPER = {
+					label = "Mille exemplaires !", kind = "projectile", startup = 0.4, active = 0, recovery = 0.6,
+					damage = 4, kbBase = 25, kbGrowth = 40, kbAngle = 40,
+					projectile = { speed = 75, angle = 0, gravity = 0, lifetime = 1.0, size = 1.4, color = PAPER, visual = SHEET, fan = { count = 8, from = -20, to = 40 } },
+					status = { name = "waiting", duration = 2 },
+					windup = { Root = { 0, 0, 0, 0, -0.2, 0.1 }, Waist = { 4, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 70, 0, 20 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, -10 }, LE = { 110, 0, 0 }, LW = { -60, 0, 0 } },
+					strike = { Root = { -8, 0, 0, 0, -0.3, -0.3 }, Waist = { -12, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 96, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 95, 0, -5 }, LE = { 10, 0, 0 }, LW = { -70, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.35 } },
+					follow = { Root = { -10, 0, 0, 0, -0.32, -0.34 }, Waist = { -14, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 98, 0, 2 }, RE = { 4, 0, 0 }, RW = { -8, 0, 0 }, LS = { 92, 0, -8 }, LE = { 14, 0, 0 }, LW = { -70, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.38 } },
+					shake = true, windupFx = { "super", { "symbols", symbols = { "1000", "📄", "📄" }, count = 6, radius = 3, color = INK } }, fx = { { "burst", color = SCANLIGHT, size = 3, at = "hand" }, { "screen", color = SCANLIGHT, alpha = 0.2 } },
+					text = "MILLE EXEMPLAIRES !", hitText = "FLAP FLAP FLAP !",
+				},
+				-- →Y : la copie géante : le bac s'élargit et crache une affiche A0 qui traverse tout le couloir comme un drap de papier
+				SUPER_side = {
+					label = "Copie géante !", kind = "projectile", startup = 0.4, active = 0, recovery = 0.7,
+					damage = 26, kbBase = 50, kbGrowth = 100, kbAngle = 30,
+					projectile = { speed = 90, angle = 0, gravity = 0, lifetime = 0.9, size = 3.4, color = PAPER, pierce = true,
+						visual = { shape = "block", size = 3, color = PAPER, spin = 3, parts = { { "block", Vector3.new(3.2, 0.06, 3.6), Vector3.new(0, 0, 0), PAPER }, { "ball", Vector3.new(1.4, 0.1, 1.4), Vector3.new(0.6, 0.06, 0.8), INK }, { "block", Vector3.new(2, 0.08, 0.3), Vector3.new(0, 0.06, -1), BLACK } } } },
+					windup = { Root = { 10, -30, 0, 0, -0.5, 0.3 }, Waist = { 14, -34, 0 }, Neck = { 10, 20, 0 }, RS = { 30, 0, 30 }, RE = { 120, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -30 }, LE = { 120, 0, 0 } },
+					strike = { Root = { -18, 22, 0, 0, -0.3, -0.5 }, Waist = { -20, 28, 0 }, Neck = { -6, -16, 0 }, RS = { 96, 0, -2 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 92, 0, 4 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+					follow = { Root = { -20, 26, 0, 0, -0.34, -0.56 }, Waist = { -24, 32, 0 }, Neck = { -8, -18, 0 }, RS = { 100, 0, -4 }, RE = { 4, 0, 0 }, RW = { 6, 0, 0 }, LS = { 96, 0, 6 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.52 } },
+					shake = true, windupFx = { "super", { "symbols", symbols = { "A0", "📄" }, count = 6, radius = 3, color = INK } }, fx = { { "burst", color = PAPER, size = 3.5, at = "hand" }, { "beam", color = SCANLIGHT, length = 14, width = 4, at = "hand" }, { "shake", amount = 0.4 } },
+					text = "FORMAT A0 !", hitText = "APLATI SOUS L'AFFICHE !",
+				},
+				-- ↑Y : la tour de copies : la machine crache sans s'arrêter, la pile monte sous ses pieds et emporte tout le couloir au plafond
+				SUPER_up = {
+					label = "Tour de copies !", startup = 0.35, active = 0.3, recovery = 0.7,
+					damage = 24, hitbox = box(16, 12, 8, 5), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3, selfVelocity = Vector2.new(0, 55),
+					windup = { Root = { -10, 0, 0, 0, -0.9, 0 }, Waist = { -30, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 60, 0, 10 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -10 }, LE = { 110, 0, 0 } },
+					strike = { Root = { 6, 0, 0, 0, 0.5, 0 }, Waist = { 18, 0, 0 }, Neck = { 50, 0, 0 }, RS = { 60, 0, 60 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -60 }, LE = { 20, 0, 0 }, RH = { 40, 0, 10 }, RK = { -90, 0, 0 }, LH = { 20, 0, -15 }, LK = { -60, 0, 0 } },
+					follow = { Root = { 10, 0, 0, 0, 0.55, 0 }, Waist = { 24, 0, 0 }, Neck = { 56, 0, 0 }, RS = { 70, 0, 70 }, RE = { 20, 0, 0 }, RW = { -10, 0, 0 }, LS = { 70, 0, -70 }, LE = { 20, 0, 0 }, RH = { 60, 0, 20 }, RK = { -110, 0, 0 }, LH = { 10, 0, -25 }, LK = { -40, 0, 0 } },
+					hold = 0.2, shake = true, windupFx = { "super", { "particles", tex = "spark", color = SCANLIGHT, dir = "all", at = "feet", time = 0.25, speed = 8 } },
+					fx = { { "pillar", color = PAPER, height = 24, width = 4, at = "front" }, { "rain", shape = "flat", color = PAPER, count = 16, radius = 6, size = 0.9 }, { "burst", color = SCANLIGHT, size = 4, at = "above" }, { "ring", color = SCANLIGHT, radius = 6, at = "feet" } },
+					text = "ENCORE UNE COPIE !", hitText = "EMPILÉ AU PLAFOND !",
+				},
+				-- ↓Y : le tapis de papier : il vide tous les bacs sur le sol du couloir, un tapis de feuilles glissantes où tout le monde dérape
+				SUPER_down = {
+					label = "Tapis de papier !", startup = 0.35, active = 0.3, recovery = 0.7,
+					damage = 22, hitbox = box(16, 4, 8, -0.5), kbBase = 44, kbGrowth = 90, kbAngle = 60,
+					status = { name = "slippery", duration = 2.5 },
+					windup = { Root = { 12, 0, 0, 0, -0.5, 0.2 }, Waist = { 20, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 150, 0, 30 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, -30 }, LE = { 60, 0, 0 } },
+					strike = { Root = { 18, 0, 0, 0, -1.0, -0.3 }, Waist = { 28, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 40, 0, 60 }, RE = { 0, 0, 0 }, RW = { 170, 0, 0 }, LS = { 40, 0, -60 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { 20, 0, 0, 0, -1.0, -0.34 }, Waist = { 30, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 30, 0, 70 }, RE = { 0, 0, 0 }, RW = { 175, 0, 0 }, LS = { 30, 0, -70 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+					hold = 0.15, windupFx = { "super" }, fx = { { "puddle", color = PAPER, width = 16 }, { "toss", shape = "flat", color = PAPER, size = 1.2, count = 10, speed = 24 }, { "beam", color = PAPER, length = 16, width = 4, at = "feet" }, { "shake", amount = 0.3 } },
+					text = "TOUT LE BAC !", hitText = "GLISSÉ SUR LA PAPERASSE !",
+				},
+			},
+			links = {
+				P_neutral = { P = "P_side", K = "K_neutral", S = "S_neutral" },
+				P_side = { P = "P_up", K = "K_side", S = "S_side" },
+				P_down = { P = "P_up", K = "K_down", S = "S_down" },
+				K_neutral = { P = "P_neutral", K = "K_side", S = "S_side" },
+				K_side = { P = "P_up", K = "K_up", S = "S_neutral" },
+				P_dash = { P = "P_side", K = "K_side", S = "S_side" },
+				K_dash = { P = "P_up", S = "S_up" },
+			},
+		},
+		{ id = "machine_a_cafe", name = "Machine à café du couloir", icon = "☕",
+			prop = { name = "PropMachine", hand = "Right", pieces = {
+				{ "Poignee", "", "cyl", Vector3.new(0.7, 0.18, 0.18), Vector3.new(0, -0.15, 0), Vector3.new(0, 0, 0), BLACK, "SmoothPlastic", { axis = "x" } },
+				{ "Corps", "", "block", Vector3.new(1.4, 2.2, 1.2), Vector3.new(0, -1.5, 0), Vector3.new(0, 0, 0), COPIER_DARK, "Metal" },
+				{ "Facade", "", "block", Vector3.new(1.2, 1.0, 0.1), Vector3.new(0, -1.0, -0.62), Vector3.new(0, 0, 0), INK, "SmoothPlastic" },
+				{ "Bouton", "", "ball", Vector3.new(0.25, 0.25, 0.15), Vector3.new(0.35, -0.8, -0.7), Vector3.new(0, 0, 0), SCANLIGHT, "Neon" },
+				{ "Bec", "", "cyl", Vector3.new(0.5, 0.14, 0.14), Vector3.new(0, -1.9, -0.75), Vector3.new(0, 0, 0), SILVER_B, "Metal" },
+				{ "Gobelet", "", "cyl", Vector3.new(0.5, 0.4, 0.4), Vector3.new(0, -2.35, -0.75), Vector3.new(0, 0, 0), CUP, "Plastic" },
+			} },
+			ability = { heal = 0.3, text = "30 % des dégâts le requinquent (c'est l'heure du café)" },
+			moves = {
+				-- J : coup de machine : il tend la lourde machine devant lui à bout de bras, lentement mais sûrement
+				P_neutral = {
+					label = "Coup de machine", startup = 0.12, active = 0.1, recovery = 0.22,
+					damage = 8, hitbox = box(4.5, 3.5, 2.8, 0.5), kbBase = 24, kbGrowth = 30, kbAngle = 28,
+					windup = { Root = { 4, -16, 0, 0, -0.15, 0.15 }, Waist = { 6, -20, 0 }, Neck = { -6, 12, 0 }, RS = { 60, 0, 10 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -10 }, LE = { 110, 0, 0 }, LW = { 0, 0, 0 } },
+					strike = { Root = { -10, 14, 0, 0, -0.28, -0.3 }, Waist = { -12, 20, 0 }, Neck = { 0, -10, 0 }, RS = { 96, 0, 4 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 92, 0, -6 }, LE = { 10, 0, 0 }, LW = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.35 } },
+					follow = { Root = { -12, 18, 0, 0, -0.3, -0.36 }, Waist = { -14, 24, 0 }, Neck = { 0, -12, 0 }, RS = { 100, 0, 6 }, RE = { 14, 0, 0 }, RW = { -10, 0, 0 }, LS = { 96, 0, -8 }, LE = { 14, 0, 0 }, LW = { -10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.38 } },
+					trail = "prop", text = "*SOUPIR*", hitText = "BOUM.",
+				},
+				-- →J : giclée de café : il appuie sur le bouton, le bec crache un jet brûlant dans la figure
+				P_side = {
+					label = "Giclée de café", startup = 0.1, active = 0.12, recovery = 0.22,
+					damage = 8, hitbox = box(6, 3, 3.5, 0.8), kbBase = 24, kbGrowth = 38, kbAngle = 22,
+					windup = { Root = { 4, -10, 0, 0, -0.15, 0.1 }, Waist = { 6, -12, 0 }, Neck = { 0, 8, 0 }, RS = { 70, 0, 20 }, RE = { 100, 0, 0 }, RW = { 60, 0, 0 }, LS = { 60, 0, -30 }, LE = { 110, 0, 0 }, LW = { 0, 0, 0 } },
+					strike = { Root = { -8, 8, 0, 0, -0.25, -0.3 }, Waist = { -10, 10, 0 }, Neck = { 0, -6, 0 }, RS = { 90, 0, 0 }, RE = { 20, 0, 0 }, RW = { 80, 0, 0 }, LS = { 70, 0, -20 }, LE = { 90, 0, 0 }, LW = { -40, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.35 } },
+					follow = { Root = { -10, 10, 0, 0, -0.28, -0.34 }, Waist = { -12, 12, 0 }, Neck = { 0, -8, 0 }, RS = { 92, 0, 0 }, RE = { 20, 0, 0 }, RW = { 82, 0, 0 }, LS = { 72, 0, -22 }, LE = { 90, 0, 0 }, LW = { -40, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.38 } },
+					fx = { { "particles", tex = "smoke", color = COFFEE, dir = "front", at = "hand", time = 0.25, speed = 16, size = 0.5, rate = 70 }, { "burst", color = COFFEE, size = 1.5, at = "front" } }, text = "PSCHHH…", hitText = "ÉBOUILLANTÉ !",
+				},
+				-- ↓J : accroupi, il pose la machine de tout son poids sur les orteils, puis se redresse en soufflant
+				P_down = {
+					label = "Machine sur les orteils", startup = 0.12, active = 0.1, recovery = 0.26,
+					damage = 8, hitbox = box(5, 2, 3, -1.8), kbBase = 26, kbGrowth = 30, kbAngle = 75,
+					windup = { Root = { 8, 0, 0, 0, -0.5, 0.1 }, Waist = { 14, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 140, 0, 15 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -30 }, LE = { 80, 0, 0 } },
+					strike = { Root = { 16, 0, 0, 0, -0.95, -0.2 }, Waist = { 26, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 40, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -30 }, LE = { 80, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					follow = { Root = { 18, 0, 0, 0, -0.95, -0.24 }, Waist = { 28, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 36, 0, 12 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 44, 0, -32 }, LE = { 80, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.32 } },
+					trail = "prop", fx = { "dust" }, text = "OUF.", hitText = "ÉCRASÉ !",
+				},
+				-- ↑J : jet de vapeur : il retourne la machine, la buse de vapeur siffle vers le plafond et soulève ce qui passe
+				P_up = {
+					label = "Jet de vapeur", startup = 0.1, active = 0.12, recovery = 0.22,
+					damage = 8, hitbox = box(4.5, 5.5, 1.5, 3.2), kbBase = 26, kbGrowth = 40, kbAngle = 86,
+					windup = { Root = { 8, 0, 0, 0, -0.3, 0.1 }, Waist = { 12, 0, 0 }, Neck = { 8, 0, 0 }, RS = { 40, 0, 20 }, RE = { 120, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -20 }, LE = { 110, 0, 0 } },
+					strike = { Root = { -10, 0, 0, 0, 0.1, -0.1 }, Waist = { -14, 0, 0 }, Neck = { -24, 0, 0 }, RS = { 170, 0, 10 }, RE = { 10, 0, 0 }, RW = { 170, 0, 0 }, LS = { 60, 0, -30 }, LE = { 80, 0, 0 } },
+					follow = { Root = { -12, 0, 0, 0, 0.12, -0.12 }, Waist = { -16, 0, 0 }, Neck = { -28, 0, 0 }, RS = { 178, 0, 12 }, RE = { 10, 0, 0 }, RW = { 175, 0, 0 }, LS = { 64, 0, -32 }, LE = { 80, 0, 0 } },
+					fx = { { "particles", tex = "smoke", color = Color3.fromRGB(240, 240, 240), dir = "up", at = "hand", time = 0.3, speed = 16, size = 0.7, rate = 70 } }, text = "PSSSSHT !", hitText = "VAPORISÉ !",
+				},
+				-- J en l'air : la machine serrée contre le ventre, il la pousse d'un coup sous lui
+				P_air = {
+					label = "Machine plongeante", startup = 0.1, active = 0.12, recovery = 0.18,
+					damage = 9, hitbox = box(4.5, 4, 1.5, -1.4), kbBase = 22, kbGrowth = 38, kbAngle = -45,
+					windup = { Root = { 10, 0, 0 }, Waist = { 14, 0, 0 }, RS = { 60, 0, 10 }, RE = { 120, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -10 }, LE = { 120, 0, 0 }, RH = { 50, 0, 0 }, RK = { -90, 0, 0 }, LH = { 60, 0, 0 }, LK = { -100, 0, 0 } },
+					strike = { Root = { -14, 0, 0 }, Waist = { -28, 0, 0 }, Neck = { 18, 0, 0 }, RS = { 40, 0, 5 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -5 }, LE = { 0, 0, 0 }, RH = { 10, 0, 0 }, RK = { -30, 0, 0 }, LH = { 30, 0, 0 }, LK = { -60, 0, 0 } },
+					follow = { Root = { -18, 0, 0 }, Waist = { -34, 0, 0 }, Neck = { 22, 0, 0 }, RS = { 24, 0, 5 }, RE = { 6, 0, 0 }, RW = { -20, 0, 0 }, LS = { 24, 0, -5 }, LE = { 6, 0, 0 }, RH = { 5, 0, 0 }, RK = { -25, 0, 0 }, LH = { 25, 0, 0 }, LK = { -55, 0, 0 } },
+					trail = "prop", hitText = "BLAM !",
+				},
+				-- dash J : le chariot de la pause : il pousse la machine devant lui comme un chariot, tête baissée vers la salle de pause
+				P_dash = {
+					label = "Chariot de pause", startup = 0.1, active = 0.16, recovery = 0.28,
+					damage = 9, hitbox = box(5.5, 4, 3, 0.6), kbBase = 30, kbGrowth = 54, kbAngle = 24, selfVelocity = Vector2.new(38, 0),
+					windup = { Root = { -8, 0, 0, 0, -0.3, 0.1 }, Waist = { -8, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 60, 0, 15 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -15 }, LE = { 100, 0, 0 } },
+					strike = { Root = { -24, 0, 0, 0, -0.42, -0.3 }, Waist = { -14, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 94, 0, 6 }, RE = { 6, 0, 0 }, RW = { 0, 0, 0 }, LS = { 94, 0, -6 }, LE = { 6, 0, 0 } },
+					follow = { Root = { -26, 0, 0, 0, -0.44, -0.35 }, Waist = { -16, 0, 0 }, Neck = { 18, 0, 0 }, RS = { 96, 0, 8 }, RE = { 6, 0, 0 }, RW = { -8, 0, 0 }, LS = { 96, 0, -8 }, LE = { 6, 0, 0 } },
+					trail = "prop", fx = { { "particles", tex = "smoke", color = Color3.fromRGB(220, 220, 220), dir = "up", at = "feet", time = 0.3, speed = 5 } }, text = "C'EST LA PAUSE.", hitText = "RENVERSÉ !",
+				},
+				-- K : coup de pied dans la machine qui ne rend pas la monnaie, elle crache un gobelet
+				K_neutral = {
+					label = "Rends la monnaie !", startup = 0.2, active = 0.12, recovery = 0.34,
+					damage = 13, hitbox = box(6, 3.5, 3.5, 0.2), kbBase = 32, kbGrowth = 74, kbAngle = 30,
+					windup = { Root = { 8, -8, 0, 0, -0.3, 0.15 }, Waist = { 8, -6, 0 }, Neck = { 8, 0, 0 }, RS = { 60, 0, 30 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -30 }, LE = { 70, 0, 0 }, RH = { -30, 0, 0 }, RK = { -70, 0, 0 } },
+					strike = { Root = { 12, 0, 0, 0, -0.15, 0.05 }, Waist = { 12, 0, 0 }, Neck = { 0, 0, 0 }, RS = { 20, 0, 50 }, RE = { 50, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -50 }, LE = { 30, 0, 0 }, RH = { 94, 0, 0 }, RK = { -4, 0, 0 }, RA = { 14, 0, 0 } },
+					follow = { Root = { 14, 0, 0, 0, -0.15, 0.1 }, Waist = { 14, 0, 0 }, Neck = { -2, 0, 0 }, RS = { 22, 0, 52 }, RE = { 50, 0, 0 }, RW = { 0, 0, 0 }, LS = { 64, 0, -54 }, LE = { 30, 0, 0 }, RH = { 100, 0, 0 }, RK = { 0, 0, 0 }, RA = { 18, 0, 0 } },
+					trail = "rightFoot", fx = { { "toss", shape = "cyl", color = CUP, size = 0.5, count = 2, speed = 16 } }, text = "RENDS LA MONNAIE !", hitText = "BONK !",
+				},
+				-- →K : balançoire à café : grand revers de la machine tenue à deux mains, il pivote tout le corps
+				K_side = {
+					label = "Balançoire à café", startup = 0.2, active = 0.14, recovery = 0.36,
+					damage = 14, hitbox = box(6.5, 3.5, 3.5, 0.8), kbBase = 34, kbGrowth = 80, kbAngle = 30, selfVelocity = Vector2.new(14, 0),
+					windup = { Root = { 6, 44, 0, 0, -0.25, 0.2 }, Waist = { 8, 50, 0 }, Neck = { -4, -32, 0 }, RS = { 70, 0, 70 }, RE = { 50, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, 20 }, LE = { 50, 0, 0 } },
+					strike = { Root = { -8, -30, 0, 0, -0.3, -0.35 }, Waist = { -10, -36, 0 }, Neck = { 0, 24, 0 }, RS = { 92, 0, -30 }, RE = { 6, 0, 0 }, RW = { 0, 0, 0 }, LS = { 92, 0, -60 }, LE = { 6, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { -10, -44, 0, 0, -0.32, -0.4 }, Waist = { -12, -50, 0 }, Neck = { 0, 30, 0 }, RS = { 96, 0, -40 }, RE = { 10, 0, 0 }, RW = { -10, 0, 0 }, LS = { 96, 0, -66 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+					trail = "prop", fx = { { "toss", shape = "ball", color = COFFEE, size = 0.5, count = 4, speed = 14 } }, hitText = "BAOUM !",
+				},
+				-- ↓K : marc de café : accroupi, il vide le bac à marc devant lui d'un coup de pied, boue noire dans les tibias
+				K_down = {
+					label = "Marc de café", startup = 0.17, active = 0.14, recovery = 0.32,
+					damage = 12, hitbox = box(7, 2, 3.5, -1.6), kbBase = 30, kbGrowth = 62, kbAngle = 70,
+					windup = { Root = { -4, -16, 0, 0, -0.6, 0.15 }, Waist = { -10, -12, 0 }, Neck = { 10, 10, 0 }, RS = { 60, 0, 30 }, RE = { 80, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -35 }, LE = { 60, 0, 0 }, RH = { -20, 0, 10 }, RK = { -70, 0, 0 } },
+					strike = { Root = { -8, 14, 0, 0, -0.75, -0.15 }, Waist = { -16, 12, 0 }, Neck = { 12, -8, 0 }, RS = { 40, 0, 20 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -30 }, LE = { 50, 0, 0 }, RH = { 55, 0, 6 }, RK = { 0, 0, 0 }, RA = { 10, 0, 0 } },
+					follow = { Root = { -9, 18, 0, 0, -0.75, -0.18 }, Waist = { -17, 14, 0 }, Neck = { 12, -10, 0 }, RS = { 38, 0, 22 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 62, 0, -30 }, LE = { 50, 0, 0 }, RH = { 58, 0, 2 }, RK = { 0, 0, 0 }, RA = { 10, 0, 0 } },
+					trail = "rightFoot", fx = { { "puddle", color = COFFEE, width = 5 }, { "particles", tex = "smoke", color = COFFEE, dir = "front", at = "feet", time = 0.25, speed = 8, size = 0.5 } }, hitText = "SPLOTCH !",
+				},
+				-- ↑K : percolateur : il cabre la machine d'un coup de genou, le percolateur siffle et soulève l'adversaire
+				K_up = {
+					label = "Percolateur", startup = 0.18, active = 0.12, recovery = 0.32,
+					damage = 12, hitbox = box(4.5, 5.5, 1.5, 3.5), kbBase = 32, kbGrowth = 70, kbAngle = 88,
+					windup = { Root = { 8, 0, 0, 0, -0.35, 0.1 }, Waist = { 12, 0, 0 }, Neck = { 8, 0, 0 }, RS = { 50, 0, 20 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -20 }, LE = { 100, 0, 0 }, RH = { -20, 0, 0 }, RK = { -60, 0, 0 } },
+					strike = { Root = { -14, 0, 0, 0, 0.05, -0.1 }, Waist = { -18, 0, 0 }, Neck = { -22, 0, 0 }, RS = { 170, 0, 10 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 160, 0, -10 }, LE = { 10, 0, 0 }, RH = { 110, 0, 0 }, RK = { -120, 0, 0 }, RA = { -20, 0, 0 } },
+					follow = { Root = { -16, 0, 0, 0, 0.08, -0.12 }, Waist = { -20, 0, 0 }, Neck = { -26, 0, 0 }, RS = { 176, 0, 12 }, RE = { 10, 0, 0 }, RW = { -20, 0, 0 }, LS = { 166, 0, -12 }, LE = { 10, 0, 0 }, RH = { 116, 0, 0 }, RK = { -124, 0, 0 }, RA = { -20, 0, 0 } },
+					trail = "prop", fx = { { "particles", tex = "smoke", color = Color3.fromRGB(240, 240, 240), dir = "up", at = "hand", time = 0.3, speed = 14, size = 0.6 } }, text = "PSSSHT !", hitText = "PERCOLÉ !",
+				},
+				-- K en l'air : gobelet écrasé : il abat la machine sous lui comme une enclume, jambes repliées
+				K_air = {
+					label = "Enclume à café", startup = 0.16, active = 0.14, recovery = 0.26,
+					damage = 13, hitbox = box(5, 4, 2, -1.2), kbBase = 30, kbGrowth = 70, kbAngle = -55,
+					windup = { Root = { 12, 0, 0 }, Waist = { 16, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 190, 0, 12 }, RE = { 50, 0, 0 }, RW = { 0, 0, 0 }, LS = { 180, 0, -12 }, LE = { 50, 0, 0 }, RH = { 60, 0, 0 }, RK = { -100, 0, 0 }, LH = { 70, 0, 0 }, LK = { -110, 0, 0 } },
+					strike = { Root = { -20, 0, 0 }, Waist = { -32, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 60, 0, 6 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -6 }, LE = { 0, 0, 0 }, RH = { 20, 0, 0 }, RK = { -40, 0, 0 }, LH = { 30, 0, 0 }, LK = { -60, 0, 0 } },
+					follow = { Root = { -24, 0, 0 }, Waist = { -36, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 40, 0, 6 }, RE = { 6, 0, 0 }, RW = { -20, 0, 0 }, LS = { 40, 0, -6 }, LE = { 6, 0, 0 }, RH = { 15, 0, 0 }, RK = { -35, 0, 0 }, LH = { 25, 0, 0 }, LK = { -55, 0, 0 } },
+					trail = "prop", hitText = "BADABOUM !",
+				},
+				-- dash K : glissade de pause : il glisse sur une flaque de café, assis, la machine sur les genoux, pieds en avant
+				K_dash = {
+					label = "Glissade sur le café", startup = 0.1, active = 0.26, recovery = 0.32,
+					damage = 12, hitbox = box(6, 3, 3, -0.8), kbBase = 30, kbGrowth = 64, kbAngle = 38, selfVelocity = Vector2.new(50, 8),
+					windup = { Root = { -8, 0, 0, 0, -0.4, 0 }, Waist = { -10, 0, 0 }, RS = { 60, 0, 10 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -10 }, LE = { 100, 0, 0 } },
+					strike = { Root = { 20, 0, 0, 0, -0.7, 0.2 }, Waist = { 10, 0, 0 }, RS = { 60, 0, 10 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -10 }, LE = { 100, 0, 0 }, RH = { 85, 0, 0 }, RK = { 0, 0, 0 }, RA = { 10, 0, 0 }, LH = { 80, 0, 0 }, LK = { -10, 0, 0 } },
+					follow = { Root = { 24, 0, 0, 0, -0.72, 0.24 }, Waist = { 12, 0, 0 }, RS = { 62, 0, 12 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 62, 0, -12 }, LE = { 100, 0, 0 }, RH = { 90, 0, 0 }, RK = { 0, 0, 0 }, RA = { 14, 0, 0 }, LH = { 85, 0, 0 }, LK = { -10, 0, 0 } },
+					trail = "bothFeet", fx = { { "puddle", color = COFFEE, width = 6 } }, text = "GRIIIN…", hitText = "DÉRAPÉ !",
+				},
+				-- L : jet de café brûlant : le bec crache une giclée longue comme le couloir, droit sur l'adversaire (brûle)
+				S_neutral = {
+					label = "Jet de café brûlant", kind = "projectile", startup = 0.24, active = 0, recovery = 0.45,
+					damage = 13, kbBase = 26, kbGrowth = 45, kbAngle = 30,
+					projectile = { speed = 80, angle = 0, gravity = 0, lifetime = 0.7, size = 1.8, color = COFFEE, visual = "water", hits = 2 },
+					status = { name = "burning", duration = 1.5 },
+					windup = { Root = { 6, -10, 0, 0, -0.2, 0.15 }, Waist = { 8, -12, 0 }, Neck = { 4, 8, 0 }, RS = { 60, 0, 20 }, RE = { 110, 0, 0 }, RW = { 60, 0, 0 }, LS = { 60, 0, -30 }, LE = { 110, 0, 0 }, LW = { 0, 0, 0 } },
+					strike = { Root = { -12, 10, 0, 0, -0.3, -0.35 }, Waist = { -14, 12, 0 }, Neck = { 0, -8, 0 }, RS = { 94, 0, 0 }, RE = { 10, 0, 0 }, RW = { 90, 0, 0 }, LS = { 80, 0, -20 }, LE = { 80, 0, 0 }, LW = { -50, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { -14, 12, 0, 0, -0.32, -0.4 }, Waist = { -16, 14, 0 }, Neck = { 0, -10, 0 }, RS = { 96, 0, 2 }, RE = { 10, 0, 0 }, RW = { 92, 0, 0 }, LS = { 82, 0, -22 }, LE = { 80, 0, 0 }, LW = { -50, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+					shake = true, fx = { { "beam", color = COFFEE, length = 12, width = 2, at = "hand" }, { "particles", tex = "smoke", color = COFFEE, dir = "front", at = "hand", time = 0.3, speed = 20, size = 0.6, rate = 80 } }, text = "UN GRAND NOIR !", hitText = "ÉBOUILLANTÉ !",
+				},
+				-- →L : la machine lancée à bout de bras à travers tout le couloir, il encaisse tout pendant l'effort
+				S_side = {
+					label = "Machine en avant", startup = 0.28, active = 0.18, recovery = 0.55,
+					damage = 16, hitbox = box(14, 5, 7, 0.8), kbBase = 38, kbGrowth = 82, kbAngle = 26, armor = true, selfVelocity = Vector2.new(20, 0),
+					windup = { Root = { 10, -20, 0, 0, -0.3, 0.3 }, Waist = { 14, -24, 0 }, Neck = { 10, 16, 0 }, RS = { 60, 0, 30 }, RE = { 120, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -30 }, LE = { 120, 0, 0 }, LW = { 0, 0, 0 } },
+					strike = { Root = { -18, 14, 0, 0, -0.4, -0.5 }, Waist = { -22, 18, 0 }, Neck = { -6, -10, 0 }, RS = { 96, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 92, 0, -4 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+					follow = { Root = { -20, 16, 0, 0, -0.44, -0.55 }, Waist = { -26, 20, 0 }, Neck = { -8, -12, 0 }, RS = { 100, 0, 2 }, RE = { 4, 0, 0 }, RW = { -8, 0, 0 }, LS = { 96, 0, -6 }, LE = { 4, 0, 0 }, LW = { -8, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.52 } },
+					hold = 0.1, shake = true, trail = "prop", fx = { { "burst", color = COPIER_DARK, size = 3.5, at = "front" }, { "beam", color = COFFEE, length = 14, width = 3, at = "feet" }, { "shake", amount = 0.4 } },
+					text = "ELLE PÈSE UNE TONNE !", hitText = "ÉCRASÉ PAR LA MACHINE !",
+				},
+				-- ↓L : flaque de café : il penche la machine et vide le réservoir sur le sol : tout le couloir patine dans le café
+				S_down = {
+					label = "Flaque de café", startup = 0.22, active = 0.2, recovery = 0.5,
+					damage = 12, hitbox = box(14, 4, 7, 0.5), kbBase = 22, kbGrowth = 35, kbAngle = 60,
+					status = { name = "slippery", duration = 2.5 },
+					windup = { Root = { 6, -10, 0, 0, -0.15, 0.1 }, Waist = { 10, -10, 0 }, Neck = { 14, 0, 0 }, RS = { 110, 0, 20 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -20 }, LE = { 100, 0, 0 } },
+					strike = { Root = { -10, 8, 0, 0, -0.3, -0.25 }, Waist = { -16, 8, 0 }, Neck = { -10, 0, 0 }, RS = { 100, 0, 15 }, RE = { 10, 0, 0 }, RW = { 0, 0, 90 }, LS = { 40, 0, -30 }, LE = { 80, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.35 } },
+					follow = { Root = { -12, 10, 0, 0, -0.32, -0.3 }, Waist = { -18, 10, 0 }, Neck = { -12, 0, 0 }, RS = { 70, 0, 30 }, RE = { 10, 0, 0 }, RW = { 0, 0, 100 }, LS = { 40, 0, -30 }, LE = { 80, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.35 } },
+					hold = 0.1, trail = "prop", fx = { { "puddle", color = COFFEE, width = 14 }, { "beam", color = COFFEE, length = 14, width = 2.5, at = "feet" } }, text = "OUPS, LE RÉSERVOIR.", hitText = "ÇA GLISSE !",
+				},
+				-- ↑L : décollage à la caféine : il boit un gobelet cul sec, les yeux s'écarquillent et il décolle en diagonale, machine brandie
+				S_up = {
+					label = "Décollage à la caféine", startup = 0.14, active = 0.3, recovery = 0.4,
+					damage = 13, hitbox = box(10, 11, 3, 4), kbBase = 32, kbGrowth = 50, kbAngle = 74, selfVelocity = Vector2.new(42, 80),
+					windup = { Root = { 6, 0, 0, 0, -0.6, 0.1 }, Waist = { -10, 0, 0 }, Neck = { 26, 0, 0 }, RS = { 40, 0, 20 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 130, 0, -20 }, LE = { 140, 0, 0 }, LW = { -30, 0, 0 } },
+					strike = { Root = { -40, 0, 0, 0, 0.4, -0.2 }, Waist = { -6, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 170, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -30, 0, -40 }, LE = { 20, 0, 0 }, LW = { 0, 0, 0 }, RH = { -25, 0, 5 }, RK = { -30, 0, 0 }, LH = { -15, 0, -5 }, LK = { -50, 0, 0 } },
+					follow = { Root = { -44, 0, 0, 0, 0.45, -0.25 }, Waist = { -8, 0, 0 }, Neck = { 32, 0, 0 }, RS = { 174, 0, 12 }, RE = { 0, 0, 0 }, RW = { -8, 0, 0 }, LS = { -35, 0, -44 }, LE = { 20, 0, 0 }, LW = { 0, 0, 0 }, RH = { -30, 0, 6 }, RK = { -35, 0, 0 }, LH = { -20, 0, -6 }, LK = { -55, 0, 0 } },
+					shake = true, trail = "prop", windupFx = { { "symbols", symbols = { "☕", "!!" }, count = 2, radius = 1.5, at = "head", color = COFFEE } },
+					fx = { { "burst", color = COFFEE, size = 3, at = "feet" }, { "ring", color = CUP, radius = 5, at = "feet" }, { "particles", tex = "smoke", color = Color3.fromRGB(240, 240, 240), dir = "down", at = "feet", time = 0.35, speed = 14 } },
+					text = "CUL SEC !", hitText = "RÉVEILLÉ !",
+				},
+				-- L en l'air : gobelets lâchés : il renverse le distributeur, une pluie de gobelets pleins tombe sur l'adversaire
+				S_air = {
+					label = "Pluie de gobelets", kind = "projectile", startup = 0.15, active = 0, recovery = 0.4,
+					damage = 6, kbBase = 24, kbGrowth = 45, kbAngle = -40,
+					projectile = { speed = 60, angle = -70, gravity = 40, lifetime = 0.7, size = 1.2, color = CUP, rain = { count = 4, spread = 6 },
+						visual = { shape = "cyl", size = 1, color = CUP, spin = 6, parts = { { "cyl", Vector3.new(0.6, 0.1, 0.6), Vector3.new(0, 0.5, 0), COFFEE } } } },
+					windup = { Root = { 8, 0, 0 }, Waist = { 12, 0, 0 }, RS = { 170, 0, 20 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 170, 0, -20 }, LE = { 60, 0, 0 }, RH = { 40, 0, 0 }, RK = { -80, 0, 0 }, LH = { 50, 0, 0 }, LK = { -90, 0, 0 } },
+					strike = { Root = { -12, 0, 0 }, Waist = { -26, 0, 0 }, Neck = { 28, 0, 0 }, RS = { 30, 0, 10 }, RE = { 0, 0, 0 }, RW = { 170, 0, 0 }, LS = { 30, 0, -10 }, LE = { 0, 0, 0 }, LW = { -40, 0, 0 }, RH = { 20, 0, 0 }, RK = { -40, 0, 0 }, LH = { 30, 0, 0 }, LK = { -60, 0, 0 } },
+					follow = { Root = { -16, 0, 0 }, Waist = { -30, 0, 0 }, Neck = { 32, 0, 0 }, RS = { 26, 0, 12 }, RE = { 4, 0, 0 }, RW = { 175, 0, 0 }, LS = { 26, 0, -12 }, LE = { 4, 0, 0 }, LW = { -50, 0, 0 }, RH = { 16, 0, 0 }, RK = { -36, 0, 0 }, LH = { 26, 0, 0 }, LK = { -56, 0, 0 } },
+					fx = { { "burst", color = COFFEE, size = 2, at = "feet" } }, text = "TOURNÉE GÉNÉRALE !", hitText = "PLOC !",
+				},
+				-- Y : tournée de décaféiné : il sert un décaféiné à tout le couloir, tout le monde s'endort sur place (lui se requinque)
+				SUPER = {
+					label = "Tournée de décaféiné !", startup = 0.45, active = 0.25, recovery = 0.7,
+					damage = 22, hitbox = box(16, 6, 8, 1), kbBase = 20, kbGrowth = 30, kbAngle = 40, selfEffect = { heal = 10 },
+					status = { name = "asleep", duration = 2.5 },
+					windup = { Root = { 4, 0, 0, 0, -0.1, 0.1 }, Waist = { 8, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 60, 0, 20 }, RE = { 110, 0, 0 }, RW = { 60, 0, 0 }, LS = { 130, 0, 30 }, LE = { 140, 0, 0 }, LW = { -30, 0, 0 } },
+					strike = { Root = { -10, 0, 0, 0, -0.3, -0.35 }, Waist = { -14, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 94, 0, 0 }, RE = { 10, 0, 0 }, RW = { 90, 0, 0 }, LS = { 90, 0, 40 }, LE = { 20, 0, 0 }, LW = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { -12, 0, 0, 0, -0.32, -0.4 }, Waist = { -16, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 96, 0, 2 }, RE = { 10, 0, 0 }, RW = { 92, 0, 0 }, LS = { 94, 0, 44 }, LE = { 20, 0, 0 }, LW = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+					hold = 0.3, windupFx = { "super", { "symbols", symbols = { "☕", "💤" }, count = 6, radius = 3, color = COFFEE } },
+					fx = { { "beam", color = COFFEE, length = 16, width = 4, at = "hand" }, { "toss", shape = "cyl", color = CUP, size = 0.6, count = 8, speed = 22 }, { "symbols", symbols = { "💤", "zzz", "💤" }, count = 8, radius = 6, at = "front", color = GREY } },
+					text = "C'EST DU DÉCA.", hitText = "ENDORMI !",
+				},
+				-- →Y : l'expresso balistique : la machine se met à vibrer, surchauffe et tire un gobelet géant qui traverse tout le couloir
+				SUPER_side = {
+					label = "Expresso balistique !", kind = "projectile", startup = 0.4, active = 0, recovery = 0.7,
+					damage = 26, kbBase = 50, kbGrowth = 100, kbAngle = 30,
+					projectile = { speed = 92, angle = 0, gravity = 0, lifetime = 0.9, size = 3.2, color = CUP, pierce = true,
+						visual = { shape = "cyl", size = 2.8, color = CUP, spin = 10, parts = { { "cyl", Vector3.new(2.6, 0.2, 2.6), Vector3.new(0, 1.3, 0), COFFEE }, { "block", Vector3.new(0.4, 1.2, 0.3), Vector3.new(1.5, 0, 0), CUP } } } },
+					status = { name = "burning", duration = 2 },
+					windup = { Root = { 10, -20, 0, 0, -0.4, 0.3 }, Waist = { 14, -24, 0 }, Neck = { 10, 14, 0 }, RS = { 60, 0, 30 }, RE = { 120, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -30 }, LE = { 120, 0, 0 } },
+					strike = { Root = { -18, 14, 0, 0, -0.3, -0.5 }, Waist = { -20, 18, 0 }, Neck = { -6, -10, 0 }, RS = { 96, 0, -2 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 92, 0, 4 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+					follow = { Root = { 4, 16, 0, 0, -0.2, -0.2 }, Waist = { 6, 20, 0 }, Neck = { 4, -12, 0 }, RS = { 120, 0, 10 }, RE = { 20, 0, 0 }, RW = { -10, 0, 0 }, LS = { 116, 0, -10 }, LE = { 20, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+					shake = true, windupFx = { "super", { "particles", tex = "smoke", color = Color3.fromRGB(240, 240, 240), dir = "up", at = "hand", time = 0.4, speed = 8 } },
+					fx = { { "burst", color = COFFEE, size = 3.5, at = "hand" }, { "beam", color = COFFEE, length = 14, width = 4, at = "hand" }, { "shake", amount = 0.4 } },
+					text = "SERRÉ, TRÈS SERRÉ !", hitText = "KA-BLONG !",
+				},
+				-- ↑Y : le geyser de café : la chaudière explose sous lui, un geyser brun le propulse et emporte tout le couloir au plafond
+				SUPER_up = {
+					label = "Geyser de café !", startup = 0.35, active = 0.3, recovery = 0.7,
+					damage = 24, hitbox = box(16, 12, 8, 5), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3, selfVelocity = Vector2.new(0, 55),
+					windup = { Root = { -10, 0, 0, 0, -0.9, 0 }, Waist = { -30, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 60, 0, 10 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -10 }, LE = { 110, 0, 0 } },
+					strike = { Root = { 6, 0, 0, 0, 0.5, 0 }, Waist = { 18, 0, 0 }, Neck = { 50, 0, 0 }, RS = { 186, 0, 6 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, -60 }, LE = { 10, 0, 0 }, RH = { 40, 0, 10 }, RK = { -90, 0, 0 }, LH = { 20, 0, -15 }, LK = { -60, 0, 0 } },
+					follow = { Root = { 10, 0, 0, 0, 0.55, 0 }, Waist = { 24, 0, 0 }, Neck = { 56, 0, 0 }, RS = { 188, 0, 10 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 156, 0, -66 }, LE = { 10, 0, 0 }, RH = { 60, 0, 20 }, RK = { -110, 0, 0 }, LH = { 10, 0, -25 }, LK = { -40, 0, 0 } },
+					hold = 0.2, shake = true, trail = "prop", windupFx = { "super", { "particles", tex = "smoke", color = Color3.fromRGB(240, 240, 240), dir = "all", at = "hand", time = 0.3, speed = 6 } },
+					fx = { { "pillar", color = COFFEE, height = 22, width = 3, at = "front" }, { "beam", color = COFFEE, length = 16, width = 5, at = "feet" }, { "burst", color = CUP, size = 4, at = "above" }, { "ring", color = COFFEE, radius = 6, at = "feet" } },
+					text = "LA CHAUDIÈRE !", hitText = "GEYSER !",
+				},
+				-- ↓Y : marc de café géant : il renverse la machine entière, une coulée de marc enlise tout le couloir
+				SUPER_down = {
+					label = "Coulée de marc !", startup = 0.35, active = 0.35, recovery = 0.7,
+					damage = 22, hitbox = box(16, 4, 8, -0.5), kbBase = 44, kbGrowth = 90, kbAngle = 60,
+					status = { name = "slowed", duration = 2.5 },
+					windup = { Root = { 12, 0, 0, 0, -0.5, 0.2 }, Waist = { 20, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 160, 0, 20 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, -20 }, LE = { 60, 0, 0 } },
+					strike = { Root = { 18, 0, 0, 0, -1.0, -0.3 }, Waist = { 28, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 30, 0, 20 }, RE = { 0, 0, 0 }, RW = { 0, 0, 120 }, LS = { 30, 0, -20 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { 20, 0, 0, 0, -1.0, -0.34 }, Waist = { 30, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 24, 0, 22 }, RE = { 0, 0, 0 }, RW = { 0, 0, 130 }, LS = { 24, 0, -22 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+					hold = 0.15, trail = "prop", windupFx = { "super" }, fx = { { "puddle", color = COFFEE, width = 16 }, { "beam", color = COFFEE, length = 16, width = 4, at = "feet" }, { "particles", tex = "smoke", color = COFFEE, dir = "front", at = "feet", time = 0.5, speed = 14, size = 1 }, { "shake", amount = 0.4 } },
+					text = "TOUT LE MARC !", hitText = "ENLISÉ !",
+				},
+			},
+			links = {
+				P_neutral = { P = "P_side", K = "K_neutral", S = "S_neutral" },
+				P_side = { P = "P_up", K = "K_side", S = "S_side" },
+				P_down = { P = "P_up", K = "K_down", S = "S_down" },
+				K_neutral = { P = "P_neutral", K = "K_side", S = "S_side" },
+				P_dash = { P = "P_side", K = "K_side", S = "S_side" },
+				K_dash = { P = "P_up", S = "S_up" },
+			},
+		},
+	},
 
 	-- Costume : costume beige, chemise et cravate marron, lunettes en demi-lune, couronne de cheveux gris,
 	-- moustache, manchettes de lustrine, badge et stylo derrière l'oreille
@@ -521,6 +1002,26 @@ local data = {
 			hold = 0.5, windupFx = { { "screen", color = Color3.fromRGB(150, 150, 160), alpha = 0.35 } },
 			fx = { { "symbols", symbols = { "🪧", "✊", "GRÈVE !" }, count = 8, radius = 6 }, { "shake", amount = 0.3 } },
 			text = "GRÈVE GÉNÉRALE !", hitText = "TOUT EST FERMÉ !",
+		},
+		-- Chaise de bureau balistique (→Y) : il s'assied sur sa chaise à roulettes, prend un élan de pied contre le guichet et
+		-- l'envoie seule à travers tout le couloir : elle fauche tout le monde, dossier en avant, puis revient en roulant jusqu'à lui
+		SUPER_side = {
+			label = "Chaise balistique !", kind = "projectile", startup = 0.4, active = 0, recovery = 0.65,
+			damage = 25, kbBase = 46, kbGrowth = 96, kbAngle = 30,
+			projectile = { speed = 80, angle = 0, gravity = 0, lifetime = 0.9, size = 3, color = GREY, from = "feet", returns = true, pierce = true,
+				visual = { shape = "block", size = 2.4, color = BLACK, spin = 6, parts = {
+					{ "block", Vector3.new(1.6, 1.4, 0.25), Vector3.new(0, 0.8, 0.7), BLACK },
+					{ "cyl", Vector3.new(1.0, 0.2, 0.2), Vector3.new(0, -0.6, 0), GREY },
+					{ "ball", Vector3.new(0.35, 0.35, 0.35), Vector3.new(0.8, -1.1, 0), BLACK },
+					{ "ball", Vector3.new(0.35, 0.35, 0.35), Vector3.new(-0.8, -1.1, 0), BLACK },
+				} } },
+			status = { name = "waiting", duration = 2 },
+			windup = { Root = { 10, 0, 0, 0, -0.7, 0.2 }, Waist = { 6, 0, 0 }, Neck = { 8, 0, 0 }, RS = { 30, 0, 30 }, RE = { 60, 0, 0 }, LS = { 120, 0, -30 }, LE = { 90, 0, 0 }, LW = { 0, 0, 0 }, RH = { 60, 0, 0 }, RK = { -100, 0, 0 } },
+			strike = { Root = { -16, 0, 0, 0, -0.5, -0.4 }, Waist = { -14, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 20, 0, 40 }, RE = { 60, 0, 0 }, LS = { 60, 0, -20 }, LE = { 20, 0, 0 }, LW = { 0, 0, 0 }, RH = { 90, 0, 0 }, RK = { -4, 0, 0 }, RA = { 20, 0, 0 } },
+			follow = { Root = { 2, 0, 0, 0, -0.35, -0.2 }, Waist = { 0, 0, 0 }, Neck = { -16, 20, 0 }, RS = { 20, 0, 30 }, RE = { 60, 0, 0 }, LS = { 80, 0, 30 }, LE = { 110, 0, 0 }, LW = { 0, 0, 0 }, RH = { 60, 0, 0 }, RK = { -20, 0, 0 }, RA = { 10, 0, 0 } },
+			prop = "chaise", trail = "rightFoot", windupFx = { "super", { "symbols", symbols = { "🪑", "GRIIIN" }, count = 4, radius = 3, color = GREY } },
+			fx = { { "burst", color = GREY, size = 3, at = "feet" }, { "particles", tex = "spark", color = Color3.fromRGB(240, 220, 160), dir = "front", at = "feet", time = 0.4, speed = 16 }, { "shake", amount = 0.3 } },
+			text = "CHAISE BALISTIQUE !", hitText = "ROULÉ DESSUS !",
 		},
 		-- Avalanche de dossiers (↑Y) : il serre une montagne de dossiers contre lui et la jette au plafond : une tour d'archives
 		-- jaillit sur tout le couloir et emporte tout le monde en haut

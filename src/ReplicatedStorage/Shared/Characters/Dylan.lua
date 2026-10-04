@@ -30,11 +30,495 @@ local PARCEL = { shape = "block", size = 1.4, color = CARDBOARD, spin = 4, parts
 	{ "block", Vector3.new(0.5, 0.4, 0.86), Vector3.new(0.3, 0.3, 0), WHITE },
 } }
 
+local CONE = Color3.fromRGB(255, 110, 20) -- cône de chantier (arme n° 2)
+local FIRE_D = Color3.fromRGB(255, 200, 60)
+local SAUCE_D = Color3.fromRGB(200, 40, 30) -- sauce tomate (arme n° 3)
+local CREPE_D = Color3.fromRGB(235, 190, 110) -- pâte dorée du calzone
+-- Part de pizza (projectiles de l'arme n° 3)
+local SLICE = { shape = "block", size = 1.2, color = PIZZA, spin = 8, parts = {
+	{ "block", Vector3.new(0.5, 0.12, 0.5), Vector3.new(0.3, 0.1, 0), SAUCE_D },
+	{ "ball", Vector3.new(0.3, 0.14, 0.3), Vector3.new(-0.25, 0.1, 0.2), SAUCE_D },
+} }
+
 local data = {
 	id = "Dylan",
 	name = "Dylan le Livreur",
 	costume = "Dylan",
 	style = "hurry",
+
+	------------------------------------------------------------------ Les 3 armes de la Caisse Bizarre (une au hasard)
+	-- n° 1 : la trottinette pliée (ses coups sont ceux de moves). n° 2 : le cône de chantier, lourd et lent, qui barre la
+	-- route et éjecte loin. n° 3 : la pile de boîtes à pizza, jeu de projectiles qui grignote et saute plus haut.
+	weapons = {
+		{ id = "trottinette", name = "Trottinette électrique & sac cube", icon = "🛵",
+			ability = { speed = 1.15, text = "Dylan file 15 % plus vite (il est en retard)" } },
+		{ id = "cone", name = "Cône de chantier", icon = "🚧",
+			prop = { name = "PropCone", hand = "Right", pieces = {
+				{ "Socle", "", "block", Vector3.new(1.6, 0.14, 1.6), Vector3.new(0, -0.2, 0), Vector3.new(0, 0, 0), BLACK, "Rubber" },
+				{ "ConeBas", "", "cyl", Vector3.new(1.0, 1.1, 1.0), Vector3.new(0, -0.8, 0), Vector3.new(0, 0, 0), CONE, "Plastic" },
+				{ "BandeBlanche", "", "cyl", Vector3.new(0.9, 0.35, 0.9), Vector3.new(0, -1.5, 0), Vector3.new(0, 0, 0), WHITE, "Plastic" },
+				{ "ConeMilieu", "", "cyl", Vector3.new(0.75, 0.9, 0.75), Vector3.new(0, -2.1, 0), Vector3.new(0, 0, 0), CONE, "Plastic" },
+				{ "BandeBlanche2", "", "cyl", Vector3.new(0.55, 0.3, 0.55), Vector3.new(0, -2.7, 0), Vector3.new(0, 0, 0), WHITE, "Plastic" },
+				{ "Pointe", "", "cyl", Vector3.new(0.35, 0.5, 0.35), Vector3.new(0, -3.1, 0), Vector3.new(0, 0, 0), CONE, "Plastic" },
+			} },
+			ability = { knockback = 1.25, text = "Éjecte 25 % plus loin (déviation obligatoire)" },
+			moves = {
+				-- J : coup de pointe de cône dans le sternum, bras tendu, l'autre main qui fait « stop »
+				P_neutral = {
+					label = "Pointe de cône", startup = 0.1, active = 0.1, recovery = 0.2,
+					damage = 7, hitbox = box(5, 3, 3, 0.6), kbBase = 22, kbGrowth = 30, kbAngle = 25,
+					windup = { Root = { 4, -18, 0, 0, -0.15, 0.15 }, Waist = { 6, -24, 0 }, Neck = { 0, 16, 0 }, RS = { 50, 0, 30 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 80, 0, -20 }, LE = { 40, 0, 0 }, LW = { -60, 0, 0 } },
+					strike = { Root = { -10, 18, 0, 0, -0.28, -0.35 }, Waist = { -12, 24, 0 }, Neck = { 0, -14, 0 }, RS = { 96, 0, 2 }, RE = { 4, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, -10 }, LE = { 10, 0, 0 }, LW = { -70, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.35 } },
+					follow = { Root = { -12, 22, 0, 0, -0.3, -0.4 }, Waist = { -14, 28, 0 }, Neck = { 0, -16, 0 }, RS = { 100, 0, 4 }, RE = { 8, 0, 0 }, RW = { -10, 0, 0 }, LS = { 92, 0, -8 }, LE = { 10, 0, 0 }, LW = { -70, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.38 } },
+					trail = "prop", text = "STOP !", hitText = "POC !",
+				},
+				-- →J : le cône collé à la bouche en porte-voix, il hurle « PARDON » : le cri cogne à bout portant
+				P_side = {
+					label = "Porte-voix", startup = 0.12, active = 0.12, recovery = 0.22,
+					damage = 8, hitbox = box(6, 3.5, 3.5, 1), kbBase = 26, kbGrowth = 42, kbAngle = 22,
+					windup = { Root = { 6, 0, 0, 0, -0.2, 0.15 }, Waist = { 8, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 120, 0, 10 }, RE = { 120, 0, 0 }, RW = { 60, 0, 0 }, LS = { 40, 0, -30 }, LE = { 80, 0, 0 } },
+					strike = { Root = { -12, 0, 0, 0, -0.3, -0.35 }, Waist = { -16, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 110, 0, 0 }, RE = { 100, 0, 0 }, RW = { 70, 0, 0 }, LS = { 60, 0, -50 }, LE = { 20, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { -14, 0, 0, 0, -0.32, -0.4 }, Waist = { -18, 0, 0 }, Neck = { -12, 0, 0 }, RS = { 112, 0, 0 }, RE = { 98, 0, 0 }, RW = { 72, 0, 0 }, LS = { 64, 0, -54 }, LE = { 20, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+					shake = true, fx = { { "ring", color = CONE, radius = 3, at = "front" }, { "symbols", symbols = { "PARDON", "!!" }, count = 3, radius = 2.5, at = "front", color = CONE } }, text = "PARDOOON !", hitText = "ASSOURDI !",
+				},
+				-- ↓J : accroupi, il pose le socle du cône de tout son poids sur les orteils de l'adversaire
+				P_down = {
+					label = "Cône sur les orteils", startup = 0.12, active = 0.1, recovery = 0.24,
+					damage = 7, hitbox = box(5, 2, 3, -1.8), kbBase = 24, kbGrowth = 30, kbAngle = 75,
+					windup = { Root = { 8, 0, 0, 0, -0.6, 0.1 }, Waist = { 14, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 150, 0, 15 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -30 }, LE = { 80, 0, 0 } },
+					strike = { Root = { 16, 0, 0, 0, -0.95, -0.2 }, Waist = { 26, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 40, 0, 10 }, RE = { 0, 0, 0 }, RW = { 170, 0, 0 }, LS = { 40, 0, -30 }, LE = { 80, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					follow = { Root = { 18, 0, 0, 0, -0.95, -0.24 }, Waist = { 28, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 36, 0, 12 }, RE = { 0, 0, 0 }, RW = { 175, 0, 0 }, LS = { 44, 0, -32 }, LE = { 80, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.32 } },
+					trail = "prop", fx = { "dust" }, hitText = "ÉCRASÉ !",
+				},
+				-- ↑J : le cône posé sur le casque comme un chapeau de sorcier, il saute pointe en l'air
+				P_up = {
+					label = "Chapeau pointu", startup = 0.1, active = 0.12, recovery = 0.24,
+					damage = 8, hitbox = box(4.5, 5.5, 1, 3.5), kbBase = 26, kbGrowth = 42, kbAngle = 86, selfVelocity = Vector2.new(0, 24),
+					windup = { Root = { -8, 0, 0, 0, -0.6, 0 }, Waist = { -18, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 170, 0, 20 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { -20, 0, -20 }, LE = { 30, 0, 0 } },
+					strike = { Root = { 6, 0, 0, 0, 0.3, 0 }, Waist = { 8, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 190, 0, 4 }, RE = { 0, 0, 0 }, RW = { 170, 0, 0 }, LS = { -50, 0, -20 }, LE = { 10, 0, 0 }, RH = { 60, 0, 0 }, RK = { -110, 0, 0 }, LH = { 60, 0, 0 }, LK = { -110, 0, 0 } },
+					follow = { Root = { 8, 0, 0, 0, 0.35, 0 }, Waist = { 10, 0, 0 }, Neck = { 34, 0, 0 }, RS = { 192, 0, 6 }, RE = { 0, 0, 0 }, RW = { 175, 0, 0 }, LS = { -55, 0, -22 }, LE = { 10, 0, 0 }, RH = { 65, 0, 0 }, RK = { -115, 0, 0 }, LH = { 65, 0, 0 }, LK = { -115, 0, 0 } },
+					trail = "prop", fx = { { "symbols", symbols = { "🚧", "✨" }, count = 2, radius = 1.5, at = "head", color = CONE } }, hitText = "PIQUÉ !",
+				},
+				-- J en l'air : cône tenu à deux mains, pointe vers le bas, il le plante sous lui
+				P_air = {
+					label = "Cône plongeant", startup = 0.1, active = 0.12, recovery = 0.18,
+					damage = 8, hitbox = box(4.5, 4, 1.5, -1.5), kbBase = 22, kbGrowth = 38, kbAngle = -45,
+					windup = { Root = { 10, 0, 0 }, Waist = { 14, 0, 0 }, RS = { 180, 0, 15 }, RE = { 50, 0, 0 }, RW = { 0, 0, 0 }, LS = { 170, 0, -15 }, LE = { 50, 0, 0 }, RH = { 50, 0, 0 }, RK = { -90, 0, 0 }, LH = { 60, 0, 0 }, LK = { -100, 0, 0 } },
+					strike = { Root = { -14, 0, 0 }, Waist = { -30, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 40, 0, 5 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -5 }, LE = { 0, 0, 0 }, RH = { 10, 0, 0 }, RK = { -30, 0, 0 }, LH = { 30, 0, 0 }, LK = { -60, 0, 0 } },
+					follow = { Root = { -18, 0, 0 }, Waist = { -36, 0, 0 }, Neck = { 24, 0, 0 }, RS = { 24, 0, 5 }, RE = { 6, 0, 0 }, RW = { -20, 0, 0 }, LS = { 24, 0, -5 }, LE = { 6, 0, 0 }, RH = { 5, 0, 0 }, RK = { -25, 0, 0 }, LH = { 25, 0, 0 }, LK = { -55, 0, 0 } },
+					trail = "prop", hitText = "PLANTÉ !",
+				},
+				-- dash J : il fonce cône en avant comme un bélier de chantier, tête baissée
+				P_dash = {
+					label = "Bélier de chantier", startup = 0.08, active = 0.16, recovery = 0.26,
+					damage = 9, hitbox = box(5.5, 4, 3, 0.6), kbBase = 30, kbGrowth = 56, kbAngle = 24, selfVelocity = Vector2.new(44, 0),
+					windup = { Root = { -8, 0, 0, 0, -0.3, 0.1 }, Waist = { -8, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 60, 0, 20 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -30 }, LE = { 80, 0, 0 } },
+					strike = { Root = { -24, 0, 0, 0, -0.42, -0.3 }, Waist = { -14, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 94, 0, 6 }, RE = { 6, 0, 0 }, RW = { 0, 0, 0 }, LS = { -30, 0, -40 }, LE = { 30, 0, 0 } },
+					follow = { Root = { -26, 0, 0, 0, -0.44, -0.35 }, Waist = { -16, 0, 0 }, Neck = { 18, 0, 0 }, RS = { 96, 0, 8 }, RE = { 6, 0, 0 }, RW = { -8, 0, 0 }, LS = { -34, 0, -42 }, LE = { 30, 0, 0 } },
+					trail = "prop", fx = { { "particles", tex = "smoke", color = Color3.fromRGB(220, 220, 220), dir = "up", at = "feet", time = 0.3, speed = 6 } }, text = "TRAVAUX !", hitText = "BOUSCULÉ !",
+				},
+				-- K : il pose le cône au sol et shoote dedans de toutes ses forces, le cône part en toupie
+				K_neutral = {
+					label = "Shoot dans le cône", startup = 0.18, active = 0.12, recovery = 0.32,
+					damage = 12, hitbox = box(6, 3.5, 3.5, 0), kbBase = 32, kbGrowth = 72, kbAngle = 30,
+					windup = { Root = { 6, -10, 0, 0, -0.2, 0.1 }, Waist = { 8, -10, 0 }, RS = { 30, 0, 40 }, RE = { 40, 0, 0 }, RW = { 170, 0, 0 }, LS = { 50, 0, -40 }, LE = { 50, 0, 0 }, RH = { -35, 0, 0 }, RK = { -70, 0, 0 } },
+					strike = { Root = { 12, 0, 0, 0, -0.12, 0.05 }, Waist = { 14, 0, 0 }, RS = { 60, 0, 55 }, RE = { 30, 0, 0 }, RW = { 170, 0, 0 }, LS = { 70, 0, -55 }, LE = { 30, 0, 0 }, RH = { 96, 0, 0 }, RK = { -4, 0, 0 }, RA = { 12, 0, 0 } },
+					follow = { Root = { 16, 0, 0, 0, -0.12, 0.1 }, Waist = { 18, 0, 0 }, RS = { 64, 0, 60 }, RE = { 25, 0, 0 }, RW = { 170, 0, 0 }, LS = { 74, 0, -60 }, LE = { 25, 0, 0 }, RH = { 104, 0, 0 }, RK = { 0, 0, 0 }, RA = { 16, 0, 0 } },
+					trail = "rightFoot", fx = { { "toss", shape = "cyl", color = CONE, size = 0.9, count = 1, speed = 20 } }, hitText = "PÉNO !",
+				},
+				-- →K : grand balayage horizontal du cône tenu par la pointe, il pivote sur les talons
+				K_side = {
+					label = "Balayage de chantier", startup = 0.18, active = 0.14, recovery = 0.34,
+					damage = 13, hitbox = box(6.5, 3.5, 3.5, 0.8), kbBase = 34, kbGrowth = 78, kbAngle = 30, selfVelocity = Vector2.new(18, 0),
+					windup = { Root = { 6, 42, 0, 0, -0.2, 0.2 }, Waist = { 8, 48, 0 }, Neck = { 0, -30, 0 }, RS = { 70, 0, 70 }, RE = { 50, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, 20 }, LE = { 70, 0, 0 } },
+					strike = { Root = { -8, -30, 0, 0, -0.3, -0.35 }, Waist = { -10, -36, 0 }, Neck = { 0, 24, 0 }, RS = { 92, 0, -30 }, RE = { 6, 0, 0 }, RW = { 0, 0, 0 }, LS = { 80, 0, -60 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { -10, -42, 0, 0, -0.32, -0.4 }, Waist = { -12, -48, 0 }, Neck = { 0, 30, 0 }, RS = { 96, 0, -40 }, RE = { 10, 0, 0 }, RW = { -10, 0, 0 }, LS = { 84, 0, -66 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+					trail = "prop", fx = { "dust" }, hitText = "BLAM !",
+				},
+				-- ↓K : accroupi, il fait rouler le cône couché au ras du bitume dans les tibias
+				K_down = {
+					label = "Cône qui roule", startup = 0.16, active = 0.14, recovery = 0.3,
+					damage = 11, hitbox = box(7, 2, 3.5, -1.6), kbBase = 30, kbGrowth = 60, kbAngle = 70,
+					windup = { Root = { 10, 10, 0, 0, -0.85, 0.1 }, Waist = { 16, 14, 0 }, Neck = { 10, 0, 0 }, RS = { 60, 0, 40 }, RE = { 60, 0, 0 }, RW = { 90, 0, 0 }, LS = { 20, 0, -40 }, LE = { 80, 0, 0 } },
+					strike = { Root = { 14, -20, 0, 0, -0.95, -0.15 }, Waist = { 20, -26, 0 }, Neck = { 10, 0, 0 }, RS = { 40, 0, 20 }, RE = { 0, 0, 0 }, RW = { 90, 0, 0 }, LS = { 30, 0, -40 }, LE = { 80, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					follow = { Root = { 16, -28, 0, 0, -0.95, -0.2 }, Waist = { 22, -32, 0 }, Neck = { 10, 0, 0 }, RS = { 36, 0, 24 }, RE = { 0, 0, 0 }, RW = { 90, 0, 0 }, LS = { 34, 0, -42 }, LE = { 80, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.32 } },
+					trail = "prop", fx = { "dust" }, hitText = "ROULÉ !",
+				},
+				-- ↑K : coup de pied monté en tenant le cône comme un balancier, pointe vers le ciel
+				K_up = {
+					label = "Pied de chantier", startup = 0.17, active = 0.12, recovery = 0.32,
+					damage = 12, hitbox = box(4.5, 6, 1.5, 3.5), kbBase = 32, kbGrowth = 70, kbAngle = 88,
+					windup = { Root = { 10, 0, 0, 0, -0.3, 0.1 }, Waist = { 14, 0, 0 }, RS = { 20, 0, 60 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -40 }, LE = { 60, 0, 0 }, RH = { -20, 0, 0 }, RK = { -60, 0, 0 } },
+					strike = { Root = { -18, 0, 0, 0, 0.05, -0.1 }, Waist = { -22, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 20, 0, 80 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -50 }, LE = { 30, 0, 0 }, RH = { 145, 0, 0 }, RK = { -6, 0, 0 }, RA = { 20, 0, 0 } },
+					follow = { Root = { -20, 0, 0, 0, 0.08, -0.12 }, Waist = { -24, 0, 0 }, Neck = { -24, 0, 0 }, RS = { 24, 0, 84 }, RE = { 20, 0, 0 }, RW = { -10, 0, 0 }, LS = { 34, 0, -52 }, LE = { 30, 0, 0 }, RH = { 152, 0, 0 }, RK = { 0, 0, 0 }, RA = { 24, 0, 0 } },
+					trail = "rightFoot", fx = { { "particles", tex = "spark", color = ORANGE, dir = "up", at = "feet", time = 0.2, speed = 6 } }, hitText = "KLANG !",
+				},
+				-- K en l'air : marteau de cône à deux mains abattu vers le bas, jambes repliées
+				K_air = {
+					label = "Marteau de cône", startup = 0.15, active = 0.14, recovery = 0.24,
+					damage = 12, hitbox = box(5, 4, 2, -1), kbBase = 30, kbGrowth = 66, kbAngle = -55,
+					windup = { Root = { 12, 0, 0 }, Waist = { 16, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 190, 0, 12 }, RE = { 50, 0, 0 }, RW = { 0, 0, 0 }, LS = { 180, 0, -12 }, LE = { 50, 0, 0 }, RH = { 60, 0, 0 }, RK = { -100, 0, 0 }, LH = { 70, 0, 0 }, LK = { -110, 0, 0 } },
+					strike = { Root = { -20, 0, 0 }, Waist = { -32, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 60, 0, 6 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -6 }, LE = { 0, 0, 0 }, RH = { 20, 0, 0 }, RK = { -40, 0, 0 }, LH = { 30, 0, 0 }, LK = { -60, 0, 0 } },
+					follow = { Root = { -24, 0, 0 }, Waist = { -36, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 40, 0, 6 }, RE = { 6, 0, 0 }, RW = { -20, 0, 0 }, LS = { 40, 0, -6 }, LE = { 6, 0, 0 }, RH = { 15, 0, 0 }, RK = { -35, 0, 0 }, LH = { 25, 0, 0 }, LK = { -55, 0, 0 } },
+					trail = "prop", hitText = "BADABOUM !",
+				},
+				-- dash K : slalom entre des cônes imaginaires, pied tendu qui fauche au passage
+				K_dash = {
+					label = "Slalom", startup = 0.1, active = 0.26, recovery = 0.3,
+					damage = 11, hitbox = box(6, 3, 3, -0.6), kbBase = 30, kbGrowth = 64, kbAngle = 40, selfVelocity = Vector2.new(52, 10),
+					windup = { Root = { -8, 20, 0, 0, -0.4, 0 }, Waist = { -10, 24, 0 }, RS = { 60, 0, 50 }, RE = { 50, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -40 } },
+					strike = { Root = { 16, -20, 0, 0, -0.6, 0.15 }, Waist = { 10, -24, 0 }, RS = { -20, 0, 60 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, -40 }, LE = { 30, 0, 0 }, RH = { 85, 0, 0 }, RK = { 0, 0, 0 }, RA = { 10, 0, 0 }, LH = { 70, 0, 0 }, LK = { -20, 0, 0 } },
+					follow = { Root = { 20, 20, 0, 0, -0.62, 0.2 }, Waist = { 12, 24, 0 }, RS = { -26, 0, 65 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 75, 0, -45 }, LE = { 30, 0, 0 }, RH = { 90, 0, 0 }, RK = { 0, 0, 0 }, RA = { 14, 0, 0 }, LH = { 75, 0, 0 }, LK = { -20, 0, 0 } },
+					wobble = true, trail = "rightFoot", fx = { "dust" }, hitText = "SKRRRT !",
+				},
+				-- L : barrage routier : il plante le cône devant lui, bras croisés, et pousse tout le couloir derrière la ligne (enracine)
+				S_neutral = {
+					label = "Barrage routier", startup = 0.24, active = 0.2, recovery = 0.5,
+					damage = 13, hitbox = box(14, 5, 7, 0.8), kbBase = 30, kbGrowth = 52, kbAngle = 25, armor = true,
+					status = { name = "rooted", duration = 1.2 },
+					windup = { Root = { 6, 0, 0, 0, -0.2, 0.15 }, Waist = { 8, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 150, 0, 20 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, 40 }, LE = { 110, 0, 0 } },
+					strike = { Root = { -12, 0, 0, 0, -0.35, -0.4 }, Waist = { -16, 0, 0 }, Neck = { 4, 0, 0 }, RS = { 60, 0, -20 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, 60 }, LE = { 120, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+					follow = { Root = { -14, 0, 0, 0, -0.38, -0.45 }, Waist = { -18, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 55, 0, -22 }, RE = { 0, 0, 0 }, RW = { -8, 0, 0 }, LS = { 62, 0, 64 }, LE = { 120, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.48 } },
+					hold = 0.1, trail = "prop", fx = { { "beam", color = CONE, length = 14, width = 2.5, at = "feet" }, { "burst", color = CONE, size = 2.5, at = "front" }, { "symbols", symbols = { "🚧", "ROUTE BARRÉE" }, count = 3, radius = 3, at = "front", color = CONE } },
+					text = "ROUTE BARRÉE !", hitText = "BLOQUÉ !",
+				},
+				-- →L : le haut-parleur de chantier : il rugit dans le cône, l'onde fait trembler tout le couloir (assourdit)
+				S_side = {
+					label = "Haut-parleur de chantier", startup = 0.26, active = 0.2, recovery = 0.5,
+					damage = 15, hitbox = box(14, 5, 7, 1), kbBase = 32, kbGrowth = 60, kbAngle = 32,
+					status = { name = "muted", duration = 2 },
+					windup = { Root = { 10, 0, 0, 0, -0.15, 0.25 }, Waist = { 16, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 110, 0, 10 }, RE = { 120, 0, 0 }, RW = { 60, 0, 0 }, LS = { 40, 0, -40 }, LE = { 80, 0, 0 } },
+					strike = { Root = { -14, 0, 0, 0, -0.3, -0.35 }, Waist = { -20, 0, 0 }, Neck = { -14, 0, 0 }, RS = { 112, 0, 0 }, RE = { 100, 0, 0 }, RW = { 70, 0, 0 }, LS = { 70, 0, -60 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+					follow = { Root = { -16, 0, 0, 0, -0.32, -0.4 }, Waist = { -22, 0, 0 }, Neck = { -16, 0, 0 }, RS = { 114, 0, 0 }, RE = { 98, 0, 0 }, RW = { 72, 0, 0 }, LS = { 74, 0, -64 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.48 } },
+					shake = true, fx = { { "beam", color = CONE, length = 14, width = 3.5, at = "head" }, { "ring", color = CONE, radius = 5, at = "front" }, { "symbols", symbols = { "♪", "RECULEZ", "♫" }, count = 5, radius = 3.5, at = "front", color = CONE }, { "shake", amount = 0.3 } },
+					text = "RECULEEEZ !", hitText = "SOURD !",
+				},
+				-- ↓L : il abat le socle du cône sur le bitume, l'onde de choc roule sur tout le couloir au ras du sol (ralentit)
+				S_down = {
+					label = "Plaque de chantier", startup = 0.24, active = 0.18, recovery = 0.5,
+					damage = 13, hitbox = box(14, 4, 7, -0.5), kbBase = 30, kbGrowth = 55, kbAngle = 78,
+					status = { name = "slowed", duration = 2 },
+					windup = { Root = { 8, 0, 0, 0, -0.1, 0.2 }, Waist = { 14, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 190, 0, 10 }, RE = { 50, 0, 0 }, RW = { 170, 0, 0 }, LS = { 180, 0, -10 }, LE = { 50, 0, 0 } },
+					strike = { Root = { -16, 0, 0, 0, -0.7, -0.35 }, Waist = { -30, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 50, 0, 6 }, RE = { 0, 0, 0 }, RW = { 170, 0, 0 }, LS = { 50, 0, -6 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { -18, 0, 0, 0, -0.75, -0.4 }, Waist = { -34, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 40, 0, 8 }, RE = { 0, 0, 0 }, RW = { 175, 0, 0 }, LS = { 40, 0, -8 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+					hold = 0.1, trail = "prop", fx = { { "ring", color = CONE, radius = 6, at = "feet" }, { "beam", color = Color3.fromRGB(200, 200, 200), length = 14, width = 3, at = "feet" }, { "shake", amount = 0.4 }, { "particles", tex = "smoke", color = Color3.fromRGB(200, 200, 200), dir = "front", at = "feet", time = 0.4, speed = 12 } },
+					text = "BOUM !", hitText = "APLATI !",
+				},
+				-- ↑L : catapulté par le cône : il saute dessus comme sur un tremplin et décolle en diagonale, cône brandi, jambes qui traînent
+				S_up = {
+					label = "Tremplin de cône", startup = 0.12, active = 0.3, recovery = 0.4,
+					damage = 14, hitbox = box(10, 11, 3, 4), kbBase = 32, kbGrowth = 52, kbAngle = 74, selfVelocity = Vector2.new(42, 80),
+					windup = { Root = { 6, 0, 0, 0, -0.8, 0.1 }, Waist = { -10, 0, 0 }, Neck = { 22, 0, 0 }, RS = { 40, 0, 20 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -20 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -40, 0, 0, 0, 0.4, -0.2 }, Waist = { -6, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 168, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -40, 0, -40 }, LE = { 20, 0, 0 }, RH = { -25, 0, 5 }, RK = { -30, 0, 0 }, LH = { -15, 0, -5 }, LK = { -50, 0, 0 } },
+					follow = { Root = { -44, 0, 0, 0, 0.45, -0.25 }, Waist = { -8, 0, 0 }, Neck = { 32, 0, 0 }, RS = { 172, 0, 12 }, RE = { 0, 0, 0 }, RW = { -8, 0, 0 }, LS = { -45, 0, -44 }, LE = { 20, 0, 0 }, RH = { -30, 0, 6 }, RK = { -35, 0, 0 }, LH = { -20, 0, -6 }, LK = { -55, 0, 0 } },
+					trail = "prop", fx = { { "ring", color = CONE, radius = 5, at = "feet" }, { "burst", color = CONE, size = 3, at = "feet" }, { "particles", tex = "spark", color = ORANGE, dir = "down", at = "feet", time = 0.35, speed = 14 } },
+					text = "TREMPLIN !", hitText = "ENVOLÉ !",
+				},
+				-- L en l'air : il lâche le cône pointe en bas, qui fonce sur l'adversaire comme une fléchette de chantier
+				S_air = {
+					label = "Fléchette de chantier", kind = "projectile", startup = 0.16, active = 0, recovery = 0.4,
+					damage = 12, kbBase = 26, kbGrowth = 48, kbAngle = -40,
+					projectile = { speed = 70, angle = -50, gravity = 20, lifetime = 0.8, size = 1.8, color = CONE,
+						visual = { shape = "cyl", size = 1.6, color = CONE, spin = 6, parts = { { "cyl", Vector3.new(0.7, 0.3, 0.7), Vector3.new(0, 0.5, 0), WHITE }, { "block", Vector3.new(1.2, 0.12, 1.2), Vector3.new(0, 0.9, 0), BLACK } } } },
+					windup = { Root = { 8, 0, 0 }, Waist = { 12, 0, 0 }, RS = { 175, 0, 20 }, RE = { 50, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -30 }, LE = { 60, 0, 0 }, RH = { 50, 0, 0 }, RK = { -90, 0, 0 }, LH = { 60, 0, 0 }, LK = { -100, 0, 0 } },
+					strike = { Root = { -14, 0, 0 }, Waist = { -28, 0, 0 }, Neck = { 28, 0, 0 }, RS = { 30, 0, 10 }, RE = { 0, 0, 0 }, RW = { -40, 0, 0 }, LS = { 30, 0, -30 }, LE = { 20, 0, 0 }, RH = { 20, 0, 0 }, RK = { -40, 0, 0 }, LH = { 30, 0, 0 }, LK = { -60, 0, 0 } },
+					follow = { Root = { -18, 0, 0 }, Waist = { -32, 0, 0 }, Neck = { 32, 0, 0 }, RS = { 24, 0, 12 }, RE = { 4, 0, 0 }, RW = { -50, 0, 0 }, LS = { 26, 0, -32 }, LE = { 20, 0, 0 }, RH = { 16, 0, 0 }, RK = { -36, 0, 0 }, LH = { 26, 0, 0 }, LK = { -56, 0, 0 } },
+					hideProp = "cone", fx = { { "burst", color = CONE, size = 2, at = "hand" } }, text = "LÂCHER !", hitText = "PLANTÉ !",
+				},
+				-- Y : déviation obligatoire : il agite le cône comme un agent de circulation, le panneau tourne et tout le couloir est envoyé dans l'autre sens (commandes inversées)
+				SUPER = {
+					label = "Déviation obligatoire !", startup = 0.4, active = 0.25, recovery = 0.7,
+					damage = 24, hitbox = box(16, 6, 8, 1), kbBase = 48, kbGrowth = 100, kbAngle = 35,
+					status = { name = "inverted", duration = 3 },
+					windup = { Root = { 0, 30, 0, 0, -0.2, 0.1 }, Waist = { 4, 36, 0 }, Neck = { 0, -26, 0 }, RS = { 100, 0, 80 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 100, 0, -80 }, LE = { 20, 0, 0 } },
+					strike = { Root = { -12, -30, 0, 0, -0.3, -0.4 }, Waist = { -14, -36, 0 }, Neck = { 0, 24, 0 }, RS = { 96, 0, -10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 96, 0, 10 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+					follow = { Root = { -14, -36, 0, 0, -0.32, -0.45 }, Waist = { -16, -42, 0 }, Neck = { 0, 28, 0 }, RS = { 100, 0, -14 }, RE = { 4, 0, 0 }, RW = { -8, 0, 0 }, LS = { 100, 0, 14 }, LE = { 4, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.48 } },
+					hold = 0.15, trail = "prop", windupFx = { "super", { "symbols", symbols = { "⬅️", "➡️", "🚧" }, count = 6, radius = 3.5, color = CONE } },
+					fx = { { "beam", color = CONE, length = 16, width = 4, at = "feet" }, { "burst", color = CONE, size = 4, at = "front" }, { "text", text = "SENS INTERDIT", color = CONE, at = "above" }, { "shake", amount = 0.4 } },
+					text = "DÉVIATION !", hitText = "DÉVIÉ !",
+				},
+				-- →Y : le cône-missile : il le charge comme un lance-roquettes sur l'épaule et le tire : il traverse tout le couloir en sifflant
+				SUPER_side = {
+					label = "Cône-missile !", kind = "projectile", startup = 0.4, active = 0, recovery = 0.7,
+					damage = 26, kbBase = 50, kbGrowth = 100, kbAngle = 30,
+					projectile = { speed = 95, angle = 0, gravity = 0, lifetime = 0.9, size = 3.2, color = CONE, pierce = true,
+						visual = { shape = "cyl", size = 2.8, color = CONE, spin = 10, parts = { { "cyl", Vector3.new(1.2, 0.4, 1.2), Vector3.new(0, 0.6, 0), WHITE }, { "block", Vector3.new(2, 0.15, 2), Vector3.new(0, 1.3, 0), BLACK }, { "ball", Vector3.new(0.8, 0.8, 0.8), Vector3.new(0, 1.6, 0), STAR } } } },
+					windup = { Root = { 8, 20, 0, 0, -0.3, 0.2 }, Waist = { 10, 24, 0 }, Neck = { -10, -20, 0 }, RS = { 150, 0, 40 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, -10 }, LE = { 90, 0, 0 } },
+					strike = { Root = { -14, 10, 0, 0, -0.34, -0.45 }, Waist = { -16, 14, 0 }, Neck = { -4, -8, 0 }, RS = { 150, 0, 30 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 92, 0, 0 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+					follow = { Root = { 2, 14, 0, 0, -0.2, -0.2 }, Waist = { 6, 18, 0 }, Neck = { -2, -10, 0 }, RS = { 160, 0, 36 }, RE = { 90, 0, 0 }, RW = { -10, 0, 0 }, LS = { 88, 0, 4 }, LE = { 14, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+					shake = true, hideProp = "cone", windupFx = { "super", { "symbols", symbols = { "🚧", "3", "2", "1" }, count = 4, radius = 3, color = CONE } },
+					fx = { { "burst", color = FIRE_D, size = 3.5, at = "hand" }, { "particles", tex = "fire", color = ORANGE, dir = "front", at = "hand", time = 0.4, speed = 20 }, { "shake", amount = 0.4 } },
+					text = "MISSILE !", hitText = "KA-BOUM !",
+				},
+				-- ↑Y : la grue de chantier : le cône s'allonge en flèche de grue et le soulève, lui et tout le couloir, jusqu'au ciel
+				SUPER_up = {
+					label = "Grue de chantier !", startup = 0.35, active = 0.3, recovery = 0.7,
+					damage = 24, hitbox = box(16, 12, 8, 5), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3, selfVelocity = Vector2.new(0, 55),
+					windup = { Root = { -10, 0, 0, 0, -0.9, 0 }, Waist = { -30, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 60, 0, 10 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -10 }, LE = { 110, 0, 0 } },
+					strike = { Root = { 6, 0, 0, 0, 0.5, 0 }, Waist = { 18, 0, 0 }, Neck = { 50, 0, 0 }, RS = { 188, 0, 6 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 188, 0, -6 }, LE = { 0, 0, 0 }, RH = { 40, 0, 10 }, RK = { -90, 0, 0 }, LH = { 20, 0, -15 }, LK = { -60, 0, 0 } },
+					follow = { Root = { 10, 0, 0, 0, 0.55, 0 }, Waist = { 24, 0, 0 }, Neck = { 56, 0, 0 }, RS = { 190, 0, 10 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 190, 0, -10 }, LE = { 0, 0, 0 }, RH = { 60, 0, 20 }, RK = { -110, 0, 0 }, LH = { 10, 0, -25 }, LK = { -40, 0, 0 } },
+					hold = 0.2, shake = true, trail = "prop", windupFx = { "super", { "particles", tex = "spark", color = STAR, dir = "all", at = "feet", time = 0.25, speed = 8 } },
+					fx = { { "pillar", color = CONE, height = 22, width = 3, at = "front" }, { "burst", color = STAR, size = 4, at = "above" }, { "ring", color = CONE, radius = 6, at = "feet" }, { "symbols", symbols = { "🏗️", "🚧" }, count = 4, radius = 4, at = "above", color = CONE } },
+					text = "GRUE !", hitText = "HISSÉ !",
+				},
+				-- ↓Y : zone de travaux : il martèle le bitume avec le cône comme un marteau-piqueur, tout le couloir tremble et s'enlise
+				SUPER_down = {
+					label = "Zone de travaux !", startup = 0.35, active = 0.4, recovery = 0.7,
+					damage = 6, hits = 4, hitbox = box(16, 4, 8, -0.5), kbBase = 40, kbGrowth = 85, kbAngle = 65,
+					status = { name = "slowed", duration = 2.5 },
+					windup = { Root = { 10, 0, 0, 0, -0.3, 0.2 }, Waist = { 16, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 160, 0, 15 }, RE = { 70, 0, 0 }, RW = { 170, 0, 0 }, LS = { 150, 0, -15 }, LE = { 70, 0, 0 } },
+					strike = { Root = { -14, 0, 0, 0, -0.6, -0.3 }, Waist = { -26, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 60, 0, 8 }, RE = { 10, 0, 0 }, RW = { 170, 0, 0 }, LS = { 60, 0, -8 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { -16, 0, 0, 0, -0.7, -0.34 }, Waist = { -30, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 50, 0, 10 }, RE = { 10, 0, 0 }, RW = { 175, 0, 0 }, LS = { 50, 0, -10 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+					shake = true, wobble = true, trail = "prop", windupFx = { "super" },
+					fx = { { "beam", color = CONE, length = 16, width = 3, at = "feet" }, { "shake", amount = 0.6 }, { "particles", tex = "smoke", color = Color3.fromRGB(200, 200, 200), dir = "all", at = "front", time = 0.5, speed = 14 }, { "symbols", symbols = { "🚧", "TRAVAUX", "🚧" }, count = 5, radius = 4, at = "front", color = CONE } },
+					text = "TRAVAUX EN COURS !", hitText = "ENLISÉ !",
+				},
+			},
+			links = {
+				P_neutral = { P = "P_side", K = "K_neutral", S = "S_neutral" },
+				P_side = { P = "P_up", K = "K_side", S = "S_side" },
+				P_down = { P = "P_up", K = "K_down", S = "S_down" },
+				K_neutral = { K = "K_side", P = "P_neutral", S = "S_side" },
+				K_side = { K = "K_up", S = "S_neutral" },
+				P_dash = { P = "P_side", K = "K_side", S = "S_side" },
+				K_dash = { P = "P_up", S = "S_up" },
+			},
+		},
+		{ id = "boites_a_pizza", name = "Pile de boîtes à pizza", icon = "🍕",
+			prop = { name = "PropPizzas", hand = "Right", pieces = {
+				{ "Boite1", "", "block", Vector3.new(1.7, 0.3, 1.7), Vector3.new(0, -0.45, -0.3), Vector3.new(0, 0, 0), CARDBOARD, "Cardboard" },
+				{ "Boite2", "", "block", Vector3.new(1.7, 0.3, 1.7), Vector3.new(0.08, -0.8, -0.35), Vector3.new(0, 6, 0), CARDBOARD, "Cardboard" },
+				{ "Boite3", "", "block", Vector3.new(1.7, 0.3, 1.7), Vector3.new(-0.06, -1.15, -0.3), Vector3.new(0, -5, 0), CARDBOARD, "Cardboard" },
+				{ "Logo", "", "ball", Vector3.new(0.6, 0.06, 0.6), Vector3.new(0, -0.28, -0.3), Vector3.new(0, 0, 0), SAUCE_D, "SmoothPlastic" },
+				{ "PartQuiDepasse", "", "wedge", Vector3.new(0.6, 0.12, 0.7), Vector3.new(0.6, -0.62, -0.9), Vector3.new(0, 90, 0), PIZZA, "SmoothPlastic" },
+			} },
+			ability = { heal = 0.25, jumps = 1, text = "Un saut de plus ; 25 % des dégâts le nourrissent (il grignote)" },
+			moves = {
+				-- J : il ouvre une boîte et la claque sur le nez de l'adversaire comme une mâchoire en carton
+				P_neutral = {
+					label = "Boîte claquée", startup = 0.07, active = 0.08, recovery = 0.15,
+					damage = 6, hitbox = box(4.5, 3, 2.8, 0.7), kbBase = 20, kbGrowth = 26, kbAngle = 25,
+					windup = { Root = { 2, -14, 0, 0, -0.12, 0.1 }, Waist = { 4, -18, 0 }, Neck = { 0, 12, 0 }, RS = { 70, 0, 20 }, RE = { 90, 0, 0 }, RW = { 60, 0, 0 }, LS = { 40, 0, -20 }, LE = { 90, 0, 0 } },
+					strike = { Root = { -8, 14, 0, 0, -0.22, -0.3 }, Waist = { -10, 20, 0 }, Neck = { 0, -12, 0 }, RS = { 94, 0, 0 }, RE = { 10, 0, 0 }, RW = { -30, 0, 0 }, LS = { 20, 0, -30 }, LE = { 100, 0, 0 } },
+					follow = { Root = { -10, 18, 0, 0, -0.24, -0.34 }, Waist = { -12, 24, 0 }, Neck = { 0, -14, 0 }, RS = { 96, 0, 2 }, RE = { 14, 0, 0 }, RW = { 20, 0, 0 }, LS = { 16, 0, -32 }, LE = { 100, 0, 0 } },
+					trail = "prop", hitText = "CLAP !",
+				},
+				-- →J : une part de pizza jetée à bout portant, en flèche, qui se colle sur le front
+				P_side = {
+					label = "Part lancée", kind = "projectile", startup = 0.09, active = 0, recovery = 0.2,
+					damage = 7, kbBase = 22, kbGrowth = 34, kbAngle = 28,
+					projectile = { speed = 72, angle = 4, gravity = 30, lifetime = 0.3, size = 1.2, color = PIZZA, aim = false, visual = SLICE },
+					windup = { Root = { 4, -24, 0, 0, -0.15, 0.2 }, Waist = { 6, -28, 0 }, Neck = { 0, 20, 0 }, RS = { 40, 0, 30 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, -10 }, LE = { 70, 0, 0 } },
+					strike = { Root = { -10, 18, 0, 0, -0.28, -0.35 }, Waist = { -12, 24, 0 }, Neck = { 0, -14, 0 }, RS = { 60, 0, 20 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 96, 0, 0 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.35 } },
+					follow = { Root = { -12, 22, 0, 0, -0.3, -0.4 }, Waist = { -14, 28, 0 }, Neck = { 0, -16, 0 }, RS = { 60, 0, 22 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 92, 0, -4 }, LE = { 6, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.38 } },
+					hitText = "SPLATCH !",
+				},
+				-- ↓J : accroupi, il fait glisser une pizza entière à plat sur le sol dans les chevilles
+				P_down = {
+					label = "Pizza glissée", kind = "projectile", startup = 0.1, active = 0, recovery = 0.22,
+					damage = 6, kbBase = 22, kbGrowth = 30, kbAngle = 70,
+					projectile = { speed = 55, angle = 0, gravity = 0, lifetime = 0.35, size = 1.4, from = "feet", color = PIZZA, aim = false,
+						visual = { shape = "disc", size = 1.6, color = PIZZA, spin = 16, parts = { { "cyl", Vector3.new(0.26, 0.35, 0.35), Vector3.new(0.3, 0.2, 0), SAUCE_D } } } },
+					windup = { Root = { 10, 0, 0, 0, -0.85, 0.1 }, Waist = { 20, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 60, 0, 25 }, RE = { 80, 0, 0 }, RW = { 0, 0, 0 }, LS = { 120, 0, -30 }, LE = { 80, 0, 0 } },
+					strike = { Root = { 14, 0, 0, 0, -1.0, -0.2 }, Waist = { 26, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 60, 0, 25 }, RE = { 80, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -20 }, LE = { 0, 0, 0 }, LW = { -40, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					follow = { Root = { 16, 0, 0, 0, -1.0, -0.24 }, Waist = { 28, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 60, 0, 25 }, RE = { 80, 0, 0 }, RW = { 0, 0, 0 }, LS = { 24, 0, -22 }, LE = { 0, 0, 0 }, LW = { -50, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.32 } },
+					trail = "leftHand", hitText = "GLISSÉE !",
+				},
+				-- ↑J : il ouvre la boîte sous le menton de l'adversaire : le nuage de vapeur de fromage le soulève
+				P_up = {
+					label = "Vapeur de fromage", startup = 0.1, active = 0.1, recovery = 0.2,
+					damage = 7, hitbox = box(4.5, 5, 1.5, 3), kbBase = 24, kbGrowth = 40, kbAngle = 85,
+					windup = { Root = { 8, 0, 0, 0, -0.3, 0.1 }, Waist = { 12, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 40, 0, 20 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -20 }, LE = { 110, 0, 0 } },
+					strike = { Root = { -10, 0, 0, 0, 0.1, -0.1 }, Waist = { -14, 0, 0 }, Neck = { -24, 0, 0 }, RS = { 160, 0, 10 }, RE = { 10, 0, 0 }, RW = { -60, 0, 0 }, LS = { 150, 0, -20 }, LE = { 20, 0, 0 }, LW = { 60, 0, 0 } },
+					follow = { Root = { -12, 0, 0, 0, 0.12, -0.12 }, Waist = { -16, 0, 0 }, Neck = { -28, 0, 0 }, RS = { 168, 0, 12 }, RE = { 10, 0, 0 }, RW = { -70, 0, 0 }, LS = { 156, 0, -22 }, LE = { 20, 0, 0 }, LW = { 70, 0, 0 } },
+					fx = { { "particles", tex = "smoke", color = Color3.fromRGB(255, 240, 210), dir = "up", at = "hand", time = 0.3, speed = 10, size = 0.6, rate = 60 }, { "symbols", symbols = { "🧀", "♨️" }, count = 2, radius = 1.5, at = "head", color = PIZZA } }, hitText = "FUMANT !",
+				},
+				-- J en l'air : il appuie la pile entière sous lui comme un plateau qui tombe
+				P_air = {
+					label = "Pile plongeante", startup = 0.1, active = 0.12, recovery = 0.16,
+					damage = 8, hitbox = box(4.5, 4, 1.5, -1.4), kbBase = 20, kbGrowth = 36, kbAngle = -40,
+					windup = { Root = { 8, 0, 0 }, Waist = { 14, 0, 0 }, RS = { 180, 0, 15 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -40 }, LE = { 40, 0, 0 }, RH = { 40, 0, 0 }, RK = { -80, 0, 0 }, LH = { 60, 0, 0 }, LK = { -90, 0, 0 } },
+					strike = { Root = { -12, 0, 0 }, Waist = { -28, 0, 0 }, RS = { 50, 0, 5 }, RE = { 0, 0, 0 }, RW = { 90, 0, 0 }, LS = { -20, 0, -45 }, LE = { 20, 0, 0 }, RH = { 15, 0, 0 }, RK = { -35, 0, 0 }, LH = { 35, 0, 0 }, LK = { -70, 0, 0 } },
+					follow = { Root = { -16, 0, 0 }, Waist = { -34, 0, 0 }, RS = { 26, 0, 5 }, RE = { 8, 0, 0 }, RW = { 90, 0, 0 }, LS = { -30, 0, -50 }, LE = { 20, 0, 0 }, RH = { 5, 0, 0 }, RK = { -30, 0, 0 }, LH = { 30, 0, 0 }, LK = { -65, 0, 0 } },
+					trail = "prop", hitText = "PLOF !",
+				},
+				-- dash J : « Pizza pour la 12 ! », il fonce la pile à l'horizontale devant lui comme un serveur pressé
+				P_dash = {
+					label = "Pizza pour la 12", startup = 0.06, active = 0.15, recovery = 0.22,
+					damage = 8, hitbox = box(5.5, 3.5, 3, 0.6), kbBase = 26, kbGrowth = 50, kbAngle = 26, selfVelocity = Vector2.new(46, 0),
+					windup = { Root = { -6, 0, 0, 0, -0.3, 0.1 }, Waist = { -6, 0, 0 }, Neck = { 8, 0, 0 }, RS = { 50, 0, 20 }, RE = { 100, 0, 0 }, RW = { 90, 0, 0 }, LS = { 40, 0, -30 }, LE = { 80, 0, 0 } },
+					strike = { Root = { -22, 0, 0, 0, -0.4, -0.3 }, Waist = { -12, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 94, 0, 4 }, RE = { 6, 0, 0 }, RW = { 90, 0, 0 }, LS = { -30, 0, -40 }, LE = { 30, 0, 0 } },
+					follow = { Root = { -24, 0, 0, 0, -0.42, -0.35 }, Waist = { -14, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 96, 0, 6 }, RE = { 6, 0, 0 }, RW = { 90, 0, 0 }, LS = { -34, 0, -42 }, LE = { 30, 0, 0 } },
+					trail = "prop", fx = { { "symbols", symbols = { "🍕", "12" }, count = 2, radius = 1.5, at = "front", color = PIZZA } }, text = "POUR LA 12 !", hitText = "SERVI !",
+				},
+				-- K : il shoote dans le bas de la pile, les boîtes partent en éventail dans l'adversaire
+				K_neutral = {
+					label = "Shoot dans la pile", startup = 0.16, active = 0.12, recovery = 0.3,
+					damage = 11, hitbox = box(6, 3.5, 3.5, 0.3), kbBase = 30, kbGrowth = 66, kbAngle = 32,
+					windup = { Root = { 6, -10, 0, 0, -0.2, 0.1 }, Waist = { 8, -8, 0 }, RS = { 40, 0, 30 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -40 }, LE = { 50, 0, 0 }, RH = { -30, 0, 0 }, RK = { -60, 0, 0 } },
+					strike = { Root = { 10, 0, 0, 0, -0.1, 0.05 }, Waist = { 12, 0, 0 }, RS = { 20, 0, 60 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, -55 }, LE = { 30, 0, 0 }, RH = { 95, 0, 0 }, RK = { -4, 0, 0 }, RA = { 10, 0, 0 } },
+					follow = { Root = { 14, 0, 0, 0, -0.1, 0.1 }, Waist = { 16, 0, 0 }, RS = { 24, 0, 64 }, RE = { 25, 0, 0 }, RW = { 0, 0, 0 }, LS = { 74, 0, -60 }, LE = { 25, 0, 0 }, RH = { 104, 0, 0 }, RK = { 0, 0, 0 }, RA = { 15, 0, 0 } },
+					trail = "rightFoot", fx = { { "toss", shape = "flat", color = CARDBOARD, size = 1, count = 3, speed = 18 } }, hitText = "CARTONNÉ !",
+				},
+				-- →K : il fait tourner une boîte fermée comme un frisbee carré et l'envoie en pleine poire
+				K_side = {
+					label = "Boîte-frisbee", kind = "projectile", startup = 0.16, active = 0, recovery = 0.3,
+					damage = 11, kbBase = 30, kbGrowth = 64, kbAngle = 30,
+					projectile = { speed = 80, angle = 0, gravity = 0, lifetime = 0.45, size = 1.8, color = CARDBOARD, aim = false,
+						visual = { shape = "block", size = 1.6, color = CARDBOARD, spin = 18, parts = { { "block", Vector3.new(1.7, 0.08, 1.7), Vector3.new(0, 0.2, 0), CARDBOARD }, { "ball", Vector3.new(0.6, 0.06, 0.6), Vector3.new(0, 0.26, 0), SAUCE_D } } } },
+					windup = { Root = { 4, 40, 0, 0, -0.2, 0.15 }, Waist = { 6, 46, 0 }, Neck = { 0, -30, 0 }, RS = { 60, 0, 70 }, RE = { 60, 0, 0 }, RW = { 90, 0, 0 }, LS = { 50, 0, -20 }, LE = { 70, 0, 0 } },
+					strike = { Root = { -10, -26, 0, 0, -0.3, -0.35 }, Waist = { -12, -32, 0 }, Neck = { 0, 22, 0 }, RS = { 92, 0, -20 }, RE = { 0, 0, 0 }, RW = { 90, 0, 0 }, LS = { 30, 0, -40 }, LE = { 70, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { -12, -36, 0, 0, -0.32, -0.4 }, Waist = { -14, -42, 0 }, Neck = { 0, 28, 0 }, RS = { 94, 0, -40 }, RE = { 6, 0, 0 }, RW = { 90, 0, 0 }, LS = { 26, 0, -44 }, LE = { 70, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+					hitText = "BOÎTÉ !",
+				},
+				-- ↓K : balayette basse, la pile posée au sol pour s'appuyer, la jambe gauche fauche
+				K_down = {
+					label = "Balayette à la pile", startup = 0.14, active = 0.14, recovery = 0.3,
+					damage = 10, hitbox = box(7, 2, 3.5, -1.6), kbBase = 28, kbGrowth = 54, kbAngle = 75,
+					windup = { Root = { 12, 10, 0, 0, -0.85, 0.1 }, Waist = { 16, 14, 0 }, RS = { 60, 0, 30 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 20, 0, -40 }, LE = { 80, 0, 0 }, LH = { -30, 0, 0 }, LK = { -40, 0, 0 } },
+					strike = { Root = { 16, -20, 0, 0, -0.95, -0.1 }, Waist = { 20, -26, 0 }, RS = { 50, 0, 40 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -40 }, LE = { 80, 0, 0 }, LH = { 50, 0, -20 }, LK = { -4, 0, 0 }, LA = { 20, 0, 0 } },
+					follow = { Root = { 18, -26, 0, 0, -0.95, -0.14 }, Waist = { 22, -32, 0 }, RS = { 52, 0, 42 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 34, 0, -42 }, LE = { 80, 0, 0 }, LH = { 56, 0, -24 }, LK = { 0, 0, 0 }, LA = { 24, 0, 0 } },
+					trail = "leftFoot", fx = { "dust" }, hitText = "FAUCHÉ !",
+				},
+				-- ↑K : il lance la pile en l'air d'un coup de genou et la rattrape : les boîtes montent dans le menton
+				K_up = {
+					label = "Pile au plafond", startup = 0.16, active = 0.12, recovery = 0.3,
+					damage = 11, hitbox = box(4.5, 6, 1.5, 3.5), kbBase = 30, kbGrowth = 64, kbAngle = 88,
+					windup = { Root = { 10, 0, 0, 0, -0.3, 0.1 }, Waist = { 14, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 60, 0, 20 }, RE = { 100, 0, 0 }, RW = { 90, 0, 0 }, LS = { 40, 0, -30 }, LE = { 60, 0, 0 }, RH = { -20, 0, 0 }, RK = { -60, 0, 0 } },
+					strike = { Root = { -14, 0, 0, 0, 0.05, -0.1 }, Waist = { -18, 0, 0 }, Neck = { -22, 0, 0 }, RS = { 176, 0, 10 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -50 }, LE = { 30, 0, 0 }, RH = { 110, 0, 0 }, RK = { -120, 0, 0 }, RA = { -20, 0, 0 } },
+					follow = { Root = { -16, 0, 0, 0, 0.08, -0.12 }, Waist = { -20, 0, 0 }, Neck = { -26, 0, 0 }, RS = { 182, 0, 12 }, RE = { 10, 0, 0 }, RW = { -20, 0, 0 }, LS = { 34, 0, -52 }, LE = { 30, 0, 0 }, RH = { 116, 0, 0 }, RK = { -124, 0, 0 }, RA = { -20, 0, 0 } },
+					trail = "prop", fx = { { "toss", shape = "flat", color = CARDBOARD, size = 1, count = 2, speed = 14, lift = 30 } }, hitText = "HOP !",
+				},
+				-- K en l'air : coup de talon vers le bas, une boîte coincée sous la semelle
+				K_air = {
+					label = "Talon à la boîte", startup = 0.14, active = 0.14, recovery = 0.22,
+					damage = 11, hitbox = box(5, 4, 2, -1.2), kbBase = 28, kbGrowth = 64, kbAngle = -50,
+					windup = { Root = { -10, 0, 0 }, Waist = { -12, 0, 0 }, RS = { 150, 0, 25 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -30 }, LE = { 60, 0, 0 }, RH = { 100, 0, 0 }, RK = { -120, 0, 0 }, LH = { 30, 0, 0 }, LK = { -60, 0, 0 } },
+					strike = { Root = { 10, 0, 0 }, Waist = { 12, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 150, 0, 25 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -30 }, LE = { 60, 0, 0 }, RH = { 10, 0, 0 }, RK = { -6, 0, 0 }, RA = { -20, 0, 0 }, LH = { 50, 0, 0 }, LK = { -90, 0, 0 } },
+					follow = { Root = { 12, 0, 0 }, Waist = { 14, 0, 0 }, Neck = { 24, 0, 0 }, RS = { 154, 0, 26 }, RE = { 60, 0, 0 }, RW = { -10, 0, 0 }, LS = { 64, 0, -32 }, LE = { 60, 0, 0 }, RH = { 2, 0, 0 }, RK = { -4, 0, 0 }, RA = { -22, 0, 0 }, LH = { 55, 0, 0 }, LK = { -95, 0, 0 } },
+					trail = "rightFoot", hitText = "TALONNÉ !",
+				},
+				-- dash K : il glisse assis sur une boîte comme sur une luge, pieds devant
+				K_dash = {
+					label = "Luge en carton", startup = 0.1, active = 0.26, recovery = 0.3,
+					damage = 11, hitbox = box(6, 3, 3, -0.8), kbBase = 30, kbGrowth = 62, kbAngle = 38, selfVelocity = Vector2.new(55, 12),
+					windup = { Root = { -8, 0, 0, 0, -0.4, 0 }, Waist = { -10, 0, 0 }, RS = { 60, 0, 40 }, RE = { 60, 0, 0 }, RW = { 90, 0, 0 }, LS = { 50, 0, -40 } },
+					strike = { Root = { 20, 0, 0, 0, -0.7, 0.2 }, Waist = { 10, 0, 0 }, RS = { -30, 0, 50 }, RE = { 20, 0, 0 }, RW = { 90, 0, 0 }, LS = { 70, 0, -40 }, LE = { 30, 0, 0 }, RH = { 85, 0, 0 }, RK = { 0, 0, 0 }, RA = { 10, 0, 0 }, LH = { 80, 0, 0 }, LK = { -10, 0, 0 } },
+					follow = { Root = { 24, 0, 0, 0, -0.72, 0.24 }, Waist = { 12, 0, 0 }, RS = { -36, 0, 55 }, RE = { 20, 0, 0 }, RW = { 90, 0, 0 }, LS = { 75, 0, -45 }, LE = { 30, 0, 0 }, RH = { 90, 0, 0 }, RK = { 0, 0, 0 }, RA = { 14, 0, 0 }, LH = { 85, 0, 0 }, LK = { -10, 0, 0 } },
+					trail = "rightFoot", fx = { "dust" }, hitText = "SKRRRT !",
+				},
+				-- L : rafale de parts : trois parts lancées en éventail d'un seul geste, qui foncent sur l'adversaire
+				S_neutral = {
+					label = "Rafale de parts", kind = "projectile", startup = 0.2, active = 0, recovery = 0.45,
+					damage = 5, kbBase = 24, kbGrowth = 40, kbAngle = 30,
+					projectile = { speed = 85, angle = 0, gravity = 0, lifetime = 0.6, size = 1.3, color = PIZZA, visual = SLICE, fan = { count = 3, from = -8, to = 8 } },
+					windup = { Root = { 6, -22, 0, 0, -0.2, 0.2 }, Waist = { 8, -26, 0 }, Neck = { 4, 16, 0 }, RS = { 60, 0, 30 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, -10 }, LE = { 70, 0, 0 } },
+					strike = { Root = { -12, 18, 0, 0, -0.3, -0.35 }, Waist = { -14, 24, 0 }, Neck = { 0, -12, 0 }, RS = { 60, 0, 30 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 96, 0, 0 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { -14, 22, 0, 0, -0.34, -0.42 }, Waist = { -18, 28, 0 }, Neck = { 0, -16, 0 }, RS = { 60, 0, 30 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 100, 0, 6 }, LE = { 6, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+					fx = { { "burst", color = PIZZA, size = 2, at = "lhand" } }, text = "TROIS PARTS !", hitText = "SPLATCH SPLATCH !",
+				},
+				-- →L : la pizza XXL : une pizza familiale lancée à plat qui traverse tout le couloir et rebondit sur les murs
+				S_side = {
+					label = "Pizza XXL", kind = "projectile", startup = 0.24, active = 0, recovery = 0.5,
+					damage = 15, kbBase = 32, kbGrowth = 60, kbAngle = 32,
+					projectile = { speed = 85, angle = 0, gravity = 0, lifetime = 0.8, size = 2.6, color = PIZZA, pierce = true, bounce = 1,
+						visual = { shape = "disc", size = 2.6, color = PIZZA, spin = 20, parts = { { "cyl", Vector3.new(0.3, 0.5, 0.5), Vector3.new(0.6, 0.25, 0), SAUCE_D }, { "cyl", Vector3.new(0.3, 0.5, 0.5), Vector3.new(-0.5, -0.4, 0), SAUCE_D }, { "cyl", Vector3.new(0.3, 0.5, 0.5), Vector3.new(0.1, -0.1, 0.6), SAUCE_D } } } },
+					status = { name = "slowed", duration = 1.5 },
+					windup = { Root = { 6, 44, 0, 0, -0.25, 0.2 }, Waist = { 8, 50, 0 }, Neck = { 4, -34, 0 }, RS = { 40, 0, 30 }, RE = { 80, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, 70 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -12, -30, 0, 0, -0.32, -0.4 }, Waist = { -14, -36, 0 }, Neck = { -4, 26, 0 }, RS = { 40, 0, 30 }, RE = { 80, 0, 0 }, RW = { 0, 0, 0 }, LS = { 94, 0, -30 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+					follow = { Root = { -14, -40, 0, 0, -0.36, -0.46 }, Waist = { -18, -46, 0 }, Neck = { -6, 30, 0 }, RS = { 40, 0, 30 }, RE = { 80, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, -50 }, LE = { 6, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+					spin = { axis = "y", degrees = 360 }, fx = { { "burst", color = PIZZA, size = 3, at = "lhand" }, { "ring", color = SAUCE_D, radius = 4, at = "front" } },
+					text = "FAMILIALE !", hitText = "PIZZA EN PLEINE FACE !",
+				},
+				-- ↓L : il pose une boîte à pizza sur le sol : le premier qui marche dessus se fait pincer par le carton
+				S_down = {
+					label = "Boîte piégée", kind = "trap", startup = 0.2, active = 0.1, recovery = 0.45,
+					damage = 13, kbBase = 30, kbGrowth = 55, kbAngle = 75,
+					trap = { size = Vector3.new(3, 2, 6), offset = 3, lifetime = 10, max = 2, color = CARDBOARD,
+						visual = { shape = "block", size = 1.8, color = CARDBOARD, parts = { { "block", Vector3.new(1.8, 0.3, 1.8), Vector3.new(0, 0, 0), CARDBOARD }, { "ball", Vector3.new(0.6, 0.06, 0.6), Vector3.new(0, 0.18, 0), SAUCE_D } } } },
+					windup = { Root = { 8, 0, 0, 0, -0.6, 0.1 }, Waist = { 14, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 60, 0, 20 }, RE = { 100, 0, 0 }, RW = { 90, 0, 0 }, LS = { 30, 0, -30 }, LE = { 80, 0, 0 } },
+					strike = { Root = { 14, 0, 0, 0, -0.95, -0.2 }, Waist = { 24, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 50, 0, 10 }, RE = { 0, 0, 0 }, RW = { 90, 0, 0 }, LS = { 40, 0, -30 }, LE = { 80, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					follow = { Root = { 6, 0, 0, 0, -0.6, -0.1 }, Waist = { 12, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 40, 0, 20 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -30 }, LE = { 80, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					fx = { { "symbols", symbols = { "🍕", "?" }, count = 2, radius = 1.5, at = "front", color = PIZZA } }, text = "C'EST POUR VOUS !", hitText = "PIÉGÉ !",
+				},
+				-- ↑L : la pile-ascenseur : il s'assied sur la pile qui s'empile toute seule sous lui et le propulse en diagonale, boîtes qui volent
+				S_up = {
+					label = "Pile-ascenseur", startup = 0.12, active = 0.3, recovery = 0.4,
+					damage = 13, hitbox = box(10, 11, 3, 4), kbBase = 32, kbGrowth = 50, kbAngle = 74, selfVelocity = Vector2.new(42, 80),
+					windup = { Root = { 6, 0, 0, 0, -0.8, 0.1 }, Waist = { -8, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 30, 0, 30 }, RE = { 110, 0, 0 }, RW = { 90, 0, 0 }, LS = { 30, 0, -30 }, LE = { 110, 0, 0 } },
+					strike = { Root = { -38, 0, 0, 0, 0.4, -0.2 }, Waist = { -6, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 150, 0, 30 }, RE = { 20, 0, 0 }, RW = { 90, 0, 0 }, LS = { 150, 0, -30 }, LE = { 20, 0, 0 }, RH = { 40, 0, 5 }, RK = { -70, 0, 0 }, LH = { 30, 0, -5 }, LK = { -60, 0, 0 } },
+					follow = { Root = { -42, 0, 0, 0, 0.45, -0.25 }, Waist = { -8, 0, 0 }, Neck = { 32, 0, 0 }, RS = { 156, 0, 34 }, RE = { 20, 0, 0 }, RW = { 90, 0, 0 }, LS = { 156, 0, -34 }, LE = { 20, 0, 0 }, RH = { 44, 0, 6 }, RK = { -74, 0, 0 }, LH = { 34, 0, -6 }, LK = { -64, 0, 0 } },
+					trail = "body", fx = { { "pillar", color = CARDBOARD, height = 10, width = 2.5 }, { "toss", shape = "flat", color = CARDBOARD, size = 1, count = 6, speed = 16 }, { "ring", color = PIZZA, radius = 5, at = "feet" } },
+					text = "ASCENSEUR !", hitText = "EMPILÉ !",
+				},
+				-- L en l'air : pluie de parts lâchées sous lui, qui tombent sur l'adversaire
+				S_air = {
+					label = "Pluie de parts", kind = "projectile", startup = 0.15, active = 0, recovery = 0.4,
+					damage = 6, kbBase = 24, kbGrowth = 45, kbAngle = -40,
+					projectile = { speed = 60, angle = -70, gravity = 40, lifetime = 0.7, size = 1.2, color = PIZZA, visual = SLICE, rain = { count = 4, spread = 6 } },
+					windup = { Root = { 10, 0, 0 }, Waist = { 14, 0, 0 }, RS = { 170, 0, 20 }, RE = { 60, 0, 0 }, RW = { 90, 0, 0 }, LS = { 170, 0, -20 }, LE = { 60, 0, 0 }, RH = { 40, 0, 0 }, RK = { -80, 0, 0 }, LH = { 50, 0, 0 }, LK = { -90, 0, 0 } },
+					strike = { Root = { -14, 0, 0 }, Waist = { -28, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 20, 0, 10 }, RE = { 0, 0, 0 }, RW = { 90, 0, 0 }, LS = { 20, 0, -10 }, LE = { 0, 0, 0 }, LW = { -40, 0, 0 }, RH = { 20, 0, 0 }, RK = { -40, 0, 0 }, LH = { 30, 0, 0 }, LK = { -60, 0, 0 } },
+					follow = { Root = { -18, 0, 0 }, Waist = { -32, 0, 0 }, Neck = { 34, 0, 0 }, RS = { 16, 0, 12 }, RE = { 4, 0, 0 }, RW = { 90, 0, 0 }, LS = { 16, 0, -12 }, LE = { 4, 0, 0 }, LW = { -50, 0, 0 }, RH = { 16, 0, 0 }, RK = { -36, 0, 0 }, LH = { 26, 0, 0 }, LK = { -56, 0, 0 } },
+					fx = { { "burst", color = PIZZA, size = 2, at = "feet" } }, text = "ÇA TOMBE !", hitText = "PLOF !",
+				},
+				-- Y : pizza party : il ouvre toutes les boîtes d'un coup, huit parts partent en éventail et tout le monde rit (de bonheur) sans pouvoir bouger
+				SUPER = {
+					label = "Pizza party !", kind = "projectile", startup = 0.35, active = 0, recovery = 0.6,
+					damage = 4, kbBase = 25, kbGrowth = 40, kbAngle = 40,
+					projectile = { speed = 75, angle = 0, gravity = 0, lifetime = 1.0, size = 1.4, color = PIZZA, visual = SLICE, fan = { count = 8, from = -20, to = 40 } },
+					status = { name = "laughing", duration = 2.5 },
+					windup = { Root = { 0, 0, 0, 0, -0.5, 0.1 }, Waist = { -16, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 60, 0, 20 }, RE = { 110, 0, 0 }, RW = { 90, 0, 0 }, LS = { 60, 0, -20 }, LE = { 110, 0, 0 } },
+					strike = { Root = { 4, 0, 0, 0, 0.2, 0 }, Waist = { 16, 0, 0 }, Neck = { 24, 0, 0 }, RS = { 140, 0, 70 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 140, 0, -70 }, LE = { 0, 0, 0 }, FR = { 0, 0, 0, 0, 0.2, 0 }, FL = { 0, 0, 0, 0, 0.2, 0 } },
+					follow = { Root = { 6, 0, 0, 0, 0.15, 0 }, Waist = { 20, 0, 0 }, Neck = { 28, 0, 0 }, RS = { 150, 0, 80 }, RE = { 5, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, -80 }, LE = { 5, 0, 0 } },
+					windupFx = { "super", { "symbols", symbols = { "🍕", "🎉", "🍕" }, count = 6, radius = 3, color = PIZZA } }, fx = { { "burst", color = PIZZA, size = 3.5, at = "front" }, { "symbols", symbols = { "🎉", "😂" }, count = 6, radius = 5, at = "front", color = STAR } },
+					text = "PIZZA PARTY !", hitText = "TROP BON !",
+				},
+				-- →Y : le calzone géant : il referme toutes les pizzas en un seul chausson énorme et le lance comme un boulet qui traverse le couloir
+				SUPER_side = {
+					label = "Calzone géant !", kind = "projectile", startup = 0.4, active = 0, recovery = 0.7,
+					damage = 26, kbBase = 50, kbGrowth = 100, kbAngle = 30,
+					projectile = { speed = 88, angle = 0, gravity = 0, lifetime = 0.9, size = 3.2, color = CREPE_D, pierce = true,
+						visual = { shape = "ball", size = 3, color = CREPE_D, spin = 8, parts = { { "ball", Vector3.new(1.2, 0.8, 2.4), Vector3.new(0, -1, 0), CREPE_D }, { "ball", Vector3.new(0.5, 0.5, 0.5), Vector3.new(0.8, 0.6, 0.6), SAUCE_D } } } },
+					windup = { Root = { 8, -30, 0, 0, -0.4, 0.3 }, Waist = { 12, -34, 0 }, Neck = { 8, 22, 0 }, RS = { 40, 0, 30 }, RE = { 120, 0, 0 }, RW = { 90, 0, 0 }, LS = { 40, 0, -30 }, LE = { 120, 0, 0 } },
+					strike = { Root = { -18, 22, 0, 0, -0.3, -0.5 }, Waist = { -20, 28, 0 }, Neck = { -6, -16, 0 }, RS = { 96, 0, -2 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 92, 0, 4 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+					follow = { Root = { -20, 26, 0, 0, -0.34, -0.56 }, Waist = { -24, 32, 0 }, Neck = { -8, -18, 0 }, RS = { 100, 0, -4 }, RE = { 4, 0, 0 }, RW = { 6, 0, 0 }, LS = { 96, 0, 6 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.52 } },
+					shake = true, hideProp = "pizzas", windupFx = { "super", { "symbols", symbols = { "🥟", "🍕" }, count = 6, radius = 3, color = CREPE_D } },
+					fx = { { "burst", color = CREPE_D, size = 3.5, at = "hand" }, { "shake", amount = 0.4 } },
+					text = "CALZONE !", hitText = "ÉCRABOUILLÉ !",
+				},
+				-- ↑Y : le four à pizza : la pile s'enflamme sous ses pieds comme un four à bois et le propulse au plafond avec tout le couloir
+				SUPER_up = {
+					label = "Four à pizza !", startup = 0.35, active = 0.3, recovery = 0.7,
+					damage = 24, hitbox = box(16, 12, 8, 5), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3, selfVelocity = Vector2.new(0, 55),
+					windup = { Root = { -10, 0, 0, 0, -0.95, 0 }, Waist = { -32, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 40, 0, -20 }, RE = { 110, 0, 0 }, RW = { 90, 0, 0 }, LS = { 40, 0, 20 }, LE = { 110, 0, 0 } },
+					strike = { Root = { 6, 0, 0, 0, 0.5, 0 }, Waist = { 18, 0, 0 }, Neck = { 50, 0, 0 }, RS = { 150, 0, 60 }, RE = { 0, 0, 0 }, RW = { 90, 0, 0 }, LS = { 150, 0, -60 }, LE = { 0, 0, 0 }, RH = { 40, 0, 10 }, RK = { -90, 0, 0 }, LH = { 20, 0, -15 }, LK = { -60, 0, 0 } },
+					follow = { Root = { 10, 0, 0, 0, 0.55, 0 }, Waist = { 24, 0, 0 }, Neck = { 56, 0, 0 }, RS = { 160, 0, 70 }, RE = { 0, 0, 0 }, RW = { 90, 0, 0 }, LS = { 160, 0, -70 }, LE = { 0, 0, 0 }, RH = { 60, 0, 20 }, RK = { -110, 0, 0 }, LH = { 10, 0, -25 }, LK = { -40, 0, 0 } },
+					hold = 0.2, shake = true, spin = { axis = "y", degrees = 360 }, windupFx = { "super", { "particles", tex = "fire", color = ORANGE, dir = "up", at = "feet", time = 0.3, speed = 6 } },
+					fx = { { "pillar", color = ORANGE, height = 22, width = 3, at = "front" }, { "particles", tex = "fire", color = STAR, dir = "up", at = "front", time = 0.6, speed = 24, size = 1.6, rate = 100 }, { "burst", color = PIZZA, size = 4, at = "above" }, { "ring", color = ORANGE, radius = 6, at = "feet" } },
+					text = "AU FOUR !", hitText = "BIEN CUIT !",
+				},
+				-- ↓Y : le tapis de pizzas : il étale toutes les pizzas sur le sol du couloir, tout le monde glisse sur le fromage fondu
+				SUPER_down = {
+					label = "Tapis de pizzas !", startup = 0.35, active = 0.3, recovery = 0.7,
+					damage = 22, hitbox = box(16, 4, 8, -0.5), kbBase = 44, kbGrowth = 90, kbAngle = 60,
+					status = { name = "slippery", duration = 2.5 },
+					windup = { Root = { 12, 0, 0, 0, -0.5, 0.2 }, Waist = { 20, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 150, 0, 30 }, RE = { 60, 0, 0 }, RW = { 90, 0, 0 }, LS = { 150, 0, -30 }, LE = { 60, 0, 0 } },
+					strike = { Root = { 18, 0, 0, 0, -1.0, -0.3 }, Waist = { 28, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 40, 0, 60 }, RE = { 0, 0, 0 }, RW = { 90, 0, 0 }, LS = { 40, 0, -60 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { 20, 0, 0, 0, -1.0, -0.34 }, Waist = { 30, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 30, 0, 70 }, RE = { 0, 0, 0 }, RW = { 90, 0, 0 }, LS = { 30, 0, -70 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+					hold = 0.15, windupFx = { "super" }, fx = { { "puddle", color = PIZZA, width = 16 }, { "toss", shape = "flat", color = PIZZA, size = 1.4, count = 8, speed = 24 }, { "beam", color = PIZZA, length = 16, width = 4, at = "feet" }, { "shake", amount = 0.3 } },
+					text = "TAPIS ROUGE… DE SAUCE !", hitText = "ÇA GLISSE !",
+				},
+			},
+			links = {
+				P_neutral = { P = "P_side", K = "K_neutral", S = "S_neutral" },
+				P_side = { P = "P_up", K = "K_side", S = "S_side" },
+				P_down = { P = "P_up", K = "K_down", S = "S_down" },
+				K_neutral = { P = "P_neutral", K = "K_side", S = "S_side" },
+				P_dash = { P = "P_side", K = "K_side", S = "S_side" },
+				K_dash = { P = "P_up", S = "S_up" },
+			},
+		},
+	},
 
 	-- Costume : casque de vélo avec support smartphone, blouson de livreur turquoise, énorme sac cube
 	-- isotherme sur le dos, short, genouillères et baskets
@@ -500,6 +984,26 @@ local data = {
 			hold = 0.3, prop = "telephone", windupFx = { { "screen", color = TEAL, alpha = 0.25 }, { "text", text = "COMMANDE VALIDÉE ✔", color = SCREEN } },
 			fx = { { "symbols", symbols = { "📦", "📦", "⭐" }, count = 8, radius = 5, at = "above" }, { "shake", amount = 0.4 } },
 			text = "COMMANDE GROUPÉE !", hitText = "LIVRÉ !",
+		},
+		-- Trottinette-javelot (→Y) : il plie la trottinette, la fait tournoyer au-dessus du casque et la lance à plat comme un
+		-- javelot à roulettes : elle traverse tout le couloir en fauchant tout le monde, puis revient se ranger dans sa main
+		SUPER_side = {
+			label = "Trottinette-javelot !", kind = "projectile", startup = 0.38, active = 0, recovery = 0.65,
+			damage = 25, kbBase = 46, kbGrowth = 96, kbAngle = 32,
+			projectile = { speed = 90, angle = 0, gravity = 0, lifetime = 0.9, size = 3, color = TEAL_DARK, returns = true, pierce = true,
+				visual = { shape = "block", size = 2.4, color = TEAL_DARK, spin = 12, parts = {
+					{ "cyl", Vector3.new(0.2, 3, 0.2), Vector3.new(0, 0, 0), METAL },
+					{ "cyl", Vector3.new(1.6, 0.16, 0.16), Vector3.new(0, 1.5, 0), BLACK },
+					{ "cyl", Vector3.new(0.25, 0.7, 0.7), Vector3.new(0, -1.5, 0), BLACK },
+					{ "cyl", Vector3.new(0.25, 0.7, 0.7), Vector3.new(0, -1.5, 2), BLACK },
+				} } },
+			status = { name = "slowed", duration = 2 },
+			windup = { Root = { 6, -38, 0, 0, -0.3, 0.3 }, Waist = { 10, -42, 0 }, Neck = { 8, 26, 0 }, RS = { 178, 0, 28 }, RE = { 40, 0, 0 }, RW = { 0, 0, 90 }, LS = { 70, 0, -20 }, LE = { 60, 0, 0 } },
+			strike = { Root = { -16, 26, 0, 0, -0.34, -0.5 }, Waist = { -18, 30, 0 }, Neck = { -6, -18, 0 }, RS = { 94, 0, -6 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -30, 0, -40 }, LE = { 30, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+			follow = { Root = { -18, 30, 0, 0, -0.36, -0.55 }, Waist = { -22, 34, 0 }, Neck = { -8, -20, 0 }, RS = { 98, 0, -8 }, RE = { 4, 0, 0 }, RW = { 6, 0, 0 }, LS = { -35, 0, -44 }, LE = { 30, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.52 } },
+			spin = { axis = "y", degrees = 360 }, hideProp = "trottinette", windupFx = { "super", { "symbols", symbols = { "🛴", "⭐" }, count = 6, radius = 3, color = STAR } },
+			fx = { { "burst", color = TEAL, size = 3, at = "hand" }, { "ring", color = ORANGE, radius = 4, at = "front" }, { "particles", tex = "spark", color = ORANGE, dir = "front", at = "hand", time = 0.3, speed = 16 }, { "shake", amount = 0.3 } },
+			text = "JAVELOT À ROULETTES !", hitText = "FAUCHÉ !",
 		},
 		-- Livraison express en orbite (↑Y) : une rampe de lancement sort du sol, il cabre à la verticale et décolle en vrille,
 		-- roue avant au ciel : tout le couloir part en orbite avec lui comme un colis-fusée

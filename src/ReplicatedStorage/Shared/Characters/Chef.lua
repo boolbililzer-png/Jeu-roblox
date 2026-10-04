@@ -26,11 +26,489 @@ local PASTA = Color3.fromRGB(245, 215, 120)
 local OIL = Color3.fromRGB(230, 200, 60)
 local SILVER = Color3.fromRGB(200, 205, 215)
 
+local CRUST = Color3.fromRGB(200, 140, 70) -- baguette géante (arme n° 2)
+local CRUMB = Color3.fromRGB(240, 220, 170)
+local POT = Color3.fromRGB(60, 60, 68) -- marmite de soupe (arme n° 3)
+local SOUP = Color3.fromRGB(230, 150, 60)
+local MEATBALL = Color3.fromRGB(150, 90, 60)
+local LOBSTER = Color3.fromRGB(220, 50, 40) -- homard du →Y
+-- Croûton (projectiles de l'arme n° 2)
+local CROUTON = { shape = "block", size = 1.0, color = CRUST, spin = 10, parts = {
+	{ "block", Vector3.new(0.7, 0.7, 0.7), Vector3.new(0, 0, 0), CRUMB },
+	{ "block", Vector3.new(0.75, 0.15, 0.75), Vector3.new(0, 0.3, 0), CRUST },
+} }
+
 local data = {
 	id = "Chef",
 	name = "Chef Flambé",
 	costume = "Chef",
 	style = "proud",
+
+	------------------------------------------------------------------ Les 3 armes de la Caisse Bizarre (une au hasard)
+	-- n° 1 : la poêle et le rouleau (ses coups sont ceux de moves). n° 2 : la baguette géante, fleuret croustillant rapide et
+	-- long. n° 3 : la marmite de soupe, lourde et lente, qui encaisse et nourrit son homme.
+	weapons = {
+		{ id = "poele", name = "Poêle & rouleau à pâtisserie", icon = "🍳",
+			ability = { damage = 1.15, text = "Dégâts +15 % (tout est meilleur avec du beurre)" } },
+		{ id = "baguette_geante", name = "Baguette géante", icon = "🥖",
+			prop = { name = "PropBaguette", hand = "Right", pieces = {
+				{ "Talon", "", "ball", Vector3.new(0.5, 0.6, 0.5), Vector3.new(0, 0.2, 0), Vector3.zero, CRUST, "Sand" },
+				{ "Mie", "", "cyl", Vector3.new(3.8, 0.5, 0.5), Vector3.new(0, -1.8, 0), Vector3.zero, CRUST, "Sand" },
+				{ "Grigne1", "", "block", Vector3.new(0.2, 0.5, 0.12), Vector3.new(0, -1.0, -0.22), Vector3.new(0, 0, 25), CRUMB, "Sand" },
+				{ "Grigne2", "", "block", Vector3.new(0.2, 0.5, 0.12), Vector3.new(0, -1.8, -0.22), Vector3.new(0, 0, 25), CRUMB, "Sand" },
+				{ "Grigne3", "", "block", Vector3.new(0.2, 0.5, 0.12), Vector3.new(0, -2.6, -0.22), Vector3.new(0, 0, 25), CRUMB, "Sand" },
+				{ "Pointe", "", "ball", Vector3.new(0.45, 0.7, 0.45), Vector3.new(0, -3.85, 0), Vector3.zero, CRUST, "Sand" },
+			} },
+			ability = { reach = 1.25, text = "Portée +25 % (une baguette d'un mètre vingt)" },
+			moves = {
+				-- J : touche de baguette : fente d'escrime éclair, la pointe pique le ventre, main gauche en l'air comme un fleurettiste
+				P_neutral = {
+					label = "Touche de baguette", startup = 0.06, active = 0.08, recovery = 0.14,
+					damage = 5, hitbox = box(5.5, 2.5, 3.2, 0.6), kbBase = 18, kbGrowth = 24, kbAngle = 20,
+					windup = { Root = { 2, 30, 0, 0, -0.15, 0.1 }, Waist = { 2, 34, 0 }, Neck = { 0, -26, 0 }, RS = { 60, 0, 10 }, RE = { 90, 0, 0 }, RW = { 0, 0, 0 }, LS = { 120, 0, -50 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -8, 24, 0, 0, -0.25, -0.35 }, Waist = { -8, 28, 0 }, Neck = { 0, -20, 0 }, RS = { 96, 0, -4 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 130, 0, -60 }, LE = { 40, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+					follow = { Root = { -10, 24, 0, 0, -0.26, -0.4 }, Waist = { -10, 28, 0 }, Neck = { 0, -20, 0 }, RS = { 98, 0, -6 }, RE = { 4, 0, 0 }, RW = { -8, 0, 0 }, LS = { 134, 0, -62 }, LE = { 40, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.48 } },
+					trail = "prop", text = "TOUCHÉ !", hitText = "PIC !",
+				},
+				-- →J : fente croustillante : grande fente en avant, la baguette tendue à l'horizontale jusqu'à l'autre bout de la cuisine
+				P_side = {
+					label = "Fente croustillante", startup = 0.09, active = 0.1, recovery = 0.2,
+					damage = 8, hitbox = box(7, 2.5, 4, 0.5), kbBase = 24, kbGrowth = 40, kbAngle = 18, selfVelocity = Vector2.new(26, 0),
+					windup = { Root = { 4, 34, 0, 0, -0.2, 0.2 }, Waist = { 4, 38, 0 }, Neck = { 0, -28, 0 }, RS = { 40, 0, 20 }, RE = { 120, 0, 0 }, RW = { 0, 0, 0 }, LS = { 110, 0, -40 }, LE = { 70, 0, 0 } },
+					strike = { Root = { -16, 26, 0, 0, -0.5, -0.6 }, Waist = { -12, 30, 0 }, Neck = { 0, -22, 0 }, RS = { 94, 0, -6 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, -40 }, LE = { 20, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.8 } },
+					follow = { Root = { -18, 28, 0, 0, -0.52, -0.65 }, Waist = { -14, 32, 0 }, Neck = { 0, -24, 0 }, RS = { 96, 0, -8 }, RE = { 0, 0, 0 }, RW = { -6, 0, 0 }, LS = { 154, 0, -42 }, LE = { 20, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.85 } },
+					trail = "prop", fx = { "dust" }, text = "EN GARDE !", hitText = "EMBROCHÉ !",
+				},
+				-- ↓J : baguette aux chevilles : accroupi, un revers rasant du bout de la baguette dans les chevilles
+				P_down = {
+					label = "Baguette aux chevilles", startup = 0.08, active = 0.1, recovery = 0.18,
+					damage = 6, hitbox = box(6.5, 1.8, 3.5, -2), kbBase = 22, kbGrowth = 24, kbAngle = 70,
+					windup = { Root = { -6, 30, 0, 0, -0.75, 0.1 }, Waist = { -12, 34, 0 }, Neck = { 8, -24, 0 }, RS = { 50, 0, 40 }, RE = { 60, 0, 0 }, RW = { 60, 0, 0 }, LS = { 30, 0, -40 }, LE = { 70, 0, 0 } },
+					strike = { Root = { -12, -20, 0, 0, -0.85, -0.2 }, Waist = { -18, -24, 0 }, Neck = { 10, 16, 0 }, RS = { 20, 0, -20 }, RE = { 0, 0, 0 }, RW = { 60, 0, 0 }, LS = { 40, 0, -40 }, LE = { 70, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					follow = { Root = { -12, -30, 0, 0, -0.85, -0.24 }, Waist = { -18, -34, 0 }, Neck = { 10, 22, 0 }, RS = { 16, 0, -30 }, RE = { 0, 0, 0 }, RW = { 60, 0, 0 }, LS = { 44, 0, -42 }, LE = { 70, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.32 } },
+					trail = "prop", hitText = "TCHAC !",
+				},
+				-- ↑J : baguette au ciel : d'un coup de poignet, la baguette remonte à la verticale et soulève sous le menton
+				P_up = {
+					label = "Baguette au ciel", startup = 0.08, active = 0.12, recovery = 0.2,
+					damage = 7, hitbox = box(4.5, 6, 2, 3.5), kbBase = 26, kbGrowth = 34, kbAngle = 86,
+					windup = { Root = { 4, 10, 0, 0, -0.4, 0.1 }, Waist = { 8, 12, 0 }, Neck = { 6, -8, 0 }, RS = { 20, 0, 20 }, RE = { 40, 0, 0 }, RW = { 60, 0, 0 }, LS = { 30, 0, -30 }, LE = { 80, 0, 0 } },
+					strike = { Root = { -8, 0, 0, 0, 0.15, -0.1 }, Waist = { -12, 0, 0 }, Neck = { -24, 0, 0 }, RS = { 176, 0, 6 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -50 }, LE = { 40, 0, 0 }, FR = { 0, 0, 0, 0, 0.15, 0 }, FL = { 0, 0, 0, 0, 0.15, 0 } },
+					follow = { Root = { -10, 0, 0, 0, 0.18, -0.12 }, Waist = { -14, 0, 0 }, Neck = { -28, 0, 0 }, RS = { 182, 0, 8 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 64, 0, -52 }, LE = { 40, 0, 0 }, FR = { 0, 0, 0, 0, 0.18, 0 }, FL = { 0, 0, 0, 0, 0.18, 0 } },
+					trail = "prop", hitText = "HOP !",
+				},
+				-- J en l'air : pique aérienne : en l'air, il pointe la baguette en diagonale vers le bas, jambes en ciseaux
+				P_air = {
+					label = "Pique aérienne", startup = 0.08, active = 0.1, recovery = 0.16,
+					damage = 7, hitbox = box(5.5, 3.5, 3, -1), kbBase = 22, kbGrowth = 34, kbAngle = -30,
+					windup = { Root = { 6, 20, 0 }, Waist = { 8, 24, 0 }, Neck = { 0, -16, 0 }, RS = { 50, 0, 20 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 120, 0, -40 }, LE = { 50, 0, 0 }, RH = { 60, 0, 0 }, RK = { -90, 0, 0 }, LH = { 30, 0, 0 }, LK = { -60, 0, 0 } },
+					strike = { Root = { -14, 16, 0 }, Waist = { -16, 20, 0 }, Neck = { 8, -12, 0 }, RS = { 70, 0, -4 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, -40 }, LE = { 20, 0, 0 }, RH = { -20, 0, 0 }, RK = { -20, 0, 0 }, LH = { 50, 0, 0 }, LK = { -40, 0, 0 } },
+					follow = { Root = { -16, 18, 0 }, Waist = { -18, 22, 0 }, Neck = { 10, -14, 0 }, RS = { 66, 0, -6 }, RE = { 4, 0, 0 }, RW = { -8, 0, 0 }, LS = { 154, 0, -42 }, LE = { 20, 0, 0 }, RH = { -24, 0, 0 }, RK = { -16, 0, 0 }, LH = { 54, 0, 0 }, LK = { -36, 0, 0 } },
+					trail = "prop", hitText = "PIQUÉ !",
+				},
+				-- dash J : charge du boulanger : baguette sous le bras comme une lance, il fonce tête baissée
+				P_dash = {
+					label = "Charge du boulanger", startup = 0.07, active = 0.15, recovery = 0.24,
+					damage = 8, hitbox = box(6.5, 3.5, 3.5, 0.5), kbBase = 28, kbGrowth = 50, kbAngle = 24, selfVelocity = Vector2.new(46, 0),
+					windup = { Root = { -6, 20, 0, 0, -0.25, 0.1 }, Waist = { -4, 24, 0 }, Neck = { 6, -18, 0 }, RS = { 20, 0, 20 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -30 }, LE = { 70, 0, 0 } },
+					strike = { Root = { -22, 20, 0, 0, -0.38, -0.3 }, Waist = { -10, 24, 0 }, Neck = { 12, -16, 0 }, RS = { 60, 0, -10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -30, 0, -40 }, LE = { 30, 0, 0 } },
+					follow = { Root = { -24, 22, 0, 0, -0.4, -0.35 }, Waist = { -12, 26, 0 }, Neck = { 14, -18, 0 }, RS = { 62, 0, -12 }, RE = { 0, 0, 0 }, RW = { -8, 0, 0 }, LS = { -34, 0, -42 }, LE = { 30, 0, 0 } },
+					trail = "prop", fx = { "dust" }, text = "CHAUD LE PAIN !", hitText = "EMBROCHÉ !",
+				},
+				-- K : moulinet de baguette : grand moulinet de la baguette autour de lui, il tourne sur un sabot
+				K_neutral = {
+					label = "Moulinet de baguette", startup = 0.16, active = 0.16, recovery = 0.3,
+					damage = 11, hitbox = box(7, 3.5, 2.5, 0.8), kbBase = 30, kbGrowth = 66, kbAngle = 32,
+					windup = { Root = { 4, -40, 0, 0, -0.3, 0.2 }, Waist = { 6, -40, 0 }, Neck = { 0, 30, 0 }, RS = { 120, 0, 60 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -40 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -6, 0, 0, 0, -0.3, -0.2 }, Waist = { -8, 0, 0 }, Neck = { 0, 0, 0 }, RS = { 95, 0, 60 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -60 }, LE = { 30, 0, 0 } },
+					follow = { Root = { -6, 0, 0, 0, -0.3, -0.22 }, Waist = { -8, 0, 0 }, Neck = { 0, 0, 0 }, RS = { 92, 0, 65 }, RE = { 5, 0, 0 }, RW = { -8, 0, 0 }, LS = { 42, 0, -62 }, LE = { 30, 0, 0 } },
+					spin = { axis = "y", degrees = 360 }, trail = "prop", hitText = "VLAN !",
+				},
+				-- →K : baguette à deux mains : il la prend comme une batte et frappe un grand coup en avançant d'un pas chassé
+				K_side = {
+					label = "Baguette-batte", startup = 0.18, active = 0.12, recovery = 0.32,
+					damage = 12, hitbox = box(7, 3.5, 3.8, 0.8), kbBase = 32, kbGrowth = 74, kbAngle = 28, selfVelocity = Vector2.new(24, 0),
+					windup = { Root = { 6, 44, 0, 0, -0.25, 0.25 }, Waist = { 8, 50, 0 }, Neck = { 4, -34, 0 }, RS = { 80, 0, 60 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, 20 }, LE = { 70, 0, 0 }, LW = { 0, 0, 0 } },
+					strike = { Root = { -12, -26, 0, 0, -0.38, -0.45 }, Waist = { -14, -30, 0 }, Neck = { -6, 20, 0 }, RS = { 92, 0, -20 }, RE = { 5, 0, 0 }, RW = { 0, 0, 0 }, LS = { 92, 0, -40 }, LE = { 5, 0, 0 }, LW = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+					follow = { Root = { -14, -40, 0, 0, -0.4, -0.5 }, Waist = { -16, -44, 0 }, Neck = { -8, 26, 0 }, RS = { 88, 0, -40 }, RE = { 10, 0, 0 }, RW = { -10, 0, 0 }, LS = { 88, 0, -60 }, LE = { 10, 0, 0 }, LW = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.55 } },
+					trail = "prop", fx = { "dust", { "toss", shape = "ball", color = CRUMB, size = 0.3, count = 4, speed = 14 } }, hitText = "BAOUM !",
+				},
+				-- ↓K : baguette rasante : accroupi, il fait tourner la baguette au ras du carrelage comme une hélice
+				K_down = {
+					label = "Hélice de baguette", startup = 0.16, active = 0.16, recovery = 0.3,
+					damage = 11, hitbox = box(8, 2, 0.5, -2), kbBase = 30, kbGrowth = 60, kbAngle = 72,
+					windup = { Root = { -8, 30, 0, 0, -0.95, 0 }, Waist = { -20, 24, 0 }, Neck = { 10, -20, 0 }, RS = { 40, 0, 60 }, RE = { 20, 0, 0 }, RW = { 80, 0, 0 }, LS = { 30, 0, -50 }, LE = { 40, 0, 0 } },
+					strike = { Root = { -12, 0, 0, 0, -1.2, 0 }, Waist = { -24, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 30, 0, 85 }, RE = { 5, 0, 0 }, RW = { 80, 0, 0 }, LS = { 20, 0, -65 }, LE = { 20, 0, 0 } },
+					follow = { Root = { -12, 0, 0, 0, -1.15, 0 }, Waist = { -22, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 32, 0, 82 }, RE = { 5, 0, 0 }, RW = { 80, 0, 0 }, LS = { 25, 0, -62 }, LE = { 20, 0, 0 } },
+					spin = { axis = "y", degrees = 360 }, trail = "prop", fx = { "dust" }, hitText = "FAUCHÉ !",
+				},
+				-- ↑K : baguette montante : il saute et remonte la baguette à deux mains comme un uppercut de pain
+				K_up = {
+					label = "Uppercut de pain", startup = 0.16, active = 0.12, recovery = 0.3,
+					damage = 12, hitbox = box(5, 6, 2, 3.5), kbBase = 32, kbGrowth = 70, kbAngle = 88, selfVelocity = Vector2.new(0, 26),
+					windup = { Root = { -8, -10, 0, 0, -0.6, 0 }, Waist = { -20, -10, 0 }, Neck = { 10, 0, 0 }, RS = { 10, 0, 20 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 10, 0, -10 }, LE = { 40, 0, 0 }, LW = { 0, 0, 0 } },
+					strike = { Root = { 10, 5, 0, 0, 0.3, -0.2 }, Waist = { 14, 8, 0 }, Neck = { 24, 0, 0 }, RS = { 160, 0, 5 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, 10 }, LE = { 20, 0, 0 }, LW = { 0, 0, 0 }, RH = { 60, 0, 0 }, RK = { -110, 0, 0 }, LH = { 50, 0, 0 }, LK = { -100, 0, 0 } },
+					follow = { Root = { 12, 8, 0, 0, 0.35, -0.25 }, Waist = { 16, 10, 0 }, Neck = { 28, 0, 0 }, RS = { 176, 0, 5 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 166, 0, 10 }, LE = { 15, 0, 0 }, LW = { 0, 0, 0 }, RH = { 65, 0, 0 }, RK = { -115, 0, 0 }, LH = { 55, 0, 0 }, LK = { -105, 0, 0 } },
+					trail = "prop", hitText = "LEVÉE DE PAIN !",
+				},
+				-- K en l'air : baguette plongeante : il abat la baguette à deux mains vers le bas comme une hache de pain
+				K_air = {
+					label = "Hache de pain", startup = 0.14, active = 0.14, recovery = 0.24,
+					damage = 12, hitbox = box(5.5, 4, 2.5, -1), kbBase = 30, kbGrowth = 66, kbAngle = -55,
+					windup = { Root = { 12, 0, 0 }, Waist = { 16, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 190, 0, 12 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 180, 0, -12 }, LE = { 40, 0, 0 }, LW = { 0, 0, 0 }, RH = { 60, 0, 0 }, RK = { -100, 0, 0 }, LH = { 70, 0, 0 }, LK = { -110, 0, 0 } },
+					strike = { Root = { -20, 0, 0 }, Waist = { -32, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 50, 0, 6 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -6 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 }, RH = { 20, 0, 0 }, RK = { -40, 0, 0 }, LH = { 30, 0, 0 }, LK = { -60, 0, 0 } },
+					follow = { Root = { -24, 0, 0 }, Waist = { -36, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 36, 0, 6 }, RE = { 6, 0, 0 }, RW = { -20, 0, 0 }, LS = { 36, 0, -6 }, LE = { 6, 0, 0 }, LW = { 0, 0, 0 }, RH = { 15, 0, 0 }, RK = { -35, 0, 0 }, LH = { 25, 0, 0 }, LK = { -55, 0, 0 } },
+					trail = "prop", hitText = "TRANCHÉ !",
+				},
+				-- dash K : glissade en garde : il glisse sur un sabot en position d'escrime, la baguette pointée devant
+				K_dash = {
+					label = "Glissade en garde", startup = 0.1, active = 0.25, recovery = 0.3,
+					damage = 11, hitbox = box(7, 3.5, 4, -0.3), kbBase = 30, kbGrowth = 62, kbAngle = 40, selfVelocity = Vector2.new(52, 0),
+					windup = { Root = { -8, 30, 0, 0, -0.4, 0 }, Waist = { -10, 34, 0 }, Neck = { 6, -26, 0 }, RS = { 40, 0, 20 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 110, 0, -40 }, LE = { 60, 0, 0 }, RH = { -15, 0, 0 }, RK = { -60, 0, 0 } },
+					strike = { Root = { 6, 26, 6, 0, -0.5, -0.2 }, Waist = { 4, 30, -6 }, Neck = { 0, -22, 0 }, RS = { 94, 0, -6 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, -40 }, LE = { 20, 0, 0 }, RH = { 80, 0, 0 }, RK = { -5, 0, 0 }, RA = { 20, 0, 0 } },
+					follow = { Root = { 8, 28, 8, 0, -0.5, -0.25 }, Waist = { 6, 32, -8 }, Neck = { 0, -24, 0 }, RS = { 96, 0, -8 }, RE = { 0, 0, 0 }, RW = { -6, 0, 0 }, LS = { 154, 0, -42 }, LE = { 20, 0, 0 }, RH = { 86, 0, 0 }, RK = { 0, 0, 0 }, RA = { 22, 0, 0 } },
+					wobble = true, trail = "prop", fx = { "dust" }, text = "ALLEZ !", hitText = "TOUCHÉ !",
+				},
+				-- L : croûtons : il casse le bout de la baguette, trois croûtons partent en éventail sur l'adversaire
+				S_neutral = {
+					label = "Croûtons !", kind = "projectile", startup = 0.2, active = 0, recovery = 0.45,
+					damage = 5, kbBase = 24, kbGrowth = 40, kbAngle = 30,
+					projectile = { speed = 85, angle = 0, gravity = 0, lifetime = 0.6, size = 1.2, color = CRUST, visual = CROUTON, fan = { count = 3, from = -8, to = 8 } },
+					windup = { Root = { 6, -20, 0, 0, -0.2, 0.2 }, Waist = { 8, -26, 0 }, Neck = { 4, 16, 0 }, RS = { 60, 0, 30 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, 0 }, LE = { 110, 0, 0 }, LW = { 0, 0, 0 } },
+					strike = { Root = { -12, 18, 0, 0, -0.3, -0.35 }, Waist = { -14, 24, 0 }, Neck = { 0, -12, 0 }, RS = { 60, 0, 30 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 96, 0, 0 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { -14, 22, 0, 0, -0.34, -0.42 }, Waist = { -18, 28, 0 }, Neck = { 0, -16, 0 }, RS = { 60, 0, 30 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 100, 0, 6 }, LE = { 6, 0, 0 }, LW = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+					fx = { { "burst", color = CRUMB, size = 2, at = "lhand" }, { "toss", shape = "ball", color = CRUMB, size = 0.3, count = 4, speed = 12 } }, text = "CROÛTONS !", hitText = "CROC !",
+				},
+				-- →L : la flèche de baguette : grande fente qui traverse tout le couloir, la baguette tendue comme une lance
+				S_side = {
+					label = "Flèche de baguette", startup = 0.22, active = 0.25, recovery = 0.5,
+					damage = 15, hitbox = box(14, 4, 7, 0.6), kbBase = 32, kbGrowth = 62, kbAngle = 24, selfVelocity = Vector2.new(40, 0),
+					windup = { Root = { 4, 36, 0, 0, -0.3, 0.3 }, Waist = { 4, 40, 0 }, Neck = { 0, -30, 0 }, RS = { 30, 0, 20 }, RE = { 130, 0, 0 }, RW = { 0, 0, 0 }, LS = { 120, 0, -40 }, LE = { 70, 0, 0 } },
+					strike = { Root = { -22, 28, 0, 0, -0.6, -0.7 }, Waist = { -14, 32, 0 }, Neck = { 0, -24, 0 }, RS = { 96, 0, -8 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 160, 0, -40 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.9 } },
+					follow = { Root = { -24, 30, 0, 0, -0.62, -0.75 }, Waist = { -16, 34, 0 }, Neck = { 0, -26, 0 }, RS = { 98, 0, -10 }, RE = { 0, 0, 0 }, RW = { -6, 0, 0 }, LS = { 164, 0, -42 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.95 } },
+					trail = "prop", fx = { { "beam", color = CRUST, length = 14, width = 2, at = "hand" }, { "burst", color = CRUMB, size = 2.5, at = "front" }, { "particles", tex = "spark", color = CRUMB, dir = "front", at = "hand", time = 0.3, speed = 16 } },
+					text = "FLÈCHE !", hitText = "TRANSPERCÉ !",
+				},
+				-- ↓L : miettes partout : il frotte la baguette entre ses mains, le nuage de miettes envahit tout le couloir et fait éternuer
+				S_down = {
+					label = "Miettes partout", startup = 0.2, active = 0.22, recovery = 0.45,
+					damage = 12, hitbox = box(14, 5, 7, 0.8), kbBase = 18, kbGrowth = 30, kbAngle = 40,
+					status = { name = "sneezy", duration = 2 },
+					windup = { Root = { 4, 0, 0, 0, -0.25, 0.1 }, Waist = { 8, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 70, 0, 20 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, -20 }, LE = { 100, 0, 0 }, LW = { 0, 0, 0 } },
+					strike = { Root = { -8, 0, 0, 0, -0.3, -0.25 }, Waist = { -14, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 90, 0, 10 }, RE = { 60, 0, 0 }, RW = { 40, 0, 0 }, LS = { 90, 0, -10 }, LE = { 60, 0, 0 }, LW = { -40, 0, 0 } },
+					follow = { Root = { -8, 0, 0, 0, -0.3, -0.25 }, Waist = { -14, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 90, 0, 10 }, RE = { 70, 0, 0 }, RW = { -40, 0, 0 }, LS = { 90, 0, -10 }, LE = { 70, 0, 0 }, LW = { 40, 0, 0 } },
+					wobble = true, shake = true, trail = "prop", fx = { { "beam", color = CRUMB, length = 14, width = 4, at = "head" }, { "particles", tex = "smoke", color = CRUMB, dir = "front", at = "hand", time = 0.4, speed = 14, size = 0.6, rate = 90 }, { "symbols", symbols = { "ATCHOUM", "🥖" }, count = 4, radius = 3, at = "front", color = CRUST } },
+					text = "ET DES MIETTES !", hitText = "ATCHOUM !",
+				},
+				-- ↑L : remontée en fente : il plante la baguette au sol comme une perche et saute par-dessus en diagonale, jambes qui traînent
+				S_up = {
+					label = "Saut à la perche", startup = 0.12, active = 0.3, recovery = 0.4,
+					damage = 13, hitbox = box(10, 11, 3, 4), kbBase = 32, kbGrowth = 50, kbAngle = 74, selfVelocity = Vector2.new(42, 80),
+					windup = { Root = { 6, 0, 0, 0, -0.7, 0.1 }, Waist = { -10, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 20, 0, 20 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -30 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -40, 0, 0, 0, 0.4, -0.2 }, Waist = { -6, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 150, 0, 10 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 140, 0, -30 }, LE = { 30, 0, 0 }, RH = { -25, 0, 5 }, RK = { -30, 0, 0 }, LH = { -15, 0, -5 }, LK = { -50, 0, 0 } },
+					follow = { Root = { -44, 0, 0, 0, 0.45, -0.25 }, Waist = { -8, 0, 0 }, Neck = { 32, 0, 0 }, RS = { 170, 0, 12 }, RE = { 0, 0, 0 }, RW = { -8, 0, 0 }, LS = { -30, 0, -40 }, LE = { 20, 0, 0 }, RH = { -30, 0, 6 }, RK = { -35, 0, 0 }, LH = { -20, 0, -6 }, LK = { -55, 0, 0 } },
+					trail = "prop", fx = { { "ring", color = CRUST, radius = 5, at = "feet" }, { "burst", color = CRUMB, size = 3, at = "feet" }, { "particles", tex = "spark", color = CRUMB, dir = "down", at = "feet", time = 0.35, speed = 14 } },
+					text = "PERCHE !", hitText = "ENVOLÉ !",
+				},
+				-- L en l'air : baguette lâchée : il lance la baguette comme un javelot vers le bas, elle fonce sur l'adversaire
+				S_air = {
+					label = "Javelot de pain", kind = "projectile", startup = 0.16, active = 0, recovery = 0.4,
+					damage = 12, kbBase = 26, kbGrowth = 48, kbAngle = -40,
+					projectile = { speed = 75, angle = -45, gravity = 15, lifetime = 0.8, size = 2, color = CRUST,
+						visual = { shape = "cyl", size = 2.4, color = CRUST, spin = 4, parts = { { "ball", Vector3.new(0.5, 0.6, 0.5), Vector3.new(0, 1.3, 0), CRUST }, { "ball", Vector3.new(0.5, 0.6, 0.5), Vector3.new(0, -1.3, 0), CRUST } } } },
+					windup = { Root = { 8, -20, 0 }, Waist = { 12, -24, 0 }, Neck = { 0, 16, 0 }, RS = { 175, 0, 20 }, RE = { 50, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -30 }, LE = { 60, 0, 0 }, RH = { 50, 0, 0 }, RK = { -90, 0, 0 }, LH = { 60, 0, 0 }, LK = { -100, 0, 0 } },
+					strike = { Root = { -14, 16, 0 }, Waist = { -28, 20, 0 }, Neck = { 28, -12, 0 }, RS = { 40, 0, 10 }, RE = { 0, 0, 0 }, RW = { -40, 0, 0 }, LS = { 30, 0, -30 }, LE = { 20, 0, 0 }, RH = { 20, 0, 0 }, RK = { -40, 0, 0 }, LH = { 30, 0, 0 }, LK = { -60, 0, 0 } },
+					follow = { Root = { -18, 18, 0 }, Waist = { -32, 22, 0 }, Neck = { 32, -14, 0 }, RS = { 34, 0, 12 }, RE = { 4, 0, 0 }, RW = { -50, 0, 0 }, LS = { 26, 0, -32 }, LE = { 20, 0, 0 }, RH = { 16, 0, 0 }, RK = { -36, 0, 0 }, LH = { 26, 0, 0 }, LK = { -56, 0, 0 } },
+					hideProp = "baguette", fx = { { "burst", color = CRUMB, size = 2, at = "hand" } }, text = "JAVELOT !", hitText = "PLANTÉ !",
+				},
+				-- Y : mille-feuilles de touches : rafale de cinq touches d'escrime si rapides qu'on ne voit plus la baguette, sur tout le couloir
+				SUPER = {
+					label = "Mille-feuilles de touches !", startup = 0.35, active = 0.5, recovery = 0.6,
+					damage = 5, hits = 5, hitbox = box(16, 5, 8, 0.8), kbBase = 20, kbGrowth = 36, kbAngle = 30,
+					windup = { Root = { 2, 36, 0, 0, -0.2, 0.15 }, Waist = { 2, 40, 0 }, Neck = { 0, -30, 0 }, RS = { 40, 0, 20 }, RE = { 120, 0, 0 }, RW = { 0, 0, 0 }, LS = { 130, 0, -50 }, LE = { 50, 0, 0 } },
+					strike = { Root = { -12, 26, 0, 0, -0.35, -0.5 }, Waist = { -10, 30, 0 }, Neck = { 0, -22, 0 }, RS = { 96, 0, -6 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, -50 }, LE = { 30, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.6 } },
+					follow = { Root = { -12, 26, 0, 0, -0.35, -0.5 }, Waist = { -10, 30, 0 }, Neck = { 0, -22, 0 }, RS = { 70, 0, -6 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, -50 }, LE = { 30, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.6 } },
+					wobble = true, trail = "prop", windupFx = { "super", { "symbols", symbols = { "🥖", "⚔️" }, count = 4, radius = 3, color = CRUST } },
+					fx = { { "beam", color = CRUMB, length = 16, width = 3, at = "hand" }, { "symbols", symbols = { "TOUCHÉ", "TOUCHÉ", "TOUCHÉ" }, count = 6, radius = 5, at = "front", color = CRUST }, { "shake", amount = 0.3 } },
+					text = "MILLE-FEUILLES !", hitText = "PIC PIC PIC PIC PIC !",
+				},
+				-- →Y : la baguette-javelot : il tourne sur lui-même comme un lanceur de javelot et envoie la baguette traverser tout le couloir, elle revient en boomerang
+				SUPER_side = {
+					label = "Baguette-javelot !", kind = "projectile", startup = 0.4, active = 0, recovery = 0.7,
+					damage = 26, kbBase = 50, kbGrowth = 100, kbAngle = 30,
+					projectile = { speed = 92, angle = 0, gravity = 0, lifetime = 0.9, size = 3.2, color = CRUST, pierce = true, returns = true,
+						visual = { shape = "cyl", size = 3.6, color = CRUST, spin = 10, parts = { { "ball", Vector3.new(0.7, 0.9, 0.7), Vector3.new(0, 1.9, 0), CRUST }, { "ball", Vector3.new(0.7, 0.9, 0.7), Vector3.new(0, -1.9, 0), CRUST }, { "block", Vector3.new(0.3, 0.7, 0.2), Vector3.new(0, 0, -0.35), CRUMB } } } },
+					windup = { Root = { 8, -40, 0, 0, -0.3, 0.3 }, Waist = { 12, -44, 0 }, Neck = { 8, 28, 0 }, RS = { 170, 0, 30 }, RE = { 50, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, -20 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -16, 26, 0, 0, -0.34, -0.5 }, Waist = { -18, 30, 0 }, Neck = { -6, -18, 0 }, RS = { 94, 0, -6 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -30, 0, -40 }, LE = { 30, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+					follow = { Root = { -18, 30, 0, 0, -0.36, -0.55 }, Waist = { -22, 34, 0 }, Neck = { -8, -20, 0 }, RS = { 98, 0, -8 }, RE = { 4, 0, 0 }, RW = { 6, 0, 0 }, LS = { -35, 0, -44 }, LE = { 30, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.52 } },
+					spin = { axis = "y", degrees = 360 }, hideProp = "baguette", windupFx = { "super", { "symbols", symbols = { "🥖", "✨" }, count = 6, radius = 3, color = CRUST } },
+					fx = { { "burst", color = CRUMB, size = 3.5, at = "hand" }, { "ring", color = CRUST, radius = 4, at = "front" }, { "shake", amount = 0.4 } },
+					text = "JAVELOT !", hitText = "EMBROCHÉ !",
+				},
+				-- ↑Y : la tour de pain : la baguette gonfle au four sous ses pieds en une tour de brioche qui l'élève avec tout le couloir
+				SUPER_up = {
+					label = "Tour de brioche !", startup = 0.35, active = 0.3, recovery = 0.7,
+					damage = 24, hitbox = box(16, 12, 8, 5), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3, selfVelocity = Vector2.new(0, 55),
+					windup = { Root = { -10, 0, 0, 0, -0.9, 0 }, Waist = { -30, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 40, 0, 20 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -20 }, LE = { 110, 0, 0 } },
+					strike = { Root = { 6, 0, 0, 0, 0.5, 0 }, Waist = { 18, 0, 0 }, Neck = { 50, 0, 0 }, RS = { 186, 0, 6 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 120, 0, -70 }, LE = { 10, 0, 0 }, RH = { 40, 0, 10 }, RK = { -90, 0, 0 }, LH = { 20, 0, -15 }, LK = { -60, 0, 0 } },
+					follow = { Root = { 10, 0, 0, 0, 0.55, 0 }, Waist = { 24, 0, 0 }, Neck = { 56, 0, 0 }, RS = { 188, 0, 10 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 126, 0, -76 }, LE = { 10, 0, 0 }, RH = { 60, 0, 20 }, RK = { -110, 0, 0 }, LH = { 10, 0, -25 }, LK = { -40, 0, 0 } },
+					hold = 0.2, shake = true, trail = "prop", windupFx = { "super", { "particles", tex = "smoke", color = CRUMB, dir = "up", at = "feet", time = 0.3, speed = 6 } },
+					fx = { { "pillar", color = CRUST, height = 22, width = 3.5, at = "front" }, { "burst", color = CRUMB, size = 4, at = "above" }, { "ring", color = CRUST, radius = 6, at = "feet" }, { "symbols", symbols = { "🥐", "🥖", "🍞" }, count = 6, radius = 4, at = "above", color = CRUST } },
+					text = "ÇA LÈVE !", hitText = "BRIOCHÉ !",
+				},
+				-- ↓Y : le pétrissage : il abat la baguette comme un rouleau et pétrit tout le couloir, l'adversaire finit en boule de pâte étourdie
+				SUPER_down = {
+					label = "Pétrissage !", startup = 0.35, active = 0.4, recovery = 0.7,
+					damage = 22, hitbox = box(16, 4, 8, -0.5), kbBase = 44, kbGrowth = 90, kbAngle = 62,
+					status = { name = "stunned", duration = 1.5 },
+					windup = { Root = { 10, 0, 0, 0, -0.3, 0.2 }, Waist = { 16, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 190, 0, 15 }, RE = { 50, 0, 0 }, RW = { 0, 0, 0 }, LS = { 190, 0, -15 }, LE = { 50, 0, 0 }, LW = { 0, 0, 0 } },
+					strike = { Root = { -16, 0, 0, 0, -0.7, -0.4 }, Waist = { -30, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 50, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -10 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+					follow = { Root = { -18, 0, 0, 0, -0.75, -0.44 }, Waist = { -34, 0, 0 }, Neck = { -12, 0, 0 }, RS = { 40, 0, 12 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 40, 0, -12 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.48 } },
+					hold = 0.15, wobble = true, trail = "prop", windupFx = { "super" },
+					fx = { { "beam", color = CRUMB, length = 16, width = 4, at = "feet" }, { "particles", tex = "smoke", color = CRUMB, dir = "all", at = "front", time = 0.5, speed = 12, size = 0.8 }, { "shake", amount = 0.5 }, { "symbols", symbols = { "🍞", "💫" }, count = 5, radius = 4, at = "front", color = CRUST } },
+					text = "ON PÉTRIT !", hitText = "EN BOULE !",
+				},
+			},
+			links = {
+				P_neutral = { P = "P_side", K = "K_neutral", S = "S_neutral" },
+				P_side = { P = "P_up", K = "K_side", S = "S_side" },
+				P_down = { P = "P_up", K = "K_down", S = "S_down" },
+				K_neutral = { P = "P_neutral", K = "K_side", S = "S_side" },
+				K_side = { P = "P_up", K = "K_up", S = "S_neutral" },
+				P_dash = { P = "P_side", K = "K_side", S = "S_side" },
+				K_dash = { P = "P_up", S = "S_up" },
+			},
+		},
+		{ id = "marmite", name = "Marmite de soupe", icon = "🍲",
+			prop = { name = "PropMarmite", hand = "Right", pieces = {
+				{ "Anse", "", "cyl", Vector3.new(1.0, 0.16, 0.16), Vector3.new(0, -0.1, 0), Vector3.zero, BLACK, "Metal", { axis = "x" } },
+				{ "Cuve", "", "cyl", Vector3.new(1.6, 1.9, 1.9), Vector3.new(0, -1.3, 0), Vector3.zero, POT, "Metal" },
+				{ "Soupe", "", "cyl", Vector3.new(0.1, 1.7, 1.7), Vector3.new(0, -0.5, 0), Vector3.zero, SOUP, "SmoothPlastic" },
+				{ "Poignee1", "", "block", Vector3.new(0.4, 0.2, 0.2), Vector3.new(1.05, -1.0, 0), Vector3.zero, BLACK, "Metal" },
+				{ "Poignee2", "", "block", Vector3.new(0.4, 0.2, 0.2), Vector3.new(-1.05, -1.0, 0), Vector3.zero, BLACK, "Metal" },
+				{ "Louche", "", "cyl", Vector3.new(1.4, 0.1, 0.1), Vector3.new(0.5, -0.1, 0.5), Vector3.new(0, 0, -30), SILVER, "Metal" },
+			} },
+			ability = { heal = 0.3, armor = true, text = "Les L encaissent ; 30 % des dégâts le nourrissent (soupe du jour)" },
+			moves = {
+				-- J : coup de marmite : il balance la lourde marmite à deux mains devant lui, lentement, en soufflant
+				P_neutral = {
+					label = "Coup de marmite", startup = 0.12, active = 0.1, recovery = 0.22,
+					damage = 8, hitbox = box(4.5, 3.5, 2.8, 0.5), kbBase = 24, kbGrowth = 30, kbAngle = 28,
+					windup = { Root = { 4, -16, 0, 0, -0.15, 0.15 }, Waist = { 6, -20, 0 }, Neck = { 8, 12, 0 }, RS = { 60, 0, 10 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -10 }, LE = { 110, 0, 0 }, LW = { 0, 0, 0 } },
+					strike = { Root = { -10, 14, 0, 0, -0.28, -0.3 }, Waist = { -12, 20, 0 }, Neck = { 0, -10, 0 }, RS = { 96, 0, 4 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 92, 0, -6 }, LE = { 10, 0, 0 }, LW = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.35 } },
+					follow = { Root = { -12, 18, 0, 0, -0.3, -0.36 }, Waist = { -14, 24, 0 }, Neck = { 0, -12, 0 }, RS = { 100, 0, 6 }, RE = { 14, 0, 0 }, RW = { -10, 0, 0 }, LS = { 96, 0, -8 }, LE = { 14, 0, 0 }, LW = { -10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.38 } },
+					trail = "prop", text = "OUMPF !", hitText = "BONG !",
+				},
+				-- →J : louchée de soupe : il puise une louche de soupe bouillante et la lance au visage
+				P_side = {
+					label = "Louchée de soupe", startup = 0.1, active = 0.12, recovery = 0.22,
+					damage = 8, hitbox = box(6, 3, 3.5, 0.8), kbBase = 24, kbGrowth = 38, kbAngle = 22,
+					windup = { Root = { 4, -10, 0, 0, -0.15, 0.1 }, Waist = { 6, -12, 0 }, Neck = { 10, 8, 0 }, RS = { 50, 0, 20 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -20 }, LE = { 120, 0, 0 }, LW = { 40, 0, 0 } },
+					strike = { Root = { -8, 10, 0, 0, -0.25, -0.3 }, Waist = { -10, 12, 0 }, Neck = { 0, -8, 0 }, RS = { 60, 0, 20 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 96, 0, -6 }, LE = { 0, 0, 0 }, LW = { -60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.35 } },
+					follow = { Root = { -10, 12, 0, 0, -0.28, -0.34 }, Waist = { -12, 14, 0 }, Neck = { 0, -10, 0 }, RS = { 60, 0, 22 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 98, 0, -8 }, LE = { 4, 0, 0 }, LW = { -70, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.38 } },
+					trail = "leftHand", fx = { { "toss", shape = "ball", color = SOUP, size = 0.5, count = 3, speed = 16 } }, text = "UNE LOUCHE ?", hitText = "SPLASH !",
+				},
+				-- ↓J : accroupi, il pose la marmite de tout son poids sur les orteils de l'adversaire
+				P_down = {
+					label = "Marmite sur les orteils", startup = 0.12, active = 0.1, recovery = 0.26,
+					damage = 8, hitbox = box(5, 2, 3, -1.8), kbBase = 26, kbGrowth = 30, kbAngle = 75,
+					windup = { Root = { 8, 0, 0, 0, -0.5, 0.1 }, Waist = { 14, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 140, 0, 15 }, RE = { 40, 0, 0 }, RW = { 0, 0, 0 }, LS = { 140, 0, -15 }, LE = { 40, 0, 0 } },
+					strike = { Root = { 16, 0, 0, 0, -0.95, -0.2 }, Waist = { 26, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 40, 0, 10 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -10 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					follow = { Root = { 18, 0, 0, 0, -0.95, -0.24 }, Waist = { 28, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 36, 0, 12 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 36, 0, -12 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.32 } },
+					trail = "prop", fx = { "dust", { "toss", shape = "ball", color = SOUP, size = 0.4, count = 3, speed = 10, lift = 20 } }, hitText = "ÉCRASÉ !",
+				},
+				-- ↑J : couvercle qui saute : la vapeur fait sauter le couvercle, il remonte la marmite sous le menton
+				P_up = {
+					label = "Couvercle qui saute", startup = 0.1, active = 0.12, recovery = 0.22,
+					damage = 8, hitbox = box(4.5, 5.5, 1.5, 3.2), kbBase = 26, kbGrowth = 40, kbAngle = 86,
+					windup = { Root = { 8, 0, 0, 0, -0.3, 0.1 }, Waist = { 12, 0, 0 }, Neck = { 8, 0, 0 }, RS = { 40, 0, 20 }, RE = { 120, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -20 }, LE = { 120, 0, 0 } },
+					strike = { Root = { -10, 0, 0, 0, 0.1, -0.1 }, Waist = { -14, 0, 0 }, Neck = { -24, 0, 0 }, RS = { 170, 0, 10 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 170, 0, -10 }, LE = { 10, 0, 0 } },
+					follow = { Root = { -12, 0, 0, 0, 0.12, -0.12 }, Waist = { -16, 0, 0 }, Neck = { -28, 0, 0 }, RS = { 178, 0, 12 }, RE = { 10, 0, 0 }, RW = { -10, 0, 0 }, LS = { 178, 0, -12 }, LE = { 10, 0, 0 } },
+					trail = "prop", fx = { { "particles", tex = "smoke", color = Color3.fromRGB(240, 240, 240), dir = "up", at = "hand", time = 0.3, speed = 14, size = 0.7, rate = 70 }, { "toss", shape = "cyl", color = SILVER, size = 1, count = 1, speed = 10, lift = 40 } }, text = "PSSSHT !", hitText = "ÉBOUILLANTÉ !",
+				},
+				-- J en l'air : marmite plongeante : il la serre contre lui et la pousse d'un coup sous ses sabots
+				P_air = {
+					label = "Marmite plongeante", startup = 0.1, active = 0.12, recovery = 0.18,
+					damage = 9, hitbox = box(4.5, 4, 1.5, -1.4), kbBase = 22, kbGrowth = 38, kbAngle = -45,
+					windup = { Root = { 10, 0, 0 }, Waist = { 14, 0, 0 }, RS = { 60, 0, 10 }, RE = { 120, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -10 }, LE = { 120, 0, 0 }, RH = { 50, 0, 0 }, RK = { -90, 0, 0 }, LH = { 60, 0, 0 }, LK = { -100, 0, 0 } },
+					strike = { Root = { -14, 0, 0 }, Waist = { -28, 0, 0 }, Neck = { 18, 0, 0 }, RS = { 40, 0, 5 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -5 }, LE = { 0, 0, 0 }, RH = { 10, 0, 0 }, RK = { -30, 0, 0 }, LH = { 30, 0, 0 }, LK = { -60, 0, 0 } },
+					follow = { Root = { -18, 0, 0 }, Waist = { -34, 0, 0 }, Neck = { 22, 0, 0 }, RS = { 24, 0, 5 }, RE = { 6, 0, 0 }, RW = { -20, 0, 0 }, LS = { 24, 0, -5 }, LE = { 6, 0, 0 }, RH = { 5, 0, 0 }, RK = { -25, 0, 0 }, LH = { 25, 0, 0 }, LK = { -55, 0, 0 } },
+					trail = "prop", hitText = "BLAM !",
+				},
+				-- dash J : « Chaud devant, la soupe ! », il court marmite à bout de bras et éclabousse tout sur son passage
+				P_dash = {
+					label = "Chaud devant, la soupe !", startup = 0.1, active = 0.16, recovery = 0.28,
+					damage = 9, hitbox = box(5.5, 4, 3, 0.6), kbBase = 30, kbGrowth = 54, kbAngle = 24, selfVelocity = Vector2.new(38, 0),
+					windup = { Root = { -8, 0, 0, 0, -0.3, 0.1 }, Waist = { -8, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 60, 0, 15 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -15 }, LE = { 100, 0, 0 } },
+					strike = { Root = { -24, 0, 0, 0, -0.42, -0.3 }, Waist = { -14, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 94, 0, 6 }, RE = { 6, 0, 0 }, RW = { 0, 0, 0 }, LS = { 94, 0, -6 }, LE = { 6, 0, 0 } },
+					follow = { Root = { -26, 0, 0, 0, -0.44, -0.35 }, Waist = { -16, 0, 0 }, Neck = { 18, 0, 0 }, RS = { 96, 0, 8 }, RE = { 6, 0, 0 }, RW = { -8, 0, 0 }, LS = { 96, 0, -8 }, LE = { 6, 0, 0 } },
+					trail = "prop", fx = { { "toss", shape = "ball", color = SOUP, size = 0.5, count = 4, speed = 14 } }, text = "CHAUD DEVANT !", hitText = "ÉCLABOUSSÉ !",
+				},
+				-- K : coup de pied au cul de marmite : il la pose et shoote dedans, elle part en roulant dans les tibias
+				K_neutral = {
+					label = "Shoot de marmite", startup = 0.2, active = 0.12, recovery = 0.34,
+					damage = 13, hitbox = box(6, 3.5, 3.5, 0.2), kbBase = 32, kbGrowth = 74, kbAngle = 30,
+					windup = { Root = { 8, -8, 0, 0, -0.3, 0.15 }, Waist = { 8, -6, 0 }, Neck = { 8, 0, 0 }, RS = { 60, 0, 30 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 40, 0, -30 }, LE = { 70, 0, 0 }, RH = { -30, 0, 0 }, RK = { -70, 0, 0 } },
+					strike = { Root = { 12, 0, 0, 0, -0.15, 0.05 }, Waist = { 12, 0, 0 }, Neck = { 0, 0, 0 }, RS = { 20, 0, 50 }, RE = { 50, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -50 }, LE = { 30, 0, 0 }, RH = { 94, 0, 0 }, RK = { -4, 0, 0 }, RA = { 14, 0, 0 } },
+					follow = { Root = { 14, 0, 0, 0, -0.15, 0.1 }, Waist = { 14, 0, 0 }, Neck = { -2, 0, 0 }, RS = { 22, 0, 52 }, RE = { 50, 0, 0 }, RW = { 0, 0, 0 }, LS = { 64, 0, -54 }, LE = { 30, 0, 0 }, RH = { 100, 0, 0 }, RK = { 0, 0, 0 }, RA = { 18, 0, 0 } },
+					trail = "rightFoot", fx = { { "toss", shape = "ball", color = SOUP, size = 0.5, count = 3, speed = 16 } }, text = "OUSTE !", hitText = "BONG !",
+				},
+				-- →K : marmite balancée : grand revers de la marmite tenue par une poignée, tout le corps tourne avec
+				K_side = {
+					label = "Marmite balancée", startup = 0.2, active = 0.14, recovery = 0.36,
+					damage = 14, hitbox = box(6.5, 3.5, 3.5, 0.8), kbBase = 34, kbGrowth = 80, kbAngle = 30, selfVelocity = Vector2.new(14, 0),
+					windup = { Root = { 6, 44, 0, 0, -0.25, 0.2 }, Waist = { 8, 50, 0 }, Neck = { 4, -32, 0 }, RS = { 70, 0, 70 }, RE = { 50, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, 20 }, LE = { 50, 0, 0 } },
+					strike = { Root = { -8, -30, 0, 0, -0.3, -0.35 }, Waist = { -10, -36, 0 }, Neck = { 0, 24, 0 }, RS = { 92, 0, -30 }, RE = { 6, 0, 0 }, RW = { 0, 0, 0 }, LS = { 92, 0, -60 }, LE = { 6, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { -10, -44, 0, 0, -0.32, -0.4 }, Waist = { -12, -50, 0 }, Neck = { 0, 30, 0 }, RS = { 96, 0, -40 }, RE = { 10, 0, 0 }, RW = { -10, 0, 0 }, LS = { 96, 0, -66 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+					spin = { axis = "y", degrees = 360 }, trail = "prop", fx = { { "toss", shape = "ball", color = SOUP, size = 0.5, count = 5, speed = 14 } }, hitText = "BAOUM !",
+				},
+				-- ↓K : soupe renversée : accroupi, il penche la marmite et balaie le sol d'une vague de soupe brûlante
+				K_down = {
+					label = "Soupe renversée", startup = 0.17, active = 0.14, recovery = 0.32,
+					damage = 12, hitbox = box(7, 2, 3.5, -1.6), kbBase = 30, kbGrowth = 62, kbAngle = 70,
+					windup = { Root = { 8, 0, 0, 0, -0.6, 0.15 }, Waist = { 14, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 60, 0, 30 }, RE = { 80, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -30 }, LE = { 80, 0, 0 } },
+					strike = { Root = { 14, 0, 0, 0, -0.9, -0.2 }, Waist = { 24, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 60, 0, 10 }, RE = { 10, 0, 0 }, RW = { 0, 0, 100 }, LS = { 60, 0, -10 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+					follow = { Root = { 16, 0, 0, 0, -0.9, -0.24 }, Waist = { 26, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 56, 0, 12 }, RE = { 10, 0, 0 }, RW = { 0, 0, 110 }, LS = { 56, 0, -12 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.32 } },
+					trail = "prop", fx = { { "puddle", color = SOUP, width = 6 }, { "particles", tex = "smoke", color = Color3.fromRGB(240, 240, 240), dir = "front", at = "feet", time = 0.25, speed = 8, size = 0.5 } }, hitText = "SPLOTCH !",
+				},
+				-- ↑K : marmite au plafond : il cabre la marmite d'un coup de genou, la louche part au ciel et la cuve soulève
+				K_up = {
+					label = "Marmite au plafond", startup = 0.18, active = 0.12, recovery = 0.32,
+					damage = 12, hitbox = box(4.5, 5.5, 1.5, 3.5), kbBase = 32, kbGrowth = 70, kbAngle = 88,
+					windup = { Root = { 8, 0, 0, 0, -0.35, 0.1 }, Waist = { 12, 0, 0 }, Neck = { 8, 0, 0 }, RS = { 50, 0, 20 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 50, 0, -20 }, LE = { 100, 0, 0 }, RH = { -20, 0, 0 }, RK = { -60, 0, 0 } },
+					strike = { Root = { -14, 0, 0, 0, 0.05, -0.1 }, Waist = { -18, 0, 0 }, Neck = { -22, 0, 0 }, RS = { 170, 0, 10 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 160, 0, -10 }, LE = { 10, 0, 0 }, RH = { 110, 0, 0 }, RK = { -120, 0, 0 }, RA = { -20, 0, 0 } },
+					follow = { Root = { -16, 0, 0, 0, 0.08, -0.12 }, Waist = { -20, 0, 0 }, Neck = { -26, 0, 0 }, RS = { 176, 0, 12 }, RE = { 10, 0, 0 }, RW = { -20, 0, 0 }, LS = { 166, 0, -12 }, LE = { 10, 0, 0 }, RH = { 116, 0, 0 }, RK = { -124, 0, 0 }, RA = { -20, 0, 0 } },
+					trail = "prop", fx = { { "toss", shape = "cyl", color = SILVER, size = 0.8, count = 1, speed = 8, lift = 40 } }, hitText = "HOP LÀ !",
+				},
+				-- K en l'air : marmite-enclume : il abat la marmite sous lui comme une enclume en fonte, jambes repliées
+				K_air = {
+					label = "Marmite-enclume", startup = 0.16, active = 0.14, recovery = 0.26,
+					damage = 13, hitbox = box(5, 4, 2, -1.2), kbBase = 30, kbGrowth = 70, kbAngle = -55,
+					windup = { Root = { 12, 0, 0 }, Waist = { 16, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 190, 0, 12 }, RE = { 50, 0, 0 }, RW = { 0, 0, 0 }, LS = { 180, 0, -12 }, LE = { 50, 0, 0 }, RH = { 60, 0, 0 }, RK = { -100, 0, 0 }, LH = { 70, 0, 0 }, LK = { -110, 0, 0 } },
+					strike = { Root = { -20, 0, 0 }, Waist = { -32, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 60, 0, 6 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -6 }, LE = { 0, 0, 0 }, RH = { 20, 0, 0 }, RK = { -40, 0, 0 }, LH = { 30, 0, 0 }, LK = { -60, 0, 0 } },
+					follow = { Root = { -24, 0, 0 }, Waist = { -36, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 40, 0, 6 }, RE = { 6, 0, 0 }, RW = { -20, 0, 0 }, LS = { 40, 0, -6 }, LE = { 6, 0, 0 }, RH = { 15, 0, 0 }, RK = { -35, 0, 0 }, LH = { 25, 0, 0 }, LK = { -55, 0, 0 } },
+					trail = "prop", hitText = "BADABOUM !",
+				},
+				-- dash K : glissade sur bouillon : il glisse sur un sabot dans une traînée de soupe, la marmite comme balancier
+				K_dash = {
+					label = "Glissade sur bouillon", startup = 0.1, active = 0.26, recovery = 0.32,
+					damage = 12, hitbox = box(6, 3.5, 3.5, -0.3), kbBase = 30, kbGrowth = 64, kbAngle = 48, selfVelocity = Vector2.new(50, 0),
+					windup = { Root = { -8, 0, 0, 0, -0.4, 0 }, Waist = { -12, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 60, 0, 60 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -60 }, LE = { 30, 0, 0 }, RH = { -15, 0, 0 }, RK = { -60, 0, 0 } },
+					strike = { Root = { 8, 0, 6, 0, -0.5, -0.2 }, Waist = { 6, 0, -6 }, Neck = { 0, 0, 0 }, RS = { 90, 0, 85 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 90, 0, -85 }, LE = { 10, 0, 0 }, RH = { 80, 0, 0 }, RK = { -5, 0, 0 }, RA = { 20, 0, 0 } },
+					follow = { Root = { 10, 0, 8, 0, -0.5, -0.25 }, Waist = { 8, 0, -8 }, Neck = { 0, 0, 0 }, RS = { 92, 0, 88 }, RE = { 10, 0, 0 }, RW = { 0, 0, 0 }, LS = { 92, 0, -88 }, LE = { 10, 0, 0 }, RH = { 86, 0, 0 }, RK = { 0, 0, 0 }, RA = { 22, 0, 0 } },
+					wobble = true, trail = "rightFoot", fx = { { "puddle", color = SOUP, width = 6 } }, text = "OUH LÀ LÀ !", hitText = "PATINÉ !",
+				},
+				-- L : boulettes ! : trois boulettes de viande piochées dans la soupe partent en éventail sur l'adversaire
+				S_neutral = {
+					label = "Boulettes !", kind = "projectile", startup = 0.22, active = 0, recovery = 0.45,
+					damage = 5, kbBase = 24, kbGrowth = 40, kbAngle = 30,
+					projectile = { speed = 80, angle = 0, gravity = 0, lifetime = 0.6, size = 1.3, color = MEATBALL, fan = { count = 3, from = -8, to = 8 },
+						visual = { shape = "ball", size = 1.1, color = MEATBALL, spin = 8, parts = { { "ball", Vector3.new(0.4, 0.2, 0.4), Vector3.new(0, 0.5, 0), SAUCE } } } },
+					windup = { Root = { 6, -20, 0, 0, -0.2, 0.2 }, Waist = { 8, -26, 0 }, Neck = { 4, 16, 0 }, RS = { 60, 0, 30 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, 0 }, LE = { 120, 0, 0 }, LW = { 40, 0, 0 } },
+					strike = { Root = { -12, 18, 0, 0, -0.3, -0.35 }, Waist = { -14, 24, 0 }, Neck = { 0, -12, 0 }, RS = { 60, 0, 30 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 96, 0, 0 }, LE = { 0, 0, 0 }, LW = { -60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { -14, 22, 0, 0, -0.34, -0.42 }, Waist = { -18, 28, 0 }, Neck = { 0, -16, 0 }, RS = { 60, 0, 30 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 100, 0, 6 }, LE = { 6, 0, 0 }, LW = { -70, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+					fx = { { "burst", color = SOUP, size = 2, at = "lhand" } }, text = "BOULETTES !", hitText = "SPLOTCH !",
+				},
+				-- →L : vague de soupe : il renverse la marmite entière devant lui, une vague brûlante roule sur tout le couloir (brûle, il encaisse)
+				S_side = {
+					label = "Vague de soupe", startup = 0.26, active = 0.22, recovery = 0.55,
+					damage = 15, burn = true, hitbox = box(14, 5, 7, 0.8), kbBase = 32, kbGrowth = 62, kbAngle = 30, armor = true,
+					windup = { Root = { 10, -20, 0, 0, -0.3, 0.3 }, Waist = { 14, -24, 0 }, Neck = { 10, 16, 0 }, RS = { 60, 0, 30 }, RE = { 120, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -30 }, LE = { 120, 0, 0 }, LW = { 0, 0, 0 } },
+					strike = { Root = { -18, 14, 0, 0, -0.4, -0.5 }, Waist = { -22, 18, 0 }, Neck = { -6, -10, 0 }, RS = { 100, 0, 0 }, RE = { 0, 0, 0 }, RW = { 0, 0, 110 }, LS = { 96, 0, -4 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+					follow = { Root = { -20, 16, 0, 0, -0.44, -0.55 }, Waist = { -26, 20, 0 }, Neck = { -8, -12, 0 }, RS = { 104, 0, 2 }, RE = { 4, 0, 0 }, RW = { 0, 0, 120 }, LS = { 100, 0, -6 }, LE = { 4, 0, 0 }, LW = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.52 } },
+					hold = 0.1, shake = true, trail = "prop", fx = { { "beam", color = SOUP, length = 14, width = 4, at = "feet" }, { "burst", color = SOUP, size = 3.5, at = "front" }, { "particles", tex = "smoke", color = Color3.fromRGB(240, 240, 240), dir = "front", at = "feet", time = 0.4, speed = 14 }, { "shake", amount = 0.3 } },
+					text = "LA SOUPE EST SERVIE !", hitText = "ÉBOUILLANTÉ !",
+				},
+				-- ↓L : bouillon au sol : il penche la marmite au ras du carrelage, la nappe de bouillon gras couvre tout le couloir et tout le monde glisse
+				S_down = {
+					label = "Bouillon gras", startup = 0.22, active = 0.2, recovery = 0.5,
+					damage = 12, hitbox = box(14, 4, 7, 0.5), kbBase = 22, kbGrowth = 35, kbAngle = 60,
+					status = { name = "slippery", duration = 2.5 },
+					windup = { Root = { 6, -10, 0, 0, -0.3, 0.1 }, Waist = { 10, -10, 0 }, Neck = { 14, 0, 0 }, RS = { 110, 0, 20 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 110, 0, -20 }, LE = { 30, 0, 0 } },
+					strike = { Root = { -10, 8, 0, 0, -0.7, -0.25 }, Waist = { -16, 8, 0 }, Neck = { -10, 0, 0 }, RS = { 70, 0, 15 }, RE = { 10, 0, 0 }, RW = { 0, 0, 100 }, LS = { 70, 0, -15 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.35 } },
+					follow = { Root = { -12, 10, 0, 0, -0.72, -0.3 }, Waist = { -18, 10, 0 }, Neck = { -12, 0, 0 }, RS = { 60, 0, 20 }, RE = { 10, 0, 0 }, RW = { 0, 0, 110 }, LS = { 60, 0, -20 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.35 } },
+					hold = 0.1, trail = "prop", fx = { { "puddle", color = SOUP, width = 14 }, { "beam", color = SOUP, length = 14, width = 2.5, at = "feet" } }, text = "UN PEU DE GRAS…", hitText = "ÇA GLISSE !",
+				},
+				-- ↑L : vapeur ascensionnelle : il s'assied sur la marmite, la vapeur le propulse en diagonale comme une montgolfière de soupe
+				S_up = {
+					label = "Montgolfière de soupe", startup = 0.14, active = 0.3, recovery = 0.4,
+					damage = 13, hitbox = box(10, 11, 3, 4), kbBase = 32, kbGrowth = 50, kbAngle = 74, selfVelocity = Vector2.new(42, 80),
+					windup = { Root = { 6, 0, 0, 0, -0.8, 0.1 }, Waist = { -10, 0, 0 }, Neck = { 22, 0, 0 }, RS = { 30, 0, 30 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 30, 0, -30 }, LE = { 110, 0, 0 } },
+					strike = { Root = { -38, 0, 0, 0, 0.4, -0.2 }, Waist = { -6, 0, 0 }, Neck = { 30, 0, 0 }, RS = { 150, 0, 40 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 150, 0, -40 }, LE = { 20, 0, 0 }, RH = { 40, 0, 5 }, RK = { -70, 0, 0 }, LH = { 30, 0, -5 }, LK = { -60, 0, 0 } },
+					follow = { Root = { -42, 0, 0, 0, 0.45, -0.25 }, Waist = { -8, 0, 0 }, Neck = { 32, 0, 0 }, RS = { 156, 0, 44 }, RE = { 20, 0, 0 }, RW = { 0, 0, 0 }, LS = { 156, 0, -44 }, LE = { 20, 0, 0 }, RH = { 44, 0, 6 }, RK = { -74, 0, 0 }, LH = { 34, 0, -6 }, LK = { -64, 0, 0 } },
+					trail = "body", fx = { { "burst", color = SOUP, size = 3, at = "feet" }, { "ring", color = SOUP, radius = 5, at = "feet" }, { "particles", tex = "smoke", color = Color3.fromRGB(240, 240, 240), dir = "down", at = "feet", time = 0.4, speed = 16, size = 1, rate = 90 } },
+					text = "PSSSHHH !", hitText = "ENVOLÉ !",
+				},
+				-- L en l'air : marmite lâchée : il lâche la marmite entière, qui tombe comme une enclume sur l'adversaire
+				S_air = {
+					label = "Marmite lâchée", kind = "projectile", startup = 0.16, active = 0, recovery = 0.4,
+					damage = 13, kbBase = 26, kbGrowth = 50, kbAngle = -45,
+					projectile = { speed = 65, angle = -60, gravity = 40, lifetime = 0.8, size = 2.2, color = POT,
+						visual = { shape = "cyl", size = 1.9, color = POT, spin = 2, parts = { { "cyl", Vector3.new(0.1, 1.7, 1.7), Vector3.new(0, 0.9, 0), SOUP }, { "block", Vector3.new(0.4, 0.2, 0.2), Vector3.new(1.05, 0.3, 0), BLACK }, { "block", Vector3.new(0.4, 0.2, 0.2), Vector3.new(-1.05, 0.3, 0), BLACK } } } },
+					windup = { Root = { 8, 0, 0 }, Waist = { 12, 0, 0 }, RS = { 175, 0, 15 }, RE = { 50, 0, 0 }, RW = { 0, 0, 0 }, LS = { 165, 0, -15 }, LE = { 50, 0, 0 }, RH = { 50, 0, 0 }, RK = { -90, 0, 0 }, LH = { 60, 0, 0 }, LK = { -100, 0, 0 } },
+					strike = { Root = { -14, 0, 0 }, Waist = { -28, 0, 0 }, Neck = { 28, 0, 0 }, RS = { 40, 0, 10 }, RE = { 0, 0, 0 }, RW = { -40, 0, 0 }, LS = { 40, 0, -10 }, LE = { 0, 0, 0 }, LW = { -40, 0, 0 }, RH = { 20, 0, 0 }, RK = { -40, 0, 0 }, LH = { 30, 0, 0 }, LK = { -60, 0, 0 } },
+					follow = { Root = { -18, 0, 0 }, Waist = { -32, 0, 0 }, Neck = { 32, 0, 0 }, RS = { 34, 0, 12 }, RE = { 4, 0, 0 }, RW = { -50, 0, 0 }, LS = { 34, 0, -12 }, LE = { 4, 0, 0 }, LW = { -50, 0, 0 }, RH = { 16, 0, 0 }, RK = { -36, 0, 0 }, LH = { 26, 0, 0 }, LK = { -56, 0, 0 } },
+					hideProp = "marmite", fx = { { "burst", color = SOUP, size = 2, at = "hand" } }, text = "ATTENTION LA MARMITE !", hitText = "ENCLUMÉ !",
+				},
+				-- Y : soupe du jour : il sert trois louches bouillantes d'affilée à tout le couloir et en reprend une pour lui
+				SUPER = {
+					label = "Soupe du jour !", startup = 0.4, active = 0.5, recovery = 0.7,
+					damage = 8, hits = 3, burn = true, hitbox = box(16, 6, 8, 1), kbBase = 24, kbGrowth = 45, kbAngle = 38, selfEffect = { heal = 8 },
+					windup = { Root = { 6, 0, 0, 0, -0.15, 0.15 }, Waist = { 10, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 50, 0, 20 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -20 }, LE = { 120, 0, 0 }, LW = { 40, 0, 0 } },
+					strike = { Root = { -10, 10, 0, 0, -0.3, -0.35 }, Waist = { -12, 12, 0 }, Neck = { -4, -8, 0 }, RS = { 60, 0, 20 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 96, 0, -6 }, LE = { 0, 0, 0 }, LW = { -60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					follow = { Root = { -10, -10, 0, 0, -0.3, -0.35 }, Waist = { -12, -12, 0 }, Neck = { -4, 8, 0 }, RS = { 60, 0, 20 }, RE = { 100, 0, 0 }, RW = { 0, 0, 0 }, LS = { 96, 0, 20 }, LE = { 0, 0, 0 }, LW = { -60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+					wobble = true, trail = "leftHand", windupFx = { "super", { "symbols", symbols = { "🍲", "♨️" }, count = 4, radius = 3, color = SOUP } },
+					fx = { { "beam", color = SOUP, length = 16, width = 4, at = "lhand" }, { "toss", shape = "ball", color = SOUP, size = 0.8, count = 9, speed = 22 }, { "symbols", symbols = { "🍲", "MIAM", "🍲" }, count = 6, radius = 5, at = "front", color = SOUP } },
+					text = "SOUPE DU JOUR !", hitText = "SERVI BRÛLANT !",
+				},
+				-- →Y : la marmite-boulet : il fait tournoyer la marmite au bout de son anse et la lance comme un boulet de canon à travers tout le couloir
+				SUPER_side = {
+					label = "Marmite-boulet !", kind = "projectile", startup = 0.4, active = 0, recovery = 0.7,
+					damage = 26, kbBase = 50, kbGrowth = 100, kbAngle = 30,
+					projectile = { speed = 85, angle = 0, gravity = 0, lifetime = 0.9, size = 3.4, color = POT, pierce = true,
+						visual = { shape = "cyl", size = 3, color = POT, spin = 8, parts = { { "cyl", Vector3.new(0.1, 2.6, 2.6), Vector3.new(0, 1.5, 0), SOUP }, { "block", Vector3.new(0.5, 0.3, 0.3), Vector3.new(1.6, 0.5, 0), BLACK }, { "block", Vector3.new(0.5, 0.3, 0.3), Vector3.new(-1.6, 0.5, 0), BLACK } } } },
+					status = { name = "burning", duration = 2 },
+					windup = { Root = { 8, -40, 0, 0, -0.3, 0.3 }, Waist = { 12, -44, 0 }, Neck = { 8, 28, 0 }, RS = { 170, 0, 40 }, RE = { 30, 0, 0 }, RW = { 0, 0, 0 }, LS = { 70, 0, -20 }, LE = { 60, 0, 0 } },
+					strike = { Root = { -16, 26, 0, 0, -0.34, -0.5 }, Waist = { -18, 30, 0 }, Neck = { -6, -18, 0 }, RS = { 94, 0, -6 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -30, 0, -40 }, LE = { 30, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+					follow = { Root = { -18, 30, 0, 0, -0.36, -0.55 }, Waist = { -22, 34, 0 }, Neck = { -8, -20, 0 }, RS = { 98, 0, -8 }, RE = { 4, 0, 0 }, RW = { 6, 0, 0 }, LS = { -35, 0, -44 }, LE = { 30, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.52 } },
+					spin = { axis = "y", degrees = 720 }, hideProp = "marmite", windupFx = { "super", { "symbols", symbols = { "🍲", "💫" }, count = 6, radius = 3, color = SOUP } },
+					fx = { { "burst", color = SOUP, size = 3.5, at = "hand" }, { "ring", color = POT, radius = 4, at = "front" }, { "shake", amount = 0.4 } },
+					text = "BOULET DE SOUPE !", hitText = "KA-BLONG !",
+				},
+				-- ↑Y : le geyser de bouillon : la marmite déborde sous ses pieds, un geyser de soupe le propulse et emporte tout le couloir au plafond
+				SUPER_up = {
+					label = "Geyser de bouillon !", startup = 0.35, active = 0.3, recovery = 0.7,
+					damage = 24, burn = true, hitbox = box(16, 12, 8, 5), kbBase = 45, kbGrowth = 95, kbAngle = 86, invuln = 0.3, selfVelocity = Vector2.new(0, 55),
+					windup = { Root = { -10, 0, 0, 0, -0.9, 0 }, Waist = { -30, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 60, 0, 10 }, RE = { 110, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -10 }, LE = { 110, 0, 0 } },
+					strike = { Root = { 6, 0, 0, 0, 0.5, 0 }, Waist = { 18, 0, 0 }, Neck = { 50, 0, 0 }, RS = { 186, 0, 6 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 186, 0, -6 }, LE = { 0, 0, 0 }, RH = { 40, 0, 10 }, RK = { -90, 0, 0 }, LH = { 20, 0, -15 }, LK = { -60, 0, 0 } },
+					follow = { Root = { 10, 0, 0, 0, 0.55, 0 }, Waist = { 24, 0, 0 }, Neck = { 56, 0, 0 }, RS = { 188, 0, 10 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 188, 0, -10 }, LE = { 0, 0, 0 }, RH = { 60, 0, 20 }, RK = { -110, 0, 0 }, LH = { 10, 0, -25 }, LK = { -40, 0, 0 } },
+					hold = 0.2, shake = true, trail = "prop", windupFx = { "super", { "particles", tex = "smoke", color = Color3.fromRGB(240, 240, 240), dir = "all", at = "hand", time = 0.3, speed = 6 } },
+					fx = { { "pillar", color = SOUP, height = 22, width = 3, at = "front" }, { "beam", color = SOUP, length = 16, width = 5, at = "feet" }, { "burst", color = MEATBALL, size = 4, at = "above" }, { "ring", color = SOUP, radius = 6, at = "feet" } },
+					text = "ÇA DÉBORDE !", hitText = "GEYSER !",
+				},
+				-- ↓Y : la marmite retournée : il retourne la marmite sur le couloir entier comme une cloche, tout le monde est enfermé dessous et ligoté par les spaghettis
+				SUPER_down = {
+					label = "Marmite retournée !", startup = 0.35, active = 0.3, recovery = 0.7,
+					damage = 22, hitbox = box(16, 5, 8, 0.5), kbBase = 40, kbGrowth = 85, kbAngle = 50,
+					status = { name = "rooted", duration = 2 },
+					windup = { Root = { 10, 0, 0, 0, -0.2, 0.2 }, Waist = { 16, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 190, 0, 15 }, RE = { 50, 0, 0 }, RW = { 0, 0, 0 }, LS = { 190, 0, -15 }, LE = { 50, 0, 0 } },
+					strike = { Root = { -16, 0, 0, 0, -0.7, -0.4 }, Waist = { -30, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 60, 0, 10 }, RE = { 0, 0, 0 }, RW = { 170, 0, 0 }, LS = { 60, 0, -10 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.45 } },
+					follow = { Root = { -18, 0, 0, 0, -0.75, -0.44 }, Waist = { -34, 0, 0 }, Neck = { -12, 0, 0 }, RS = { 50, 0, 12 }, RE = { 0, 0, 0 }, RW = { 175, 0, 0 }, LS = { 50, 0, -12 }, LE = { 0, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.48 } },
+					hold = 0.2, trail = "prop", windupFx = { "super" },
+					fx = { { "burst", color = POT, size = 4.5, at = "front" }, { "beam", color = SOUP, length = 16, width = 4, at = "feet" }, { "rain", shape = "cyl", color = PASTA, count = 12, radius = 6, size = 1.2 }, { "shake", amount = 0.5 } },
+					text = "SOUS CLOCHE !", hitText = "LIGOTÉ !",
+				},
+			},
+			links = {
+				P_neutral = { P = "P_side", K = "K_neutral", S = "S_neutral" },
+				P_side = { P = "P_up", K = "K_side", S = "S_side" },
+				P_down = { P = "P_up", K = "K_down", S = "S_down" },
+				K_neutral = { P = "P_neutral", K = "K_side", S = "S_side" },
+				P_dash = { P = "P_side", K = "K_side", S = "S_side" },
+				K_dash = { P = "P_up", S = "S_up" },
+			},
+		},
+	},
 
 	look = {
 		body = {
@@ -531,6 +1009,27 @@ local data = {
 			hold = 0.3, windupFx = { "super" },
 			fx = { { "pillar", color = FIRE, height = 24, width = 5, at = "front" }, { "particles", tex = "fire", color = FLAME, dir = "up", at = "front", time = 0.7, speed = 30, size = 2.2, rate = 120 }, { "screen", color = FIRE, alpha = 0.3 }, { "shake", amount = 0.7 } },
 			text = "FLAMBÉE IMPÉRIALE !", hitText = "BIEN CUIT !",
+		},
+		-- Homard en colère (→Y) : il sort un homard vivant du vivier, le brandit par la queue en s'excusant, et le lance : le homard
+		-- traverse le couloir pinces en avant, poursuit l'adversaire et lui pince les orteils jusqu'à ce qu'il ne bouge plus
+		SUPER_side = {
+			label = "Homard en colère !", kind = "projectile", startup = 0.4, active = 0, recovery = 0.65,
+			damage = 24, kbBase = 44, kbGrowth = 92, kbAngle = 32,
+			projectile = { speed = 80, angle = 0, gravity = 0, lifetime = 1.0, size = 2.8, color = LOBSTER, homing = 0.5, pierce = true,
+				visual = { shape = "ball", size = 2.2, color = LOBSTER, spin = 6, parts = {
+					{ "ball", Vector3.new(1.0, 0.7, 2.0), Vector3.new(0, 0, 1.2), LOBSTER },
+					{ "block", Vector3.new(0.5, 0.4, 1.2), Vector3.new(0.9, 0, -1.2), LOBSTER },
+					{ "block", Vector3.new(0.5, 0.4, 1.2), Vector3.new(-0.9, 0, -1.2), LOBSTER },
+					{ "ball", Vector3.new(0.25, 0.25, 0.25), Vector3.new(0.4, 0.5, -0.8), BLACK },
+					{ "ball", Vector3.new(0.25, 0.25, 0.25), Vector3.new(-0.4, 0.5, -0.8), BLACK },
+				} } },
+			status = { name = "rooted", duration = 1.5 },
+			windup = { Root = { 8, -36, 0, 0, -0.3, 0.3 }, Waist = { 12, -40, 0 }, Neck = { 6, 26, 0 }, RS = { 160, 0, 30 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 10, 0, -40 }, LE = { 85, 0, 0 } },
+			strike = { Root = { -16, 26, 0, 0, -0.34, -0.5 }, Waist = { -18, 30, 0 }, Neck = { -6, -18, 0 }, RS = { 94, 0, -6 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { -20, 0, -45 }, LE = { 40, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+			follow = { Root = { -14, 30, 0, 0, -0.3, -0.5 }, Waist = { -16, 34, 0 }, Neck = { 10, -20, 0 }, RS = { 60, 0, 30 }, RE = { 60, 0, 0 }, RW = { 0, 0, 0 }, LS = { 60, 0, -30 }, LE = { 60, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.5 } },
+			hideProp = "poele", windupFx = { "super", { "symbols", symbols = { "🦞", "PARDON", "🦞" }, count = 5, radius = 3, color = LOBSTER } },
+			fx = { { "burst", color = LOBSTER, size = 3, at = "hand" }, { "particles", tex = "spark", color = SAUCE, dir = "front", at = "hand", time = 0.3, speed = 16 }, { "shake", amount = 0.3 } },
+			text = "DÉSOLÉ, MON HOMARD !", hitText = "PINCÉ !",
 		},
 		-- Crêpe suzette en orbite (↑Y) : poêle glissée sous le couloir entier, il la retourne d'un coup de reins : crêpe suzette flambée jusqu'au plafond, tout le monde avec
 		SUPER_up = {
