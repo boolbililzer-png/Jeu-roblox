@@ -43,6 +43,197 @@ local data = {
 	costume = "Bob",
 	style = "yeti",
 
+	------------------------------------------------------------------ Mains nues (sans Caisse Bizarre) : le yéti à la plage
+	-- Ses propres J / K et ses combos sans glacière : Bob joue au beach-volley (manchette, service, smash), danse le
+	-- hula et le limbo, joue d'un ukulélé imaginaire, chasse les moustiques et sautille sur le sable brûlant.
+	bare = {
+		moves = {
+			-- J : manchette de beach-volley : les deux avant-bras joints remontent d'un coup
+			P_neutral = {
+				label = "Manchette", startup = 0.08, active = 0.08, recovery = 0.16,
+				damage = 6, hitbox = box(4.5, 3, 2.6, 0.4), kbBase = 20, kbGrowth = 24, kbAngle = 40,
+				windup = { Root = { 10, 0, 0, 0, -0.45, 0.1 }, Waist = { 14, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 20, 0, -10 }, RE = { 0, 0, 0 }, LS = { 20, 0, 10 }, LE = { 0, 0, 0 } },
+				strike = { Root = { -4, 0, 0, 0, -0.25, -0.2 }, Waist = { -4, 0, 0 }, Neck = { -6, 0, 0 }, RS = { 80, 0, -12 }, RE = { 0, 0, 0 }, LS = { 80, 0, 12 }, LE = { 0, 0, 0 } },
+				follow = { Root = { -5, 0, 0, 0, -0.22, -0.22 }, Waist = { -5, 0, 0 }, Neck = { -8, 0, 0 }, RS = { 86, 0, -12 }, RE = { 0, 0, 0 }, LS = { 86, 0, 12 }, LE = { 0, 0, 0 } },
+				trail = "bothHands", hitText = "BOMP !",
+			},
+			-- J J : service cuillère : grand balancier du bras droit, de bas en haut
+			P_combo2 = {
+				label = "Service cuillère", startup = 0.07, active = 0.08, recovery = 0.16,
+				damage = 6, hitbox = box(4.5, 3.5, 2.8, 0.6), kbBase = 20, kbGrowth = 26, kbAngle = 45,
+				windup = { Root = { 6, 0, 0, 0, -0.2, 0.15 }, Waist = { 8, 10, 0 }, Neck = { 6, 0, 0 }, RS = { -50, 0, 10 }, RE = { 10, 0, 0 }, LS = { 60, 0, -10 }, LE = { 40, 0, 0 } },
+				strike = { Root = { -6, 0, 0, 0, -0.15, -0.3 }, Waist = { -6, -10, 0 }, Neck = { -6, 0, 0 }, RS = { 100, 0, 10 }, RE = { 10, 0, 0 }, LS = { 20, 0, -20 }, LE = { 40, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.3 } },
+				follow = { Root = { -7, 0, 0, 0, -0.15, -0.32 }, Waist = { -7, -12, 0 }, Neck = { -8, 0, 0 }, RS = { 120, 0, 12 }, RE = { 10, 0, 0 }, LS = { 18, 0, -22 }, LE = { 40, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.32 } },
+				trail = "rightHand", hitText = "SERVICE !",
+			},
+			-- J J J : smash de plage : il bondit et rabat sa grosse patte poilue de tout son poids
+			P_combo3 = {
+				label = "Smash de plage", startup = 0.12, active = 0.1, recovery = 0.28,
+				damage = 9, hitbox = box(5, 4, 2.6, 1), kbBase = 28, kbGrowth = 50, kbAngle = 25, selfVelocity = Vector2.new(10, 12),
+				windup = { Root = { -14, 0, 0, 0, -0.1, 0.15 }, Waist = { -16, 10, 0 }, Neck = { -20, 0, 0 }, RS = { 175, 0, 20 }, RE = { 70, 0, 0 }, LS = { 120, 0, -20 }, LE = { 10, 0, 0 } },
+				strike = { Root = { 16, 0, 0, 0, -0.2, -0.4 }, Waist = { 18, -14, 0 }, Neck = { 10, 0, 0 }, RS = { 70, 0, 10 }, RE = { 0, 0, 0 }, RW = { 30, 0, 0 }, LS = { 30, 0, -30 }, LE = { 30, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.35 } },
+				follow = { Root = { 18, 0, 0, 0, -0.22, -0.44 }, Waist = { 20, -16, 0 }, Neck = { 12, 0, 0 }, RS = { 50, 0, 12 }, RE = { 0, 0, 0 }, RW = { 40, 0, 0 }, LS = { 26, 0, -32 }, LE = { 30, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.38 } },
+				trail = "rightHand", fx = { { "burst", color = DUNE, size = 2.5, at = "front" }, { "shake", amount = 0.3 } }, hitText = "SMAAASH !",
+			},
+			-- J K : déhanché hula : la chemise hawaïenne ondule et ses grosses hanches bousculent deux fois
+			PK_combo = {
+				label = "Déhanché hula", startup = 0.1, active = 0.2, recovery = 0.24,
+				damage = 7, hits = 2, hitbox = box(5, 3, 2, 0), kbBase = 24, kbGrowth = 40, kbAngle = 30,
+				windup = { Root = { 0, 0, -12, 0, -0.3, 0.05 }, Waist = { 0, 0, 12 }, Neck = { 0, 0, -6 }, RS = { 90, 0, 60 }, RE = { 60, 0, 0 }, RW = { 0, 0, 30 }, LS = { 90, 0, -60 }, LE = { 60, 0, 0 }, LW = { 0, 0, 30 } },
+				strike = { Root = { 0, 20, 14, 0, -0.3, -0.2 }, Waist = { 0, -10, -14 }, Neck = { 0, 0, 6 }, RS = { 90, 0, 70 }, RE = { 50, 0, 0 }, RW = { 0, 0, -30 }, LS = { 90, 0, -70 }, LE = { 50, 0, 0 }, LW = { 0, 0, -30 } },
+				follow = { Root = { 0, -20, -14, 0, -0.3, -0.22 }, Waist = { 0, 10, 14 }, Neck = { 0, 0, -6 }, RS = { 90, 0, 60 }, RE = { 60, 0, 0 }, RW = { 0, 0, 30 }, LS = { 90, 0, -60 }, LE = { 60, 0, 0 }, LW = { 0, 0, 30 } },
+				wobble = true, trail = "body", fx = { { "symbols", symbols = { "🌺", "🌴" }, color = PINK, count = 4, radius = 3 } }, hitText = "ALOHA-HOP !",
+			},
+			-- K K : limbo : il se cambre à l'extrême en arrière et passe un pied sous la garde de l'adversaire
+			K_combo2 = {
+				label = "Limbo", startup = 0.12, active = 0.12, recovery = 0.28,
+				damage = 8, hitbox = box(5.5, 2.5, 3, -0.9), kbBase = 24, kbGrowth = 44, kbAngle = 55,
+				windup = { Root = { -10, 0, 0, 0, -0.3, 0.1 }, Waist = { -14, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 60, 0, 70 }, RE = { 20, 0, 0 }, LS = { 60, 0, -70 }, LE = { 20, 0, 0 }, RH = { 40, 0, 0 }, RK = { -80, 0, 0 } },
+				strike = { Root = { -40, 0, 0, 0, -0.75, 0.25 }, Waist = { -24, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 20, 0, 90 }, RE = { 10, 0, 0 }, LS = { 20, 0, -90 }, LE = { 10, 0, 0 }, RH = { 90, 0, 0 }, RK = { -4, 0, 0 }, RA = { 20, 0, 0 }, LH = { 40, 0, 0 }, LK = { -100, 0, 0 } },
+				follow = { Root = { -44, 0, 0, 0, -0.78, 0.28 }, Waist = { -26, 0, 0 }, Neck = { 22, 0, 0 }, RS = { 16, 0, 94 }, RE = { 10, 0, 0 }, LS = { 16, 0, -94 }, LE = { 10, 0, 0 }, RH = { 94, 0, 0 }, RK = { 0, 0, 0 }, RA = { 24, 0, 0 }, LH = { 44, 0, 0 }, LK = { -104, 0, 0 } },
+				trail = "rightFoot", hitText = "PLUS BAS !",
+			},
+			-- K J : « Aloha ! » : grand salut de la main, la patte poilue balaie l'adversaire au passage
+			KP_combo = {
+				label = "Aloha !", startup = 0.1, active = 0.12, recovery = 0.24,
+				damage = 7, hitbox = box(5, 3.5, 2.6, 1.4), kbBase = 24, kbGrowth = 40, kbAngle = 35,
+				windup = { Root = { 0, 20, 0, 0, -0.1, 0.05 }, Waist = { 0, 20, 0 }, Neck = { 0, -10, 0 }, RS = { 150, 0, 60 }, RE = { 20, 0, 0 }, LS = { 20, 0, -20 }, LE = { 30, 0, 0 } },
+				strike = { Root = { -4, -20, 0, 0, -0.15, -0.25 }, Waist = { -4, -24, 0 }, Neck = { -6, 10, 0 }, RS = { 120, 0, -20 }, RE = { 10, 0, 0 }, RW = { 0, 0, -30 }, LS = { 20, 0, -24 }, LE = { 30, 0, 0 } },
+				follow = { Root = { -5, -24, 0, 0, -0.15, -0.27 }, Waist = { -5, -28, 0 }, Neck = { -8, 12, 0 }, RS = { 140, 0, 40 }, RE = { 10, 0, 0 }, RW = { 0, 0, 30 }, LS = { 20, 0, -26 }, LE = { 30, 0, 0 } },
+				trail = "rightHand", fx = { { "text", text = "ALOHA !", color = SHIRT, at = "head" } }, hitText = "BIENVENUE !",
+			},
+			-- K K J : ukulélé furieux : il gratte un ukulélé imaginaire à toute vitesse puis l'écrase devant lui (finition)
+			KKP_combo = {
+				label = "Ukulélé furieux", startup = 0.12, active = 0.24, recovery = 0.34,
+				damage = 10, hits = 3, hitbox = box(5, 4, 2.4, 0.6), kbBase = 30, kbGrowth = 60, kbAngle = 40,
+				windup = { Root = { 4, 10, 0, 0, -0.2, 0.05 }, Waist = { 4, 10, 0 }, Neck = { 20, -10, 0 }, RS = { 40, 0, 20 }, RE = { 90, 0, 0 }, RW = { 30, 0, 0 }, LS = { 60, 0, -40 }, LE = { 110, 0, 0 } },
+				strike = { Root = { -6, -6, 0, 0, -0.2, -0.2 }, Waist = { -6, -6, 0 }, Neck = { 20, 10, 0 }, RS = { 30, 0, 30 }, RE = { 100, 0, 0 }, RW = { -30, 0, 0 }, LS = { 60, 0, -40 }, LE = { 110, 0, 0 } },
+				follow = { Root = { 14, 0, 0, 0, -0.3, -0.4 }, Waist = { 18, 0, 0 }, Neck = { 0, 0, 0 }, RS = { 60, 0, 10 }, RE = { 10, 0, 0 }, LS = { 60, 0, -10 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.35 } },
+				hold = 0.1, trail = "bothHands", fx = { { "symbols", symbols = { "♪", "♫", "🎸" }, color = YELLOW, count = 6, radius = 3 }, { "burst", color = SHORTS, size = 2.5, at = "front" } }, hitText = "DERNIER ACCORD !",
+			},
+			-- →J : éventail poilu : il s'évente d'un grand coup de patte et la bourrasque fraîche repousse l'adversaire
+			P_side = {
+				label = "Éventail poilu", startup = 0.1, active = 0.12, recovery = 0.2,
+				damage = 7, hitbox = box(5.5, 3.5, 3, 0.8), kbBase = 26, kbGrowth = 32, kbAngle = 20, selfVelocity = Vector2.new(8, 0),
+				windup = { Root = { 0, 30, 0, 0, -0.15, 0.1 }, Waist = { 0, 30, 0 }, Neck = { -10, -20, 0 }, RS = { 70, 0, -30 }, RE = { 100, 0, 0 }, RW = { 0, 0, 40 }, LS = { 10, 0, -20 }, LE = { 30, 0, 0 } },
+				strike = { Root = { -4, -20, 0, 0, -0.2, -0.25 }, Waist = { -4, -24, 0 }, Neck = { -4, 10, 0 }, RS = { 90, 0, 70 }, RE = { 10, 0, 0 }, RW = { 0, 0, -30 }, LS = { 10, 0, -24 }, LE = { 30, 0, 0 } },
+				follow = { Root = { -5, -24, 0, 0, -0.2, -0.28 }, Waist = { -5, -28, 0 }, Neck = { -6, 12, 0 }, RS = { 86, 0, 84 }, RE = { 12, 0, 0 }, RW = { 0, 0, -40 }, LS = { 10, 0, -26 }, LE = { 30, 0, 0 } },
+				trail = "rightHand", fx = { { "particles", tex = "smoke", color = SNOW, dir = "front", at = "hand", time = 0.3 } }, hitText = "FFFOUH !",
+			},
+			-- ↓J : accroupi, il tapote un château de sable à toute vitesse et le sable gicle sur les chevilles
+			P_down = {
+				label = "Château de sable", startup = 0.07, active = 0.12, recovery = 0.18,
+				damage = 5, hits = 2, hitbox = box(4.5, 2, 2.4, -1.4), kbBase = 20, kbGrowth = 24, kbAngle = 65,
+				windup = { Root = { 16, 0, 0, 0, -0.85, 0.05 }, Waist = { 20, 0, 0 }, Neck = { 14, 0, 0 }, RS = { 100, 0, 10 }, RE = { 60, 0, 0 }, LS = { 50, 0, -10 }, LE = { 30, 0, 0 } },
+				strike = { Root = { 18, 0, 0, 0, -0.9, -0.12 }, Waist = { 22, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 50, 0, 10 }, RE = { 30, 0, 0 }, LS = { 100, 0, -10 }, LE = { 60, 0, 0 } },
+				follow = { Root = { 18, 0, 0, 0, -0.9, -0.14 }, Waist = { 22, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 100, 0, 10 }, RE = { 60, 0, 0 }, LS = { 46, 0, -10 }, LE = { 30, 0, 0 } },
+				trail = "bothHands", fx = { { "toss", shape = "ball", color = DUNE, size = 0.3, count = 5, speed = 12 } }, hitText = "PAF-PAF !",
+			},
+			-- ↑J : passe haute de volley, du bout des doigts poilus, vers le ciel
+			P_up = {
+				label = "Passe haute", startup = 0.08, active = 0.1, recovery = 0.22,
+				damage = 6, hitbox = box(4, 5, 0.8, 3.2), kbBase = 24, kbGrowth = 36, kbAngle = 86,
+				windup = { Root = { 0, 0, 0, 0, -0.5, 0 }, Waist = { 0, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 140, 0, 30 }, RE = { 100, 0, 0 }, RW = { -40, 0, 0 }, LS = { 140, 0, -30 }, LE = { 100, 0, 0 }, LW = { -40, 0, 0 } },
+				strike = { Root = { -6, 0, 0, 0, 0.05, 0 }, Waist = { -8, 0, 0 }, Neck = { -30, 0, 0 }, RS = { 175, 0, 14 }, RE = { 0, 0, 0 }, RW = { -10, 0, 0 }, LS = { 175, 0, -14 }, LE = { 0, 0, 0 }, LW = { -10, 0, 0 } },
+				follow = { Root = { -8, 0, 0, 0, 0.05, 0 }, Waist = { -10, 0, 0 }, Neck = { -34, 0, 0 }, RS = { 178, 0, 16 }, RE = { 0, 0, 0 }, RW = { 0, 0, 0 }, LS = { 178, 0, -16 }, LE = { 0, 0, 0 }, LW = { 0, 0, 0 } },
+				trail = "bothHands", hitText = "À TOI !",
+			},
+			-- J en l'air : tue-moustique : il claque ses deux paumes l'une contre l'autre devant lui en plein vol
+			P_air = {
+				label = "Tue-moustique", startup = 0.08, active = 0.1, recovery = 0.2,
+				damage = 7, hitbox = box(4.5, 3.5, 2.4, 0.4), kbBase = 20, kbGrowth = 32, kbAngle = 30,
+				windup = { Root = { -6, 0, 0 }, Waist = { -6, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 90, 0, 90 }, RE = { 10, 0, 0 }, LS = { 90, 0, -90 }, LE = { 10, 0, 0 }, RH = { 30, 0, 10 }, RK = { -60, 0, 0 }, LH = { 30, 0, -10 }, LK = { -60, 0, 0 } },
+				strike = { Root = { 10, 0, 0 }, Waist = { 8, 0, 0 }, Neck = { 6, 0, 0 }, RS = { 92, 0, 0 }, RE = { 0, 0, 0 }, LS = { 92, 0, 0 }, LE = { 0, 0, 0 }, RH = { 50, 0, 6 }, RK = { -80, 0, 0 }, LH = { 50, 0, -6 }, LK = { -80, 0, 0 } },
+				follow = { Root = { 12, 0, 0 }, Waist = { 10, 0, 0 }, Neck = { 8, 0, 0 }, RS = { 94, 0, -2 }, RE = { 0, 0, 0 }, LS = { 94, 0, 2 }, LE = { 0, 0, 0 }, RH = { 52, 0, 6 }, RK = { -82, 0, 0 }, LH = { 52, 0, -6 }, LK = { -82, 0, 0 } },
+				trail = "bothHands", hitText = "CLAC… RATÉ !",
+			},
+			-- dash J : « Dernier à l'eau ! » : il fonce vers la mer en levant les bras et bouscule du torse
+			P_dash = {
+				label = "Dernier à l'eau !", startup = 0.08, active = 0.18, recovery = 0.24,
+				damage = 7, hitbox = box(5, 4, 2.4, 0.6), kbBase = 26, kbGrowth = 38, kbAngle = 30, selfVelocity = Vector2.new(34, 0),
+				windup = { Root = { 6, 0, 0, 0, -0.2, 0.15 }, Waist = { 6, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 120, 0, 40 }, RE = { 20, 0, 0 }, LS = { 120, 0, -40 }, LE = { 20, 0, 0 } },
+				strike = { Root = { -6, 0, 0, 0, -0.15, -0.35 }, Waist = { -10, 0, 0 }, Neck = { -20, 0, 0 }, RS = { 165, 0, 40 }, RE = { 10, 0, 0 }, LS = { 165, 0, -40 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.4 } },
+				follow = { Root = { -8, 0, 0, 0, -0.15, -0.38 }, Waist = { -12, 0, 0 }, Neck = { -22, 0, 0 }, RS = { 170, 0, 46 }, RE = { 10, 0, 0 }, LS = { 170, 0, -46 }, LE = { 10, 0, 0 }, FL = { 0, 0, 0, 0, 0, -0.42 } },
+				trail = "body", fx = { "dust" }, hitText = "YOUHOU !",
+			},
+			-- K : il shoote dans un ballon de plage invisible, plat du pied
+			K_neutral = {
+				label = "Ballon de plage", startup = 0.1, active = 0.1, recovery = 0.22,
+				damage = 7, hitbox = box(4.5, 3, 2.8, -0.4), kbBase = 24, kbGrowth = 40, kbAngle = 40,
+				windup = { Root = { -4, -10, 0, 0, -0.15, 0.1 }, Waist = { -6, -10, 0 }, Neck = { 14, 0, 0 }, RS = { 40, 0, 50 }, RE = { 40, 0, 0 }, LS = { 50, 0, -40 }, LE = { 40, 0, 0 }, RH = { -40, 0, 0 }, RK = { -60, 0, 0 } },
+				strike = { Root = { -10, 10, 0, 0, -0.1, -0.05 }, Waist = { -8, 10, 0 }, Neck = { 16, 0, 0 }, RS = { 30, 0, 60 }, RE = { 30, 0, 0 }, LS = { 70, 0, -50 }, LE = { 30, 0, 0 }, RH = { 80, 0, -10 }, RK = { -4, 0, 0 }, RA = { 0, 0, 20 } },
+				follow = { Root = { -12, 12, 0, 0, -0.1, -0.06 }, Waist = { -10, 12, 0 }, Neck = { 18, 0, 0 }, RS = { 28, 0, 62 }, RE = { 30, 0, 0 }, LS = { 72, 0, -52 }, LE = { 30, 0, 0 }, RH = { 90, 0, -14 }, RK = { 0, 0, 0 }, RA = { 0, 0, 24 } },
+				trail = "rightFoot", fx = { { "toss", shape = "ball", color = SHORTS, size = 1, count = 1, speed = 20 } }, hitText = "POOONG !",
+			},
+			-- →K : pas de crabe : il file de côté en crabe et tape d'un pied de travers
+			K_side = {
+				label = "Pas de crabe", startup = 0.12, active = 0.12, recovery = 0.26,
+				damage = 8, hitbox = box(5.5, 3, 3, -0.4), kbBase = 26, kbGrowth = 46, kbAngle = 30, selfVelocity = Vector2.new(18, 0),
+				windup = { Root = { 0, -60, 0, 0, -0.45, 0.1 }, Waist = { 0, -20, 0 }, Neck = { 0, 60, 0 }, RS = { 60, 0, 100 }, RE = { 100, 0, 0 }, LS = { 60, 0, -100 }, LE = { 100, 0, 0 }, RH = { 20, 0, 40 }, RK = { -60, 0, 0 } },
+				strike = { Root = { 0, -80, 10, 0, -0.4, -0.2 }, Waist = { 0, -20, 0 }, Neck = { 0, 70, 0 }, RS = { 70, 0, 110 }, RE = { 110, 0, 0 }, LS = { 70, 0, -110 }, LE = { 110, 0, 0 }, RH = { 10, 0, 85 }, RK = { -4, 0, 0 } },
+				follow = { Root = { 0, -84, 12, 0, -0.4, -0.22 }, Waist = { 0, -22, 0 }, Neck = { 0, 74, 0 }, RS = { 72, 0, 112 }, RE = { 114, 0, 0 }, LS = { 72, 0, -112 }, LE = { 114, 0, 0 }, RH = { 10, 0, 90 }, RK = { 0, 0, 0 } },
+				trail = "rightFoot", fx = { { "symbols", symbols = { "🦀" }, color = COOLER, count = 2, radius = 2 } }, hitText = "CLIC-CLAC !",
+			},
+			-- ↓K : sable brûlant ! il sautille d'un pied sur l'autre et écrase les orteils de l'adversaire (deux coups)
+			K_down = {
+				label = "Sable brûlant !", startup = 0.1, active = 0.2, recovery = 0.28,
+				damage = 8, hits = 2, hitbox = box(5, 2, 2.4, -1.5), kbBase = 24, kbGrowth = 42, kbAngle = 70,
+				windup = { Root = { 6, 0, 0, 0, 0.1, 0.05 }, Waist = { 6, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 40, 0, 80 }, RE = { 60, 0, 0 }, LS = { 40, 0, -80 }, LE = { 60, 0, 0 }, RH = { 60, 0, 0 }, RK = { -90, 0, 0 } },
+				strike = { Root = { 10, 0, 0, 0, -0.2, -0.15 }, Waist = { 8, 0, 0 }, Neck = { 24, 0, 0 }, RS = { 50, 0, 90 }, RE = { 50, 0, 0 }, LS = { 50, 0, -90 }, LE = { 50, 0, 0 }, RH = { 30, 0, 0 }, RK = { -10, 0, 0 }, LH = { 60, 0, 0 }, LK = { -90, 0, 0 } },
+				follow = { Root = { 10, 0, 0, 0, -0.2, -0.18 }, Waist = { 8, 0, 0 }, Neck = { 24, 0, 0 }, RS = { 50, 0, 90 }, RE = { 50, 0, 0 }, LS = { 50, 0, -90 }, LE = { 50, 0, 0 }, RH = { 60, 0, 0 }, RK = { -90, 0, 0 }, LH = { 30, 0, 0 }, LK = { -10, 0, 0 } },
+				wobble = true, trail = "leftFoot", fx = { "dust" }, hitText = "AÏE-AÏE-AÏE !",
+			},
+			-- ↑K : jongle de genou : il fait sauter un ballon imaginaire très haut d'un coup de genou
+			K_up = {
+				label = "Jongle de genou", startup = 0.12, active = 0.12, recovery = 0.28,
+				damage = 9, hitbox = box(4, 5.5, 1.2, 2.6), kbBase = 26, kbGrowth = 52, kbAngle = 88,
+				windup = { Root = { 6, 0, 0, 0, -0.4, 0.05 }, Waist = { 10, 0, 0 }, Neck = { 20, 0, 0 }, RS = { 30, 0, 60 }, RE = { 60, 0, 0 }, LS = { 30, 0, -60 }, LE = { 60, 0, 0 }, RH = { -10, 0, 0 }, RK = { -40, 0, 0 } },
+				strike = { Root = { -10, 0, 0, 0, 0.1, 0 }, Waist = { -8, 0, 0 }, Neck = { -30, 0, 0 }, RS = { 60, 0, 70 }, RE = { 30, 0, 0 }, LS = { 60, 0, -70 }, LE = { 30, 0, 0 }, RH = { 120, 0, 0 }, RK = { -110, 0, 0 } },
+				follow = { Root = { -12, 0, 0, 0, 0.1, 0 }, Waist = { -10, 0, 0 }, Neck = { -36, 0, 0 }, RS = { 62, 0, 74 }, RE = { 30, 0, 0 }, LS = { 62, 0, -74 }, LE = { 30, 0, 0 }, RH = { 126, 0, 0 }, RK = { -116, 0, 0 } },
+				trail = "rightLeg", hitText = "UN, DEUX, TROIS !",
+			},
+			-- K en l'air : double ruade alpine : les deux pieds en tongs détendent en arrière puis en avant
+			K_air = {
+				label = "Double ruade alpine", startup = 0.1, active = 0.14, recovery = 0.22,
+				damage = 8, hitbox = box(5, 3, 2.4, -0.8), kbBase = 24, kbGrowth = 40, kbAngle = 35,
+				windup = { Root = { 20, 0, 0 }, Waist = { 10, 0, 0 }, Neck = { -10, 0, 0 }, RS = { 60, 0, 60 }, RE = { 40, 0, 0 }, LS = { 60, 0, -60 }, LE = { 40, 0, 0 }, RH = { 110, 0, 6 }, RK = { -130, 0, 0 }, LH = { 110, 0, -6 }, LK = { -130, 0, 0 } },
+				strike = { Root = { -20, 0, 0 }, Waist = { -10, 0, 0 }, Neck = { 10, 0, 0 }, RS = { 40, 0, 80 }, RE = { 20, 0, 0 }, LS = { 40, 0, -80 }, LE = { 20, 0, 0 }, RH = { 80, 0, 6 }, RK = { 0, 0, 0 }, RA = { 20, 0, 0 }, LH = { 80, 0, -6 }, LK = { 0, 0, 0 }, LA = { 20, 0, 0 } },
+				follow = { Root = { -22, 0, 0 }, Waist = { -12, 0, 0 }, Neck = { 12, 0, 0 }, RS = { 38, 0, 84 }, RE = { 20, 0, 0 }, LS = { 38, 0, -84 }, LE = { 20, 0, 0 }, RH = { 84, 0, 6 }, RK = { 0, 0, 0 }, RA = { 24, 0, 0 }, LH = { 84, 0, -6 }, LK = { 0, 0, 0 }, LA = { 24, 0, 0 } },
+				trail = "rightFoot", fx = { { "particles", tex = "smoke", color = SNOW, dir = "front", at = "feet", time = 0.25 } }, hitText = "HIIIHAN !",
+			},
+			-- dash K : saute-vague : il bondit par-dessus une vague imaginaire, les deux pieds en avant
+			K_dash = {
+				label = "Saute-vague", startup = 0.1, active = 0.22, recovery = 0.3,
+				damage = 9, hitbox = box(5.5, 3, 2.6, -0.2), kbBase = 28, kbGrowth = 54, kbAngle = 38, selfVelocity = Vector2.new(40, 16),
+				windup = { Root = { 10, 0, 0, 0, -0.6, 0.1 }, Waist = { 14, 0, 0 }, Neck = { 10, 0, 0 }, RS = { -30, 0, 30 }, RE = { 30, 0, 0 }, LS = { -30, 0, -30 }, LE = { 30, 0, 0 } },
+				strike = { Root = { -24, 0, 0, 0, -0.2, -0.1 }, Waist = { -10, 0, 0 }, Neck = { 16, 0, 0 }, RS = { 130, 0, 50 }, RE = { 10, 0, 0 }, LS = { 130, 0, -50 }, LE = { 10, 0, 0 }, RH = { 85, 0, 8 }, RK = { -6, 0, 0 }, LH = { 85, 0, -8 }, LK = { -6, 0, 0 } },
+				follow = { Root = { -26, 0, 0, 0, -0.2, -0.12 }, Waist = { -12, 0, 0 }, Neck = { 18, 0, 0 }, RS = { 134, 0, 54 }, RE = { 10, 0, 0 }, LS = { 134, 0, -54 }, LE = { 10, 0, 0 }, RH = { 88, 0, 8 }, RK = { 0, 0, 0 }, LH = { 88, 0, -8 }, LK = { 0, 0, 0 } },
+				trail = "rightFoot", fx = { { "toss", shape = "ball", color = WATER, size = 0.35, count = 5, speed = 14 } }, hitText = "SPLAOUCH !",
+			},
+		},
+		-- Combos à mains nues : beach-volley J J J (manchette, service, smash) ou J ↑J J (manchette, passe, smash),
+		-- J K K J (hula, limbo, ukulélé furieux), K J J (aloha puis smash). Un S pour finir envoie le spécial du perso.
+		links = {
+			P_neutral = { P = "P_combo2", up_P = "P_up", K = "PK_combo", S = "S_neutral" },
+			P_combo2 = { P = "P_combo3", up_P = "P_up", S = "S_side" },
+			P_up = { P = "P_combo3", K = "K_up", S = "S_up" },
+			P_combo3 = { S = "S_down" },
+			PK_combo = { K = "K_combo2", S = "S_neutral" },
+			K_neutral = { K = "K_combo2", P = "KP_combo", S = "S_side" },
+			K_combo2 = { P = "KKP_combo", K = "K_down", S = "S_down" },
+			KP_combo = { P = "P_combo3", K = "K_side", S = "S_side" },
+			KKP_combo = { S = "S_neutral" },
+			P_side = { P = "P_combo2", K = "K_side", S = "S_side" },
+			K_side = { P = "KP_combo", S = "S_side" },
+			P_down = { P = "P_up", K = "K_down", S = "S_down" },
+			K_down = { K = "K_up", S = "S_down" },
+			K_up = { S = "S_up" },
+			P_dash = { K = "PK_combo", S = "S_side" },
+			K_dash = { P = "P_combo3", S = "S_up" },
+			P_air = { K = "K_air", S = "S_air" },
+			K_air = { P = "P_air", S = "S_air" },
+		},
+	},
 	------------------------------------------------------------------ Les 3 armes de la Caisse Bizarre (une au hasard)
 	-- n° 1 : la glacière et les tongs (ses coups sont ceux de moves). n° 2 : le pistolet à eau géant, tout en projectiles, rapide,
 	-- qui trempe l'adversaire. n° 3 : la planche de surf, lourde et lente, qui éjecte très loin et le fait glisser plus vite.
