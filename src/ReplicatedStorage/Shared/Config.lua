@@ -24,6 +24,15 @@ Config.RUN_SPEED = 34 -- …puis on court tant que la direction reste tenue
 Config.ATTACK_MOVE_SPEED = 0.55 -- on peut marcher pendant un coup au sol, à 55 % de la vitesse
 Config.DROP_HOLD = 0.2 -- ↓ tenu ce temps sur une plateforme fine : on passe au travers
 
+-- Garde (bouclier, touche G / bouton 🛡️) : maintenue au sol, on ne bouge plus et les coups ne passent pas.
+-- La bulle s'use (coups bloqués et temps passé en garde) et se recharge quand on la baisse ; vide = cassée.
+Config.SHIELD_MAX = 50
+Config.SHIELD_MIN = 10 -- il faut au moins ça pour lever la garde
+Config.SHIELD_DRAIN = 7 -- usure par seconde de garde
+Config.SHIELD_REGEN = 10 -- recharge par seconde, garde baissée
+Config.SHIELD_DAMAGE = 1.2 -- un coup bloqué use la bulle de ses dégâts × 1,2
+Config.SHIELD_BREAK_STUN = 1.6 -- bulle cassée : sonné ce temps
+
 -- Esquive
 Config.DODGE_SPEED = 70
 Config.DODGE_DURATION = 0.3

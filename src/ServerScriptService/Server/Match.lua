@@ -83,6 +83,13 @@ local function assignTeam(model)
 		model:SetAttribute("Team", "")
 		return
 	end
+	-- équipe choisie par le salon (2 contre 2) : on la garde, même après un rechargement du personnage
+	local player = Players:GetPlayerFromCharacter(model)
+	local wanted = player and player:GetAttribute("Team")
+	if wanted == "Rouge" or wanted == "Bleu" then
+		model:SetAttribute("Team", wanted)
+		return
+	end
 	local counts = { Rouge = 0, Bleu = 0 }
 	for _, other in ipairs(Fighters.all()) do
 		local team = other ~= model and teamOf(other)

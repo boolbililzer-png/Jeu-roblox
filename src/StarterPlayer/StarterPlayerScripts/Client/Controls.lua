@@ -37,6 +37,8 @@ local BUTTON_KEYS = {
 	[Enum.KeyCode.Space] = "SAUT",
 	[Enum.KeyCode.LeftShift] = "ESQUIVE",
 	[Enum.KeyCode.Y] = "SUPER",
+	[Enum.KeyCode.I] = "SHIELD", -- garde (maintenue)
+	[Enum.KeyCode.G] = "SHIELD",
 	[Enum.KeyCode.T] = "CHARGE",
 	[Enum.KeyCode.U] = "MAIN",
 	-- emotes (à part des attaques)
@@ -62,6 +64,7 @@ local BUTTONS = {
 	{ "ESQUIVE", "ESQ", Color3.fromRGB(60, 190, 90), Vector2.new(0.66, 0.7), 0.14 },
 	{ "SUPER", "⭐", Color3.fromRGB(255, 170, 0), Vector2.new(0.67, 0.46), 0.15 },
 	{ "CHARGE", "⚡", Color3.fromRGB(70, 170, 255), Vector2.new(0.555, 0.88), 0.13 },
+	{ "SHIELD", "🛡️", Color3.fromRGB(120, 200, 255), Vector2.new(0.555, 0.66), 0.13 },
 	{ "MAIN", "✋", Color3.fromRGB(170, 90, 220), Vector2.new(0.8, 0.42), 0.14 },
 	{ "EMOTE", "😀", Color3.fromRGB(90, 90, 110), Vector2.new(0.95, 0.12), 0.1 },
 }
@@ -115,7 +118,7 @@ function Controls:_release(name)
 	end
 	if name == "CHARGE" then
 		self._fire("CHARGE_END")
-	elseif name == "P" or name == "K" or name == "S" then
+	elseif name == "P" or name == "K" or name == "S" or name == "SHIELD" then
 		self._fire(name .. "_RELEASE")
 	end
 end
@@ -340,6 +343,7 @@ local HELP_ROWS = {
 	{ "Caisse Bizarre 📦", "✋ dessus : une de tes 3 armes au hasard", "✋ on it: one of your 3 weapons" },
 	{ "Saut / double saut", "Espace", "Space" },
 	{ "Esquive", "Maj gauche", "Left Shift" },
+	{ "Garde 🛡️ (maintenir, au sol)", "I ou G", "I or G" },
 	{ "Main ✋ : ramasser / lancer", "U (+ flèche pour viser)", "U (+ arrow to aim)" },
 	{ "Passer sous une plateforme", "maintenir bas", "hold down" },
 	{ "3 Supers / fatal (recharge 1,4 s)", "↑Y, →Y (ou Y), ↓Y", "↑Y, →Y (or Y), ↓Y" },

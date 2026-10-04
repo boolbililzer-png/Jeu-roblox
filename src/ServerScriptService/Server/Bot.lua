@@ -222,6 +222,15 @@ local function think(brain, now)
 	end
 
 	local target, distance = nearest(model, root)
+	-- en garde : on ne bouge pas, puis on la baisse au bout d'un court instant
+	local guardState = Fighters.get(model)
+	if guardState and guardState.shielding then
+		brain.wantMove = 0
+		if os.clock() >= (brain.shieldUntil or 0) then
+			Combat.handleModelAction(model, "SHIELD_END")
+		end
+		return
+	end
 	-- Caisse Bizarre à portée : on va l'ouvrir (son arme et ses vrais coups)
 	if not MoveSets.armed(model) then
 		local crate, crateDistance = nearestCrate(root)
@@ -245,8 +254,15 @@ local function think(brain, now)
 		brain.facing = dx >= 0 and 1 or -1
 	end
 
-	-- esquive quand un adversaire proche lance un coup
+	-- garde ou esquive quand un adversaire proche lance un coup
 	local enemyStart = target:GetAttribute("MoveStart") or 0
+	if distance < 7 and onGround and workspace:GetServerTimeNow() - enemyStart < 0.12 and not busy
+		and (model:GetAttribute("Shield") or 0) >= Config.SHIELD_MAX * 0.5 and rng:NextNumber() < 0.05 + 0.06 * d then
+		brain.wantMove = 0
+		brain.shieldUntil = os.clock() + 0.35 + rng:NextNumber() * 0.35
+		Combat.handleModelAction(model, "SHIELD_START")
+		return
+	end
 	if distance < 7 and workspace:GetServerTimeNow() - enemyStart < 0.15 and not busy and not flags.noDodge
 		and rng:NextNumber() < 0.08 + 0.1 * d then
 		model:SetAttribute("DodgeStart", workspace:GetServerTimeNow())

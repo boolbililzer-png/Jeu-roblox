@@ -1585,6 +1585,21 @@ local function onSpecialEvent(kind, data)
 			Fx.ring(root.Position, look[2], 6, 0.45)
 			Fx.popText(root.Position + Vector3.new(0, 5, 1), look[1] .. " !", look[2], 1.3, 1.2)
 		end
+	elseif kind == "Blocked" then
+		-- coup bloqué par la garde : éclat bleu et petit texte
+		local root = data.model and data.model:FindFirstChild("HumanoidRootPart")
+		if root then
+			Fx.ring(root.Position, Color3.fromRGB(140, 210, 255), 3.5, 0.25)
+			Fx.popText(root.Position + Vector3.new(0, 4, 1), "BLOQUÉ !", Color3.fromRGB(140, 210, 255), 0.7, 0.5)
+		end
+	elseif kind == "ShieldBreak" then
+		local root = data.model and data.model:FindFirstChild("HumanoidRootPart")
+		if root then
+			Fx.burst(root.Position, Color3.fromRGB(140, 210, 255), 5)
+			Fx.ring(root.Position, Color3.fromRGB(255, 255, 255), 7, 0.5)
+			Fx.popText(root.Position + Vector3.new(0, 5, 1), "🛡️ GARDE CASSÉE !", Color3.fromRGB(255, 120, 120), 1.2, 1.2)
+			CameraRig.punch(root.Position, 0.3, 2)
+		end
 	elseif kind == "Popup" then
 		local root = data.model and data.model:FindFirstChild("HumanoidRootPart")
 		if root then
@@ -2396,6 +2411,38 @@ function Fx.start()
 		end)
 	end
 
+	-- Bulle de garde autour de chaque combattant en garde : elle rétrécit quand elle s'use
+	local bubbles = {}
+	RunService.RenderStepped:Connect(function()
+		for _, model in ipairs(CollectionService:GetTagged("Fighter")) do
+			local root = model:FindFirstChild("HumanoidRootPart")
+			local on = root ~= nil and model:GetAttribute("Shielding") == true
+			local bubble = bubbles[model]
+			if on and not bubble then
+				bubble = part({ Shape = Enum.PartType.Ball, Material = Enum.Material.ForceField, Color = Color3.fromRGB(120, 200, 255), Transparency = 0.2, Size = Vector3.one * 6 })
+				bubble.Name = "BulleDeGarde"
+				bubble.Parent = workspace
+				bubbles[model] = bubble
+			elseif not on and bubble then
+				bubble:Destroy()
+				bubbles[model] = nil
+				bubble = nil
+			end
+			if bubble then
+				local amount = math.clamp((model:GetAttribute("Shield") or 0) / Config.SHIELD_MAX, 0, 1)
+				bubble.Size = Vector3.one * (3.2 + 3.3 * amount)
+				bubble.Color = Color3.fromRGB(255, 90, 90):Lerp(Color3.fromRGB(120, 200, 255), amount)
+				bubble.CFrame = CFrame.new(root.Position + Vector3.new(0, -0.3, 0))
+			end
+		end
+		for model, bubble in pairs(bubbles) do
+			if not model.Parent then
+				bubble:Destroy()
+				bubbles[model] = nil
+			end
+		end
+	end)
+
 	local remote = ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("Fx")
 	remote.OnClientEvent:Connect(function(kind, data)
 		if kind == "Hit" then
@@ -2412,7 +2459,7 @@ function Fx.start()
 			or kind == "Splat" or kind == "Grab" or kind == "TooHeavy" or kind == "GeyserWarn" or kind == "Geyser" then
 			onItemEvent(kind, data)
 		elseif kind == "Object" or kind == "ObjectEnd" or kind == "Grapple" or kind == "Counter" or kind == "Absorbed"
-			or kind == "Sneeze" or kind == "Buff" or kind == "Popup" or kind == "FatalFx" then
+			or kind == "Sneeze" or kind == "Buff" or kind == "Popup" or kind == "FatalFx" or kind == "Blocked" or kind == "ShieldBreak" then
 			onSpecialEvent(kind, data)
 		elseif kind == "HazardWarn" then
 			hazardWarn(data)

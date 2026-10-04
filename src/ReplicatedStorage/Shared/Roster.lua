@@ -35,6 +35,7 @@ Roster.INFO = {
 Roster.MODES = {
 	{ id = "brawl", name = "Bagarre générale", icon = "💥", text = "4 joueurs, chacun pour soi, 3 minutes" },
 	{ id = "duel", name = "Duel", icon = "⚔️", text = "1 contre 1, 3 vies" },
+	{ id = "duo", name = "2 contre 2", icon = "🤝", text = "Équipes Rouge et Bleu, 3 vies chacun" },
 	{ id = "adventure", name = "Aventure", icon = "🗺️", text = "5 combats contre des bots" },
 	{ id = "training", name = "Entraînement", icon = "🎯", text = "Le mannequin, sans chrono" },
 }

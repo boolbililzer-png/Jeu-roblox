@@ -61,6 +61,8 @@ local lastMoveKey, lastMoveAt = nil, -10 -- dernier coup lancé, pour les encha�
 local buffered = nil -- appui arrivé un peu trop tôt dans un enchaînement : { button, vector, time }
 local charging = false -- recharge d'énergie en cours (O / ⚡ maintenu)
 local smash = nil -- J ou K maintenu au sol : { button, key, pressedAt, startedAt }
+local shielding = false -- garde levée (touche I / G, bouton 🛡️)
+local shieldSince = 0 -- (le serveur confirme la garde un peu après l'appui)
 local dashUntil, dashDir, running = 0, 0, false -- dash (double tap) puis course
 local carry = nil -- coup lancé en ruée ou en course : { dir, speed, untilTime } (le perso garde son élan)
 local downSince, dropUntil = nil, 0 -- ↓ maintenu sur une plateforme fine : on passe au travers
@@ -601,7 +603,47 @@ local function tryFatal()
 	return false
 end
 
+-- Garde : levée au sol tant que la touche est tenue ; le serveur bloque les coups et use la bulle
+local function stopShield()
+	if shielding then
+		shielding = false
+		busyUntil = 0
+		ActionRemote:FireServer("SHIELD_END")
+	end
+end
+
+local function startShield()
+	if shielding or not canAct() or not isGrounded() or os.clock() < busyUntil then
+		return
+	end
+	if (character:GetAttribute("Shield") or Config.SHIELD_MAX) < Config.SHIELD_MIN then
+		Fx.popText(root.Position + Vector3.new(0, 4, 1), "🛡️ GARDE À PLAT", Color3.fromRGB(120, 200, 255), 0.8, 0.8)
+		return
+	end
+	cancelSmash()
+	setCharging(false)
+	buffered = nil
+	shielding = true
+	shieldSince = os.clock()
+	busyUntil = os.clock() + 999
+	ActionRemote:FireServer("SHIELD_START")
+end
+
 controls.Pressed:Connect(function(name)
+	if name == "SHIELD" then
+		startShield()
+		return
+	elseif name == "SHIELD_RELEASE" then
+		stopShield()
+		return
+	elseif shielding then
+		-- depuis la garde : saut ou esquive la baissent ; les attaques attendent qu'on la lâche
+		if name == "SAUT" or name == "ESQUIVE" then
+			stopShield()
+		else
+			return
+		end
+	end
 	if name == "CHARGE_END" then
 		setCharging(false)
 		return
@@ -665,6 +707,10 @@ KnockbackRemote.OnClientEvent:Connect(function(velocity, hitstun)
 	stunnedUntil = os.clock() + hitstun
 	setCharging(false)
 	cancelSmash()
+	if shielding then
+		shielding = false
+		busyUntil = 0
+	end
 	buffered = nil
 	knockbackToken += 1
 	-- plus de PlatformStand (le perso s'enfonçait dans le sol jusqu'à la taille) : au sol, une petite composante
@@ -783,6 +829,10 @@ RunService.Heartbeat:Connect(function(dt)
 	local status = flags()
 	local speedMult = Statuses.speed(character)
 	humanoid.WalkSpeed = ((dashing and Config.DASH_SPEED) or (running and Config.RUN_SPEED) or Config.WALK_SPEED) * speedMult
+	-- en garde : immobile ; la garde tombe si on quitte le sol ou si le serveur l'a cassée
+	if shielding and (not grounded or not acting or (character:GetAttribute("Shielding") == false and now - shieldSince > 0.4)) then
+		stopShield()
+	end
 	if status.noMove then
 		humanoid.WalkSpeed = 0
 	end
@@ -804,7 +854,7 @@ RunService.Heartbeat:Connect(function(dt)
 		-- coup lancé en ruée / en course : il garde son élan
 		moveX = carry.dir
 		humanoid.WalkSpeed = carry.speed * speedMult
-	elseif acting and not charging and not status.noMove and math.abs(v.X) > 0.2 then
+	elseif acting and not charging and not shielding and not status.noMove and math.abs(v.X) > 0.2 then
 		-- on peut marcher pendant un coup (plus lentement au sol), et toujours se diriger en l'air
 		moveX = v.X
 		if busy and grounded then

@@ -681,10 +681,21 @@ function Combat.isLink(previous, key)
 	return false
 end
 
--- Remplissage de la barre d'énergie pendant la recharge
+-- Remplissage de la barre d'énergie pendant la recharge ; usure et recharge de la garde
 RunService.Heartbeat:Connect(function(dt)
 	for _, model in ipairs(Fighters.all()) do
 		local s = Fighters.get(model)
+		local shield = model:GetAttribute("Shield") or Config.SHIELD_MAX
+		if s.shielding then
+			shield -= Config.SHIELD_DRAIN * dt
+			if shield <= 0 then
+				Fighters.breakShield(model)
+			else
+				model:SetAttribute("Shield", shield)
+			end
+		elseif shield < Config.SHIELD_MAX and os.clock() >= s.stunnedUntil then
+			model:SetAttribute("Shield", math.min(Config.SHIELD_MAX, shield + Config.SHIELD_REGEN * dt))
+		end
 		if s.charging then
 			local energy = math.min(Config.ENERGY_MAX, (model:GetAttribute("Energy") or 0) + Config.ENERGY_CHARGE_RATE * dt)
 			model:SetAttribute("Energy", energy)
@@ -852,6 +863,27 @@ function Combat.handleModelAction(model, action, extra)
 			smashPower = math.clamp((now - s.smash.start) / Config.SMASH_MAX_TIME, 0, 1)
 		end
 		Fighters.clearSmash(model)
+	end
+
+	-- garde (bouclier) : levée au sol, tant que la touche est tenue
+	if action == "SHIELD_START" then
+		local humanoid = model:FindFirstChildOfClass("Humanoid")
+		local grounded = humanoid ~= nil and humanoid.FloorMaterial ~= Enum.Material.Air
+		if grounded and now >= s.busyUntil - 0.05 and now >= s.stunnedUntil and not Statuses.flags(model).noAct
+			and (model:GetAttribute("Shield") or 0) >= Config.SHIELD_MIN and not model:GetAttribute("Holding") then
+			Fighters.setCharging(model, false)
+			Fighters.setShielding(model, true)
+		end
+		return
+	elseif action == "SHIELD_END" then
+		Fighters.setShielding(model, false)
+		return
+	end
+	-- esquive ou saut depuis la garde : la garde se baisse d'abord
+	if s.shielding and action == "DODGE" then
+		Fighters.setShielding(model, false)
+	elseif s.shielding then
+		return -- en garde, on ne frappe pas
 	end
 
 	if action == "DODGE" then

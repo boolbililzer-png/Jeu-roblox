@@ -535,6 +535,12 @@ local function basePose(rig, input, dt)
 		state = "dash"
 	end
 
+	-- Garde levée : accroupi derrière ses bras croisés, les pieds plantés
+	if input.shielding and state ~= "charge" then
+		pose = merge(pose, Poses.shield)
+		state = "shield"
+	end
+
 	-- Tient un adversaire saisi (avant de le projeter)
 	if input.holding then
 		pose = merge(pose, input.grabHold or Poses.grabHold)

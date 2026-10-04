@@ -444,6 +444,7 @@ for _, id in ipairs(Roster.ORDER) do
 			animate(id, "attente", rig, { grounded = true, speed = 0, velY = 0, style = data.style, fidgets = data.fidgets }, 20)
 			animate(id, "marche", rig, { grounded = true, speed = 20, velY = 0, style = data.style }, 2)
 			animate(id, "saisie", rig, { grounded = true, speed = 0, velY = 0, style = data.style, holding = true, grabHold = data.grabHold }, 1)
+			animate(id, "garde", rig, { grounded = true, speed = 0, velY = 0, style = data.style, shielding = true }, 1)
 		end
 	end
 end

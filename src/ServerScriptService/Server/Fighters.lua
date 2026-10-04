@@ -27,6 +27,8 @@ function Fighters.resetAttributes(model)
 	model:SetAttribute("Stocks", Config.STOCKS)
 	model:SetAttribute("Super", 0)
 	model:SetAttribute("SuperReadyAt", 0) -- recharge des Supers (Y) : prête
+	model:SetAttribute("Shield", Config.SHIELD_MAX) -- garde (bouclier) pleine
+	model:SetAttribute("Shielding", false)
 	model:SetAttribute("Bulles", 0)
 	model:SetAttribute("Status", "")
 	model:SetAttribute("StatusUntil", 0)
@@ -79,6 +81,7 @@ function Fighters.register(model, characterId, displayName)
 		immunity = {},
 		armorUntil = 0, -- encaisse sans être éjecté (armor d'un coup, titubade…)
 		counter = nil, -- contre en cours : { untilTime, move, key }
+		shielding = false, -- garde levée (bouclier)
 	}
 	CollectionService:AddTag(model, Fighters.TAG)
 	model.Destroying:Connect(function()
@@ -174,6 +177,27 @@ local function sameTeam(a, b)
 	return Config.TEAMS and ta ~= nil and ta ~= "" and ta == tb
 end
 
+-- Garde (bouclier) : levée tant que la touche est tenue ; on ne frappe plus et on ne bouge plus
+function Fighters.setShielding(model, on)
+	local s = state[model]
+	if not s or s.shielding == on then
+		return
+	end
+	s.shielding = on
+	model:SetAttribute("Shielding", on)
+	s.busyUntil = on and (os.clock() + 999) or os.clock()
+end
+
+-- Bulle vide : la garde casse, le combattant décolle un peu et reste sonné
+function Fighters.breakShield(model)
+	Fighters.setShielding(model, false)
+	model:SetAttribute("Shield", 0)
+	if remotes.Fx then
+		remotes.Fx:FireAllClients("ShieldBreak", { model = model })
+	end
+	Fighters.applyKnockback(model, Vector3.new(0, 40, 0), Config.SHIELD_BREAK_STUN)
+end
+
 function Fighters.stun(model, duration)
 	local s = state[model]
 	if s then
@@ -218,6 +242,7 @@ function Fighters.applyKnockback(model, velocity, hitstun)
 		return
 	end
 	Fighters.stun(model, hitstun)
+	Fighters.setShielding(model, false) -- une éjection baisse la garde
 	-- pour que tous les clients jouent l'animation de projection
 	model:SetAttribute("HitPower", velocity.Magnitude)
 	model:SetAttribute("HitstunUntil", workspace:GetServerTimeNow() + hitstun)
@@ -320,6 +345,19 @@ function Fighters.hit(attacker, target, move, damageMultiplier, direction)
 		local attackerRoot, targetRoot = Fighters.root(attacker), Fighters.root(target)
 		local back = (attackerRoot and targetRoot and attackerRoot.Position.X < targetRoot.Position.X) and -1 or 1
 		task.defer(Fighters.hit, target, attacker, riposte, 1, back)
+		return false
+	end
+	-- garde levée : le coup est bloqué (pas de dégâts ni d'éjection), mais la bulle s'use
+	if ts.shielding and not move.unblockable then
+		local left = (target:GetAttribute("Shield") or 0) - (move.damage or 0) * Config.SHIELD_DAMAGE
+		target:SetAttribute("Shield", math.max(0, left))
+		local targetRoot = Fighters.root(target)
+		if remotes.Fx then
+			remotes.Fx:FireAllClients("Blocked", { model = target, attacker = attacker, position = targetRoot and targetRoot.Position })
+		end
+		if left <= 0 then
+			Fighters.breakShield(target)
+		end
 		return false
 	end
 	if move.pull then

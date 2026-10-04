@@ -387,6 +387,7 @@ local function stepModel(model, rig, dt, now, serverNow)
 				weapon = held ~= "" and held or nil,
 				held = model:GetAttribute("Grabbed") == true,
 				holding = model:GetAttribute("Holding") == true,
+				shielding = model:GetAttribute("Shielding") == true,
 				grabHold = data and data.grabHold,
 				obese = (model:GetAttribute("ObeseUntil") or 0) > serverNow,
 				dashing = now < (rig.dashUntil or 0),

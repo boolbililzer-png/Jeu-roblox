@@ -37,6 +37,7 @@ On ne combine jamais deux boutons : la direction tenue au moment de l'appui choi
 | **K** attaque lourde | K | K (bleu) |
 | **S** spécial du perso, même sans arme (maintenu = portée allongée) | L | S (jaune) |
 | Esquive (puis S = spécial d'esquive) | Maj | ESQ |
+| 🛡️ Garde (maintenir, au sol) | I ou G | 🛡️ |
 | ⭐ 4 Supers (1,4 s de recharge entre deux) : Y, →Y, ↑Y, ↓Y ; et coup fatal | Y | ⭐ |
 | ✋ Ramasser une caisse ou un objet, lancer l'objet, **jeter son arme** (pas de saisie) | U | ✋ |
 | 😀 Emotes | 1, 2, 3, 4 | 😀 |
@@ -63,6 +64,9 @@ On ne combine jamais deux boutons : la direction tenue au moment de l'appui choi
 - **Persos qui volent** (Capitaine Canard, Roi Pigeon, Gaston, Mamie) : un saut en l'air de plus, plané, et
   un ↑L très puissant.
 - **J et K maintenus au sol** : frappe chargée, comme les smashs.
+- **Garde** 🛡️ (I, G ou le bouton 🛡️, maintenue au sol) : une bulle bloque tous les coups, mais on ne bouge plus.
+  Elle s'use avec les coups bloqués et le temps passé en garde, puis se recharge. Vide, elle casse et on reste
+  sonné. Saut ou esquive la baissent tout de suite.
 - **↑S** sert de remontée et ne coûte pas d'énergie.
 
 ## Règles
@@ -70,6 +74,8 @@ On ne combine jamais deux boutons : la direction tenue au moment de l'appui choi
 - **Bagarre générale** : 4 combattants, chacun pour soi, 3 minutes. +1 point par éjection, −1 par chute.
   En cas d'égalité, mort subite à 300 %.
 - **Duel** : 1 contre 1, 3 vies.
+- **2 contre 2** : équipes Rouge et Bleu, 3 vies chacun, pas de coups entre coéquipiers. Deux joueurs sont mis
+  ensemble chez les Rouges ; les places libres sont prises par des bots.
 - **Aventure** : 5 combats contre des bots de plus en plus forts, chacun dans l'arène de l'adversaire,
   avec un boss à la fin. On peut la faire à deux.
 - **Entraînement** : le mannequin, sans chrono. Le bouton ⏏ QUITTER ramène au salon.

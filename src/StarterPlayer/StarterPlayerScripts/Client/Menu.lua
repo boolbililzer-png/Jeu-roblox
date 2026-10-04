@@ -116,7 +116,7 @@ function Menu.start()
 	label(modeCol, "MODE", UDim2.fromScale(1, 0.08), UDim2.fromScale(0, 0.01), { TextColor3 = ACCENT })
 	local modeButtons = {}
 	for i, mode in ipairs(Roster.MODES) do
-		local b = button(modeCol, "", UDim2.fromScale(0.92, 0.2), UDim2.fromScale(0.04, 0.1 + (i - 1) * 0.225))
+		local b = button(modeCol, "", UDim2.fromScale(0.92, 0.16), UDim2.fromScale(0.04, 0.1 + (i - 1) * 0.177))
 		label(b, mode.icon .. " " .. mode.name, UDim2.fromScale(0.94, 0.5), UDim2.fromScale(0.03, 0.05))
 		label(b, mode.text, UDim2.fromScale(0.94, 0.36), UDim2.fromScale(0.03, 0.58), { TextColor3 = Color3.fromRGB(210, 200, 220) })
 		b.MouseButton1Click:Connect(function()

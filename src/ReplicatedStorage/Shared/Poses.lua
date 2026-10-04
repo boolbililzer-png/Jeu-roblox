@@ -264,6 +264,19 @@ Poses.held = {
 	FL = { 0, 0, 0 },
 }
 
+-- Garde (bouclier) : accroupi, bras croisés devant le visage
+Poses.shield = {
+	Root = { 6, 0, 0, 0, -0.45, 0.05 },
+	Waist = { 12, 0, 0 },
+	Neck = { 10, 0, 0 },
+	RS = { 95, 0, -40 },
+	RE = { 110, 0, 0 },
+	RW = { 0, 0, 0 },
+	LS = { 95, 0, 40 },
+	LE = { 110, 0, 0 },
+	LW = { 0, 0, 0 },
+}
+
 -- Tient un adversaire saisi à bout de bras (pose par défaut, chaque perso peut avoir la sienne : grabHold)
 Poses.grabHold = {
 	Root = { -4, 0, 0, 0, -0.2, 0.05 },

@@ -224,7 +224,7 @@ local function startMatch(mode, ready)
 	end
 
 	-- qui joue : les premiers prêts (places limitées), les autres regardent
-	local slots = (mode == "duel" and 2) or (mode == "adventure" and 2) or 4
+	local slots = (mode == "duel" and 2) or (mode == "adventure" and 2) or 4 -- 2 contre 2 : 4 places
 	local humans = {}
 	for _, player in ipairs(ready) do
 		if #humans < slots then
@@ -242,13 +242,13 @@ local function startMatch(mode, ready)
 		return
 	end
 
-	Config.TEAMS = false
+	Config.TEAMS = mode == "duo" -- 2 contre 2 : pas de coups entre coéquipiers, vies et victoire par équipe
 	prepareArena(pickArena(nil))
 	if mode == "training" then
 		Match.configure("training")
 		spawnPlayers(humans)
 		Dummy.spawn()
-	elseif mode == "duel" then
+	elseif mode == "duel" or mode == "duo" then
 		Match.configure("stock")
 		spawnPlayers(humans)
 	else
@@ -256,15 +256,37 @@ local function startMatch(mode, ready)
 		spawnPlayers(humans)
 	end
 	-- places libres : des bots (difficulté moyenne)
-	local wanted = (mode == "duel" and 2) or (mode == "brawl" and 4) or 0
+	local wanted = (mode == "duel" and 2) or ((mode == "brawl" or mode == "duo") and 4) or 0
 	local taken = {}
 	for _, id in pairs(participants) do
 		taken[id] = true
 	end
+	local bots = {}
 	for i = #humans + 1, wanted do
 		local id = randomCharacter(taken)
 		taken[id] = true
-		Bot.spawn(id, rng:NextInteger(2, 3), CFrame.new(Config.SPAWN_POINTS[i]), Bot.randomName() .. " (" .. (CharacterList[id].name or id) .. ")")
+		table.insert(bots, Bot.spawn(id, rng:NextInteger(2, 3), CFrame.new(Config.SPAWN_POINTS[i]), Bot.randomName() .. " (" .. (CharacterList[id].name or id) .. ")"))
+	end
+	if mode == "duo" then
+		-- 2 contre 2 : jusqu'à 2 joueurs ensemble chez les Rouges (les bots en face) ; à 3 ou 4, une équipe sur deux
+		local counts = { Rouge = 0, Bleu = 0 }
+		for i, player in ipairs(humans) do
+			if player.Character then
+				local team = (#humans <= 2 or i % 2 == 1) and "Rouge" or "Bleu"
+				player:SetAttribute("Team", team)
+				setTeam(player.Character, team)
+				counts[team] += 1
+			end
+		end
+		for _, model in ipairs(bots) do
+			if model then
+				-- l'équipe la moins nombreuse (2 combattants par équipe)
+				local team = (counts.Rouge < counts.Bleu and "Rouge") or (counts.Bleu < counts.Rouge and "Bleu")
+					or (counts.Rouge < 2 and "Rouge" or "Bleu")
+				setTeam(model, team)
+				counts[team] += 1
+			end
+		end
 	end
 	Match.begin()
 	if mode ~= "training" then
@@ -314,6 +336,9 @@ function Lobby.backToLobby(showResults)
 	table.clear(participants)
 	current = nil
 	Config.TEAMS = false
+	for _, player in ipairs(Players:GetPlayers()) do
+		player:SetAttribute("Team", "")
+	end
 	workspace:SetAttribute("Stage", 0)
 	setPhase(showResults and "results" or "lobby", showResults and "Résultats" or "")
 	task.delay(showResults and 7 or 0, function()
